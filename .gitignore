@@ -20,6 +20,7 @@
 /gradlew.bat
 /local.properties
 /Makefile
+/*.Make
 
 /src/Game/Assets/log.txt
 
