@@ -1,6 +1,8 @@
 #include <ctime>
+#include <string>
 #include <stdio.h>
 #include <stdarg.h>
+#include <filesystem>
 
 #include "Engine/Utility/Log.h"
 
@@ -13,11 +15,43 @@
 namespace gp1
 {
 
-void log(Severity severity, const char* message, ...)
+bool fileLoggingEnabled = true;
+std::string logFilepath = "log.txt";
+
+// TODO(fkp): This currently opens the file each time we log. We
+// should instead probably save to a buffer first and flush it every
+// so often.
+void log(Severity severity, const char* format, ...)
 {
 	va_list args;
-	va_start(args, message);
+	va_start(args, format);
 
+	FILE* file = nullptr;
+
+	if (fileLoggingEnabled)
+	{
+		std::filesystem::path filepath { logFilepath };
+		std::filesystem::create_directories(filepath.parent_path());
+
+		file = fopen(logFilepath.c_str(), "a");
+
+		if (file)
+		{
+			static bool hasDone = false;
+
+			if (!hasDone)
+			{
+				hasDone = true;
+				fprintf(file, "\n\n================================================================\n\n");
+			}
+		}
+		else
+		{
+			fileLoggingEnabled = false;
+			log(Severity::Warning, "Failed to open log file '%s' (error: %s).", logFilepath.c_str(), std::strerror(errno));
+		}
+	}
+	
 	constexpr unsigned int timeBufferSize = 16;
 	std::time_t currentTime = std::time(nullptr);
 	char timeBuffer[timeBufferSize];
@@ -25,29 +59,60 @@ void log(Severity severity, const char* message, ...)
 	if (std::strftime(timeBuffer, timeBufferSize, "[%H:%M:%S]", std::localtime(&currentTime)))
 	{
 		printf("%s ", timeBuffer);
+
+		if (file)
+		{
+			fprintf(file, "%s ", timeBuffer);
+		}
 	}
 	
 	switch (severity)
 	{
 	case Severity::Trace:
 		printf(WHITE "Trace" DEFAULT_COLOUR ": ");
+
+		if (file)
+		{
+			fprintf(file, "Trace: ");
+		}
 		break;
 
 	case Severity::Debug:
 		printf(BLUE "Debug" DEFAULT_COLOUR ": ");
+		if (file)
+		{
+			fprintf(file, "Debug: ");
+		}
 		break;
 
 	case Severity::Warning:
 		printf(YELLOW "Warning" DEFAULT_COLOUR ": ");
+		if (file)
+		{
+			fprintf(file, "Warning: ");
+		}
 		break;
 
 	case Severity::Error:
 		printf(RED "Error" DEFAULT_COLOUR ": ");
+		
+		if (file)
+		{
+			fprintf(file, "Error: ");
+		}
 		break;
 	}
 	
-	vprintf(message, args);
+	vprintf(format, args);
 	printf("\n");
+
+	if (file)
+	{
+		vfprintf(file, format, args);
+		fprintf(file, "\n");
+
+		fclose(file);
+	}
 	
 	va_end(args);
 }

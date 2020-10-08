@@ -8,7 +8,7 @@ int main( int /*argc*/, char* /*argv*/[] )
 	MyClass a( 50 );
 
 	std::cout << "Hello, world!\n";
-	std::cout << "A: " << a.Value() << "\n";
+	std::cout << "A: " << a.Value() << "\n\n";
 
 	gp1::log(gp1::Severity::Trace, "This is a trace message.");
 	gp1::log(gp1::Severity::Debug, "Another string: '%s'", "Hello, World!");
