@@ -42,6 +42,8 @@ namespace gp1
 		MouseMovedEvent(int x, int y) : m_X(x), m_Y(y) {};
 		virtual EventType GetType() override { return EventType::MOUSE_MOVED_EVENT; };
 		static EventType GetTypeS() { return EventType::MOUSE_MOVED_EVENT; };
+		static uint32_t GetXAxisIndex() { return 0; }	// placeholder for AxisInputBinding.h
+		static uint32_t GetYAxisIndex() { return 1; }	// placeholder for AxisInputBinding.h
 		int GetX() {return m_X;}
 		int GetY() {return m_Y;}
 	private:

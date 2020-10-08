@@ -21,6 +21,7 @@ namespace gp1
 		virtual EventType GetType() override { return EventType::KEY_PRESSED_EVENT; };
 		static EventType GetTypeS() { return EventType::KEY_PRESSED_EVENT; };
 		int GetKey() { return m_Keycode; };
+		bool IsRepeat() { return m_Repeat; };
 	private:
 		int m_Keycode;
 		bool m_Repeat;
