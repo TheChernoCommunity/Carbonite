@@ -14,3 +14,10 @@ You can get the latest version [here](https://premake.github.io/download)! Make 
 	*(Psst! There are also a few [third-party premake extensions](https://github.com/premake/premake-core/wiki/Modules#third-party-modules) at your disposal, in case none of the official generators pique your interest)*
 3. Premake will now have generated project files for the action you specified. You should see a workspace file in the project root directory. For Visual Studio this takes the shape of a `.sln` file. For GNU Make; a `Makefile`, etc..</br>
 	This means that you can now build the project using the corresponding build tool on your computer. If you're using GNU Make, for instance, you can now simply call `make`. Otherwise, if you're using an IDE, you should open the workspace file with said IDE and you will be able to build the project.
+
+## ❓ FAQ
+- I get `invalid value 'Objective-C++' for compileas`, what do I do?
+	- Update Premake, you are likely not using the latest version
+
+- Visual Studio keeps asking me to "Retarget Solution", how can I avoid this?
+	- Use the right Premake action, `vs2017` for Visual Studio 2017 and `vs2019` for Visual Studio 2019
