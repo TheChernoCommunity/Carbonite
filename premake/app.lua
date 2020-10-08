@@ -10,7 +10,6 @@ function app( name )
 	project( name )
 
 	debugdir 'src/%{prj.name}/Assets'
-	kind 'WindowedApp'
 	links( libraries )
 	links( third_party_libraries )
 	location 'build/%{_ACTION}'
@@ -31,6 +30,12 @@ function app( name )
 
 	filter { 'system:macosx or ios', 'files:**.cpp' }
 		compileas 'Objective-C++'
+
+	filter 'configurations:Debug'
+		kind 'ConsoleApp'
+
+	filter 'configurations:Release'
+		kind 'WindowedApp'
 
 	filter { }
 
