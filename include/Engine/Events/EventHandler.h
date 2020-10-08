@@ -8,22 +8,22 @@
 
 namespace gp1
 {
-    class EventHandler
-    {
-    public:
-        template<typename T>
-        static void PushEvent(T& e)
-        {
+	class EventHandler
+	{
+	public:
+		template<typename T>
+		static void PushEvent(T& e)
+		{
 
-        }
+		}
 
-        template<typename T, typename F>
-        void Dispatch(Event& e, const F& f)
-        {
-            if(e.GetType() == T::GetTypeS() && (e.Handled == false))
-            {
-                e.Handled = f(static_cast<T&>(e));
-            }
-        }
-    };
+		template<typename T, typename F>
+		void Dispatch(Event& e, const F& f)
+		{
+			if(e.GetType() == T::GetTypeS() && (e.Handled == false))
+			{
+				e.Handled = f(static_cast<T&>(e));
+			}
+		}
+	};
 }

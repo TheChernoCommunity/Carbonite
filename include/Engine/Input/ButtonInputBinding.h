@@ -25,7 +25,7 @@ namespace gp1 {
 		public:
 			ButtonInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback);
 
-			virtual void HandleEvent(Event& event);
+			virtual void HandleEvent(Event& event) override;
 
 		private:
 			ButtonInputType m_inputType;	// The type of event to listen for
