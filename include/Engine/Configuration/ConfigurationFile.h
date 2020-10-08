@@ -24,8 +24,11 @@ namespace gp1 {
 			// Writes to the configuration file.
 			void SaveConfiguration();
 
+			// Sets a config's value.
 			void SetConfig(std::string configId, std::string configValue);
+			// Removes a config.
 			void RemoveConfig(std::string configId);
+			// Gets a config.
 			const std::string* GetConfig(std::string configId);
 
 			// Gets the id of this ConfigurationFile.

@@ -10,8 +10,8 @@ namespace gp1 {
 
 	namespace input {
 
-		ButtonInputBinding::ButtonInputBinding(std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback)
-			: IInputBinding(id, InputType::BUTTON, location, button), m_inputType(inputType), m_callback(callback) {}
+		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback)
+			: IInputBinding(inputGroup, id, InputType::BUTTON, location, button), m_inputType(inputType), m_callback(callback) {}
 
 		void ButtonInputBinding::HandleEvent(Event& event) {
 			EventType eventType = event.GetType();
@@ -33,7 +33,7 @@ namespace gp1 {
 						return;
 				}
 
-				this->m_callback(this->GetIndex());
+				this->m_callback(this->GetLocation(), this->m_inputType, this->GetIndex());
 				event.Handled = true;
 				break;
 			}
@@ -46,7 +46,7 @@ namespace gp1 {
 				if ((uint32_t)releasedEvent.GetKey() != this->GetIndex())
 					return;
 
-				this->m_callback(this->GetIndex());
+				this->m_callback(this->GetLocation(), this->m_inputType, this->GetIndex());
 				event.Handled = true;
 				break;
 			}
@@ -59,7 +59,7 @@ namespace gp1 {
 				if ((uint32_t)pressedEvent.GetButton() != this->GetIndex())
 					return;
 
-				this->m_callback(this->GetIndex());
+				this->m_callback(this->GetLocation(), this->m_inputType, this->GetIndex());
 				event.Handled = true;
 				break;
 			}
@@ -72,7 +72,7 @@ namespace gp1 {
 				if ((uint32_t)releasedEvent.GetButton() != this->GetIndex())
 					return;
 
-				this->m_callback(this->GetIndex());
+				this->m_callback(this->GetLocation(), this->m_inputType, this->GetIndex());
 				event.Handled = true;
 				break;
 			}

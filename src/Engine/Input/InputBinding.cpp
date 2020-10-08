@@ -4,15 +4,24 @@
 
 #include "Engine/Input/IInputBinding.h"
 #include "Engine/Configuration/ConfigurationManager.h"
+#include "Engine/Input/InputGroup.h"
 
+#include <exception>
 #include <filesystem>
 
 namespace gp1 {
 
 	namespace input {
 
-		IInputBinding::IInputBinding(std::string id, InputType type, InputLocation location, uint32_t index)
-			: m_id(id), m_type(type) {
+		IInputBinding::IInputBinding(InputGroup* inputGroup, std::string id, InputType type, InputLocation location, uint32_t index) {
+			if (inputGroup == nullptr) {
+				throw std::exception("IInputBinding can't take a nullptr to an InputGroup!");
+			}
+
+			this->m_inputGroup = inputGroup;
+			this->m_id = id;
+			this->m_type = type;
+
 			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetConfigurationFile("InputBindings");
 			if (inputBindings == nullptr)
 				inputBindings = configuration::ConfigurationManager::CreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
@@ -37,6 +46,10 @@ namespace gp1 {
 
 				this->m_index = configInd;
 			}
+		}
+
+		IInputBinding::~IInputBinding() {
+			this->m_inputGroup->RemoveInputBindingImpl(this);
 		}
 
 		void IInputBinding::SetBinding(InputLocation location, uint32_t index) {
@@ -71,6 +84,10 @@ namespace gp1 {
 
 			inputBindings->SetConfig(this->m_id, buf);
 			this->m_index = index;
+		}
+
+		InputGroup* IInputBinding::GetInputGroup() const {
+			return this->m_inputGroup;
 		}
 
 		const std::string& IInputBinding::GetId() const {
