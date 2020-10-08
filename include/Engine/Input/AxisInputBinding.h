@@ -12,11 +12,11 @@ namespace gp1 {
 	namespace input {
 
 		// Callback for AxisInputBinding
-		typedef std::function<void(uint32_t axis, double value)> AxisCallback;
+		typedef std::function<void(InputLocation location, uint32_t axis, double value)> AxisCallback;
 
 		struct AxisInputBinding : public IInputBinding {
 		public:
-			AxisInputBinding(std::string id, InputLocation location, uint32_t axis, AxisCallback callback);
+			AxisInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, uint32_t axis, AxisCallback callback);
 
 			virtual void HandleEvent(Event& event);
 

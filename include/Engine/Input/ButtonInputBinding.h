@@ -19,11 +19,11 @@ namespace gp1 {
 		};
 
 		// Callback for ButtonInputBindings
-		typedef std::function<void(uint32_t button)> ButtonCallback;
+		typedef std::function<void(InputLocation location, ButtonInputType inputType, uint32_t button)> ButtonCallback;
 
 		struct ButtonInputBinding : public IInputBinding {
 		public:
-			ButtonInputBinding(std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback);
+			ButtonInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback);
 
 			virtual void HandleEvent(Event& event);
 

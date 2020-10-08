@@ -13,6 +13,8 @@ namespace gp1 {
 
 	namespace input {
 
+		class InputGroup;
+
 		// The device where an input can be gotten from.
 		enum class InputLocation : uint32_t {
 			KEYBOARD,
@@ -29,33 +31,22 @@ namespace gp1 {
 
 		struct IInputBinding {
 		public:
-			IInputBinding(std::string id, InputType type, InputLocation location, uint32_t index);
+			IInputBinding(InputGroup* inputGroup, std::string id, InputType type, InputLocation location, uint32_t index);
+			// This destructor is virtual to stop the warning "delete of an abstract class 'IInputBinding' that has a non-virtual destructor results in undefined behaviour. Though there is no need to implement this destructor in subclasses
+			virtual ~IInputBinding();
 
-			/// <summary>
-			/// Handles an event from the Event System.
-			/// </summary>
-			/// <param name="event">A reference to an event to try to handle.</param>
+			// Handles an event form tht Event System.
 			virtual void HandleEvent(Event& event) = 0;
 
-			/// <summary>
-			/// Sets the input location and index of this Input Binding.
-			/// And then sets it in the input configuration.
-			/// </summary>
-			/// <param name="location">The input location for the binding i.e. InputLocation::KEYBOARD for a key and InputLocation::MOUSE for a mouse button.</param>
-			/// <param name="index">The actual index for the key, button, axis et cetera.</param>
+			// Sets the input location and index of this Input Binding.  And then sets it in the input configuration.
 			void SetBinding(InputLocation location, uint32_t index);
-
-			/// <summary>
-			/// Sets the input location of this Input Binding.
-			/// </summary>
-			/// <param name="location">The input location for the binding i.e. InputLocation::KEYBOARD for a key and InputLocation::MOUSE for a mouse button.</param>
+			// Sets the input location of this Input Binding.
 			void SetInputLocation(InputLocation location);
-
-			/// <summary>
-			/// Sets the index of this Input Binding.
-			/// </summary>
-			/// <param name="index">The actual index for the key, button, axis et cetera.</param>
+			// Sets the index of this Input Binding.
 			void SetIndex(uint32_t index);
+
+			// Gets the InputGroup this is part of.
+			InputGroup* GetInputGroup() const;
 
 			// Gets the config id of this Input Binding.
 			const std::string& GetId() const;
@@ -67,6 +58,8 @@ namespace gp1 {
 			const uint32_t& GetIndex() const;
 
 		private:
+			InputGroup* m_inputGroup;	// The input group this binding is part of.
+
 			std::string m_id;			// Id to use for storing & loading the input from configuration file.
 			InputType m_type;			// The type of input to expect i.e. is it a button or an axis.
 			InputLocation m_location;	// The location of the input i.e. is this input binding for a Keyboard or a Mouse
