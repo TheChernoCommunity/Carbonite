@@ -18,7 +18,7 @@ namespace gp1 {
 		public:
 			AxisInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, uint32_t axis, AxisCallback callback);
 
-			virtual void HandleEvent(Event& event);
+			virtual void HandleEvent(Event& event) override;
 
 		private:
 			AxisCallback m_callback;	// The callback to call if the corrent event was passed to HandleEvent()
