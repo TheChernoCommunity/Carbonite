@@ -31,7 +31,7 @@ namespace gp1 {
 
 		struct IInputBinding {
 		public:
-			IInputBinding(InputGroup* inputGroup, std::string id, InputType type, InputLocation location, uint32_t index);
+			IInputBinding(InputGroup* inputGroup, std::string id, InputType type, uint32_t index, InputLocation location);
 			// This destructor is virtual to stop the warning "delete of an abstract class 'IInputBinding' that has a non-virtual destructor results in undefined behaviour. Though there is no need to implement this destructor in subclasses
 			virtual ~IInputBinding();
 

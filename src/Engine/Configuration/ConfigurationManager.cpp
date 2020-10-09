@@ -29,6 +29,13 @@ namespace gp1 {
 			return nullptr;
 		}
 
+		ConfigurationFile* ConfigurationManager::GetOrCreateConfigurationFile(std::string id, std::string filePath) {
+			ConfigurationFile* configurationFile = GetConfigurationFile(id);
+			if (configurationFile != nullptr)
+				return configurationFile;
+			return CreateConfigurationFile(id, filePath);
+		}
+
 		void ConfigurationManager::RemoveConfigurationFileImpl(ConfigurationFile* configurationFile) {
 			auto itr = ConfigurationManager::ConfigurationFiles.find(configurationFile->GetId());
 			if (itr != ConfigurationManager::ConfigurationFiles.end())
