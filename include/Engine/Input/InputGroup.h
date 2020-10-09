@@ -19,7 +19,7 @@ namespace gp1 {
 
 		class InputGroup {
 		public:
-			InputGroup(InputHandler* inputHandler, std::string id);
+			InputGroup(std::string id);
 			~InputGroup();
 
 			// Sets this input group as the current input group in the InputHandler this is created for.
@@ -41,16 +41,14 @@ namespace gp1 {
 			void RemoveInputBinding(IInputBinding* binding);
 
 			// Creates a ButtonInputBinding for this input group with the specified id.
-			ButtonInputBinding* CreateButtonInputBinding(std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback);
+			ButtonInputBinding* CreateButtonInputBinding(std::string id, uint32_t button, ButtonInputType inputType = ButtonInputType::PRESS, InputLocation location = InputLocation::KEYBOARD, ButtonCallback callback = nullptr);
 			// Creates a AxisInputBinding for this input group with the specified id.
-			AxisInputBinding* CreateAxisInputBinding(std::string id, InputLocation location, uint32_t axis, AxisCallback callback);
+			AxisInputBinding* CreateAxisInputBinding(std::string id, uint32_t axis, InputLocation location = InputLocation::MOUSE, AxisCallback callback = nullptr);
 
 			// Gets the id of this InputGroup
 			const std::string& GetId() const;
 
 		private:
-			InputHandler* m_inputHandler;										// The InputHandler this InputGroup was created for.
-
 			std::string m_id;													// The id of this InputGroup.
 			std::unordered_map<std::string, IInputBinding*> m_inputBindings;	// The bindings this InputGroup handles.
 		};

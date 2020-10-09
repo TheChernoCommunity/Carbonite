@@ -10,10 +10,13 @@ namespace gp1 {
 
 	namespace input {
 
-		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback)
-			: IInputBinding(inputGroup, id, InputType::BUTTON, location, button), m_inputType(inputType), m_callback(callback) {}
+		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback)
+			: IInputBinding(inputGroup, id, InputType::BUTTON, button, location), m_inputType(inputType), m_callback(callback) {}
 
 		void ButtonInputBinding::HandleEvent(Event& event) {
+			if (this->m_callback == nullptr)
+				return;
+
 			EventType eventType = event.GetType();
 			switch (eventType) {
 			case EventType::KEY_PRESSED_EVENT:
@@ -77,6 +80,10 @@ namespace gp1 {
 				break;
 			}
 			}
+		}
+
+		void ButtonInputBinding::SetCallback(ButtonCallback callback) {
+			this->m_callback = callback;
 		}
 
 	} // namespace input

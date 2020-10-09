@@ -25,6 +25,8 @@ namespace gp1 {
 			static ConfigurationFile* CreateConfigurationFile(std::string id, std::string filePath);
 			// Gets a ConfigurationFile.
 			static ConfigurationFile* GetConfigurationFile(std::string id);
+			// Gets or Creates a new ConfigurationFile that can be used to store configs.
+			static ConfigurationFile* GetOrCreateConfigurationFile(std::string id, std::string filePath);
 			// This function only removes the ConfigurationFile from the 'ConfigurationFiles' variable.
 			static void RemoveConfigurationFileImpl(ConfigurationFile* configurationFile);
 			// This function deletes the configurationFile data. which causes it to save and remove itself from the 'ConfigurationFiles' variable.

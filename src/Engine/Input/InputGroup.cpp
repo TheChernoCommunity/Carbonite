@@ -12,25 +12,19 @@ namespace gp1 {
 
 	namespace input {
 
-		InputGroup::InputGroup(InputHandler* inputHandler, std::string id) {
-			if (inputHandler == nullptr) {
-				throw std::exception("InputGroup can't take a nullptr to an InputHandler!");
-			}
-
-			this->m_inputHandler = inputHandler;
-			this->m_id = id;
-		}
+		InputGroup::InputGroup(std::string id)
+			: m_id(id) {}
 
 		InputGroup::~InputGroup() {
-			this->m_inputHandler->RemoveInputGroupImpl(this);
+			InputHandler::RemoveInputGroupImpl(this);
 		}
 
 		void InputGroup::attach() {
-			this->m_inputHandler->SetCurrentActiveInputGroup(this);
+			InputHandler::SetCurrentActiveInputGroup(this);
 		}
 
 		void InputGroup::detach() {
-			this->m_inputHandler->SetCurrentActiveInputGroup(nullptr);
+			InputHandler::SetCurrentActiveInputGroup(nullptr);
 		}
 
 		void InputGroup::HandleEvent(Event& event) {
@@ -58,14 +52,16 @@ namespace gp1 {
 			delete binding;
 		}
 
-		ButtonInputBinding* InputGroup::CreateButtonInputBinding(std::string id, InputLocation location, ButtonInputType inputType, uint32_t button, ButtonCallback callback) {
-			ButtonInputBinding* binding = new ButtonInputBinding(this, this->m_id + "." + id, location, inputType, button, callback);
+		ButtonInputBinding* InputGroup::CreateButtonInputBinding(std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback) {
+			InputHandler::GetBindingConfigs(this->m_id + "." + id, &location, &button);
+			ButtonInputBinding* binding = new ButtonInputBinding(this, this->m_id + "." + id, button, inputType, location, callback);
 			this->m_inputBindings.insert(std::pair(id, binding));
 			return binding;
 		}
 
-		AxisInputBinding* InputGroup::CreateAxisInputBinding(std::string id, InputLocation location, uint32_t axis, AxisCallback callback) {
-			AxisInputBinding* binding = new AxisInputBinding(this, this->m_id + "." + id, location, axis, callback);
+		AxisInputBinding* InputGroup::CreateAxisInputBinding(std::string id, uint32_t axis, InputLocation location, AxisCallback callback) {
+			InputHandler::GetBindingConfigs(this->m_id + "." + id, &location, &axis);
+			AxisInputBinding* binding = new AxisInputBinding(this, this->m_id + "." + id, axis, location, callback);
 			this->m_inputBindings.insert(std::pair(id, binding));
 			return binding;
 		}
