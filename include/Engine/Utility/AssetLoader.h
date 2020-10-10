@@ -23,7 +23,6 @@ public:
 
 private:
 	AssetLoader();
-	~AssetLoader();
 
 	AssetLoadResult LoadAssetFromFile(AssetId assetId);
 

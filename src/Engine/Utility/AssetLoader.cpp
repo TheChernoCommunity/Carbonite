@@ -18,10 +18,6 @@ AssetLoader::AssetLoader()
 {
 }
 
-AssetLoader::~AssetLoader()
-{
-}
-
 AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
 {
 	AssetLoadResult cacheResult = m_cache.LoadAsset(assetId);
