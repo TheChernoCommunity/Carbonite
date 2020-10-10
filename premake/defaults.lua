@@ -14,12 +14,12 @@ warnings 'Extra'
 filter 'configurations:Debug'
 	optimize 'Off'
 	symbols 'On'
-	defines { 'DEBUG' }
+	defines { '_DEBUG' }
 
 filter 'configurations:Release'
 	optimize 'Full'
 	symbols 'Off'
-	defines { 'RELEASE', 'NDEBUG' }
+	defines { '_RELEASE', 'NDEBUG' }
 
 filter 'system:windows'
 	toolset 'msc'
