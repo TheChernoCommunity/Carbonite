@@ -4,6 +4,8 @@
 #include <functional>
 #include <unordered_map>
 #include <mutex>
+#include <thread>
+#include <queue>
 
 namespace gp1
 {
@@ -21,12 +23,14 @@ class AssetLoader
 public:
 	static AssetLoader& Get();
 
+	using AssetLoadCallback = std::function<void(AssetLoadResult)>;
+
 	AssetLoadResult LoadAsset(AssetId assetId);
-	// void LoadAssetAsync(AssetId assetId, std::function<void(AssetLoadResult)> callback);
+	void LoadAssetAsync(AssetId assetId, AssetLoadCallback callback);
 
 private:
-	AssetLoader() {};
-	// ~AssetLoader(); // Maybe?
+	AssetLoader();
+	~AssetLoader(); // Maybe?
 
 	AssetLoadResult LoadAssetFromFile(AssetId assetId);
 
@@ -42,5 +46,17 @@ private:
 	};
 
 	Cache m_cache;
+
+	std::thread m_loaderThread;
+	void LoadAssetThreadFunc();
+
+	struct AssetLoadRequest
+	{
+		AssetId id;
+		AssetLoadCallback callback;
+	};
+	std::mutex m_loadQueueMutex;
+	std::condition_variable m_loadQueueCv;
+	std::queue<AssetLoadRequest> m_loadQueue;
 };
 };

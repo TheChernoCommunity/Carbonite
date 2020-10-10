@@ -4,12 +4,24 @@
 #include <iostream>
 #include <fstream>
 
+#include "Engine/Utility/Log.h"
+
 namespace gp1
 {
 AssetLoader& AssetLoader::Get()
 {
 	static AssetLoader assetLoader;
 	return assetLoader;
+}
+
+AssetLoader::AssetLoader()
+	: m_loaderThread(&AssetLoader::LoadAssetThreadFunc, this)
+{
+}
+
+AssetLoader::~AssetLoader()
+{
+	m_loaderThread.join();
 }
 
 AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
@@ -20,6 +32,18 @@ AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
 		return cacheResult;
 	}
 	return LoadAssetFromFile(assetId);
+}
+
+void AssetLoader::LoadAssetAsync(AssetId assetId, AssetLoadCallback callback)
+{
+	std::unique_lock<std::mutex> lock(m_loadQueueMutex);
+	m_loadQueueCv.wait(lock, [this]() { return true; });
+
+	AssetLoadRequest request{ assetId, callback };
+	m_loadQueue.push(request);
+
+	lock.unlock();
+	m_loadQueueCv.notify_all();
 }
 
 AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
@@ -79,5 +103,25 @@ AssetLoadResult AssetLoader::Cache::StoreAsset(AssetId assetId, const std::strin
 	result.data = m_cache[assetId];
 
 	return result;
+}
+
+void AssetLoader::LoadAssetThreadFunc()
+{
+	gp1::log(gp1::Severity::Trace, "Hello from asset load thread!");
+
+	std::unique_lock<std::mutex> lock(m_loadQueueMutex);
+	m_loadQueueCv.wait(lock, [this]()
+	{
+		return !m_loadQueue.empty();
+	});
+
+	AssetLoadRequest request = m_loadQueue.front();
+	m_loadQueue.pop();
+
+	AssetLoadResult result = LoadAsset(request.id);
+	request.callback(result);
+
+	lock.unlock();
+	m_loadQueueCv.notify_all();
 }
 };
