@@ -15,13 +15,11 @@ AssetLoader& AssetLoader::Get()
 }
 
 AssetLoader::AssetLoader()
-	: m_loaderThread(&AssetLoader::LoadAssetThreadFunc, this)
 {
 }
 
 AssetLoader::~AssetLoader()
 {
-	m_loaderThread.join();
 }
 
 AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
@@ -32,12 +30,6 @@ AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
 		return cacheResult;
 	}
 	return LoadAssetFromFile(assetId);
-}
-
-void AssetLoader::LoadAssetAsync(AssetId assetId, AssetLoadCallback callback)
-{
-	AssetLoadRequest request{ assetId, callback };
-	m_requestQueue.push(request);
 }
 
 AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
@@ -70,7 +62,6 @@ AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
 
 AssetLoadResult AssetLoader::Cache::LoadAsset(AssetId assetId)
 {
-	std::scoped_lock lock(m_mutex);
 	AssetLoadResult result;
 	result.id = assetId;
 
@@ -86,7 +77,6 @@ AssetLoadResult AssetLoader::Cache::LoadAsset(AssetId assetId)
 
 AssetLoadResult AssetLoader::Cache::StoreAsset(AssetId assetId, const std::string& contents)
 {
-	std::scoped_lock lock(m_mutex);
 	AssetLoadResult result;
 	result.success = true;
 
@@ -98,14 +88,4 @@ AssetLoadResult AssetLoader::Cache::StoreAsset(AssetId assetId, const std::strin
 
 	return result;
 }
-
-void AssetLoader::LoadAssetThreadFunc()
-{
-	while (true)
-	{
-		AssetLoadRequest request = m_requestQueue.pop();
-		AssetLoadResult result = LoadAsset(request.id);
-		request.callback(result);
-	}
 }
-};
