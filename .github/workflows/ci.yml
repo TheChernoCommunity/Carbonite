@@ -9,15 +9,14 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: cmd
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Generate Project Files
+      run: premake5.exe vs2019
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Build Solution
+      run: C:/"Program Files (x86)"/"Microsoft Visual Studio"/2019/BuildTools/MSBuild/Current/Bin/MSBuild.exe -property:Configuration=Release -maxCpuCount -verbosity:minimal -noLogo GameProject.sln
