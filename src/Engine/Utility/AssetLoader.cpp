@@ -8,7 +8,7 @@ namespace gp1
 {
 AssetLoader& AssetLoader::Get()
 {
-	AssetLoader assetLoader;
+	static AssetLoader assetLoader;
 	return assetLoader;
 }
 
@@ -51,9 +51,10 @@ AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
 	file.close();
 
 	m_assetCache[assetId] = data;
-
+	// Can't use `result.data = data` here as `data` will get destroyed, invalidating the view
+	// We want to use the long lasting string in the cache
+	result.data = m_assetCache[assetId];
 	result.success = true;
-	result.data = data;
 	return result;
 }
 
@@ -62,13 +63,8 @@ AssetLoadResult AssetLoader::LoadAssetFromCache(AssetId assetId)
 	AssetLoadResult result;
 	result.id = assetId;
 
-	auto& it = m_assetCache.find(assetId);
-	if (it == m_assetCache.end())
-	{
-		result.success = false;
-		result.data = nullptr;
-	}
-	else
+	const auto& it = m_assetCache.find(assetId);
+	if (it != m_assetCache.end())
 	{
 		result.success = true;
 		result.data = it->second;

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <functional>
+#include <unordered_map>
 
 namespace gp1
 {
@@ -11,7 +12,7 @@ struct AssetLoadResult
 {
 	AssetId id = "";
 	bool success = false;
-	std::string_view data = nullptr;
+	std::string_view data;
 };
 
 class AssetLoader
@@ -23,7 +24,7 @@ public:
 	// void LoadAssetAsync(AssetId assetId, std::function<void(AssetLoadResult)> callback);
 
 private:
-	AssetLoader();
+	AssetLoader() {};
 	// ~AssetLoader(); // Maybe?
 
 	AssetLoadResult LoadAssetFromFile(AssetId assetId);
