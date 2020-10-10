@@ -29,6 +29,9 @@ namespace gp1 {
 		}
 
 		InputGroup* InputHandler::CreateInputGroup(std::string id) {
+			if (InputHandler::m_inputGroups.find(id) != InputHandler::m_inputGroups.end())
+				return nullptr;
+
 			InputGroup* inputGroup = new InputGroup(id);
 			InputHandler::m_inputGroups.insert(std::pair(id, inputGroup));
 			if (InputHandler::m_currentInputGroup == nullptr)
