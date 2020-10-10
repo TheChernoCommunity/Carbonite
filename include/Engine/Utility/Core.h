@@ -1,13 +1,13 @@
 #pragma once
 
 #ifdef _WIN32
-#ifdef _WIN64
+	#ifdef _WIN64
 		#define PLATFORM_WINDOWS
 	#else
 		#error "Windows X86 is not supported"
 	#endif
 #elif defined(__APPLE__) || defined(__MACH__)
-#include <TargetConditionals.h>
+	#include <TargetConditionals.h>
 	#if TARGET_IPHONE_SIMULATOR == 1
 		#error "IOS simulator not supported"
 	#elif TARGET_OS_IPHONE == 1
@@ -19,10 +19,10 @@
 		#error "Unknown Apple platform"
 	#endif
 #elif defined(__ANDROID__)
-#define PLATFORM_ANDROID
+	#define PLATFORM_ANDROID
 	#error "Android is not supported"
 #elif defined(__linux__)
-#define PLATFORM_LINUX
+	#define PLATFORM_LINUX
 #else
-#error "Unknown platform"
+	#error "Unknown platform"
 #endif
