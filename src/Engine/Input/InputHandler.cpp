@@ -66,7 +66,7 @@ namespace gp1 {
 		void InputHandler::SetBindingConfigs(std::string id, InputLocation location, uint32_t index) {
 			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetOrCreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
 			char buf[32];	// 12 For "Loc: , Ind: " and 10 for each number so 32 characters should be the maximum obtainable.
-			sprintf_s(buf, "Loc: %u, Ind: %u", (uint32_t)location, index);
+			sprintf(buf, "Loc: %u, Ind: %u", (uint32_t)location, index);
 			inputBindings->SetConfig(id, buf);
 		}
 
@@ -77,7 +77,7 @@ namespace gp1 {
 				SetBindingConfigs(id, *location, *index);
 			} else {
 				uint32_t confLoc;
-				sscanf_s(config->c_str(), "Loc: %u, Ind: %u", &confLoc, index);
+				sscanf(config->c_str(), "Loc: %u, Ind: %u", &confLoc, index);
 				if (confLoc > (uint32_t)InputLocation::LAST)
 					*location = InputLocation::UNKNOWN;
 				else

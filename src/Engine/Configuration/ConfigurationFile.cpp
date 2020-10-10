@@ -21,8 +21,7 @@ namespace gp1 {
 		}
 
 		void ConfigurationFile::ReadConfiguration() {
-			FILE* file;
-			fopen_s(&file, this->m_filePath.c_str(), "r");
+			FILE* file = fopen(this->m_filePath.c_str(), "r");
 			if (file) {
 				fseek(file, 0, SEEK_END);
 				uint32_t length = (uint32_t)ftell(file);
@@ -53,8 +52,7 @@ namespace gp1 {
 			std::filesystem::path filepath{ this->m_filePath };
 			std::filesystem::create_directories(filepath.parent_path());
 
-			FILE* file;
-			fopen_s(&file, this->m_filePath.c_str(), "w");
+			FILE* file = fopen(this->m_filePath.c_str(), "w");
 			if (file) {
 				for (auto config : this->m_configs) {
 					fwrite(config.first.c_str(), sizeof(char), config.first.size(), file);
