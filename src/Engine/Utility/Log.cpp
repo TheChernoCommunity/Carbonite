@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <filesystem>
 
-#include "Engine/Utility/Log.h"
+#include "Engine/Utility/Core/Log.h"
 
 #define WHITE "\033[0;97m"
 #define BLUE "\033[0;36m"
