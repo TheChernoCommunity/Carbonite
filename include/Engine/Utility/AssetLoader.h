@@ -3,9 +3,8 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
-#include <mutex>
-#include <thread>
-#include <queue>
+
+#include "Engine/Utility/ProducerConsumerQueue.h"
 
 namespace gp1
 {
@@ -30,10 +29,9 @@ public:
 
 private:
 	AssetLoader();
-	~AssetLoader(); // Maybe?
+	~AssetLoader();
 
 	AssetLoadResult LoadAssetFromFile(AssetId assetId);
-
 
 	class Cache
 	{
@@ -44,19 +42,15 @@ private:
 		std::mutex m_mutex;
 		std::unordered_map<AssetId, std::string> m_cache;
 	};
-
 	Cache m_cache;
-
-	std::thread m_loaderThread;
-	void LoadAssetThreadFunc();
 
 	struct AssetLoadRequest
 	{
 		AssetId id;
 		AssetLoadCallback callback;
 	};
-	std::mutex m_loadQueueMutex;
-	std::condition_variable m_loadQueueCv;
-	std::queue<AssetLoadRequest> m_loadQueue;
+	gp1::ProducerConsumerQueue<AssetLoadRequest> m_requestQueue;
+	std::thread m_loaderThread;
+	void LoadAssetThreadFunc();
 };
 };
