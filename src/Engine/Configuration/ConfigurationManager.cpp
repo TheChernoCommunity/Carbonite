@@ -16,6 +16,9 @@ namespace gp1 {
 		}
 
 		ConfigurationFile* ConfigurationManager::CreateConfigurationFile(std::string id, std::string filePath) {
+			if (ConfigurationManager::ConfigurationFiles.find(id) != ConfigurationManager::ConfigurationFiles.end())
+				return nullptr;
+
 			ConfigurationFile* configurationFile = new ConfigurationFile(id, filePath);
 			configurationFile->ReadConfiguration();
 			ConfigurationManager::ConfigurationFiles.insert(std::pair(id, configurationFile));

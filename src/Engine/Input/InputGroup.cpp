@@ -53,6 +53,9 @@ namespace gp1 {
 		}
 
 		ButtonInputBinding* InputGroup::CreateButtonInputBinding(std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback) {
+			if (this->m_inputBindings.find(id) != this->m_inputBindings.end())
+				return nullptr;
+
 			InputHandler::GetBindingConfigs(this->m_id + "." + id, &location, &button);
 			ButtonInputBinding* binding = new ButtonInputBinding(this, this->m_id + "." + id, button, inputType, location, callback);
 			this->m_inputBindings.insert(std::pair(id, binding));
@@ -60,6 +63,9 @@ namespace gp1 {
 		}
 
 		AxisInputBinding* InputGroup::CreateAxisInputBinding(std::string id, uint32_t axis, InputLocation location, AxisCallback callback) {
+			if (this->m_inputBindings.find(id) != this->m_inputBindings.end())
+				return nullptr;
+
 			InputHandler::GetBindingConfigs(this->m_id + "." + id, &location, &axis);
 			AxisInputBinding* binding = new AxisInputBinding(this, this->m_id + "." + id, axis, location, callback);
 			this->m_inputBindings.insert(std::pair(id, binding));
