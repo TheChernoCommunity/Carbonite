@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Engine/Events/Event.h"
+
 namespace gp1
 {
     class EventHandler
