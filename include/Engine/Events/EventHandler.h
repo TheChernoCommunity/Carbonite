@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Events/Event.h"
+#include "Event.h"
 
 namespace gp1
 {
