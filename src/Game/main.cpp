@@ -12,17 +12,26 @@ int main( int /*argc*/, char* /*argv*/[] )
 
 	gp1::AssetLoader& assetLoader = gp1::AssetLoader::Get();
 
-	assetLoader.LoadAssetAsync("foo.txt", [](gp1::AssetLoadResult result)
+	auto onAssetLoaded = [](gp1::AssetLoadResult result)
 	{
 		if (result.success)
 		{
-			gp1::log(gp1::Severity::Trace, "Successfully loaded foo.txt! Contents: %s", std::string(result.data).c_str());
+			gp1::log(gp1::Severity::Trace, "Successfully loaded %s! Contents: %s", result.id.c_str(), std::string(result.data).c_str());
 		}
 		else
 		{
-			gp1::log(gp1::Severity::Warning, "Failed to load foo.txt");
+			gp1::log(gp1::Severity::Warning, "Failed to load %s", result.id.c_str());
 		}
-	});
+	};
+
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
+	assetLoader.LoadAssetAsync("foo.txt", onAssetLoaded);
 
 	/*gp1::AssetLoadResult fooResult = assetLoader.LoadAsset("foo.txt");
 	if (fooResult.success)

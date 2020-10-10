@@ -101,8 +101,11 @@ AssetLoadResult AssetLoader::Cache::StoreAsset(AssetId assetId, const std::strin
 
 void AssetLoader::LoadAssetThreadFunc()
 {
-	AssetLoadRequest request = m_requestQueue.pop();
-	AssetLoadResult result = LoadAsset(request.id);
-	request.callback(result);
+	while (true)
+	{
+		AssetLoadRequest request = m_requestQueue.pop();
+		AssetLoadResult result = LoadAsset(request.id);
+		request.callback(result);
+	}
 }
 };
