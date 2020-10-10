@@ -16,7 +16,7 @@ int main( int /*argc*/, char* /*argv*/[] )
 
 #include <Windows.h>
 
-int WINAPI WinMain( HINSTANCE /*instance*/, HINSTANCE /*prev_instance*/, LPSTR /*cmd_line*/, int /*cmd_show*/ )
+int WINAPI WinMain( _In_ HINSTANCE /*instance*/, _In_opt_ HINSTANCE /*prev_instance*/, _In_ LPSTR /*cmd_line*/, _In_ int /*cmd_show*/ )
 {
 	return main( __argc, __argv );
 }
