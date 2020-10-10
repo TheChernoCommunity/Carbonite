@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
+#include <mutex>
 
 namespace gp1
 {
@@ -29,7 +30,17 @@ private:
 
 	AssetLoadResult LoadAssetFromFile(AssetId assetId);
 
-	AssetLoadResult LoadAssetFromCache(AssetId assetId);
-	std::unordered_map<AssetId, std::string> m_assetCache;
+
+	class Cache
+	{
+	public:
+		AssetLoadResult LoadAsset(AssetId assetId);
+		AssetLoadResult StoreAsset(AssetId assetId, const std::string& contents);
+	private:
+		std::mutex m_mutex;
+		std::unordered_map<AssetId, std::string> m_cache;
+	};
+
+	Cache m_cache;
 };
 };

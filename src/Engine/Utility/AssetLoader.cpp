@@ -14,7 +14,7 @@ AssetLoader& AssetLoader::Get()
 
 AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
 {
-	AssetLoadResult cacheResult = LoadAssetFromCache(assetId);
+	AssetLoadResult cacheResult = m_cache.LoadAsset(assetId);
 	if (cacheResult.success)
 	{
 		return cacheResult;
@@ -24,20 +24,16 @@ AssetLoadResult AssetLoader::LoadAsset(AssetId assetId)
 
 AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
 {
-	AssetLoadResult result;
-	result.id = assetId;
-	result.success = false;
-
 	std::filesystem::path path{ assetId };
 	if (!std::filesystem::exists(path))
 	{
-		return result;
+		return AssetLoadResult{ assetId };
 	}
 
 	std::ifstream file(path, std::ios::in | std::ios::binary);
 	if (!file)
 	{
-		return result;
+		return AssetLoadResult{ assetId };
 	}
 
 	file.seekg(0, file.end);
@@ -50,25 +46,37 @@ AssetLoadResult AssetLoader::LoadAssetFromFile(AssetId assetId)
 
 	file.close();
 
-	m_assetCache[assetId] = data;
-	// Can't use `result.data = data` here as `data` will get destroyed, invalidating the view
-	// We want to use the long lasting string in the cache
-	result.data = m_assetCache[assetId];
-	result.success = true;
+	AssetLoadResult result = m_cache.StoreAsset(assetId, data);
 	return result;
 }
 
-AssetLoadResult AssetLoader::LoadAssetFromCache(AssetId assetId)
+AssetLoadResult AssetLoader::Cache::LoadAsset(AssetId assetId)
 {
+	std::scoped_lock lock(m_mutex);
 	AssetLoadResult result;
 	result.id = assetId;
 
-	const auto& it = m_assetCache.find(assetId);
-	if (it != m_assetCache.end())
+	const auto& it = m_cache.find(assetId);
+	if (it != m_cache.end())
 	{
 		result.success = true;
 		result.data = it->second;
 	}
+
+	return result;
+}
+
+AssetLoadResult AssetLoader::Cache::StoreAsset(AssetId assetId, const std::string& contents)
+{
+	std::scoped_lock lock(m_mutex);
+	AssetLoadResult result;
+	result.success = true;
+
+	// Putting contents into the cache copies it
+	// That copy will be around indefinitely
+	// So it's safe to use for the AssetLoadResult string_view
+	m_cache[assetId] = contents;
+	result.data = m_cache[assetId];
 
 	return result;
 }

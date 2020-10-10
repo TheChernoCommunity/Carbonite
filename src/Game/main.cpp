@@ -22,6 +22,8 @@ int main( int /*argc*/, char* /*argv*/[] )
 		gp1::log(gp1::Severity::Warning, "Failed to load foo.txt");
 	}
 
+	gp1::AssetLoadResult fooAgain = assetLoader.LoadAsset("foo.txt");
+
 	return 0;
 }
 
