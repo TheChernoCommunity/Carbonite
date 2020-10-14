@@ -1,4 +1,6 @@
 return function()
+	warnings 'Off'
+
 	includedirs {
 		'third_party/glfw/include'
 	}
