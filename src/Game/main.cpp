@@ -1,6 +1,7 @@
 #include "Engine/Utility/Log.h"
 
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 int main( int /*argc*/, char* /*argv*/[] )
@@ -21,6 +22,13 @@ int main( int /*argc*/, char* /*argv*/[] )
 	}
 
 	glfwMakeContextCurrent(window);
+
+	if (!gladLoadGL())
+	{
+		gp1::log(gp1::Severity::Error, "Failed to load OpenGL functions.");
+		glfwTerminate();
+		return 1;
+	}
 
 	float red = 0.0f;
 	float redInc = 0.001f;
