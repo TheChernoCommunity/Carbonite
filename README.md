@@ -1,6 +1,21 @@
 # 🎮 Untitled Game Project
 This is a community-driven game project from people in [TheCherno](https://www.youtube.com/user/TheChernoProject)'s community Discord server.
 
+## 🤷‍♂️ How do I contribute?
+The first step in contributing is to download all the necessary tools. You will need Premake5 ([see Premake](#-premake)) and a C++ compiler (if you're using Visual Studio, you're all set!).
+
+Next, you'll need to *fork* this repository. You don't have permissions to push code directly to this repository, so you'll need to make your own copy. To do this, press the "Fork" button in the upper-right corner of this page, and GitHub magic will take care of the rest!
+
+Now that you've got a fork, you'll need to clone it. This means that you create a local (i.e. on your own hard drive) copy of the repository.
+```
+git clone https://github.com/<MyGitHubAccount>/GameProject-1.git
+cd GameProject-1
+```
+
+Excellent, you've got a local copy of this repository. Now you need to build the code ([see Building](#-building)) and make your changes (for a basic Git workflow, [see Git](#-git)). Remember to re-run Premake whenever you add a new file.
+
+Changes committed and pushed? Great! Create a *Pull Request* by going to the "Pull Requests" tab in GitHub. This allows others to review your code, and maybe ask you to make changes if needed. If all goes well your changes will be *merged*, and you will see them appear in the main repository.
+
 ## <img src="https://premake.github.io/premake-logo.png" width=32 /> Premake
 This project uses Premake for project configuration. ([What is Premake?](https://github.com/premake/premake-core/wiki/What-Is-Premake))</br>
 You can get the latest version [here](https://premake.github.io/download)! Make sure you have it in your PATH or in the project root directory.
@@ -21,3 +36,59 @@ You can get the latest version [here](https://premake.github.io/download)! Make 
 
 - Visual Studio keeps asking me to "Retarget Solution", how can I avoid this?
 	- Use the right Premake action, `vs2017` for Visual Studio 2017 and `vs2019` for Visual Studio 2019
+
+## ✉ Git
+Note: This is just a basic workflow, for more detailed descriptions see [the documentation](https://git-scm.com/docs).
+
+Checking the status of your repository:
+```
+git status
+```
+
+Saving (committing) your changes (do this regularly):
+```
+# For a list of files
+git add <file1> <file2>
+# For all files
+git add *
+
+git commit -m "Message"
+```
+
+Branch management:
+```
+git branch branchName		# Creates the branch
+git checkout branchName		# To switch to that branch
+git branch -d branchName	# Deletes the branch (local)
+git push origin :branchName	# Deletes the branch (remote)
+```
+
+Pushing your changes to a remote repository:
+```
+git push
+```
+
+Reverting back to an older commit:
+(WARNING: you will lose all uncommitted work)
+```
+# Find the commit ID (e.g. a1b2c3d4)
+git log --oneline
+
+git reset --hard a1b2c3d4
+```
+
+Ensuring your local repository is up-to-date with the ChernoCommunity one:
+```
+# Only do this once:
+git remote add upstream https://github.com/TheChernoCommunity/GameProject-1.git
+
+git fetch upstream
+git checkout master
+git merge upstream/master
+```
+
+Rebasing your branch (first, ensure your local repository is up-to-date with the ChernoCommunity one):
+```
+git checkout branchName
+git rebase master
+```

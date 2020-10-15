@@ -10,7 +10,7 @@ function utils.get_platforms()
 	end
 
 	if os.ishost( 'windows' ) then
-		return os.is64bit() and { 'x64', 'x86' } or { 'x86' }
+		return { 'x64' }
 	end
 
 	local arch = os.outputof( 'uname -m' )

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#pragma once
-
 #define BITSHIFT(x) (1 << x)
 
 namespace gp1
