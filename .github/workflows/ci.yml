@@ -14,7 +14,8 @@ jobs:
         shell: cmd
     steps:
     - uses: actions/checkout@v2
-
+      with:
+        submodules: true
     - name: Generate Project Files
       run: premake5.exe vs2019
 
