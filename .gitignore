@@ -22,7 +22,7 @@
 /Makefile
 /*.Make
 
-/src/Game/Assets/log.txt
+/src/Game/Assets/logs/
 
 premake5.exe
 premake5
