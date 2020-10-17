@@ -13,8 +13,13 @@ function app( name )
 	links( libraries )
 	links( third_party_libraries )
 	location 'build/%{_ACTION}'
-	sysincludedirs { 'include' }
 	xcodebuildresources 'src/%{prj.name}/Assets'
+
+	sysincludedirs {
+		'include',
+		'third_party/glfw/include',
+		'third_party/glad/include',
+	}
 
 	files {
 		'include/%{prj.name}/**.h',
@@ -23,7 +28,10 @@ function app( name )
 	}
 
 	filter 'system:linux'
-		linkoptions { '-Wl,-rpath=\\$$ORIGIN' }
+		linkoptions { '-pthread -Wl,-rpath=\\$$ORIGIN' }
+		links {
+			'dl'
+		}
 
 	filter 'system:ios'
 		files { 'src/%{prj.name}/Resources/Info.plist', 'src/%{prj.name}/Assets' }
