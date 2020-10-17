@@ -1,4 +1,4 @@
-#include "Engine/Utility/Log.h"
+#include "Game/Game.h"
 
 int main(int /*argc*/, char* /*argv*/[]) {
 	gp1::Game game;
