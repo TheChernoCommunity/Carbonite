@@ -26,9 +26,9 @@ namespace gp1 {
 				MouseMovedEvent& movedEvent = *((MouseMovedEvent*)&event);
 
 				if (MouseMovedEvent::GetXAxisIndex() == this->GetIndex()) {
-					this->m_callback(this->GetLocation(), this->GetIndex(), movedEvent.GetX());
+					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetX() });
 				} else if (MouseMovedEvent::GetYAxisIndex() == this->GetIndex()) {
-					this->m_callback(this->GetLocation(), this->GetIndex(), movedEvent.GetY());
+					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetY() });
 				}
 
 				break;
@@ -36,7 +36,7 @@ namespace gp1 {
 			}
 		}
 
-		void AxisInputBinding::SetCallback(AxisCallback callback) {
+		void AxisInputBinding::BindCallback(AxisCallback callback) {
 			this->m_callback = callback;
 		}
 
