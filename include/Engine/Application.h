@@ -1,6 +1,6 @@
-//	
+//
 //	Created by MarcasRealAccount on 17. Oct. 2020
-//	
+//
 
 #pragma once
 
@@ -10,12 +10,16 @@ namespace gp1 {
 
 	class Application {
 	public:
-		void Start();
-		void Stop();
+		~Application();
+		static Application* CreateApplication();
+
+		void Run();
+	protected:
+		Application();
 
 	private:
-		virtual void StartApp() = 0;
-		virtual void StopApp() = 0;
+		static Application* s_Instance;
 	};
+
 
 } // namespace gp1

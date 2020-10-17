@@ -1,6 +1,6 @@
-//	
+//
 //	Created by MarcasRealAccount on 17. Oct. 2020
-//	
+//
 
 #pragma once
 
@@ -9,14 +9,10 @@
 
 namespace gp1 {
 
-	class Game : public gp1::Application {
+	class Game : public gp1::Application
+	{
 	public:
 		Game();
-
-	private:
-		virtual void StartApp() override;
-		virtual void StopApp() override;
-
 	private:
 		Logger m_Logger;
 	};

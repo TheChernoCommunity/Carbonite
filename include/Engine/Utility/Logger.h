@@ -1,7 +1,7 @@
-//	
+//
 //	Created by FancyKillerPanda on 8. Oct. 2020
 //	Edited by MarcasRealAccount on 17. Oct. 2020
-//	
+//
 
 #pragma once
 
@@ -35,7 +35,7 @@ namespace gp1
 
 	public:
 		static void Init();
-		static void Deinit();
+		static void DeInit();
 
 		static void EnableSeverity(Severity severity);
 		static void DisableSeverity(Severity severity);
