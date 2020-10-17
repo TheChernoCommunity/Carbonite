@@ -1,9 +1,9 @@
 #include "Game/Game.h"
 
 int main(int /*argc*/, char* /*argv*/[]) {
-	gp1::Game game;
-	game.Start();
-	game.Stop();
+	gp1::Application* game = gp1::Application::CreateApplication();
+	game->Run();
+	delete game;
 	return 0;
 }
 

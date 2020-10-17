@@ -1,7 +1,7 @@
-//	
+//
 //	Created by FancyKillerPanda on 8. Oct. 2020
 //	Edited by MarcasRealAccount on 17. Oct. 2020
-//	
+//
 
 #include <ctime>
 #include <cstring>
@@ -69,7 +69,7 @@ namespace gp1 {
 		}
 	}
 
-	void Logger::Deinit() {
+	void Logger::DeInit() {
 		Flush();
 	}
 
