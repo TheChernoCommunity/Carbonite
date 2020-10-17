@@ -18,10 +18,14 @@ namespace gp1 {
 			REPEAT
 		};
 
-		// Callback for ButtonInputBindings
-		typedef std::function<void(InputLocation location, ButtonInputType inputType, uint32_t button)> ButtonCallback;
+		struct ButtonCallbackData {
+			InputLocation m_Location;
+			ButtonInputType m_InputType;
+			uint32_t m_Button;
+		};
 
-#define SetButtonCallback(bindingPtr, functionPtr) bindingPtr->SetCallback(std::bind(functionPtr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+		// Callback for ButtonInputBindings
+		typedef std::function<void(ButtonCallbackData data)> ButtonCallback;
 
 		struct ButtonInputBinding : public IInputBinding {
 		public:
@@ -29,8 +33,8 @@ namespace gp1 {
 
 			virtual void HandleEvent(Event& event) override;
 
-			// Sets the callback for this binding.
-			void SetCallback(ButtonCallback callback);
+			// Binds the callback for this binding.
+			void BindCallback(ButtonCallback callback);
 
 		private:
 			ButtonInputType m_inputType;	// The type of event to listen for

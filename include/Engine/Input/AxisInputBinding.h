@@ -11,10 +11,14 @@ namespace gp1 {
 
 	namespace input {
 
-		// Callback for AxisInputBinding
-		typedef std::function<void(InputLocation location, uint32_t axis, double value)> AxisCallback;
+		struct AxisCallbackData {
+			InputLocation m_Location;
+			uint32_t m_Axis;
+			double m_Value;
+		};
 
-#define SetAxisCallback(bindingPtr, functionPtr) bindingPtr->SetCallback(std::bind(functionPtr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+		// Callback for AxisInputBinding
+		typedef std::function<void(AxisCallbackData data)> AxisCallback;
 
 		struct AxisInputBinding : public IInputBinding {
 		public:
@@ -22,8 +26,8 @@ namespace gp1 {
 
 			virtual void HandleEvent(Event& event) override;
 
-			// Sets the callback for this binding.
-			void SetCallback(AxisCallback callback);
+			// Binds the callback for this binding.
+			void BindCallback(AxisCallback callback);
 
 		private:
 			AxisCallback m_callback;	// The callback to call if the corrent event was passed to HandleEvent()
