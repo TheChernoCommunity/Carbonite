@@ -29,19 +29,19 @@ namespace gp1 {
 		}
 
 		void IInputBinding::SetBinding(InputLocation location, uint32_t index) {
-			InputHandler::SetBindingConfigs(this->m_id, this->m_location, this->m_index);
 			this->m_location = location;
 			this->m_index = index;
+			InputHandler::SetBindingConfigs(this->m_inputGroup->GetId() + "." + this->m_id, this->m_location, this->m_index);
 		}
 
 		void IInputBinding::SetInputLocation(InputLocation location) {
-			InputHandler::SetBindingConfigs(this->m_id, this->m_location, this->m_index);
 			this->m_location = location;
+			InputHandler::SetBindingConfigs(this->m_inputGroup->GetId() + "." + this->m_id, this->m_location, this->m_index);
 		}
 
 		void IInputBinding::SetIndex(uint32_t index) {
-			InputHandler::SetBindingConfigs(this->m_id, this->m_location, this->m_index);
 			this->m_index = index;
+			InputHandler::SetBindingConfigs(this->m_inputGroup->GetId() + "." + this->m_id, this->m_location, this->m_index);
 		}
 
 		InputGroup* IInputBinding::GetInputGroup() const {
