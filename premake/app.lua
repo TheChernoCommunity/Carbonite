@@ -16,11 +16,10 @@ function app( name )
 	xcodebuildresources 'src/%{prj.name}/Assets'
 
 	sysincludedirs {
-		'include',
 		'third_party/glfw/include',
 		'third_party/glad/include',
 	}
-
+	
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Engine/Utility/Core.h"
+#include "Engine/Window/Window.h"
 
 namespace gp1 {
 
@@ -19,7 +20,7 @@ namespace gp1 {
 
 	private:
 		static Application* s_Instance;
+		Window m_Window{ { 1280, 720, "Cherno Community Game Project 1", WindowMode::WINDOWED, false } };	// TODO: create init function for application using WindowData
 	};
-
 
 } // namespace gp1

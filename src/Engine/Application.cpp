@@ -11,16 +11,21 @@ namespace gp1 {
 	Application::Application()
 	{
 		Logger::Init();
+		m_Window.Init();
 	}
 
 	void Application::Run()
 	{
-
+		while (!m_Window.IsCloseRequested())
+		{
+			m_Window.OnUpdate();
+		}
 	}
 
 	Application::~Application()
 	{
 		configuration::ConfigurationManager::SaveConfigurations();
+		m_Window.DeInit();
 		Logger::DeInit();
 	}
 
