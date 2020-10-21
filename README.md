@@ -8,8 +8,14 @@ Next, you'll need to *fork* this repository. You don't have permissions to push 
 
 Now that you've got a fork, you'll need to clone it. This means that you create a local (i.e. on your own hard drive) copy of the repository.
 ```
+git clone --recurse-submodules -j8 https://github.com/<MyGitHubAccount>/GameProject-1.git
+cd GameProject-1
+```
+If that didn't work, due to using an older version of git, you might want to try
+```
 git clone https://github.com/<MyGitHubAccount>/GameProject-1.git
 cd GameProject-1
+git submodule update --init --recursive
 ```
 
 Excellent, you've got a local copy of this repository. Now you need to build the code ([see Building](#-building)) and make your changes (for a basic Git workflow, [see Git](#-git)). Remember to re-run Premake whenever you add a new file.
