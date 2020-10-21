@@ -9,6 +9,11 @@ function library( name )
 	links( libraries )
 	location 'build/%{_ACTION}'
 
+	sysincludedirs {
+		'third_party/glfw/include',
+		'third_party/glad/include',
+	}
+
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',
