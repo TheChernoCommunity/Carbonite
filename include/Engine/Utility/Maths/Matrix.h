@@ -16,7 +16,11 @@ namespace gp1
 	template<typename T>
 	struct Matrix<1, 2, T>
 	{
+<<<<<<< HEAD
 		Matrix<1, 2, T>(T a_x1) : x1(a_x1) {}
+=======
+		Matrix<1, 1, T>(T a_x1) : x1(a_x1) {}
+>>>>>>> maths
 
 		T x1;
 	};
@@ -24,7 +28,11 @@ namespace gp1
 	template<typename T>
 	struct Matrix<1, 3, T>
 	{
+<<<<<<< HEAD
 		Matrix<1, 3, T>(T a_x1) : x1(a_x1) {}
+=======
+		Matrix<1, 1, T>(T a_x1) : x1(a_x1) {}
+>>>>>>> maths
 
 		T x1;
 	};
@@ -32,7 +40,11 @@ namespace gp1
 	template<typename T>
 	struct Matrix<1, 4, T>
 	{
+<<<<<<< HEAD
 		Matrix<1, 4, T>(T a_x1) : x1(a_x1) {}
+=======
+		Matrix<1, 1, T>(T a_x1) : x1(a_x1) {}
+>>>>>>> maths
 
 		T x1;
 	};

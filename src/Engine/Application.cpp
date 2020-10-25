@@ -4,7 +4,10 @@
 
 #include "Engine/Application.h"
 #include "Engine/Utility/Logger.h"
+<<<<<<< HEAD
 #include "Engine/Configuration/ConfigurationManager.h"
+=======
+>>>>>>> maths
 #include "Engine/Utility/Maths/Matrix.h"
 
 namespace gp1 {
