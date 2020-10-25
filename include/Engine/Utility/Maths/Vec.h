@@ -73,5 +73,9 @@ namespace gp1
 		};
 	};
 
+	typedef Vec<2, float> Vec2;
+	typedef Vec<3, float> Vec3;
+	typedef Vec<4, float> Vec4;
+
 
 }
