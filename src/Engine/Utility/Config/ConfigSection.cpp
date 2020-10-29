@@ -144,31 +144,109 @@ namespace gp1 {
 			}
 		}
 
-		void ConfigSection::SetConfigInt(std::string key, int64_t value) {
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, int8_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
-		void ConfigSection::SetConfigUInt(std::string key, uint64_t value) {
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, int16_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
-		void ConfigSection::SetConfigBool(std::string key, bool value) {
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, int32_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, int64_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, uint8_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, uint16_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, uint32_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, uint64_t value) {
+			SetConfig(key, std::to_string(value));
+		}
+
+		template <>
+		void ConfigSection::SetConfigTyped(std::string key, bool value) {
 			SetConfig(key, value ? "true" : "false");
 		}
 
-		int64_t ConfigSection::GetConfigInt(std::string key, int64_t def) {
+		template <>
+		int8_t ConfigSection::GetConfigTyped(std::string key, int8_t def) {
+			int8_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		int16_t ConfigSection::GetConfigTyped(std::string key, int16_t def) {
+			int16_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		int32_t ConfigSection::GetConfigTyped(std::string key, int32_t def) {
+			int32_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		int64_t ConfigSection::GetConfigTyped(std::string key, int64_t def) {
 			int64_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
-		uint64_t ConfigSection::GetConfigUInt(std::string key, uint64_t def) {
+		template <>
+		uint8_t ConfigSection::GetConfigTyped(std::string key, uint8_t def) {
+			uint8_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		uint16_t ConfigSection::GetConfigTyped(std::string key, uint16_t def) {
+			uint16_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		uint32_t ConfigSection::GetConfigTyped(std::string key, uint32_t def) {
+			uint32_t val;
+			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
+			return val;
+		}
+
+		template <>
+		uint64_t ConfigSection::GetConfigTyped(std::string key, uint64_t def) {
 			uint64_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
-		bool ConfigSection::GetConfigBool(std::string key, bool def) {
+		template <>
+		bool ConfigSection::GetConfigTyped(std::string key, bool def) {
 			std::string value = GetConfig(key, def ? "true" : "false");
 			return value == "true";
 		}

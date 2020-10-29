@@ -68,19 +68,19 @@ namespace gp1 {
 		void InputHandler::SetBindingConfigs(std::string id, InputLocation location, uint32_t index) {
 			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
 			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
-			sec->SetConfigUInt("Location", (uint32_t)location);
-			sec->SetConfigUInt("Index", index);
+			sec->SetConfigTyped<uint32_t>("Location", static_cast<uint32_t>(location));
+			sec->SetConfigTyped<uint32_t>("Index", index);
 		}
 
 		void InputHandler::GetBindingConfigs(std::string id, InputLocation* location, uint32_t* index) {
 			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
 			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
-			uint32_t confLoc = (uint32_t)sec->GetConfigUInt("Location", (uint32_t)*location);
-			if (confLoc > (uint32_t)InputLocation::LAST)
+			uint32_t confLoc = sec->GetConfigTyped<uint32_t>("Location", static_cast<uint32_t>(*location));
+			if (confLoc > static_cast<uint32_t>(InputLocation::LAST))
 				*location = InputLocation::UNKNOWN;
 			else
-				*location = (InputLocation)confLoc;
-			*index = (uint32_t)sec->GetConfigUInt("Index", *index);
+				*location = static_cast<InputLocation>(confLoc);
+			*index = sec->GetConfigTyped<uint32_t>("Index", *index);
 		}
 
 	} // namespace input

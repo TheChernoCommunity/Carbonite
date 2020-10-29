@@ -24,20 +24,20 @@ namespace gp1 {
 		openMenu->BindCallback(std::bind(&Game::OpenMenuCallback, this, std::placeholders::_1));
 		// The callback is void(gp1::input::ButtonCallbackData data) or void(gp1::input::AxisCallbackData data) depending on what type of binding.
 		// For an example setup look at the callbacks in this class.
-		m_Logger.LogDebug("OpenMenu keybind is: %u, on device: %u", openMenu->GetIndex(), (uint32_t)openMenu->GetLocation());
+		m_Logger.LogDebug("OpenMenu keybind is: %u, on device: %u", openMenu->GetIndex(), static_cast<uint32_t>(openMenu->GetLocation()));
 
 		input::AxisInputBinding* lookX = onFoot->CreateAxisInputBinding("lookX", input::axises::mouseX);
 		lookX->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
-		m_Logger.LogDebug("LookX keybind is: %u, on device: %u", lookX->GetIndex(), (uint32_t)lookX->GetLocation());
+		m_Logger.LogDebug("LookX keybind is: %u, on device: %u", lookX->GetIndex(), static_cast<uint32_t>(lookX->GetLocation()));
 
 		input::AxisInputBinding* lookY = onFoot->CreateAxisInputBinding("lookY", input::axises::mouseY);
 		lookY->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
-		m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), (uint32_t)lookY->GetLocation());
+		m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), static_cast<uint32_t>(lookY->GetLocation()));
 
 		input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
 		input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::keyEscape);
 		closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
-		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), (uint32_t)closeMenu->GetLocation());
+		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
 	}
 
 

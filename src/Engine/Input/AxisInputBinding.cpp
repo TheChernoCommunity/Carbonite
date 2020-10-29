@@ -23,7 +23,7 @@ namespace gp1 {
 			{
 				if (this->GetLocation() != InputLocation::MOUSE)
 					return;
-				MouseMovedEvent& movedEvent = *((MouseMovedEvent*)&event);
+				MouseMovedEvent& movedEvent = *(reinterpret_cast<MouseMovedEvent*>(&event));
 
 				if (this->GetIndex() == axises::mouseX) {
 					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetX(), GetId() });
