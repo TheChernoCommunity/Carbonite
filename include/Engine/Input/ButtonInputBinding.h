@@ -3,8 +3,8 @@
 //	
 
 #pragma once
-
 #include "Engine/Input/IInputBinding.h"
+
 #include <functional>
 
 namespace gp1 {

@@ -6,6 +6,10 @@
 
 namespace gp1 {
 
+	Mesh::~Mesh() {
+		CleanUpGLData();
+	}
+
 	void Mesh::MarkDirty() {
 		this->m_Dirty = true;
 	}

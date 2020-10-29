@@ -20,9 +20,19 @@ namespace gp1 {
 			auto itr = ConfigManager::ConfigFiles.find(id);
 			if (itr != ConfigManager::ConfigFiles.end())
 				return itr->second;
-			ConfigFile* file = new ConfigFile(id);
+			ConfigFile* file = new ConfigFile("Configs/" + id);
 			file->ReadConfig();
 			ConfigManager::ConfigFiles.insert({ id, file });
+			return file;
+		}
+
+		ConfigFile* ConfigManager::GetConfigFilePath(std::string filePath) {
+			auto itr = ConfigManager::ConfigFiles.find(filePath);
+			if (itr != ConfigManager::ConfigFiles.end())
+				return itr->second;
+			ConfigFile* file = new ConfigFile(filePath);
+			file->ReadConfig();
+			ConfigManager::ConfigFiles.insert({ filePath, file });
 			return file;
 		}
 
