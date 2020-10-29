@@ -99,12 +99,12 @@ namespace gp1 {
 		uint32_t len = ftell(file);
 		fseek(file, 0, SEEK_SET);
 		char* buf = new char[len];
-		len = (uint32_t)fread(buf, sizeof(char), len, file);
+		len = static_cast<uint32_t>(fread(buf, sizeof(char), len, file));
 		buf[len] = '\0';
 		fclose(file);
 
 		GLchar* const pShaderSource[1]{ buf };
-		GLint pLengths[1]{ (GLint)len };
+		GLint pLengths[1]{ static_cast<GLint>(len) };
 
 		glShaderSource(shaderID, 1, pShaderSource, pLengths);
 		glCompileShader(shaderID);
@@ -146,7 +146,7 @@ namespace gp1 {
 		if (pShaderAttributes) {
 			auto shaderAttributes = pShaderAttributes->GetConfigs();
 			for (auto attribute : shaderAttributes) {
-				uint32_t index = (uint32_t)pShaderAttributes->GetConfigUInt(attribute.first);
+				uint32_t index = pShaderAttributes->GetConfigTyped<uint32_t>(attribute.first, 0);
 				this->m_Attributes.insert({ attribute.first, index });
 			}
 		}
@@ -197,7 +197,7 @@ namespace gp1 {
 			GLenum type;
 			char name[128];
 
-			glGetActiveUniform(this->m_ProgramID, (GLuint)i, 128, &length, &size, &type, name);
+			glGetActiveUniform(this->m_ProgramID, static_cast<GLuint>(i), 128, &length, &size, &type, name);
 			this->m_UniformIds.insert({ std::string(name), { i, type } });
 		}
 		this->m_Dirty = false;

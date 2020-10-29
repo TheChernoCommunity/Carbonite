@@ -35,17 +35,17 @@ namespace gp1 {
 
 		glBindBuffer(GL_ARRAY_BUFFER, this->m_VBOs[0]);
 		glBufferData(GL_ARRAY_BUFFER, this->m_Vertices.size() * sizeof(Vertex), this->m_Vertices.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Position)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Normal)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, UV)));
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		if (this->m_HasIndices) {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_VBOs[1]);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->m_Indices.size() * sizeof(uint32_t), this->m_Indices.data(), GL_STATIC_DRAW);
-			this->m_BufferSize = (uint32_t)this->m_Indices.size();
+			this->m_BufferSize = static_cast<uint32_t>(this->m_Indices.size());
 		} else {
-			this->m_BufferSize = (uint32_t)this->m_Vertices.size();
+			this->m_BufferSize = static_cast<uint32_t>(this->m_Vertices.size());
 		}
 
 		glBindVertexArray(0);

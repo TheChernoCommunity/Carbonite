@@ -81,7 +81,7 @@ namespace gp1 {
 					case 'x':
 						uint32_t unicodeCharacter = '\0' << 16 | output[i + 2] << 12 | output[i + 3] << 8 | output[i + 4] << 4 | output[i + 5];
 						output = output.substr(0, i) + output.substr(i + 6);
-						output.insert(i, (char*)&unicodeCharacter);
+						output.insert(i, reinterpret_cast<char*>(&unicodeCharacter));
 						break;
 					}
 				}
