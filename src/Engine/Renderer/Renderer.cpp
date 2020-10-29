@@ -3,6 +3,7 @@
 //	
 
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Shader/Shader.h"
 #include "Engine/Window/Window.h"
 
 #define GLFW_INCLUDE_NONE
@@ -35,17 +36,29 @@ namespace gp1 {
 		m_Mesh.m_Indices.push_back(3);
 		m_Mesh.m_Indices.push_back(2);
 		m_Mesh.m_Indices.push_back(1);
+
+		m_Material.SetShader(Shader::GetShader("shader"));
 	}
 
 	void Renderer::DeInit() {
 		this->m_Mesh.CleanUpGLData();
+
+		Shader::CleanUpShaders();
 	}
 
 	void Renderer::Render() {
 		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		RenderMesh(this->m_Mesh);
+		RenderMeshWithMaterial(this->m_Mesh, this->m_Material);
+	}
+
+	void Renderer::RenderMeshWithMaterial(Mesh& mesh, Material& material) {
+		PreRenderMesh(mesh);
+		PreMaterial(material);
+		MidRenderMesh(mesh);
+		PostMaterial(material);
+		PostRenderMesh(mesh);
 	}
 
 	void Renderer::RenderMesh(Mesh& mesh) {
@@ -94,6 +107,21 @@ namespace gp1 {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	void Renderer::PreMaterial(Material& material) {
+		Shader* shader = material.GetShader();
+		if (shader) {
+			shader->Start();
+			material.SetAllUniforms();
+		}
+	}
+
+	void Renderer::PostMaterial(Material& material) {
+		Shader* shader = material.GetShader();
+		if (shader) {
+			shader->Stop();
+		}
 	}
 
 } // namespace gp1
