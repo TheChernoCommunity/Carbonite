@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Engine/Input/InputHandler.h"
-#include "Engine/Configuration/ConfigurationManager.h"
+#include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Events/Event.h"
 
 namespace gp1 {
@@ -66,25 +66,21 @@ namespace gp1 {
 		}
 
 		void InputHandler::SetBindingConfigs(std::string id, InputLocation location, uint32_t index) {
-			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetOrCreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
-			char buf[32];	// 12 For "Loc: , Ind: " and 10 for each number so 32 characters should be the maximum obtainable.
-			sprintf(buf, "Loc: %u, Ind: %u", (uint32_t)location, index);
-			inputBindings->SetConfig(id, buf);
+			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
+			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
+			sec->SetConfigUInt("Location", (uint32_t)location);
+			sec->SetConfigUInt("Index", index);
 		}
 
 		void InputHandler::GetBindingConfigs(std::string id, InputLocation* location, uint32_t* index) {
-			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetOrCreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
-			const std::string* config = inputBindings->GetConfig(id);
-			if (config == nullptr) {
-				SetBindingConfigs(id, *location, *index);
-			} else {
-				uint32_t confLoc;
-				sscanf(config->c_str(), "Loc: %u, Ind: %u", &confLoc, index);
-				if (confLoc > (uint32_t)InputLocation::LAST)
-					*location = InputLocation::UNKNOWN;
-				else
-					*location = (InputLocation)confLoc;
-			}
+			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
+			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
+			uint32_t confLoc = (uint32_t)sec->GetConfigUInt("Location", (uint32_t)*location);
+			if (confLoc > (uint32_t)InputLocation::LAST)
+				*location = InputLocation::UNKNOWN;
+			else
+				*location = (InputLocation)confLoc;
+			*index = (uint32_t)sec->GetConfigUInt("Index", *index);
 		}
 
 	} // namespace input
