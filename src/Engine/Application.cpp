@@ -4,7 +4,7 @@
 
 #include "Engine/Application.h"
 #include "Engine/Utility/Logger.h"
-#include "Engine/Configuration/ConfigurationManager.h"
+#include "Engine/Utility/Config/ConfigManager.h"
 
 namespace gp1 {
 
@@ -24,7 +24,7 @@ namespace gp1 {
 
 	Application::~Application()
 	{
-		configuration::ConfigurationManager::SaveConfigurations();
+		config::ConfigManager::SaveConfigs();
 		m_Window.DeInit();
 		Logger::DeInit();
 	}
