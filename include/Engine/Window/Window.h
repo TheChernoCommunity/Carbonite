@@ -1,3 +1,8 @@
+//
+//	Created by rtryan98 on 21. Oct. 2020
+//	Edited by MarcasRealAccount on 29. Oct. 2020
+//
+
 #pragma once
 #define GLFW_INCLUDE_NONE
 #include <glfw/glfw3.h>
@@ -6,6 +11,8 @@
 
 namespace gp1
 {
+	class Renderer;
+
 	enum class WindowMode : int8_t
 	{
 		WINDOWED = 0,
@@ -41,6 +48,7 @@ namespace gp1
 		void SetTitle(const std::string& p_Title);
 		const WindowData& GetWindowData() const;
 		const bool IsCloseRequested() const;
+		friend Renderer;
 	private:
 		WindowData m_WindowData;
 		Logger m_Logger;
