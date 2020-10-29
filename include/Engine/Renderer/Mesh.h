@@ -2,6 +2,7 @@
 //	Created by MarcasRealAccount on 29. Oct. 2020
 //	
 
+#pragma once
 #include <stdint.h>
 #include <vector>
 
@@ -46,55 +47,61 @@ namespace gp1 {
 	};
 
 	struct Vertex {
-		struct { float x, y, z; } Position;
-		struct { float x, y, z; } Normal;
-		struct { float x, y; } UV;
+		struct { float x, y, z; } Position;	// The position for this vertex.
+		struct { float x, y, z; } Normal;	// The normal for this vertex.
+		struct { float x, y; } UV;			// The uv for this vertex.
 	};
 
 	struct Mesh {
 	public:
+		~Mesh();
+
+		// Mark this mesh dirty for recreation.
 		void MarkDirty();
 
 		friend Renderer;
 
 	private:
+		// Get this mesh's VAO.
 		uint32_t GetVAO();
 
+		// Initialize GL data.
 		void InitGLData();
+		// Clean up GL data.
 		void CleanUpGLData();
 
 	public:
-		std::vector<Vertex> m_Vertices;
-		std::vector<uint32_t> m_Indices;
+		std::vector<Vertex> m_Vertices;		// This mesh's vertices.
+		std::vector<uint32_t> m_Indices;	// This mesh's indices.
 
 	private:
-		uint32_t m_VAO = 0;
-		uint32_t m_VBOs[2]{ 0, 0 };
-		uint32_t m_BufferSize = 0;
+		uint32_t m_VAO = 0;				// This mesh's VAO.
+		uint32_t m_VBOs[2]{ 0, 0 };		// This mesh's VBOs.
+		uint32_t m_BufferSize = 0;		// This mesh's Buffer Size. (i.e. the number of vertices/indices)
 
-		bool m_HasIndices = false;
+		bool m_HasIndices = false;		// Does this mesh have indices.
 
-		bool m_Dirty = true;
-		bool m_IsDynamic = false;
-
-		struct {
-			bool m_Enabled = true;
-			TriangleFace m_Face = TriangleFace::BACK;
-		} m_CullMode;
-
-		bool m_DepthTest = true;
+		bool m_Dirty = true;			// Should this mesh be recreated.
+		bool m_IsDynamic = false;		// Is this mesh dynamic. (i.e. should the vertices and indices be kept after initialization of GL data)
 
 		struct {
-			bool m_Enabled = true;
-			BlendFunc m_SrcFunc = BlendFunc::SRC_ALPHA;
-			BlendFunc m_DstFunc = BlendFunc::ONE_MINUS_SRC_ALPHA;
-		} m_BlendFunc;
+			bool m_Enabled = true;						// Is face culling enabled.
+			TriangleFace m_Face = TriangleFace::BACK;	// The face to cull.
+		} m_CullMode;					// This mesh's cullmode.
+
+		bool m_DepthTest = true;		// Is depth testing enabled.
 
 		struct {
-			bool m_Enabled = true;
-			TriangleFace m_Face = TriangleFace::FRONT_AND_BACK;
-			PolygonMode m_Mode = PolygonMode::FILL;
-		} m_PolygonMode;
+			bool m_Enabled = true;									// Is blending enabled.
+			BlendFunc m_SrcFunc = BlendFunc::SRC_ALPHA;				// The blend function's source function.
+			BlendFunc m_DstFunc = BlendFunc::ONE_MINUS_SRC_ALPHA;	// The blend function's destination function.
+		} m_BlendFunc;					// The mesh's blend function.
+
+		struct {
+			bool m_Enabled = true;									// Is polygon mode enabled.
+			TriangleFace m_Face = TriangleFace::FRONT_AND_BACK;		// The face to render with this mode.
+			PolygonMode m_Mode = PolygonMode::FILL;					// The polygon mode.
+		} m_PolygonMode;				// The mesh's polygon mode.
 	};
 
 } // namespace gp1

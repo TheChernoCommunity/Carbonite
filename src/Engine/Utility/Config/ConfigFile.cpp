@@ -26,9 +26,6 @@ namespace gp1 {
 				if (output[i] == '\\') {
 					char c = output[i + 1];
 					switch (c) {
-					//case '\n':
-					//	output = output.substr(0, i) + output.substr(i + 2);
-					//	break;
 					case '\\':
 						output = output.substr(0, i) + output.substr(i + 2);
 						output.insert(i, "\\");
@@ -102,7 +99,7 @@ namespace gp1 {
 		}
 
 		void ConfigFile::ReadConfig() {
-			FILE* file = fopen(("Configs/" + this->GetKey() + ".ini").c_str(), "r");
+			FILE* file = fopen((this->GetKey() + ".ini").c_str(), "r");
 			if (file) {
 				fseek(file, 0, SEEK_END);
 				uint64_t length = (uint64_t)ftell(file);
@@ -167,10 +164,10 @@ namespace gp1 {
 		}
 
 		void ConfigFile::SaveConfig() {
-			std::filesystem::path filepath{ "Configs/" + this->GetKey() + ".ini" };
+			std::filesystem::path filepath{ this->GetKey() + ".ini" };
 			std::filesystem::create_directories(filepath.parent_path());
 
-			FILE* file = fopen(("Configs/" + this->GetKey() + ".ini").c_str(), "w");
+			FILE* file = fopen((this->GetKey() + ".ini").c_str(), "w");
 			if (file) {
 				std::string fileStr = Save();
 				fwrite(fileStr.c_str(), sizeof(char), fileStr.length(), file);
