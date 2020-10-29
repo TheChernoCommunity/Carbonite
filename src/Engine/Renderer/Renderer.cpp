@@ -70,7 +70,7 @@ namespace gp1 {
 	void Renderer::PreRenderMesh(Mesh& mesh) {
 		if (mesh.m_CullMode.m_Enabled) {
 			glEnable(GL_CULL_FACE);
-			glCullFace((GLenum)mesh.m_CullMode.m_Face);
+			glCullFace(static_cast<GLenum>(mesh.m_CullMode.m_Face));
 		}
 
 		if (mesh.m_DepthTest)
@@ -78,10 +78,10 @@ namespace gp1 {
 
 		if (mesh.m_BlendFunc.m_Enabled) {
 			glEnable(GL_BLEND);
-			glBlendFunc((GLenum)mesh.m_BlendFunc.m_SrcFunc, (GLenum)mesh.m_BlendFunc.m_DstFunc);
+			glBlendFunc(static_cast<GLenum>(mesh.m_BlendFunc.m_SrcFunc), static_cast<GLenum>(mesh.m_BlendFunc.m_DstFunc));
 		}
 
-		glPolygonMode((GLenum)mesh.m_PolygonMode.m_Face, (GLenum)mesh.m_PolygonMode.m_Mode);
+		glPolygonMode(static_cast<GLenum>(mesh.m_PolygonMode.m_Face), static_cast<GLenum>(mesh.m_PolygonMode.m_Mode));
 
 		glBindVertexArray(mesh.GetVAO());
 		glEnableVertexAttribArray(0);

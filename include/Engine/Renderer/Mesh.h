@@ -47,9 +47,9 @@ namespace gp1 {
 	};
 
 	struct Vertex {
-		struct { float x, y, z; } Position;	// The position for this vertex.
-		struct { float x, y, z; } Normal;	// The normal for this vertex.
-		struct { float x, y; } UV;			// The uv for this vertex.
+		struct { float x, y, z; } Position{ 0.0f, 0.0f, 0.0f };	// The position for this vertex.
+		struct { float x, y, z; } Normal{ 0.0f, 0.0f, 0.0f };	// The normal for this vertex.
+		struct { float x, y; } UV{ 0.0f, 0.0f };				// The uv for this vertex.
 	};
 
 	struct Mesh {

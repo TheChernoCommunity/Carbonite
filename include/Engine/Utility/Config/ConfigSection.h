@@ -34,19 +34,12 @@ namespace gp1 {
 			// Gets or creates a section.
 			ConfigSection* GetOrCreateSection(std::string key);
 
-			// Sets a config value with an int value.
-			void SetConfigInt(std::string key, int64_t value);
-			// Sets a config value with an unsigned int value.
-			void SetConfigUInt(std::string key, uint64_t value);
-			// Sets a config value with a bool value.
-			void SetConfigBool(std::string key, bool value);
-
-			// Get int value of a config.
-			int64_t GetConfigInt(std::string key, int64_t def = 0);
-			// Get unsigned int value of a config.
-			uint64_t GetConfigUInt(std::string key, uint64_t def = 0);
-			// Get bool value of a config.
-			bool GetConfigBool(std::string key, bool def = false);
+			// Sets a config value with a T value.
+			template <typename T>
+			void SetConfigTyped(std::string key, T value);
+			// Get T value of a config.
+			template <typename T>
+			T GetConfigTyped(std::string key, T def);
 
 			// Get the key.
 			std::string GetKey() const;
