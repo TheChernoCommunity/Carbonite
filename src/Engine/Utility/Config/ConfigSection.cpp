@@ -100,6 +100,7 @@ namespace gp1 {
 
 		void ConfigSection::SetConfig(const std::string& key, const std::string& value) {
 			this->m_Configs.insert_or_assign(key, value);
+			this->m_Changed = true;
 		}
 
 		const std::string& ConfigSection::GetConfig(const std::string& key, const std::string& def) {
@@ -107,6 +108,7 @@ namespace gp1 {
 			if (itr != this->m_Configs.end())
 				return itr->second;
 			this->m_Configs.insert_or_assign(key, def);
+			this->m_Changed = true;
 			return def;
 		}
 
@@ -259,6 +261,21 @@ namespace gp1 {
 			std::string key = this->m_Key;
 			if (this->m_Parent) key = this->m_Parent->GetFullKey() + "." + key;
 			return key;
+		}
+
+		bool ConfigSection::HasChanged() const {
+			if (m_Changed)
+				return true;
+			for (auto section : this->m_Sections)
+				if (section.second->HasChanged())
+					return true;
+			return false;
+		}
+
+		void ConfigSection::SetChanges(bool changed) {
+			this->m_Changed = changed;
+			for (auto section : this->m_Sections)
+				section.second->SetChanges(changed);
 		}
 
 		std::string ConfigSection::Save(bool first) {

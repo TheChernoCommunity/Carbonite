@@ -164,14 +164,17 @@ namespace gp1 {
 		}
 
 		void ConfigFile::SaveConfig() {
-			std::filesystem::path filepath{ this->GetKey() + ".ini" };
-			std::filesystem::create_directories(filepath.parent_path());
+			if (HasChanged()) {
+				std::filesystem::path filepath{ this->GetKey() + ".ini" };
+				std::filesystem::create_directories(filepath.parent_path());
 
-			FILE* file = fopen((this->GetKey() + ".ini").c_str(), "w");
-			if (file) {
-				std::string fileStr = Save();
-				fwrite(fileStr.c_str(), sizeof(char), fileStr.length(), file);
-				fclose(file);
+				FILE* file = fopen((this->GetKey() + ".ini").c_str(), "w");
+				if (file) {
+					std::string fileStr = Save();
+					fwrite(fileStr.c_str(), sizeof(char), fileStr.length(), file);
+					fclose(file);
+				}
+				SetChanges(false);
 			}
 		}
 
