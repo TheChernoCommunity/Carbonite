@@ -10,7 +10,7 @@ namespace gp1 {
 
 	namespace config {
 
-		std::string ToParsableString(std::string str) {
+		std::string ToParsableString(const std::string& str) {
 			std::string output = str;
 
 			bool space = false;
@@ -75,7 +75,7 @@ namespace gp1 {
 			return output;
 		}
 
-		ConfigSection::ConfigSection(std::string key, ConfigSection* parent)
+		ConfigSection::ConfigSection(const std::string& key, ConfigSection* parent)
 			: m_Key(key), m_Parent(parent) {}
 
 		ConfigSection::~ConfigSection() {
@@ -98,11 +98,11 @@ namespace gp1 {
 			return this->m_Sections;
 		}
 
-		void ConfigSection::SetConfig(std::string key, std::string value) {
+		void ConfigSection::SetConfig(const std::string& key, const std::string& value) {
 			this->m_Configs.insert_or_assign(key, value);
 		}
 
-		std::string ConfigSection::GetConfig(std::string key, std::string def) {
+		const std::string& ConfigSection::GetConfig(const std::string& key, const std::string& def) {
 			auto itr = this->m_Configs.find(key);
 			if (itr != this->m_Configs.end())
 				return itr->second;
@@ -110,7 +110,7 @@ namespace gp1 {
 			return def;
 		}
 
-		ConfigSection* ConfigSection::GetSection(std::string key) const {
+		ConfigSection* ConfigSection::GetSection(const std::string& key) const {
 			uint64_t keyPeriod = key.find_first_of('.');
 			if (keyPeriod < key.length()) {
 				std::string thisKey = key.substr(0, keyPeriod);
@@ -126,7 +126,7 @@ namespace gp1 {
 			}
 		}
 
-		ConfigSection* ConfigSection::GetOrCreateSection(std::string key) {
+		ConfigSection* ConfigSection::GetOrCreateSection(const std::string& key) {
 			ConfigSection* section = GetSection(key);
 			if (section != nullptr)
 				return section;
@@ -145,113 +145,113 @@ namespace gp1 {
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, int8_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, int8_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, int16_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, int16_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, int32_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, int32_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, int64_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, int64_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, uint8_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, uint8_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, uint16_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, uint16_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, uint32_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, uint32_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, uint64_t value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, uint64_t value) {
 			SetConfig(key, std::to_string(value));
 		}
 
 		template <>
-		void ConfigSection::SetConfigTyped(std::string key, bool value) {
+		void ConfigSection::SetConfigTyped(const std::string& key, bool value) {
 			SetConfig(key, value ? "true" : "false");
 		}
 
 		template <>
-		int8_t ConfigSection::GetConfigTyped(std::string key, int8_t def) {
+		int8_t ConfigSection::GetConfigTyped(const std::string& key, int8_t def) {
 			int8_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		int16_t ConfigSection::GetConfigTyped(std::string key, int16_t def) {
+		int16_t ConfigSection::GetConfigTyped(const std::string& key, int16_t def) {
 			int16_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		int32_t ConfigSection::GetConfigTyped(std::string key, int32_t def) {
+		int32_t ConfigSection::GetConfigTyped(const std::string& key, int32_t def) {
 			int32_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		int64_t ConfigSection::GetConfigTyped(std::string key, int64_t def) {
+		int64_t ConfigSection::GetConfigTyped(const std::string& key, int64_t def) {
 			int64_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		uint8_t ConfigSection::GetConfigTyped(std::string key, uint8_t def) {
+		uint8_t ConfigSection::GetConfigTyped(const std::string& key, uint8_t def) {
 			uint8_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		uint16_t ConfigSection::GetConfigTyped(std::string key, uint16_t def) {
+		uint16_t ConfigSection::GetConfigTyped(const std::string& key, uint16_t def) {
 			uint16_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		uint32_t ConfigSection::GetConfigTyped(std::string key, uint32_t def) {
+		uint32_t ConfigSection::GetConfigTyped(const std::string& key, uint32_t def) {
 			uint32_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		uint64_t ConfigSection::GetConfigTyped(std::string key, uint64_t def) {
+		uint64_t ConfigSection::GetConfigTyped(const std::string& key, uint64_t def) {
 			uint64_t val;
 			std::istringstream(GetConfig(key, std::to_string(def))) >> val;
 			return val;
 		}
 
 		template <>
-		bool ConfigSection::GetConfigTyped(std::string key, bool def) {
+		bool ConfigSection::GetConfigTyped(const std::string& key, bool def) {
 			std::string value = GetConfig(key, def ? "true" : "false");
 			return value == "true";
 		}
 
-		std::string ConfigSection::GetKey() const {
+		const std::string& ConfigSection::GetKey() const {
 			return this->m_Key;
 		}
 

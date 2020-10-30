@@ -19,7 +19,7 @@ namespace gp1 {
 
 		class InputGroup {
 		public:
-			InputGroup(std::string id);
+			InputGroup(const std::string& id);
 			~InputGroup();
 
 			// Sets this input group as the current input group in the InputHandler this is created for.
@@ -33,7 +33,7 @@ namespace gp1 {
 
 			// Gets an input binding from its id.
 			// You can cast the return value to the correct binding type.
-			IInputBinding* GetInputBinding(std::string id);
+			IInputBinding* GetInputBinding(const std::string& id);
 
 			// Removes the binding from this InputGroup, should not be called unless inside IInputBinding's destructor.
 			void RemoveInputBindingImpl(IInputBinding* binding);
@@ -41,9 +41,9 @@ namespace gp1 {
 			void RemoveInputBinding(IInputBinding* binding);
 
 			// Creates a ButtonInputBinding for this input group with the specified id.
-			ButtonInputBinding* CreateButtonInputBinding(std::string id, uint32_t button, ButtonInputType inputType = ButtonInputType::PRESS, InputLocation location = InputLocation::KEYBOARD, ButtonCallback callback = nullptr);
+			ButtonInputBinding* CreateButtonInputBinding(const std::string& id, uint32_t button, ButtonInputType inputType = ButtonInputType::PRESS, InputLocation location = InputLocation::KEYBOARD, ButtonCallback callback = nullptr);
 			// Creates a AxisInputBinding for this input group with the specified id.
-			AxisInputBinding* CreateAxisInputBinding(std::string id, uint32_t axis, InputLocation location = InputLocation::MOUSE, AxisCallback callback = nullptr);
+			AxisInputBinding* CreateAxisInputBinding(const std::string& id, uint32_t axis, InputLocation location = InputLocation::MOUSE, AxisCallback callback = nullptr);
 
 			// Gets the id of this InputGroup
 			const std::string& GetId() const;

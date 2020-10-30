@@ -8,31 +8,31 @@
 #include "Engine/Application.h"
 #include "Engine/Utility/Logger.h"
 #include "Engine/Utility/Config/ConfigManager.h"
+#include "Engine/Input/InputHandler.h"
 
 namespace gp1 {
 
-	Application::Application()
-	{
+	Application::Application() {
 		Logger::Init();
 		m_Window.Init();
-		m_Renderer.Init();
+		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
+		m_Renderer->Init();
 	}
 
-	void Application::Run()
-	{
-		while (!m_Window.IsCloseRequested())
-		{
-			m_Renderer.Render();
+	void Application::Run() {
+		while (!m_Window.IsCloseRequested()) {
+			m_Renderer->Render();
 			m_Window.OnUpdate();
 		}
 	}
 
-	Application::~Application()
-	{
-		m_Renderer.DeInit();
+	Application::~Application() {
+		this->m_Renderer->DeInit();
+		delete m_Renderer;
 		m_Window.DeInit();
-		Logger::DeInit();
+		input::InputHandler::CleanUp();
 		config::ConfigManager::SaveConfigs();
+		Logger::DeInit();
 	}
 
 } // namespace gp1

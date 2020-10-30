@@ -10,7 +10,7 @@ namespace gp1 {
 
 	namespace input {
 
-		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback)
+		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, const std::string& id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback)
 			: IInputBinding(inputGroup, id, InputType::BUTTON, button, location), m_inputType(inputType), m_callback(callback) {}
 
 		void ButtonInputBinding::HandleEvent(Event& event) {

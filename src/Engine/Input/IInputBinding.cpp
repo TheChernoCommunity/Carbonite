@@ -12,7 +12,7 @@ namespace gp1 {
 
 	namespace input {
 
-		IInputBinding::IInputBinding(InputGroup* inputGroup, std::string id, InputType type, uint32_t index, InputLocation location) {
+		IInputBinding::IInputBinding(InputGroup* inputGroup, const std::string& id, InputType type, uint32_t index, InputLocation location) {
 			if (inputGroup == nullptr) {
 				throw std::exception("IInputBinding can't take a nullptr to an InputGroup!");
 			}
@@ -25,7 +25,7 @@ namespace gp1 {
 		}
 
 		IInputBinding::~IInputBinding() {
-			this->m_inputGroup->RemoveInputBindingImpl(this);
+			//this->m_inputGroup->RemoveInputBindingImpl(this);
 		}
 
 		void IInputBinding::SetBinding(InputLocation location, uint32_t index) {

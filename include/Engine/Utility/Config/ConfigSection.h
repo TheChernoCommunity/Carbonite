@@ -15,7 +15,7 @@ namespace gp1 {
 
 		struct ConfigSection {
 		public:
-			ConfigSection(std::string key, ConfigSection* parent = nullptr);
+			ConfigSection(const std::string& key, ConfigSection* parent = nullptr);
 			~ConfigSection();
 
 			// Cleans up the config file.
@@ -26,23 +26,23 @@ namespace gp1 {
 			// Gets all the sections.
 			const std::unordered_map<std::string, ConfigSection*>& GetSections() const;
 			// Sets a config value.
-			void SetConfig(std::string key, std::string value);
+			void SetConfig(const std::string& key, const std::string& value);
 			// Gets or creates a config value.
-			std::string GetConfig(std::string key, std::string def = "");
+			const std::string& GetConfig(const std::string& key, const std::string& def = "");
 			// Gets a section.
-			ConfigSection* GetSection(std::string key) const;
+			ConfigSection* GetSection(const std::string& key) const;
 			// Gets or creates a section.
-			ConfigSection* GetOrCreateSection(std::string key);
+			ConfigSection* GetOrCreateSection(const std::string& key);
 
 			// Sets a config value with a T value.
 			template <typename T>
-			void SetConfigTyped(std::string key, T value);
+			void SetConfigTyped(const std::string& key, T value);
 			// Get T value of a config.
 			template <typename T>
-			T GetConfigTyped(std::string key, T def);
+			T GetConfigTyped(const std::string& key, T def);
 
 			// Get the key.
-			std::string GetKey() const;
+			const std::string& GetKey() const;
 			// Get the full key with the parent's key.
 			std::string GetFullKey() const;
 
