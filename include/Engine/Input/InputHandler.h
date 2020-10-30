@@ -16,30 +16,33 @@ namespace gp1 {
 
 		class InputHandler {
 		public:
+			// Clearas all input's.
+			static void CleanUp();
+
 			// Handles events for Input Bindings
 			static bool HandleEvent(Event& event);
 
 			// Sets the current active input group by using an InputGroups id.
-			static void SetCurrentActiveInputGroup(std::string id);
+			static void SetCurrentActiveInputGroup(const std::string& id);
 			// Sets the current active input group.
 			// Setting inputGroup to nullptr causes this to not handle anything.
 			static void SetCurrentActiveInputGroup(InputGroup* inputGroup);
 
 			// Creates a new InputGroup with the specified id.
-			static InputGroup* CreateInputGroup(std::string id);
+			static InputGroup* CreateInputGroup(const std::string& id);
 			// Gets an InputGroup from its id.
-			static InputGroup* GetInputGroup(std::string id);
+			static InputGroup* GetInputGroup(const std::string& id);
 			// Gets or Creates a new InputGroup with the specified id.
-			static InputGroup* GetOrCreateInputGroup(std::string id);
+			static InputGroup* GetOrCreateInputGroup(const std::string& id);
 			// Removes the InputGroup from this InputHandler, should not be called unless inside InputGroup's destructor.
 			static void RemoveInputGroupImpl(InputGroup* inputGroup);
 			// Deletes the pointer, causing it to call 'RemoveInputGroupImpl'
 			static void RemoveInputGroup(InputGroup* inputGroup);
 
 			// Sets the bindings to a config.
-			static void SetBindingConfigs(std::string id, InputLocation location, uint32_t index);
+			static void SetBindingConfigs(const std::string& id, InputLocation location, uint32_t index);
 			// Gets the bindings from a config.
-			static void GetBindingConfigs(std::string id, InputLocation* location, uint32_t* index);
+			static void GetBindingConfigs(const std::string& id, InputLocation* location, uint32_t* index);
 
 		private:
 			static std::unordered_map<std::string, InputGroup*> m_inputGroups;	// The InputGroups this InputHandler handles.

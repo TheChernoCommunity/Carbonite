@@ -30,7 +30,7 @@ namespace gp1 {
 
 		struct ButtonInputBinding : public IInputBinding {
 		public:
-			ButtonInputBinding(InputGroup* inputGroup, std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback);
+			ButtonInputBinding(InputGroup* inputGroup, const std::string& id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback);
 
 			virtual void HandleEvent(Event& event) override;
 
