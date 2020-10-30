@@ -12,11 +12,14 @@ namespace gp1 {
 
 	namespace input {
 
-		InputGroup::InputGroup(std::string id)
+		InputGroup::InputGroup(const std::string& id)
 			: m_id(id) {}
 
 		InputGroup::~InputGroup() {
-			InputHandler::RemoveInputGroupImpl(this);
+			for (auto binding : this->m_inputBindings)
+				delete binding.second;
+
+			//InputHandler::RemoveInputGroupImpl(this);
 		}
 
 		void InputGroup::attach() {
@@ -35,7 +38,7 @@ namespace gp1 {
 			}
 		}
 
-		IInputBinding* InputGroup::GetInputBinding(std::string id) {
+		IInputBinding* InputGroup::GetInputBinding(const std::string& id) {
 			auto itr = this->m_inputBindings.find(id);
 			if (itr != this->m_inputBindings.end())
 				return itr->second;
@@ -52,7 +55,7 @@ namespace gp1 {
 			delete binding;
 		}
 
-		ButtonInputBinding* InputGroup::CreateButtonInputBinding(std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback) {
+		ButtonInputBinding* InputGroup::CreateButtonInputBinding(const std::string& id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback) {
 			if (this->m_inputBindings.find(id) != this->m_inputBindings.end())
 				return nullptr;
 
@@ -62,7 +65,7 @@ namespace gp1 {
 			return binding;
 		}
 
-		AxisInputBinding* InputGroup::CreateAxisInputBinding(std::string id, uint32_t axis, InputLocation location, AxisCallback callback) {
+		AxisInputBinding* InputGroup::CreateAxisInputBinding(const std::string& id, uint32_t axis, InputLocation location, AxisCallback callback) {
 			if (this->m_inputBindings.find(id) != this->m_inputBindings.end())
 				return nullptr;
 

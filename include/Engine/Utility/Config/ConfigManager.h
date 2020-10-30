@@ -22,9 +22,9 @@ namespace gp1 {
 			static void SaveConfigs();
 
 			// Get or create a ConfigFile that can be used to store configs.
-			static ConfigFile* GetConfigFile(std::string id);
+			static ConfigFile* GetConfigFile(const std::string& id);
 			// Get or create a ConfigFile at a custom file path instead of "Configs/".
-			static ConfigFile* GetConfigFilePath(std::string filePath);
+			static ConfigFile* GetConfigFilePath(const std::string& filePath);
 
 			friend ConfigFile;
 		private:

@@ -3,6 +3,8 @@
 //	
 
 #pragma once
+#include "Engine/Renderer/Renderer.h"
+
 #include <stdint.h>
 #include <vector>
 
@@ -11,97 +13,127 @@
 namespace gp1 {
 
 	class Renderer;
+	class OpenGLRenderer;
 
-	enum class TriangleFace : GLenum {
-		BACK = GL_BACK,
-		FRONT = GL_FRONT,
-		FRONT_AND_BACK = GL_FRONT_AND_BACK
+	enum class VertexAttribIndex : uint32_t {
+		POSITION = 0,
+		NORMAL = 1,
+		UV = 2,
+		SSBO_INDEX = 3,
+		JOINT_INDICES = 3,
+		JOINT_WEIGHTS = 4
 	};
 
-	enum class BlendFunc : GLenum {
-		ZERO = GL_ZERO,
-		ONE = GL_ONE,
-		SRC_COLOR = GL_SRC_COLOR,
-		ONE_MINUS_SRC_COLOR = GL_ONE_MINUS_SRC_COLOR,
-		DST_COLOR = GL_DST_COLOR,
-		ONE_MINUS_DST_COLOR = GL_ONE_MINUS_DST_COLOR,
-		SRC_ALPHA = GL_SRC_ALPHA,
-		ONE_MINUS_SRC_ALPHA = GL_ONE_MINUS_SRC_ALPHA,
-		DST_ALPHA = GL_DST_ALPHA,
-		ONE_MINUS_DST_ALPHA = GL_ONE_MINUS_DST_ALPHA,
-		CONSTANT_COLOR = GL_CONSTANT_COLOR,
-		ONE_MINUS_CONSTANT_COLOR = GL_ONE_MINUS_CONSTANT_COLOR,
-		CONSTANT_ALPHA = GL_CONSTANT_COLOR,
-		ONE_MINUS_CONSTANT_ALPHA = GL_ONE_MINUS_CONSTANT_ALPHA,
-		SRC_ALPHA_SATURATE = GL_SRC_ALPHA_SATURATE,
-		SRC1_COLOR = GL_SRC1_COLOR,
-		ONE_MINUS_SRC1_COLOR = GL_ONE_MINUS_SRC1_COLOR,
-		SRC1_ALPHA = GL_SRC1_ALPHA,
-		ONE_MINUS_SRC1_ALPHA = GL_ONE_MINUS_SRC1_ALPHA,
-	};
-
-	enum class PolygonMode : GLenum {
-		POINT = GL_POINT,
-		LINE = GL_LINE,
-		FILL = GL_FILL
-	};
-
-	struct Vertex {
-		struct { float x, y, z; } Position{ 0.0f, 0.0f, 0.0f };	// The position for this vertex.
-		struct { float x, y, z; } Normal{ 0.0f, 0.0f, 0.0f };	// The normal for this vertex.
-		struct { float x, y; } UV{ 0.0f, 0.0f };				// The uv for this vertex.
-	};
+	struct MeshData;
 
 	struct Mesh {
 	public:
-		~Mesh();
+		virtual ~Mesh();
 
 		// Mark this mesh dirty for recreation.
 		void MarkDirty();
+		// Clears this mesh's dirtiness.
+		void ClearDirty();
+		// Is this mesh dirty.
+		bool IsDirty();
 
-		friend Renderer;
+		// Is the mesh editable.
+		bool IsEditable();
+		// Is the mesh dynamic.
+		bool IsDynamic();
+
+		// Get this mesh's data.
+		MeshData* GetMeshData(Renderer* renderer);
+
+		friend MeshData;
 
 	private:
-		// Get this mesh's VAO.
-		uint32_t GetVAO();
-
-		// Initialize GL data.
-		void InitGLData();
-		// Clean up GL data.
-		void CleanUpGLData();
+		// Create the custom mesh data.
+		virtual MeshData* CreateCustomMeshData(Renderer* renderer) = 0;
 
 	public:
-		std::vector<Vertex> m_Vertices;		// This mesh's vertices.
 		std::vector<uint32_t> m_Indices;	// This mesh's indices.
 
+	protected:
+		bool m_Dirty = true;		// Should this mesh be recreated.
+		bool m_Editable = true;		// Is this mesh editable.
+		bool m_IsDynamic = false;	// Is this mesh dynamic. (i.e. should the vertices and indices be kept after initialization of GL data)
+
 	private:
-		uint32_t m_VAO = 0;				// This mesh's VAO.
-		uint32_t m_VBOs[2]{ 0, 0 };		// This mesh's VBOs.
-		uint32_t m_BufferSize = 0;		// This mesh's Buffer Size. (i.e. the number of vertices/indices)
+		MeshData* m_MeshData = nullptr;	// The renderer specific meshdata.
+	};
 
-		bool m_HasIndices = false;		// Does this mesh have indices.
+	struct MeshData {
+	public:
+		MeshData(Mesh* mesh);
+		virtual ~MeshData();
 
-		bool m_Dirty = true;			// Should this mesh be recreated.
-		bool m_IsDynamic = false;		// Is this mesh dynamic. (i.e. should the vertices and indices be kept after initialization of GL data)
+		// Get the renderer type for this mesh data.
+		virtual RendererType GetRendererType() const = 0;
+		// Clean up this mesh data.
+		virtual void CleanUp() = 0;
 
-		struct {
-			bool m_Enabled = true;						// Is face culling enabled.
-			TriangleFace m_Face = TriangleFace::BACK;	// The face to cull.
-		} m_CullMode;					// This mesh's cullmode.
+	protected:
+		// Get the mesh this mesh data is part of.
+		Mesh* GetMesh() const;
 
-		bool m_DepthTest = true;		// Is depth testing enabled.
+	private:
+		Mesh* m_Mesh;
+	};
 
-		struct {
-			bool m_Enabled = true;									// Is blending enabled.
-			BlendFunc m_SrcFunc = BlendFunc::SRC_ALPHA;				// The blend function's source function.
-			BlendFunc m_DstFunc = BlendFunc::ONE_MINUS_SRC_ALPHA;	// The blend function's destination function.
-		} m_BlendFunc;					// The mesh's blend function.
+	struct OpenGLMeshData : public MeshData {
+	public:
+		OpenGLMeshData(Mesh* mesh);
 
-		struct {
-			bool m_Enabled = true;									// Is polygon mode enabled.
-			TriangleFace m_Face = TriangleFace::FRONT_AND_BACK;		// The face to render with this mode.
-			PolygonMode m_Mode = PolygonMode::FILL;					// The polygon mode.
-		} m_PolygonMode;				// The mesh's polygon mode.
+		virtual RendererType GetRendererType() const override;
+
+		// Does this mesh have vertices.
+		virtual bool HasVertices() = 0;
+		// Get the custom data size.
+		virtual uint32_t GetCustomDataSize() = 0;
+		// Initialize custom gl data.
+		virtual void InitCustomGLData() = 0;
+		// Clear custom gl data.
+		virtual void ClearCustomData() = 0;
+
+		// Does this mesh have indices.
+		bool HasIndices();
+		// Get this mesh's vao.
+		uint32_t GetVAO();
+		// Initialize gl data.
+		void InitGLData();
+		virtual void CleanUp() override;
+
+		friend OpenGLRenderer;
+
+	protected:
+		// Create vbos.
+		void CreateVBOs(uint8_t count);
+		// Create attribs.
+		void CreateVertexAttribArrays(uint8_t count);
+
+		// Bind next vbo.
+		void BindNextVBO(GLenum bufferType);
+		// Unbind vbo.
+		void UnbindVBO(GLenum bufferType);
+
+		// Set and enable attrib pointer.
+		void SetVertexAttribPointer(uint32_t index, uint32_t size, GLenum type, bool normalized, uint64_t stride, uint64_t offset);
+		// Set and enable attrib pointer.
+		void SetVertexAttribIPointer(uint32_t index, uint32_t size, GLenum type, uint64_t stride, uint64_t offset);
+		// Set and enable attrib pointer.
+		void SetVertexAttribLPointer(uint32_t index, uint32_t size, GLenum type, uint64_t stride, uint64_t offset);
+
+	protected:
+		uint32_t m_VAO = 0;						// This mesh's VAO.
+		uint8_t m_NumVBOs = 0;					// The number of VBOs that this mesh has.
+		uint8_t m_CurrentVBO = 0;				// The current VBO.
+		uint32_t* m_VBOs = nullptr;				// This mesh's VBOs.
+		uint8_t m_NumAttribs = 0;				// The number of enabled vertex attribs this mesh has.
+		uint8_t m_CurrentAttrib = 0;			// The current vertex attrib.
+		uint32_t* m_EnabledAttribs = nullptr;	// The vertex attribs that have been enabled for this mesh.
+		uint32_t m_BufferSize = 0;				// This mesh's Buffer Size. (i.e. the number of vertices/indices)
+		bool m_HasIndices = false;				// Does this mesh have indices.
 	};
 
 } // namespace gp1

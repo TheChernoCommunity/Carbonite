@@ -16,7 +16,7 @@ namespace gp1 {
 				configFile.second->SaveConfig();
 		}
 
-		ConfigFile* ConfigManager::GetConfigFile(std::string id) {
+		ConfigFile* ConfigManager::GetConfigFile(const std::string& id) {
 			auto itr = ConfigManager::ConfigFiles.find(id);
 			if (itr != ConfigManager::ConfigFiles.end())
 				return itr->second;
@@ -26,7 +26,7 @@ namespace gp1 {
 			return file;
 		}
 
-		ConfigFile* ConfigManager::GetConfigFilePath(std::string filePath) {
+		ConfigFile* ConfigManager::GetConfigFilePath(const std::string& filePath) {
 			auto itr = ConfigManager::ConfigFiles.find(filePath);
 			if (itr != ConfigManager::ConfigFiles.end())
 				return itr->second;

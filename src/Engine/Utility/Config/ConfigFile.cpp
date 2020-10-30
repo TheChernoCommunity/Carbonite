@@ -13,7 +13,7 @@ namespace gp1 {
 
 	namespace config {
 
-		std::string ParsableToString(std::string str) {
+		std::string ParsableToString(const std::string& str) {
 			uint64_t start = str.find_first_not_of(' ');
 			uint64_t end = str.find_last_not_of(' ');
 			std::string output = str.substr(start, end + 1 - start);
@@ -90,7 +90,7 @@ namespace gp1 {
 			return output;
 		}
 
-		ConfigFile::ConfigFile(std::string id)
+		ConfigFile::ConfigFile(const std::string& id)
 			: ConfigSection(id) {}
 
 		ConfigFile::~ConfigFile() {

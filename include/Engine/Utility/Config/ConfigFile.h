@@ -16,7 +16,7 @@ namespace gp1 {
 
 		class ConfigFile : public ConfigSection {
 		public:
-			ConfigFile(std::string id);
+			ConfigFile(const std::string& id);
 			~ConfigFile();
 
 			// Reads and parses the config file.
