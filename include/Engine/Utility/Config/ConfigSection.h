@@ -48,6 +48,12 @@ namespace gp1 {
 
 			friend ConfigFile;
 
+		protected:
+			// Has this section changed.
+			bool HasChanged() const;
+			// Set if this section has changed.
+			void SetChanges(bool changed);
+
 		private:
 			// Get the file string.
 			std::string Save(bool first = true);
@@ -62,6 +68,7 @@ namespace gp1 {
 
 			std::unordered_map<std::string, std::string> m_Configs;		// The configs.
 			std::unordered_map<std::string, ConfigSection*> m_Sections;	// The sections.
+			bool m_Changed = false;										// Has this section changed.
 		};
 
 	} // namespace config

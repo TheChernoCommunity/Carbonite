@@ -28,7 +28,7 @@ namespace gp1 {
 	class Renderer {
 	public:
 		Renderer(Window* window);
-		virtual ~Renderer() {}
+		virtual ~Renderer() = default;
 
 		virtual RendererType GetRendererType() const = 0;
 
