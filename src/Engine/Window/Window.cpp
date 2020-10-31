@@ -1,6 +1,6 @@
 //
 //	Created by rtryan98 on 21. Oct. 2020
-//	Edited by MarcasRealAccount on 4. Nov. 2020
+//	Edited by MarcasRealAccount on 31. Oct. 2020
 //
 
 #include "Engine/Window/Window.h"
@@ -154,7 +154,6 @@ namespace gp1
 
 	void Window::OnUpdate()
 	{
-		glfwSwapBuffers(m_NativeHandle);
 		glfwPollEvents();
 	}
 

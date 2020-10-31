@@ -16,7 +16,7 @@ namespace gp1 {
 	Application::Application() {
 		Logger::Init();
 		m_Window.Init();
-		m_Renderer = Renderer::GetRenderer(RendererType::VULKAN, &m_Window);
+		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
 		m_Renderer->Init();
 	}
 
