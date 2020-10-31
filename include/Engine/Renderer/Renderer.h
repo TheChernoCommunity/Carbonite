@@ -4,25 +4,21 @@
 
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace gp1 {
 
 	class Window;
-	struct MeshData;
-	struct OpenGLMeshData;
 	struct Mesh;
-	class ShaderData;
-	class Shader;
-	class MaterialData;
-	class OpenGLMaterialData;
+	struct MeshData;
 	class Material;
-
-	struct StaticMesh;
+	class MaterialData;
+	class Shader;
+	class ShaderData;
 
 	enum class RendererType {
-		OPENGL
+		OPENGL,
+		VULKAN
 	};
 
 	class Renderer {
@@ -40,16 +36,16 @@ namespace gp1 {
 		virtual void Render() = 0;
 
 		// Is the MeshData made for this renderer.
-		virtual bool IsMeshDataUsable(MeshData* meshData) = 0;
+		virtual bool IsMeshDataUsable(MeshData* meshData);
 		// Is the ShaderData made for this renderer.
-		virtual bool IsShaderDataUsable(ShaderData* shaderData) = 0;
+		virtual bool IsShaderDataUsable(ShaderData* shaderData);
 		// Is the MaterialData made for this renderer.
-		virtual bool IsMaterialDataUsable(MaterialData* materialData) = 0;
+		virtual bool IsMaterialDataUsable(MaterialData* materialData);
 
-		// Create a StaticMeshData for this renderer.
-		virtual MeshData* CreateStaticMeshData(Mesh* mesh) = 0;
 		// Create a SkeletalMeshData for this renderer.
 		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) = 0;
+		// Create a StaticMeshData for this renderer.
+		virtual MeshData* CreateStaticMeshData(Mesh* mesh) = 0;
 		// Create a StaticVoxelMeshData for this renderer.
 		virtual MeshData* CreateStaticVoxelMeshData(Mesh* mesh) = 0;
 
@@ -62,49 +58,32 @@ namespace gp1 {
 	protected:
 		GLFWwindow* GetNativeWindowHandle() const;
 
+		template <typename T>
+		T* GetMeshData(Mesh* mesh) {
+			return reinterpret_cast<T*>(mesh->GetMeshData(this));
+		}
+
+		template <typename T>
+		T* GetMaterialData(Material* material) {
+			return reinterpret_cast<T*>(material->GetMaterialData(this));
+		}
+
+		template <typename T>
+		T* GetShaderData(MaterialData* materialData) {
+			return GetShaderData<T>(materialData->GetMaterial<Material>()->GetShader());
+		}
+
+		template <typename T>
+		T* GetShaderData(Shader* shader) {
+			return reinterpret_cast<T*>(shader->GetShaderData(this));
+		}
+
 	public:
 		// Get the appropriate renderer for the type.
 		static Renderer* GetRenderer(RendererType rendererType, Window* window);
 
 	protected:
 		Window* m_Window;				// The window instance.
-
-		StaticMesh* m_Mesh = nullptr;
-		Material* m_Material = nullptr;
-	};
-
-	class OpenGLRenderer : public Renderer {
-	public:
-		OpenGLRenderer(Window* window);
-
-		virtual RendererType GetRendererType() const override;
-
-		virtual void Init() override;
-		virtual void DeInit() override;
-		virtual void Render() override;
-
-		virtual bool IsMeshDataUsable(MeshData* meshData) override;
-		virtual bool IsShaderDataUsable(ShaderData* shaderData) override;
-		virtual bool IsMaterialDataUsable(MaterialData* materialData) override;
-
-		virtual MeshData* CreateStaticMeshData(Mesh* mesh) override;
-		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) override;
-		virtual MeshData* CreateStaticVoxelMeshData(Mesh* mesh) override;
-
-		virtual ShaderData* CreateShaderData(Shader* shader) override;
-
-		virtual MaterialData* CreateMaterialData(Material* material) override;
-
-	private:
-		// Render a mesh with a material.
-		void RenderMeshWithMaterial(OpenGLMeshData* mesh, OpenGLMaterialData* material);
-		// Render a mesh.
-		void RenderMesh(OpenGLMeshData* mesh);
-
-		// Set up data for the material.
-		void PreMaterial(OpenGLMaterialData* material);
-		// Clean up data for the material.
-		void PostMaterial(OpenGLMaterialData* material);
 	};
 
 } // namespace gp1
