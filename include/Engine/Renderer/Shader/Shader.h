@@ -5,13 +5,10 @@
 #pragma once
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Shader/Uniform.h"
-#include "Engine/Utility/Logger.h"
 
 #include <stdint.h>
 #include <string>
 #include <unordered_map>
-
-#include <glad/glad.h>
 
 namespace gp1 {
 
@@ -53,6 +50,8 @@ namespace gp1 {
 		friend Material;
 
 	private:
+		// Loads attributes and uniforms from the shaders .ini file
+		void LoadAttributesAndUniforms();
 		// Create the custom shader data.
 		virtual ShaderData* CreateCustomShaderData(Renderer* renderer);
 
@@ -88,7 +87,11 @@ namespace gp1 {
 
 	protected:
 		// Get the shader this shader data is part of.
-		Shader* GetShader() const;
+		template <typename T>
+		T* GetShader() const {
+			return reinterpret_cast<T*>(this->m_Shader);
+		}
+
 		const std::unordered_map<std::string, uint32_t>& GetAttributes() const;
 
 		void SetAttributeIndex(const std::string& id, uint32_t index);
@@ -96,45 +99,6 @@ namespace gp1 {
 
 	private:
 		Shader* m_Shader;
-	};
-
-	class OpenGLShaderData : public ShaderData {
-	public:
-		OpenGLShaderData(Shader* shader);
-
-		virtual RendererType GetRendererType() const override;
-		virtual void CleanUp() override;
-
-		// Get the program id.
-		uint32_t GetProgramID();
-		// Initialize GL data.
-		void InitGLData();
-
-		// Start using this shader.
-		void Start();
-		// Stop using this shader.
-		void Stop();
-
-	protected:
-		// Load and compile a shader type.
-		uint32_t LoadShader(ShaderType type);
-
-	protected:
-		// Get the id of the shader type.
-		static uint32_t GetShaderTypeId(ShaderType type);
-		// Get the name of a shader type.
-		static const char* GetShaderTypeName(ShaderType type);
-		// Get the extension name of a shader type.
-		static const char* GetShaderTypeExtensionName(ShaderType type);
-
-		static UniformType GetUniformType(GLenum type);
-
-	private:
-		uint32_t m_ProgramID = 0;	// The program ID of this shader.
-
-		std::unordered_map<ShaderType, bool> m_Shaders;	// All shader types that have been loaded.
-	private:
-		static Logger m_Logger;	// The shader's logger.
 	};
 
 } // namespace gp1
