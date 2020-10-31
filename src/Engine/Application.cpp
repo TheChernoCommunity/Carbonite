@@ -9,13 +9,14 @@
 #include "Engine/Utility/Logger.h"
 #include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Input/InputHandler.h"
+#include "Engine/Renderer/Shader/Shader.h"
 
 namespace gp1 {
 
 	Application::Application() {
 		Logger::Init();
 		m_Window.Init();
-		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
+		m_Renderer = Renderer::GetRenderer(RendererType::VULKAN, &m_Window);
 		m_Renderer->Init();
 	}
 
@@ -29,6 +30,7 @@ namespace gp1 {
 	Application::~Application() {
 		this->m_Renderer->DeInit();
 		delete m_Renderer;
+		Shader::CleanUpShaders();
 		m_Window.DeInit();
 		input::InputHandler::CleanUp();
 		config::ConfigManager::SaveConfigs();

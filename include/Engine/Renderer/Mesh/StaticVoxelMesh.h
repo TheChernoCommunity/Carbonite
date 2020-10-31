@@ -2,7 +2,7 @@
 //	Created by MarcasRealAccount on 30. Oct. 2020
 //	
 
-#include "Engine/Renderer/Mesh.h"
+#include "Engine/Renderer/Mesh/Mesh.h"
 
 namespace gp1 {
 
@@ -19,17 +19,6 @@ namespace gp1 {
 
 	public:
 		std::vector<StaticVoxelMeshVertex> m_Vertices;	// This mesh's vertices.
-	};
-
-	struct OpenGLStaticVoxelMeshData : public OpenGLMeshData {
-	public:
-		OpenGLStaticVoxelMeshData(Mesh* mesh);
-
-	private:
-		bool HasVertices() override;
-		uint32_t GetCustomDataSize() override;
-		void InitCustomGLData() override;
-		void ClearCustomData() override;
 	};
 
 } // namespace gp1

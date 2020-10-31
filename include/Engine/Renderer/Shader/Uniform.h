@@ -6,12 +6,9 @@
 
 #include <stdint.h>
 
-#include <glad/glad.h>
-
 namespace gp1 {
 
 	class Material;
-	class OpenGLMaterial;
 
 	enum class UniformType : uint32_t {
 		FLOAT,
@@ -37,7 +34,6 @@ namespace gp1 {
 		Uniform(T defaultValue) : m_Value(defaultValue) {}
 
 		friend Material;
-		friend OpenGLMaterial;
 
 	public:
 		T m_Value;			// The value of this uniform.

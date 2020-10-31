@@ -1,30 +1,26 @@
 //	
-//	Created by MarcasRealAccount on 30. Oct. 2020
+//	Created by MarcasRealAccount on 31. Oct. 2020
 //	
 
-#include "Engine/Renderer/SkeletalMesh.h"
+#include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLSkeletalMeshData.h"
 
 namespace gp1 {
-
-	MeshData* SkeletalMesh::CreateCustomMeshData(Renderer* renderer) {
-		return renderer->CreateSkeletalMeshData(this);
-	}
 
 	OpenGLSkeletalMeshData::OpenGLSkeletalMeshData(Mesh* mesh)
 		: OpenGLMeshData(mesh) {}
 
 	bool OpenGLSkeletalMeshData::HasVertices() {
-		return reinterpret_cast<SkeletalMesh*>(GetMesh())->m_Vertices.size() > 0;
+		return GetMesh<SkeletalMesh>()->m_Vertices.size() > 0;
 	}
 
 	uint32_t OpenGLSkeletalMeshData::GetCustomDataSize() {
-		return static_cast<uint32_t>(reinterpret_cast<SkeletalMesh*>(GetMesh())->m_Vertices.size());
+		return static_cast<uint32_t>(GetMesh<SkeletalMesh>()->m_Vertices.size());
 	}
 
 	void OpenGLSkeletalMeshData::InitCustomGLData() {
 		CreateVBOs(this->m_NumVBOs + 1);
 		BindNextVBO(GL_ARRAY_BUFFER);
-		glBufferData(GL_ARRAY_BUFFER, reinterpret_cast<SkeletalMesh*>(GetMesh())->m_Vertices.size() * sizeof(SkeletalMeshVertex), reinterpret_cast<SkeletalMesh*>(GetMesh())->m_Vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, GetMesh<SkeletalMesh>()->m_Vertices.size() * sizeof(SkeletalMeshVertex), GetMesh<SkeletalMesh>()->m_Vertices.data(), GL_STATIC_DRAW);
 		CreateVertexAttribArrays(5);
 		SetVertexAttribPointer(static_cast<uint32_t>(VertexAttribIndex::POSITION), 3, GL_FLOAT, false, sizeof(SkeletalMeshVertex), offsetof(SkeletalMeshVertex, position));
 		SetVertexAttribPointer(static_cast<uint32_t>(VertexAttribIndex::NORMAL), 3, GL_FLOAT, false, sizeof(SkeletalMeshVertex), offsetof(SkeletalMeshVertex, normal));
@@ -35,7 +31,7 @@ namespace gp1 {
 	}
 
 	void OpenGLSkeletalMeshData::ClearCustomData() {
-		reinterpret_cast<SkeletalMesh*>(GetMesh())->m_Vertices.clear();
+		GetMesh<SkeletalMesh>()->m_Vertices.clear();
 	}
 
 } // namespace gp1
