@@ -40,8 +40,8 @@ namespace gp1 {
 		// Clean up data for the material.
 		void PostMaterial(OpenGLMaterialData* material);
 
-		StaticMesh* m_Mesh;
-		Material* m_Material;
+		StaticMesh* m_Mesh = nullptr;
+		Material* m_Material = nullptr;
 	};
 
 } // namespace gp1

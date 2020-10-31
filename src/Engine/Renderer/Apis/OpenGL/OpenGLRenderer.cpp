@@ -67,6 +67,8 @@ namespace gp1 {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		RenderMeshWithMaterial(GetMeshData<OpenGLMeshData>(this->m_Mesh), GetMaterialData<OpenGLMaterialData>(this->m_Material));
+
+		glfwSwapBuffers(GetNativeWindowHandle());
 	}
 
 	MeshData* OpenGLRenderer::CreateSkeletalMeshData(Mesh* mesh) {
