@@ -17,7 +17,7 @@ namespace gp1 {
 		class InputHandler {
 		public:
 			// Handles events for Input Bindings
-			static void HandleEvent(Event& event);
+			static bool HandleEvent(Event& event);
 
 			// Sets the current active input group by using an InputGroups id.
 			static void SetCurrentActiveInputGroup(std::string id);

@@ -36,7 +36,7 @@ namespace gp1 {
 						return;
 				}
 
-				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex() });
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
 				event.Handled = true;
 				break;
 			}
@@ -49,7 +49,10 @@ namespace gp1 {
 				if ((uint32_t)releasedEvent.GetKey() != this->GetIndex())
 					return;
 
-				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex() });
+				if (this->m_inputType != ButtonInputType::RELEASE)
+					return;
+
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
 				event.Handled = true;
 				break;
 			}
@@ -62,7 +65,7 @@ namespace gp1 {
 				if ((uint32_t)pressedEvent.GetButton() != this->GetIndex())
 					return;
 
-				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex() });
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
 				event.Handled = true;
 				break;
 			}
@@ -75,7 +78,7 @@ namespace gp1 {
 				if ((uint32_t)releasedEvent.GetButton() != this->GetIndex())
 					return;
 
-				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex() });
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
 				event.Handled = true;
 				break;
 			}
