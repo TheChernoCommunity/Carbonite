@@ -6,6 +6,7 @@
 
 #include "Engine/Input/InputHandler.h"
 #include "Engine/Configuration/ConfigurationManager.h"
+#include "Engine/Events/Event.h"
 
 namespace gp1 {
 
@@ -14,10 +15,11 @@ namespace gp1 {
 		std::unordered_map<std::string, InputGroup*> InputHandler::m_inputGroups;
 		InputGroup* InputHandler::m_currentInputGroup = nullptr;
 
-		void InputHandler::HandleEvent(Event& event) {
+		bool InputHandler::HandleEvent(Event& event) {
 			if (InputHandler::m_currentInputGroup != nullptr) {
 				InputHandler::m_currentInputGroup->HandleEvent(event);
 			}
+			return event.Handled;
 		}
 
 		void InputHandler::SetCurrentActiveInputGroup(std::string id) {
