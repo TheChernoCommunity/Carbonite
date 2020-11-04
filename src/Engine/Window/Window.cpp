@@ -1,6 +1,12 @@
+//
+//	Created by rtryan98 on 21. Oct. 2020
+//	Edited by MarcasRealAccount on 4. Nov. 2020
+//
+
 #include "Engine/Window/Window.h"
 #include "Engine/Utility/Logger.h"
 
+#include "Engine/Events/EventHandler.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Events/WindowEvent.h"
@@ -59,7 +65,7 @@ namespace gp1
 				data.Width = width;
 				data.Height = height;
 				WindowResizeEvent event{ width, height };
-				// data.function(event);	// TODO: implement when event callback function is available
+				EventHandler::PushEvent(event);
 			});
 
 		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -70,19 +76,19 @@ namespace gp1
 				case GLFW_PRESS:
 				{
 					KeyPressedEvent event{ key, false };
-					// data.function(event);	// TODO: implement when event callback function is available
+					EventHandler::PushEvent(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					KeyReleasedEvent event{ key };
-					// data.function(event);	// TODO: implement when event callback function is available
+					EventHandler::PushEvent(event);
 					break;
 				}
 				case GLFW_REPEAT:
 				{
 					KeyPressedEvent event{ key, true };
-					// data.function(event);	// TODO: implement when event callback function is available
+					EventHandler::PushEvent(event);
 					break;
 				}
 				default:
@@ -100,13 +106,13 @@ namespace gp1
 				case GLFW_PRESS:
 				{
 					MouseButtonPressedEvent event{ button };
-					// data.function(event);	// TODO: implement when event callback function is available
+					EventHandler::PushEvent(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					MouseButtonReleasedEvent event{ button };
-					// data.function(event);	// TODO: implement when event callback function is available
+					EventHandler::PushEvent(event);
 					break;
 				}
 				default:
@@ -120,7 +126,14 @@ namespace gp1
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				MouseMovedEvent event{ static_cast<int>(xPos), static_cast<int>(yPos) };
-				// data.function(event);	// TODO: implement when event callback function is available
+				EventHandler::PushEvent(event);
+			});
+
+		glfwSetScrollCallback(m_NativeHandle, [](GLFWwindow* window, double x, double y)
+			{
+				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+				MouseScrollEvent event{ x, y };
+				EventHandler::PushEvent(event);
 			});
 
 		glfwMakeContextCurrent(m_NativeHandle);

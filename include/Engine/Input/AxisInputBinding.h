@@ -15,6 +15,7 @@ namespace gp1 {
 			InputLocation m_Location;
 			uint32_t m_Axis;
 			double m_Value;
+			const std::string& m_Id;
 		};
 
 		// Callback for AxisInputBinding
@@ -32,6 +33,14 @@ namespace gp1 {
 		private:
 			AxisCallback m_callback;	// The callback to call if the corrent event was passed to HandleEvent()
 		};
+
+		namespace axises {
+			constexpr uint32_t mouseX = 0;
+			constexpr uint32_t mouseY = 1;
+			constexpr uint32_t mouseWheelX = 2;
+			constexpr uint32_t mouseWheelY = 3;
+			constexpr uint32_t mouseLast = mouseWheelY;
+		}
 
 	} // namespace input
 
