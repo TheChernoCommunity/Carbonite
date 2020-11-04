@@ -1,10 +1,12 @@
 //
 // Created by sfulham on 8/10/20.
+// Edited by MarcasRealAccount on 4. Nov. 2020.
 //
 
 #pragma once
 
 #include "Engine/Events/Event.h"
+#include "Engine/Input/InputHandler.h"
 
 namespace gp1
 {
@@ -14,11 +16,11 @@ namespace gp1
 		template<typename T>
 		static void PushEvent(T& e)
 		{
-
+			Dispatch<T>(e, input::InputHandler::HandleEvent);
 		}
 
 		template<typename T, typename F>
-		void Dispatch(Event& e, const F& f)
+		static void Dispatch(Event& e, const F& f)
 		{
 			if(e.GetType() == T::GetTypeS() && (e.Handled == false))
 			{

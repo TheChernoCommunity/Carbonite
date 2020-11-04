@@ -25,10 +25,24 @@ namespace gp1 {
 					return;
 				MouseMovedEvent& movedEvent = *((MouseMovedEvent*)&event);
 
-				if (MouseMovedEvent::GetXAxisIndex() == this->GetIndex()) {
-					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetX() });
-				} else if (MouseMovedEvent::GetYAxisIndex() == this->GetIndex()) {
-					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetY() });
+				if (this->GetIndex() == axises::mouseX) {
+					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetX(), GetId() });
+				} else if (this->GetIndex() == axises::mouseY) {
+					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetY(), GetId() });
+				}
+
+				break;
+			}
+			case EventType::MOUSE_SCROLLED_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::MOUSE)
+					return;
+				MouseScrollEvent& scrollEvent = *static_cast<MouseScrollEvent*>(&event);
+
+				if (this->GetIndex() == axises::mouseWheelX) {
+					this->m_callback({ this->GetLocation(), this->GetIndex(), scrollEvent.GetX(), GetId() });
+				} else if (this->GetIndex() == axises::mouseWheelY) {
+					this->m_callback({ this->GetLocation(), this->GetIndex(), scrollEvent.GetY(), GetId() });
 				}
 
 				break;
