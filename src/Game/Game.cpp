@@ -45,6 +45,7 @@ namespace gp1 {
 		input::InputHandler::HandleEvent(MouseMovedEvent(50, 100));
 	}
 
+
 	void Game::LookCallback(input::AxisCallbackData data) {
 		switch (data.m_Axis) {
 		case 0:
