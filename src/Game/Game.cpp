@@ -29,30 +29,30 @@ namespace gp1 {
 		playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
 		playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
 		playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
+		
+		input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
+		input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::gamepadTriangle, input::ButtonInputType::PRESS, input::InputLocation::GAMEPAD);
+		closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
+		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
 
 		// First get or create a new InputGroup with InputHandler::GetOrCreateInputGroup(name):
 		input::InputGroup* onFoot = input::InputHandler::GetOrCreateInputGroup("onFoot");
 		onFoot->SetCaptureMouse(true);
 		// Second create either a ButtonInputBinding or AxisInputBinding with their respective create functions:
-		input::ButtonInputBinding* openMenu = onFoot->CreateButtonInputBinding("openMenu", input::buttons::keyEscape);
+		input::ButtonInputBinding* openMenu = onFoot->CreateButtonInputBinding("openMenu", input::buttons::gamepadTriangle, input::ButtonInputType::PRESS, input::InputLocation::GAMEPAD);
 		// Thirdly if you didn't set the binding in the create function you can do it like this:
 		openMenu->BindCallback(std::bind(&Game::OpenMenuCallback, this, std::placeholders::_1));
 		// The callback is void(gp1::input::ButtonCallbackData data) or void(gp1::input::AxisCallbackData data) depending on what type of binding.
 		// For an example setup look at the callbacks in this class.
 		m_Logger.LogDebug("OpenMenu keybind is: %u, on device: %u", openMenu->GetIndex(), static_cast<uint32_t>(openMenu->GetLocation()));
 
-		input::AxisInputBinding* lookX = onFoot->CreateAxisInputBinding("lookX", input::axises::mouseX);
+		input::AxisInputBinding* lookX = onFoot->CreateAxisInputBinding("lookX", input::axises::gamepadLeftTrigger, input::InputLocation::GAMEPAD);
 		lookX->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
 		m_Logger.LogDebug("LookX keybind is: %u, on device: %u", lookX->GetIndex(), static_cast<uint32_t>(lookX->GetLocation()));
 
-		input::AxisInputBinding* lookY = onFoot->CreateAxisInputBinding("lookY", input::axises::mouseY);
+		input::AxisInputBinding* lookY = onFoot->CreateAxisInputBinding("lookY", input::axises::gamepadRightTrigger, input::InputLocation::GAMEPAD);
 		lookY->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
 		m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), static_cast<uint32_t>(lookY->GetLocation()));
-
-		input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
-		input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::keyEscape);
-		closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
-		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
 
 		//DebugRenderer::DebugDrawPoint({ 0, 0, -2 }, 20.0f);
 		//DebugRenderer::DebugDrawSphere({ 0, 0, -2 }, 0.5f, 10.0f);
