@@ -19,7 +19,9 @@ namespace gp1 {
 		enum class InputLocation : uint32_t {
 			KEYBOARD,
 			MOUSE,
-			LAST = MOUSE,
+			GAMEPAD,
+			JOYSTICK,
+			LAST = JOYSTICK,
 			UNKNOWN
 		};
 

@@ -35,12 +35,22 @@ namespace gp1 {
 		};
 
 		namespace axises {
+
 			constexpr uint32_t mouseX = 0;
 			constexpr uint32_t mouseY = 1;
 			constexpr uint32_t mouseWheelX = 2;
 			constexpr uint32_t mouseWheelY = 3;
 			constexpr uint32_t mouseLast = mouseWheelY;
-		}
+
+			constexpr uint32_t gamepadLeftX = 0;
+			constexpr uint32_t gamepadLeftY = 1;
+			constexpr uint32_t gamepadRightX = 2;
+			constexpr uint32_t gamepadRightY = 3;
+			constexpr uint32_t gamepadLeftTrigger = 4;
+			constexpr uint32_t gamepadRightTrigger = 5;
+			constexpr uint32_t gamepadLast = gamepadRightTrigger;
+
+		} // namespace axises
 
 	} // namespace input
 

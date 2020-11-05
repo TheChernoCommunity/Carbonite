@@ -44,6 +44,7 @@ namespace gp1 {
 		};
 
 		namespace buttons {
+
 			constexpr uint32_t keySpace = 32;
 			constexpr uint32_t keyApostrophe = 39;
 			constexpr uint32_t keyComma = 44;
@@ -178,7 +179,29 @@ namespace gp1 {
 			constexpr uint32_t mouseLeft = mouse1;
 			constexpr uint32_t mouseRight = mouse2;
 			constexpr uint32_t mouseMiddle = mouse3;
-		}
+
+			constexpr uint32_t gamepadA = 0;
+			constexpr uint32_t gamepadB = 1;
+			constexpr uint32_t gamepadX = 2;
+			constexpr uint32_t gamepadY = 3;
+			constexpr uint32_t gamepadLeftBumper = 4;
+			constexpr uint32_t gamepadRightBumper = 5;
+			constexpr uint32_t gamepadBack = 6;
+			constexpr uint32_t gamepadStart = 7;
+			constexpr uint32_t gamepadGuide = 8;
+			constexpr uint32_t gamepadLeftThumb = 9;
+			constexpr uint32_t gamepadRightThumb = 10;
+			constexpr uint32_t gamepadDPadUp = 11;
+			constexpr uint32_t gamepadDPadRight = 12;
+			constexpr uint32_t gamepadDPadDown = 13;
+			constexpr uint32_t gamepadDPadLeft = 14;
+			constexpr uint32_t gamepadLast = gamepadDPadLeft;
+			constexpr uint32_t gamepadCross = gamepadA;
+			constexpr uint32_t gamepadCircle = gamepadB;
+			constexpr uint32_t gamepadSquare = gamepadX;
+			constexpr uint32_t gamepadTriangle = gamepadY;
+
+		} // namespace buttons
 
 	} // namespace input
 
