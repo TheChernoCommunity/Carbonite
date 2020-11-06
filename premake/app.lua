@@ -19,6 +19,7 @@ function app( name )
 		'include',
 		'third_party/glfw/include',
 		'third_party/glad/include',
+		'third_party/glm/glm'
 	}
 	
 	files {

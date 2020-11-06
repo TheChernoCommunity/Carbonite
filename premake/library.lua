@@ -12,6 +12,7 @@ function library( name )
 	sysincludedirs {
 		'third_party/glfw/include',
 		'third_party/glad/include',
+		'third_party/glm/glm',
 	}
 
 	files {

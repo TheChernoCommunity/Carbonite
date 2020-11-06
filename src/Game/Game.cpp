@@ -6,6 +6,7 @@
 #include "Engine/Application.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
+#include "Engine/Renderer/DebugRenderer.h"
 
 namespace gp1 {
 
@@ -38,6 +39,14 @@ namespace gp1 {
 		input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::keyEscape);
 		closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
 		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
+
+		//DebugRenderer::DebugDrawPoint({ 0, 0, -2 }, 20.0f);
+		//DebugRenderer::DebugDrawSphere({ 0, 0, -2 }, 0.5f, 10.0f);
+		//DebugRenderer::DebugDrawLine({ -2, 1, -4 }, { 2, -1, -4 }, 10.0f);
+		//DebugRenderer::DebugDrawBox({ 0, 0, -3 }, { 1, 1, 1 }, { 0, 0, 0 }, 10.0f);
+		DebugRenderer::DebugDrawABox({ 0, -2, -7 }, 10.0f);
+		DebugRenderer::DebugDrawABox({ -1, -2, -7 }, 10.0f);
+		DebugRenderer::DebugDrawABox({ -2, -2, -7 }, 10.0f);
 	}
 
 	void Game::LookCallback(input::AxisCallbackData data) {

@@ -4,17 +4,21 @@
 
 #pragma once
 
+#include "Engine/Scene/Camera.h"
+
 struct GLFWwindow;
 
 namespace gp1 {
 
 	class Window;
+	class DebugRenderer;
 	struct Mesh;
 	struct MeshData;
 	class Material;
 	class MaterialData;
 	class Shader;
 	class ShaderData;
+	class Scene;
 
 	enum class RendererType {
 		OPENGL,
@@ -29,11 +33,14 @@ namespace gp1 {
 		virtual RendererType GetRendererType() const = 0;
 
 		// Initialize the renderer.
-		virtual void Init() = 0;
+		void Init();
 		// De-initialize the renderer.
-		virtual void DeInit() = 0;
-		// Render a frame.
-		virtual void Render() = 0;
+		void DeInit();
+		// Render a scene.
+		void Render(Scene* scene);
+
+		// Is the DebugRenderer made for this renderer.
+		virtual bool IsDebugRendererUsable(DebugRenderer* debugRenderer);
 
 		// Is the MeshData made for this renderer.
 		virtual bool IsMeshDataUsable(MeshData* meshData);
@@ -41,6 +48,9 @@ namespace gp1 {
 		virtual bool IsShaderDataUsable(ShaderData* shaderData);
 		// Is the MaterialData made for this renderer.
 		virtual bool IsMaterialDataUsable(MaterialData* materialData);
+
+		// Create a DebugRenderer for this renderer.
+		virtual DebugRenderer* CreateDebugRenderer() = 0;
 
 		// Create a SkeletalMeshData for this renderer.
 		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) = 0;
@@ -56,7 +66,16 @@ namespace gp1 {
 		virtual MaterialData* CreateMaterialData(Material* material) = 0;
 
 	protected:
+		// Initialize the renderer.
+		virtual void InitRenderer() = 0;
+		// De-initialize the renderer.
+		virtual void DeInitRenderer() = 0;
+		// Render a scene.
+		virtual void RenderScene(Scene* scene, uint32_t width, uint32_t height) = 0;
+
 		GLFWwindow* GetNativeWindowHandle() const;
+
+		DebugRenderer* GetDebugRenderer();
 
 		template <typename T>
 		T* GetMeshData(Mesh* mesh) {
@@ -83,7 +102,7 @@ namespace gp1 {
 		static Renderer* GetRenderer(RendererType rendererType, Window* window);
 
 	protected:
-		Window* m_Window;				// The window instance.
+		Window* m_Window;	// The window instance.
 	};
 
 } // namespace gp1

@@ -5,6 +5,8 @@
 #include "Engine/Renderer/Shader/Material.h"
 #include "Engine/Renderer/Shader/Shader.h"
 
+#include <glm.hpp>
+
 namespace gp1 {
 
 	Material::~Material() {
@@ -29,19 +31,19 @@ namespace gp1 {
 				}
 				case UniformType::FLOAT_VEC2:
 				{
-					Uniform<Vec2f> uniformVec2f({ 0.0f, 0.0f });
+					Uniform<glm::fvec2> uniformVec2f({ 0.0f, 0.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformVec2f });
 					break;
 				}
 				case UniformType::FLOAT_VEC3:
 				{
-					Uniform<Vec3f> uniformVec3f({ 0.0f, 0.0f, 0.0f });
+					Uniform<glm::fvec3> uniformVec3f({ 0.0f, 0.0f, 0.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformVec3f });
 					break;
 				}
 				case UniformType::FLOAT_VEC4:
 				{
-					Uniform<Vec4f> uniformVec4f({ 0.0f, 0.0f, 0.0f, 0.0f });
+					Uniform<glm::fvec4> uniformVec4f({ 0.0f, 0.0f, 0.0f, 0.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformVec4f });
 					break;
 				}
@@ -53,19 +55,19 @@ namespace gp1 {
 				}
 				case UniformType::INT_VEC2:
 				{
-					Uniform<Vec2i> uniformVec2i({ 0, 0 });
+					Uniform<glm::ivec2> uniformVec2i({ 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec2i });
 					break;
 				}
 				case UniformType::INT_VEC3:
 				{
-					Uniform<Vec3i> uniformVec3i({ 0, 0, 0 });
+					Uniform<glm::ivec3> uniformVec3i({ 0, 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec3i });
 					break;
 				}
 				case UniformType::INT_VEC4:
 				{
-					Uniform<Vec4i> uniformVec4i({ 0, 0, 0, 0 });
+					Uniform<glm::ivec4> uniformVec4i({ 0, 0, 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec4i });
 					break;
 				}
@@ -77,37 +79,37 @@ namespace gp1 {
 				}
 				case UniformType::UINT_VEC2:
 				{
-					Uniform<Vec2u> uniformVec2u({ 0, 0 });
+					Uniform<glm::uvec2> uniformVec2u({ 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec2u });
 					break;
 				}
 				case UniformType::UINT_VEC3:
 				{
-					Uniform<Vec3u> uniformVec3u({ 0, 0, 0 });
+					Uniform<glm::uvec3> uniformVec3u({ 0, 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec3u });
 					break;
 				}
 				case UniformType::UINT_VEC4:
 				{
-					Uniform<Vec4u> uniformVec4u({ 0, 0, 0, 0 });
+					Uniform<glm::uvec4> uniformVec4u({ 0, 0, 0, 0 });
 					this->m_Uniforms.insert({ uniform.first, uniformVec4u });
 					break;
 				}
 				case UniformType::FLOAT_MAT2:
 				{
-					Uniform<Mat2f> uniformMat2f({ 1.0f, 0.0f, 0.0f, 1.0f });
+					Uniform<glm::fmat2> uniformMat2f({ 1.0f, 0.0f, 0.0f, 1.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformMat2f });
 					break;
 				}
 				case UniformType::FLOAT_MAT3:
 				{
-					Uniform<Mat3f> uniformMat3f({ 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f });
+					Uniform<glm::fmat3> uniformMat3f({ 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformMat3f });
 					break;
 				}
 				case UniformType::FLOAT_MAT4:
 				{
-					Uniform<Mat4f> uniformMat4f({ 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f });
+					Uniform<glm::fmat4> uniformMat4f({ 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f });
 					this->m_Uniforms.insert({ uniform.first, uniformMat4f });
 					break;
 				}

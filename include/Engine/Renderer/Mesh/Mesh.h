@@ -19,6 +19,21 @@ namespace gp1 {
 		JOINT_WEIGHTS = 4
 	};
 
+	enum class RenderMode : uint32_t {
+		POINTS,
+		LINE_STRIP,
+		LINE_LOOP,
+		LINES,
+		LINE_STRIP_ADJANCENCY,
+		LINES_ADJACENCY,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN,
+		TRIANGLES,
+		TRIANGLE_STRIP_ADJACENCY,
+		TRIANGLES_ADJACENCY,
+		PATCHES
+	};
+
 	struct MeshData;
 
 	struct Mesh {
@@ -48,6 +63,9 @@ namespace gp1 {
 
 	public:
 		std::vector<uint32_t> m_Indices;	// This mesh's indices.
+
+		RenderMode m_RenderMode = RenderMode::TRIANGLES;	// The render mode.
+		float m_LineWidth = 1.0f;							// The line width of this mesh if rendered with points or lines.
 
 	protected:
 		bool m_Dirty = true;		// Should this mesh be recreated.
