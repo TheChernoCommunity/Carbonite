@@ -3,12 +3,16 @@
 //	
 
 #include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
+#include "Engine/Renderer/Apis/OpenGL/OpenGLDebugRenderer.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLMeshData.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLSkeletalMeshData.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticMeshData.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticVoxelMeshData.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLMaterialData.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderData.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Scene/Entity.h"
+#include "Engine/Scene/Camera.h"
 
 #include <stdint.h>
 
@@ -25,50 +29,8 @@ namespace gp1 {
 		return RendererType::OPENGL;
 	}
 
-	void OpenGLRenderer::Init() {
-		int32_t fw, fh;
-		glfwGetFramebufferSize(GetNativeWindowHandle(), &fw, &fh);
-		glViewport(0, 0, fw, fh);
-
-		glfwSetFramebufferSizeCallback(GetNativeWindowHandle(), [](GLFWwindow* window, int32_t width, int32_t height) {
-			_CRT_UNUSED(window);
-			glViewport(0, 0, width, height);
-			});
-
-		m_Mesh = new StaticMesh();
-		m_Material = new Material();
-
-		m_Mesh->m_Vertices.push_back({ { -0.5f, 0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f } });
-		m_Mesh->m_Vertices.push_back({ { 0.5f, 0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f } });
-		m_Mesh->m_Vertices.push_back({ { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } });
-		m_Mesh->m_Vertices.push_back({ { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } });
-
-		m_Mesh->m_Indices.push_back(3);
-		m_Mesh->m_Indices.push_back(1);
-		m_Mesh->m_Indices.push_back(0);
-		m_Mesh->m_Indices.push_back(3);
-		m_Mesh->m_Indices.push_back(2);
-		m_Mesh->m_Indices.push_back(1);
-
-		m_Material->SetShader(Shader::GetShader("shader"));
-		Uniform<Mat4f>* transformationMatrix = m_Material->GetUniform<Mat4f>("transformationMatrix");
-		if (transformationMatrix) {
-			transformationMatrix->m_Value.m30 = 0.5f;
-		}
-	}
-
-	void OpenGLRenderer::DeInit() {
-		delete m_Mesh;
-		delete m_Material;
-	}
-
-	void OpenGLRenderer::Render() {
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		RenderMeshWithMaterial(GetMeshData<OpenGLMeshData>(this->m_Mesh), GetMaterialData<OpenGLMaterialData>(this->m_Material));
-
-		glfwSwapBuffers(GetNativeWindowHandle());
+	DebugRenderer* OpenGLRenderer::CreateDebugRenderer() {
+		return new OpenGLDebugRenderer(this);
 	}
 
 	MeshData* OpenGLRenderer::CreateSkeletalMeshData(Mesh* mesh) {
@@ -91,6 +53,79 @@ namespace gp1 {
 		return new OpenGLMaterialData(material);
 	}
 
+	void OpenGLRenderer::InitRenderer() {
+
+	}
+
+	void OpenGLRenderer::DeInitRenderer() {
+
+	}
+
+	void OpenGLRenderer::RenderScene(Scene* scene, uint32_t width, uint32_t height) {
+		Camera* mainCamera = scene->GetMainCamera();
+		if (mainCamera) {
+			glViewport(0, 0, width, height);
+			glClearColor(mainCamera->m_ClearColor.r, mainCamera->m_ClearColor.g, mainCamera->m_ClearColor.b, mainCamera->m_ClearColor.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			for (auto entity : scene->GetEntities()) {
+				RenderEntity(entity);
+			}
+
+			// Render Debug Objects:
+			OpenGLDebugRenderer* debugRenderer = reinterpret_cast<OpenGLDebugRenderer*>(GetDebugRenderer());
+			if (debugRenderer) {
+				std::vector<OpenGLDebugObject*>& entities = debugRenderer->m_Entities;
+				auto itr = entities.begin();
+				while (itr != entities.end()) {
+					OpenGLDebugObject* obj = *itr;
+					if (obj->m_Lifetime > 0.0f) {
+						if (glfwGetTime() - obj->m_SpawnTime > obj->m_Lifetime) {
+							delete obj;
+							itr = entities.erase(itr);
+							continue;
+						}
+						obj->m_Scene = scene;
+						RenderEntity(obj);
+						itr++;
+					} else {
+						RenderEntity(obj);
+						delete obj;
+						itr = entities.erase(itr);
+						continue;
+					}
+				}
+			}
+
+			glfwSwapBuffers(GetNativeWindowHandle());
+		}
+	}
+
+	void OpenGLRenderer::RenderEntity(Entity* entity) {
+		Scene* scene = entity->GetScene();
+		if (!scene) return;
+
+		Camera* cam = scene->GetMainCamera();
+		if (!cam) return;
+
+		Mesh* mesh = entity->GetMesh();
+		Material* material = entity->GetMaterial();
+		if (material) {
+			if (mesh) {
+				Uniform<glm::fmat4>* transformationMatrix = material->GetUniform<glm::fmat4>("transformationMatrix");
+				if (transformationMatrix) transformationMatrix->m_Value = entity->GetTransformationMatrix();
+				Uniform<glm::fmat4>* projectionViewMatrix = material->GetUniform<glm::fmat4>("projectionViewMatrix");
+				if (projectionViewMatrix) projectionViewMatrix->m_Value = cam->GetProjectionViewMatrix();
+				Uniform<glm::fvec3>* lightDirection = material->GetUniform<glm::fvec3>("lightDirection");
+				if (lightDirection) lightDirection->m_Value = { 0, 0, 1 };
+
+				RenderMeshWithMaterial(GetMeshData<OpenGLMeshData>(mesh), GetMaterialData<OpenGLMaterialData>(material));
+			}
+		} else if (mesh) {
+			RenderMesh(GetMeshData<OpenGLMeshData>(mesh));
+		}
+	}
+
 	void OpenGLRenderer::RenderMeshWithMaterial(OpenGLMeshData* mesh, OpenGLMaterialData* material) {
 		PreMaterial(material);
 		RenderMesh(mesh);
@@ -98,18 +133,26 @@ namespace gp1 {
 	}
 
 	void OpenGLRenderer::RenderMesh(OpenGLMeshData* mesh) {
+		if (mesh->GetMesh<Mesh>()->m_RenderMode == RenderMode::POINTS)
+			glPointSize(mesh->GetMesh<Mesh>()->m_LineWidth);
+		else
+			glLineWidth(mesh->GetMesh<Mesh>()->m_LineWidth);
+
 		glBindVertexArray(mesh->GetVAO());
 		for (uint8_t i = 0; i < mesh->m_NumAttribs; i++)
 			glEnableVertexAttribArray(mesh->m_EnabledAttribs[i]);
 
 		if (mesh->HasIndices())
-			glDrawElements(GL_TRIANGLES, mesh->m_BufferSize, GL_UNSIGNED_INT, 0);
+			glDrawElements(mesh->GetRenderMode(), mesh->m_BufferSize, GL_UNSIGNED_INT, 0);
 		else
-			glDrawArrays(GL_TRIANGLES, 0, mesh->m_BufferSize);
+			glDrawArrays(mesh->GetRenderMode(), 0, mesh->m_BufferSize);
 
 		for (uint8_t i = mesh->m_NumAttribs; i > 0; i--)
 			glDisableVertexAttribArray(mesh->m_EnabledAttribs[i - 1]);
 		glBindVertexArray(0);
+
+		glPointSize(1);
+		glLineWidth(1);
 	}
 
 	void OpenGLRenderer::PreMaterial(OpenGLMaterialData* material) {

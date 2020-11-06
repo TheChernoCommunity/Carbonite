@@ -13,9 +13,7 @@ namespace gp1 {
 
 		virtual RendererType GetRendererType() const override;
 
-		virtual void Init() override;
-		virtual void DeInit() override;
-		virtual void Render() override;
+		virtual DebugRenderer* CreateDebugRenderer() override;
 
 		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) override;
 		virtual MeshData* CreateStaticMeshData(Mesh* mesh) override;
@@ -24,5 +22,10 @@ namespace gp1 {
 		virtual ShaderData* CreateShaderData(Shader* shader) override;
 
 		virtual MaterialData* CreateMaterialData(Material* material) override;
+
+	protected:
+		virtual void InitRenderer() override;
+		virtual void DeInitRenderer() override;
+		virtual void RenderScene(Scene* scene, uint32_t width, uint32_t height) override;
 	};
 }

@@ -17,9 +17,7 @@ namespace gp1 {
 
 		virtual RendererType GetRendererType() const override;
 
-		virtual void Init() override;
-		virtual void DeInit() override;
-		virtual void Render() override;
+		virtual DebugRenderer* CreateDebugRenderer() override;
 
 		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) override;
 		virtual MeshData* CreateStaticMeshData(Mesh* mesh) override;
@@ -29,7 +27,14 @@ namespace gp1 {
 
 		virtual MaterialData* CreateMaterialData(Material* material) override;
 
+	protected:
+		virtual void InitRenderer() override;
+		virtual void DeInitRenderer() override;
+		virtual void RenderScene(Scene* scene, uint32_t width, uint32_t height) override;
+
 	private:
+		// Render an entity.
+		void RenderEntity(Entity* entity);
 		// Render a mesh with a material.
 		void RenderMeshWithMaterial(OpenGLMeshData* mesh, OpenGLMaterialData* material);
 		// Render a mesh.
@@ -39,9 +44,6 @@ namespace gp1 {
 		void PreMaterial(OpenGLMaterialData* material);
 		// Clean up data for the material.
 		void PostMaterial(OpenGLMaterialData* material);
-
-		StaticMesh* m_Mesh = nullptr;
-		Material* m_Material = nullptr;
 	};
 
 } // namespace gp1

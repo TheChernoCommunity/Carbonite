@@ -3,6 +3,7 @@
 //
 
 #include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
+#include "Engine/Renderer/Apis/Vulkan/VulkanDebugRenderer.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanSkeletalMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMeshData.h"
@@ -19,16 +20,8 @@ namespace gp1 {
 		return RendererType::VULKAN;
 	}
 
-	void VulkanRenderer::Init() {
-
-	}
-
-	void VulkanRenderer::DeInit() {
-
-	}
-
-	void VulkanRenderer::Render() {
-
+	DebugRenderer* VulkanRenderer::CreateDebugRenderer() {
+		return new VulkanDebugRenderer(this);
 	}
 
 	MeshData* VulkanRenderer::CreateSkeletalMeshData(Mesh* mesh) {
@@ -49,6 +42,20 @@ namespace gp1 {
 
 	MaterialData* VulkanRenderer::CreateMaterialData(Material* material) {
 		return new VulkanMaterialData(material);
+	}
+
+	void VulkanRenderer::InitRenderer() {
+
+	}
+
+	void VulkanRenderer::DeInitRenderer() {
+
+	}
+
+	void VulkanRenderer::RenderScene(Scene* scene, uint32_t width, uint32_t height) {
+		_CRT_UNUSED(scene);
+		_CRT_UNUSED(width);
+		_CRT_UNUSED(height);
 	}
 
 } // namespace gp1

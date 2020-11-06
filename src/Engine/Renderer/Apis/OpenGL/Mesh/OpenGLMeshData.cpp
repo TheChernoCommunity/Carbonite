@@ -9,6 +9,37 @@ namespace gp1 {
 	OpenGLMeshData::OpenGLMeshData(Mesh* mesh)
 		: MeshData(mesh) {}
 
+	GLenum OpenGLMeshData::GetRenderMode() const {
+		switch (GetMesh<Mesh>()->m_RenderMode) {
+		case RenderMode::POINTS:
+			return GL_POINTS;
+		case RenderMode::LINE_STRIP:
+			return GL_LINE_STRIP;
+		case RenderMode::LINE_LOOP:
+			return GL_LINE_LOOP;
+		case RenderMode::LINES:
+			return GL_LINES;
+		case RenderMode::LINE_STRIP_ADJANCENCY:
+			return GL_LINE_STRIP_ADJACENCY;
+		case RenderMode::LINES_ADJACENCY:
+			return GL_LINES_ADJACENCY;
+		case RenderMode::TRIANGLE_STRIP:
+			return GL_TRIANGLE_STRIP;
+		case RenderMode::TRIANGLE_FAN:
+			return GL_TRIANGLE_FAN;
+		case RenderMode::TRIANGLES:
+			return GL_TRIANGLES;
+		case RenderMode::TRIANGLE_STRIP_ADJACENCY:
+			return GL_TRIANGLE_STRIP_ADJACENCY;
+		case RenderMode::TRIANGLES_ADJACENCY:
+			return GL_TRIANGLES_ADJACENCY;
+		case RenderMode::PATCHES:
+			return GL_PATCHES;
+		default:
+			return GL_POINTS;
+		}
+	}
+
 	RendererType OpenGLMeshData::GetRendererType() const {
 		return RendererType::OPENGL;
 	}
