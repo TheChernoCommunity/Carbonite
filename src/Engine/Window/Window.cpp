@@ -68,6 +68,13 @@ namespace gp1
 				EventHandler::PushEvent(event);
 			});
 
+		glfwSetFramebufferSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height)
+			{
+				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+				data.FramebufferWidth = width;
+				data.FramebufferHeight = height;
+			});
+
 		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));

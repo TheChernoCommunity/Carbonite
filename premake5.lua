@@ -13,6 +13,7 @@ configurations { 'Debug', 'Release' }
 
 third_party_library 'glad'
 third_party_library 'glfw'
+third_party_library 'glm'
 library 'Engine'
 app 'Game'
 

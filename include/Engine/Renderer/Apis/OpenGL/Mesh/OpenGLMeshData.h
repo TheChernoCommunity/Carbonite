@@ -15,6 +15,7 @@ namespace gp1 {
 	public:
 		OpenGLMeshData(Mesh* mesh);
 
+		GLenum GetRenderMode() const;
 		virtual RendererType GetRendererType() const override;
 
 		// Does this mesh have vertices.

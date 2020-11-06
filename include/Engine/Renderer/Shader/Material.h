@@ -10,60 +10,6 @@
 
 namespace gp1 {
 
-	struct Mat2f {
-		float m00, m01;
-		float m10, m11;
-	};
-
-	struct Mat3f {
-		float m00, m01, m02;
-		float m10, m11, m12;
-		float m20, m21, m22;
-	};
-
-	struct Mat4f {
-		float m00, m01, m02, m03;
-		float m10, m11, m12, m13;
-		float m20, m21, m22, m23;
-		float m30, m31, m32, m33;
-	};
-
-	struct Vec2f {
-		float x, y;
-	};
-
-	struct Vec3f {
-		float x, y, z;
-	};
-
-	struct Vec4f {
-		float x, y, z, w;
-	};
-
-	struct Vec2i {
-		int32_t x, y;
-	};
-
-	struct Vec3i {
-		int32_t x, y, z;
-	};
-
-	struct Vec4i {
-		int32_t x, y, z, w;
-	};
-
-	struct Vec2u {
-		uint32_t x, y;
-	};
-
-	struct Vec3u {
-		uint32_t x, y, z;
-	};
-
-	struct Vec4u {
-		uint32_t x, y, z, w;
-	};
-
 	class Shader;
 
 	template <typename T>

@@ -22,6 +22,8 @@ namespace gp1
 
 	struct WindowData
 	{
+		unsigned int FramebufferWidth;
+		unsigned int FramebufferHeight;
 		unsigned int Width;
 		unsigned int Height;
 		std::string Title;

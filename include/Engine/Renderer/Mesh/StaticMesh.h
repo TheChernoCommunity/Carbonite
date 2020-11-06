@@ -4,12 +4,14 @@
 
 #include "Engine/Renderer/Mesh/Mesh.h"
 
+#include <glm.hpp>
+
 namespace gp1 {
 
 	struct StaticMeshVertex {
-		struct { float x, y, z; } position{ 0.0f, 0.0f, 0.0f };
-		struct { float x, y, z; } normal{ 0.0f, 0.0f, 0.0f };
-		struct { float x, y; } uv{ 0.0f, 0.0f };
+		glm::fvec3 position{ 0.0f, 0.0f, 0.0f };
+		glm::fvec3 normal{ 0.0f, 0.0f, 0.0f };
+		glm::fvec2 uv{ 0.0f, 0.0f };
 	};
 
 	struct StaticMesh : public Mesh {
