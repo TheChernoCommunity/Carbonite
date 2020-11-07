@@ -42,9 +42,9 @@ namespace gp1 {
 			static void RemoveInputGroup(InputGroup* inputGroup);
 
 			// Sets the bindings to a config.
-			static void SetBindingConfigs(const std::string& id, InputLocation location, uint32_t index);
+			static void SetBindingConfigs(const std::string& id, InputType inputType, InputLocation location, uint32_t index);
 			// Gets the bindings from a config.
-			static void GetBindingConfigs(const std::string& id, InputLocation* location, uint32_t* index);
+			static void GetBindingConfigs(const std::string& id, InputType inputType, InputLocation* location, uint32_t* index);
 
 			friend Application;
 
