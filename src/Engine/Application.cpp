@@ -52,6 +52,7 @@ namespace gp1 {
 	Application::Application() {
 		Logger::Init();
 		m_Window.Init();
+		input::InputHandler::m_Window = &m_Window;
 		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
 		m_Renderer->Init();
 

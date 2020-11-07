@@ -19,6 +19,7 @@ namespace gp1 {
 
 		// First get or create a new InputGroup with InputHandler::GetOrCreateInputGroup(name):
 		input::InputGroup* onFoot = input::InputHandler::GetOrCreateInputGroup("onFoot");
+		onFoot->SetCaptureMouse(true);
 		// Second create either a ButtonInputBinding or AxisInputBinding with their respective create functions:
 		input::ButtonInputBinding* openMenu = onFoot->CreateButtonInputBinding("openMenu", input::buttons::keyEscape);
 		// Thirdly if you didn't set the binding in the create function you can do it like this:

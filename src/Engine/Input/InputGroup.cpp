@@ -18,8 +18,6 @@ namespace gp1 {
 		InputGroup::~InputGroup() {
 			for (auto binding : this->m_inputBindings)
 				delete binding.second;
-
-			//InputHandler::RemoveInputGroupImpl(this);
 		}
 
 		void InputGroup::attach() {
@@ -28,6 +26,14 @@ namespace gp1 {
 
 		void InputGroup::detach() {
 			InputHandler::SetCurrentActiveInputGroup(nullptr);
+		}
+
+		void InputGroup::SetCaptureMouse(bool captureMouse) {
+			this->m_CaptureMouse = captureMouse;
+		}
+
+		bool InputGroup::DoesCaptureMouse() const {
+			return this->m_CaptureMouse;
 		}
 
 		void InputGroup::HandleEvent(Event& event) {

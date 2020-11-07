@@ -202,6 +202,14 @@ namespace gp1
 		glfwSetWindowTitle(m_NativeHandle, m_WindowData.Title.c_str());
 	}
 
+	int Window::GetInputMode(int mode) {
+		return glfwGetInputMode(m_NativeHandle, mode);
+	}
+
+	void Window::SetInputMode(int mode, int value) {
+		glfwSetInputMode(m_NativeHandle, mode, value);
+	}
+
 	const WindowData& Window::GetWindowData() const
 	{
 		return m_WindowData;

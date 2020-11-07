@@ -11,6 +11,8 @@
 namespace gp1 {
 
 	class Event;
+	class Window;
+	class Application;
 
 	namespace input {
 
@@ -44,10 +46,13 @@ namespace gp1 {
 			// Gets the bindings from a config.
 			static void GetBindingConfigs(const std::string& id, InputLocation* location, uint32_t* index);
 
+			friend Application;
+
 		private:
 			static std::unordered_map<std::string, InputGroup*> m_inputGroups;	// The InputGroups this InputHandler handles.
 
-			static InputGroup* m_currentInputGroup;								// The currently active InputGroup.
+			static InputGroup* m_currentInputGroup;	// The currently active InputGroup.
+			static Window* m_Window;				// The window of this application.
 		};
 
 	} // namespace input
