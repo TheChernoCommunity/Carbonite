@@ -104,6 +104,13 @@ namespace gp1 {
 		}
 
 		const std::string& ConfigSection::GetConfig(const std::string& key, const std::string& def) {
+			uint64_t keyPeriod = key.find_first_of('.');
+			if (keyPeriod < key.length()) {
+				std::string thisKey = key.substr(0, keyPeriod);
+				ConfigSection* sec = GetOrCreateSection(thisKey);
+				if (sec)
+					return sec->GetConfig(key.substr(keyPeriod + 1), def);
+			}
 			auto itr = this->m_Configs.find(key);
 			if (itr != this->m_Configs.end())
 				return itr->second;

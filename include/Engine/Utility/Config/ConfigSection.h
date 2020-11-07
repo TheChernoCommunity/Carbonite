@@ -6,6 +6,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace gp1 {
 
@@ -40,6 +41,43 @@ namespace gp1 {
 			// Get T value of a config.
 			template <typename T>
 			T GetConfigTyped(const std::string& key, T def);
+			// Sets a config value with an enum value name.
+			template <typename T>
+			void SetConfigEnum(const std::string& key, T value, const std::vector<std::pair<T, std::string>>& enumNames) {
+				auto itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->first == value) {
+						SetConfig(key, itr->second);
+						break;
+					}
+					itr++;
+				}
+			}
+
+			// Gets the element T that the config's value was the same as.
+			template <typename T>
+			T GetConfigEnum(const std::string& key, T def, const std::vector<std::pair<T, std::string>>& enumNames) {
+				std::string defName = "";
+				auto itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->first == def) {
+						defName = itr->second;
+						break;
+					}
+					itr++;
+				}
+				if (itr == enumNames.end()) return def;
+
+				const std::string& configValue = GetConfig(key, defName);
+
+				itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->second == configValue)
+						return itr->first;
+					itr++;
+				}
+				return def;
+			}
 
 			// Get the key.
 			const std::string& GetKey() const;

@@ -23,14 +23,14 @@ namespace gp1 {
 		TestFLAC = AudioSource::LoadFromFile("Sounds/TestFLAC.flac");
 
 		input::InputGroup* audioInput = input::InputHandler::GetOrCreateInputGroup("audioInput");
-		input::ButtonInputBinding* playWav = audioInput->CreateButtonInputBinding("playWav", input::buttons::key0);
-		input::ButtonInputBinding* playMp3 = audioInput->CreateButtonInputBinding("playMp3", input::buttons::key1);
-		input::ButtonInputBinding* playFlac = audioInput->CreateButtonInputBinding("playFlac", input::buttons::key2);
+		input::ButtonInputBinding* playWav = audioInput->CreateButtonInputBinding("playWav", input::buttons::key1);
+		input::ButtonInputBinding* playMp3 = audioInput->CreateButtonInputBinding("playMp3", input::buttons::key2);
+		input::ButtonInputBinding* playFlac = audioInput->CreateButtonInputBinding("playFlac", input::buttons::key3);
+
+		input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
 		playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
 		playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
 		playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
-		
-		input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
 		input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::gamepadTriangle, input::ButtonInputType::PRESS, input::InputLocation::GAMEPAD);
 		closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
 		m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
@@ -81,20 +81,17 @@ namespace gp1 {
 		input::InputHandler::SetCurrentActiveInputGroup("onFoot");
 	}
 
-	void Game::PlayMP3Callback(input::ButtonCallbackData data)
-	{
+	void Game::PlayMP3Callback(input::ButtonCallbackData data) {
 		// Play the source
 		Audio::Play(TestMP3);
 	}
 
-	void Game::PlayWAVCallback(input::ButtonCallbackData data)
-	{
+	void Game::PlayWAVCallback(input::ButtonCallbackData data) {
 		// Play the source
 		Audio::Play(TestWAV);
 	}
 
-	void Game::PlayFLACCallback(input::ButtonCallbackData data)
-	{
+	void Game::PlayFLACCallback(input::ButtonCallbackData data) {
 		// Play the source
 		Audio::Play(TestFLAC);
 	}
