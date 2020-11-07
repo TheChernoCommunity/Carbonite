@@ -44,13 +44,6 @@ namespace gp1 {
 		input::InputHandler::HandleEvent(MouseMovedEvent(100, 50));
 		input::InputHandler::HandleEvent(KeyPressedEvent(256, false));
 		input::InputHandler::HandleEvent(MouseMovedEvent(50, 100));
-
-		using namespace GL;
-		Texture t = Texture2DCreate({20,20});
-		GL::BindTexture(t,0);
-		GL::BindTexture(t, 0);
-		GL::UnbindTexture(0);
-		DeleteTexture(t);
 	}
 
 	void Game::LookCallback(input::AxisCallbackData data) {
