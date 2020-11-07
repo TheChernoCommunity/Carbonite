@@ -7,13 +7,16 @@
 #include "Engine/Input/InputHandler.h"
 #include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Events/Event.h"
+#include "Engine/Window/Window.h"
 
 namespace gp1 {
 
 	namespace input {
 
 		std::unordered_map<std::string, InputGroup*> InputHandler::m_inputGroups;
+
 		InputGroup* InputHandler::m_currentInputGroup = nullptr;
+		Window* InputHandler::m_Window = nullptr;
 
 		void InputHandler::CleanUp() {
 			for (auto group : InputHandler::m_inputGroups) {
@@ -23,6 +26,10 @@ namespace gp1 {
 
 		bool InputHandler::HandleEvent(Event& event) {
 			if (InputHandler::m_currentInputGroup != nullptr) {
+				if (InputHandler::m_Window->GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_NORMAL && InputHandler::m_currentInputGroup->DoesCaptureMouse())
+					InputHandler::m_Window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				else if (InputHandler::m_Window->GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_DISABLED && !InputHandler::m_currentInputGroup->DoesCaptureMouse())
+					InputHandler::m_Window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				InputHandler::m_currentInputGroup->HandleEvent(event);
 			}
 			return event.Handled;

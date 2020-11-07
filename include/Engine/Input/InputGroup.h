@@ -28,6 +28,11 @@ namespace gp1 {
 			// You don't have to call this function before attaching another InputGroup.
 			void detach();
 
+			// Tells the InputGroup that the mouse should be captured when it's being used.
+			void SetCaptureMouse(bool captureMouse);
+			// Gets wether this InputGroup captures the mouse or not.
+			bool DoesCaptureMouse() const;
+
 			// Handles an event for this InputGroup.
 			void HandleEvent(Event& event);
 
@@ -51,6 +56,7 @@ namespace gp1 {
 		private:
 			std::string m_id;													// The id of this InputGroup.
 			std::unordered_map<std::string, IInputBinding*> m_inputBindings;	// The bindings this InputGroup handles.
+			bool m_CaptureMouse = false;										// Does this InputGroup capture the mouse.
 		};
 
 	} // namespace input

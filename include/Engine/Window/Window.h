@@ -48,6 +48,8 @@ namespace gp1
 		void SetHeight(const int p_Height);
 		void SetSize(const int p_Width, const int p_Height);
 		void SetTitle(const std::string& p_Title);
+		int GetInputMode(int mode);
+		void SetInputMode(int mode, int value);
 		const WindowData& GetWindowData() const;
 		const bool IsCloseRequested() const;
 		friend Renderer;
