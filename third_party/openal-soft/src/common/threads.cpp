@@ -69,7 +69,9 @@ semaphore::semaphore(unsigned int initial)
 }
 
 semaphore::~semaphore()
-{ CloseHandle(mSem); }
+{
+    CloseHandle(mSem);
+}
 
 void semaphore::post()
 {
@@ -78,10 +80,14 @@ void semaphore::post()
 }
 
 void semaphore::wait() noexcept
-{ WaitForSingleObject(mSem, INFINITE); }
+{
+    WaitForSingleObject(mSem, INFINITE);
+}
 
 bool semaphore::try_wait() noexcept
-{ return WaitForSingleObject(mSem, 0) == WAIT_OBJECT_0; }
+{
+    return WaitForSingleObject(mSem, 0) == WAIT_OBJECT_0;
+}
 
 } // namespace al
 
@@ -123,16 +129,24 @@ semaphore::semaphore(unsigned int initial)
 }
 
 semaphore::~semaphore()
-{ dispatch_release(mSem); }
+{
+    dispatch_release(mSem);
+}
 
 void semaphore::post()
-{ dispatch_semaphore_signal(mSem); }
+{
+    dispatch_semaphore_signal(mSem);
+}
 
 void semaphore::wait() noexcept
-{ dispatch_semaphore_wait(mSem, DISPATCH_TIME_FOREVER); }
+{
+    dispatch_semaphore_wait(mSem, DISPATCH_TIME_FOREVER);
+}
 
 bool semaphore::try_wait() noexcept
-{ return dispatch_semaphore_wait(mSem, DISPATCH_TIME_NOW) == 0; }
+{
+    return dispatch_semaphore_wait(mSem, DISPATCH_TIME_NOW) == 0;
+}
 
 #else /* !__APPLE__ */
 
@@ -145,7 +159,9 @@ semaphore::semaphore(unsigned int initial)
 }
 
 semaphore::~semaphore()
-{ sem_destroy(&mSem); }
+{
+    sem_destroy(&mSem);
+}
 
 void semaphore::post()
 {
@@ -160,7 +176,9 @@ void semaphore::wait() noexcept
 }
 
 bool semaphore::try_wait() noexcept
-{ return sem_trywait(&mSem) == 0; }
+{
+    return sem_trywait(&mSem) == 0;
+}
 
 #endif /* __APPLE__ */
 

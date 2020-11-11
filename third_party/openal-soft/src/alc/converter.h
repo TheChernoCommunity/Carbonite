@@ -27,8 +27,8 @@ struct SampleConverter {
     InterpState mState{};
     ResamplerFunc mResample{};
 
-    alignas(16) float mSrcSamples[BUFFERSIZE]{};
-    alignas(16) float mDstSamples[BUFFERSIZE]{};
+    alignas(16) float mSrcSamples[BUFFERSIZE] {};
+    alignas(16) float mDstSamples[BUFFERSIZE] {};
 
     struct ChanSamples {
         alignas(16) float PrevSamples[MAX_RESAMPLER_PADDING];
@@ -45,7 +45,7 @@ struct SampleConverter {
 using SampleConverterPtr = std::unique_ptr<SampleConverter>;
 
 SampleConverterPtr CreateSampleConverter(DevFmtType srcType, DevFmtType dstType, size_t numchans,
-    ALuint srcRate, ALuint dstRate, Resampler resampler);
+        ALuint srcRate, ALuint dstRate, Resampler resampler);
 
 
 struct ChannelConverter {
@@ -53,7 +53,9 @@ struct ChannelConverter {
     DevFmtChannels mSrcChans;
     DevFmtChannels mDstChans;
 
-    bool is_active() const noexcept { return mSrcChans != mDstChans; }
+    bool is_active() const noexcept {
+        return mSrcChans != mDstChans;
+    }
 
     void convert(const void *src, float *dst, ALuint frames) const;
 };

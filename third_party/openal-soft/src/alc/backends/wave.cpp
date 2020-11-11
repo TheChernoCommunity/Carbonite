@@ -58,41 +58,44 @@ using std::chrono::nanoseconds;
 
 constexpr ALCchar waveDevice[] = "Wave File Writer";
 
-constexpr ALubyte SUBTYPE_PCM[]{
+constexpr ALubyte SUBTYPE_PCM[] {
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa,
     0x00, 0x38, 0x9b, 0x71
 };
-constexpr ALubyte SUBTYPE_FLOAT[]{
+constexpr ALubyte SUBTYPE_FLOAT[] {
     0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa,
     0x00, 0x38, 0x9b, 0x71
 };
 
-constexpr ALubyte SUBTYPE_BFORMAT_PCM[]{
+constexpr ALubyte SUBTYPE_BFORMAT_PCM[] {
     0x01, 0x00, 0x00, 0x00, 0x21, 0x07, 0xd3, 0x11, 0x86, 0x44, 0xc8, 0xc1,
     0xca, 0x00, 0x00, 0x00
 };
 
-constexpr ALubyte SUBTYPE_BFORMAT_FLOAT[]{
+constexpr ALubyte SUBTYPE_BFORMAT_FLOAT[] {
     0x03, 0x00, 0x00, 0x00, 0x21, 0x07, 0xd3, 0x11, 0x86, 0x44, 0xc8, 0xc1,
     0xca, 0x00, 0x00, 0x00
 };
 
 void fwrite16le(ALushort val, FILE *f)
 {
-    ALubyte data[2]{ static_cast<ALubyte>(val&0xff), static_cast<ALubyte>((val>>8)&0xff) };
+    ALubyte data[2] { static_cast<ALubyte>(val&0xff), static_cast<ALubyte>((val>>8)&0xff) };
     fwrite(data, 1, 2, f);
 }
 
 void fwrite32le(ALuint val, FILE *f)
 {
-    ALubyte data[4]{ static_cast<ALubyte>(val&0xff), static_cast<ALubyte>((val>>8)&0xff),
-        static_cast<ALubyte>((val>>16)&0xff), static_cast<ALubyte>((val>>24)&0xff) };
+    ALubyte data[4] { static_cast<ALubyte>(val&0xff), static_cast<ALubyte>((val>>8)&0xff),
+                      static_cast<ALubyte>((val>>16)&0xff), static_cast<ALubyte>((val>>24)&0xff)
+                    };
     fwrite(data, 1, 4, f);
 }
 
 
 struct WaveBackend final : public BackendBase {
-    WaveBackend(ALCdevice *device) noexcept : BackendBase{device} { }
+    WaveBackend(ALCdevice *device) noexcept : BackendBase {
+        device
+    } { }
     ~WaveBackend() override;
 
     int mixerProc();
@@ -132,13 +135,13 @@ int WaveBackend::mixerProc()
     int64_t done{0};
     auto start = std::chrono::steady_clock::now();
     while(!mKillNow.load(std::memory_order_acquire) &&
-          mDevice->Connected.load(std::memory_order_acquire))
+            mDevice->Connected.load(std::memory_order_acquire))
     {
         auto now = std::chrono::steady_clock::now();
 
         /* This converts from nanoseconds to nanosamples, then to samples. */
         int64_t avail{std::chrono::duration_cast<seconds>((now-start) *
-            mDevice->Frequency).count()};
+                      mDevice->Frequency).count()};
         if(avail-done < mDevice->UpdateSize)
         {
             std::this_thread::sleep_for(restTime);
@@ -157,7 +160,7 @@ int WaveBackend::mixerProc()
                 {
                     ALushort *samples = reinterpret_cast<ALushort*>(mBuffer.data());
                     const size_t len{mBuffer.size() / 2};
-                    for(size_t i{0};i < len;i++)
+                    for(size_t i{0}; i < len; i++)
                     {
                         const ALushort samp{samples[i]};
                         samples[i] = static_cast<ALushort>((samp>>8) | (samp<<8));
@@ -167,7 +170,7 @@ int WaveBackend::mixerProc()
                 {
                     ALuint *samples = reinterpret_cast<ALuint*>(mBuffer.data());
                     const size_t len{mBuffer.size() / 4};
-                    for(size_t i{0};i < len;i++)
+                    for(size_t i{0}; i < len; i++)
                     {
                         const ALuint samp{samples[i]};
                         samples[i] = (samp>>24) | ((samp>>8)&0x0000ff00) |
@@ -222,7 +225,7 @@ void WaveBackend::open(const ALCchar *name)
 #endif
     if(!mFile)
         throw al::backend_exception{ALC_INVALID_VALUE, "Could not open file '%s': %s", fname,
-            strerror(errno)};
+                                    strerror(errno)};
 
     mDevice->DeviceName = name;
 }
@@ -244,38 +247,52 @@ bool WaveBackend::reset()
 
     switch(mDevice->FmtType)
     {
-        case DevFmtByte:
-            mDevice->FmtType = DevFmtUByte;
-            break;
-        case DevFmtUShort:
-            mDevice->FmtType = DevFmtShort;
-            break;
-        case DevFmtUInt:
-            mDevice->FmtType = DevFmtInt;
-            break;
-        case DevFmtUByte:
-        case DevFmtShort:
-        case DevFmtInt:
-        case DevFmtFloat:
-            break;
+    case DevFmtByte:
+        mDevice->FmtType = DevFmtUByte;
+        break;
+    case DevFmtUShort:
+        mDevice->FmtType = DevFmtShort;
+        break;
+    case DevFmtUInt:
+        mDevice->FmtType = DevFmtInt;
+        break;
+    case DevFmtUByte:
+    case DevFmtShort:
+    case DevFmtInt:
+    case DevFmtFloat:
+        break;
     }
     switch(mDevice->FmtChans)
     {
-        case DevFmtMono:   chanmask = 0x04; break;
-        case DevFmtStereo: chanmask = 0x01 | 0x02; break;
-        case DevFmtQuad:   chanmask = 0x01 | 0x02 | 0x10 | 0x20; break;
-        case DevFmtX51: chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x200 | 0x400; break;
-        case DevFmtX51Rear: chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020; break;
-        case DevFmtX61: chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x100 | 0x200 | 0x400; break;
-        case DevFmtX71: chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x200 | 0x400; break;
-        case DevFmtAmbi3D:
-            /* .amb output requires FuMa */
-            mDevice->mAmbiOrder = minu(mDevice->mAmbiOrder, 3);
-            mDevice->mAmbiLayout = AmbiLayout::FuMa;
-            mDevice->mAmbiScale = AmbiNorm::FuMa;
-            isbformat = 1;
-            chanmask = 0;
-            break;
+    case DevFmtMono:
+        chanmask = 0x04;
+        break;
+    case DevFmtStereo:
+        chanmask = 0x01 | 0x02;
+        break;
+    case DevFmtQuad:
+        chanmask = 0x01 | 0x02 | 0x10 | 0x20;
+        break;
+    case DevFmtX51:
+        chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x200 | 0x400;
+        break;
+    case DevFmtX51Rear:
+        chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020;
+        break;
+    case DevFmtX61:
+        chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x100 | 0x200 | 0x400;
+        break;
+    case DevFmtX71:
+        chanmask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x200 | 0x400;
+        break;
+    case DevFmtAmbi3D:
+        /* .amb output requires FuMa */
+        mDevice->mAmbiOrder = minu(mDevice->mAmbiOrder, 3);
+        mDevice->mAmbiLayout = AmbiLayout::FuMa;
+        mDevice->mAmbiScale = AmbiNorm::FuMa;
+        isbformat = 1;
+        chanmask = 0;
+        break;
     }
     bytes = mDevice->bytesFromFmt();
     channels = mDevice->channelsFromFmt();
@@ -310,8 +327,8 @@ bool WaveBackend::reset()
     fwrite32le(chanmask, mFile);
     // 16 byte GUID, sub-type format
     val = fwrite((mDevice->FmtType == DevFmtFloat) ?
-        (isbformat ? SUBTYPE_BFORMAT_FLOAT : SUBTYPE_FLOAT) :
-        (isbformat ? SUBTYPE_BFORMAT_PCM : SUBTYPE_PCM), 1, 16, mFile);
+                 (isbformat ? SUBTYPE_BFORMAT_FLOAT : SUBTYPE_FLOAT) :
+                 (isbformat ? SUBTYPE_BFORMAT_PCM : SUBTYPE_PCM), 1, 16, mFile);
     (void)val;
 
     fputs("data", mFile);
@@ -368,10 +385,14 @@ void WaveBackend::stop()
 
 
 bool WaveBackendFactory::init()
-{ return true; }
+{
+    return true;
+}
 
 bool WaveBackendFactory::querySupport(BackendType type)
-{ return type == BackendType::Playback; }
+{
+    return type == BackendType::Playback;
+}
 
 std::string WaveBackendFactory::probe(BackendType type)
 {

@@ -48,7 +48,7 @@ std::array<double,HIL_SIZE> InitHannWindow()
 {
     std::array<double,HIL_SIZE> ret;
     /* Create lookup table of the Hann window for the desired size, i.e. HIL_SIZE */
-    for(size_t i{0};i < HIL_SIZE>>1;i++)
+    for(size_t i{0}; i < HIL_SIZE>>1; i++)
     {
         constexpr double scale{al::MathDefs<double>::Pi() / double{HIL_SIZE-1}};
         const double val{std::sin(static_cast<double>(i) * scale)};
@@ -62,23 +62,23 @@ alignas(16) const std::array<double,HIL_SIZE> HannWindow = InitHannWindow();
 struct FshifterState final : public EffectState {
     /* Effect parameters */
     size_t mCount{};
-    ALuint mPhaseStep[2]{};
-    ALuint mPhase[2]{};
-    double mSign[2]{};
+    ALuint mPhaseStep[2] {};
+    ALuint mPhase[2] {};
+    double mSign[2] {};
 
     /* Effects buffers */
-    double mInFIFO[HIL_SIZE]{};
-    complex_d mOutFIFO[HIL_STEP]{};
-    complex_d mOutputAccum[HIL_SIZE]{};
-    complex_d mAnalytic[HIL_SIZE]{};
-    complex_d mOutdata[BUFFERSIZE]{};
+    double mInFIFO[HIL_SIZE] {};
+    complex_d mOutFIFO[HIL_STEP] {};
+    complex_d mOutputAccum[HIL_SIZE] {};
+    complex_d mAnalytic[HIL_SIZE] {};
+    complex_d mOutdata[BUFFERSIZE] {};
 
-    alignas(16) float mBufferOut[BUFFERSIZE]{};
+    alignas(16) float mBufferOut[BUFFERSIZE] {};
 
     /* Effect gains for each output channel */
     struct {
-        float Current[MAX_OUTPUT_CHANNELS]{};
-        float Target[MAX_OUTPUT_CHANNELS]{};
+        float Current[MAX_OUTPUT_CHANNELS] {};
+        float Target[MAX_OUTPUT_CHANNELS] {};
     } mGains[2];
 
 
@@ -158,7 +158,7 @@ void FshifterState::update(const ALCcontext *context, const ALeffectslot *slot, 
 
 void FshifterState::process(const size_t samplesToDo, const al::span<const FloatBufferLine> samplesIn, const al::span<FloatBufferLine> samplesOut)
 {
-    for(size_t base{0u};base < samplesToDo;)
+    for(size_t base{0u}; base < samplesToDo;)
     {
         size_t todo{minz(HIL_SIZE-mCount, samplesToDo-base)};
 
@@ -167,7 +167,8 @@ void FshifterState::process(const size_t samplesToDo, const al::span<const Float
         do {
             mInFIFO[count] = samplesIn[0][base];
             mOutdata[base] = mOutFIFO[count-FIFO_LATENCY];
-            ++base; ++count;
+            ++base;
+            ++count;
         } while(--todo);
         mCount = count;
 
@@ -176,35 +177,35 @@ void FshifterState::process(const size_t samplesToDo, const al::span<const Float
         mCount = FIFO_LATENCY;
 
         /* Real signal windowing and store in Analytic buffer */
-        for(size_t k{0};k < HIL_SIZE;k++)
+        for(size_t k{0}; k < HIL_SIZE; k++)
             mAnalytic[k] = mInFIFO[k]*HannWindow[k];
 
         /* Processing signal by Discrete Hilbert Transform (analytical signal). */
         complex_hilbert(mAnalytic);
 
         /* Windowing and add to output accumulator */
-        for(size_t k{0};k < HIL_SIZE;k++)
+        for(size_t k{0}; k < HIL_SIZE; k++)
             mOutputAccum[k] += 2.0/OVERSAMP*HannWindow[k]*mAnalytic[k];
 
         /* Shift accumulator, input & output FIFO */
         std::copy_n(mOutputAccum, HIL_STEP, mOutFIFO);
         auto accum_iter = std::copy(std::begin(mOutputAccum)+HIL_STEP, std::end(mOutputAccum),
-            std::begin(mOutputAccum));
+                                    std::begin(mOutputAccum));
         std::fill(accum_iter, std::end(mOutputAccum), complex_d{});
         std::copy(std::begin(mInFIFO)+HIL_STEP, std::end(mInFIFO), std::begin(mInFIFO));
     }
 
     /* Process frequency shifter using the analytic signal obtained. */
     float *RESTRICT BufferOut{mBufferOut};
-    for(ALsizei c{0};c < 2;++c)
+    for(ALsizei c{0}; c < 2; ++c)
     {
         const ALuint phase_step{mPhaseStep[c]};
         ALuint phase_idx{mPhase[c]};
-        for(size_t k{0};k < samplesToDo;++k)
+        for(size_t k{0}; k < samplesToDo; ++k)
         {
             const double phase{phase_idx * ((1.0 / FRACTIONONE) * al::MathDefs<double>::Tau())};
             BufferOut[k] = static_cast<float>(mOutdata[k].real()*std::cos(phase) +
-                mOutdata[k].imag()*std::sin(phase)*mSign[c]);
+                                              mOutdata[k].imag()*std::sin(phase)*mSign[c]);
 
             phase_idx += phase_step;
             phase_idx &= FRACTIONMASK;
@@ -213,7 +214,7 @@ void FshifterState::process(const size_t samplesToDo, const al::span<const Float
 
         /* Now, mix the processed sound data to the output. */
         MixSamples({BufferOut, samplesToDo}, samplesOut, mGains[c].Current, mGains[c].Target,
-            maxz(samplesToDo, 512), 0);
+                   maxz(samplesToDo, 512), 0);
     }
 }
 
@@ -230,11 +231,13 @@ void Fshifter_setParamf(EffectProps *props, ALenum param, float val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid frequency shifter float property 0x%04x",
-            param};
+                               param};
     }
 }
 void Fshifter_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Fshifter_setParamf(props, param, vals[0]); }
+{
+    Fshifter_setParamf(props, param, vals[0]);
+}
 
 void Fshifter_setParami(EffectProps *props, ALenum param, int val)
 {
@@ -243,24 +246,26 @@ void Fshifter_setParami(EffectProps *props, ALenum param, int val)
     case AL_FREQUENCY_SHIFTER_LEFT_DIRECTION:
         if(!(val >= AL_FREQUENCY_SHIFTER_MIN_LEFT_DIRECTION && val <= AL_FREQUENCY_SHIFTER_MAX_LEFT_DIRECTION))
             throw effect_exception{AL_INVALID_VALUE,
-                "Frequency shifter left direction out of range"};
+                                   "Frequency shifter left direction out of range"};
         props->Fshifter.LeftDirection = val;
         break;
 
     case AL_FREQUENCY_SHIFTER_RIGHT_DIRECTION:
         if(!(val >= AL_FREQUENCY_SHIFTER_MIN_RIGHT_DIRECTION && val <= AL_FREQUENCY_SHIFTER_MAX_RIGHT_DIRECTION))
             throw effect_exception{AL_INVALID_VALUE,
-                "Frequency shifter right direction out of range"};
+                                   "Frequency shifter right direction out of range"};
         props->Fshifter.RightDirection = val;
         break;
 
     default:
         throw effect_exception{AL_INVALID_ENUM,
-            "Invalid frequency shifter integer property 0x%04x", param};
+                               "Invalid frequency shifter integer property 0x%04x", param};
     }
 }
 void Fshifter_setParamiv(EffectProps *props, ALenum param, const int *vals)
-{ Fshifter_setParami(props, param, vals[0]); }
+{
+    Fshifter_setParami(props, param, vals[0]);
+}
 
 void Fshifter_getParami(const EffectProps *props, ALenum param, int *val)
 {
@@ -274,11 +279,13 @@ void Fshifter_getParami(const EffectProps *props, ALenum param, int *val)
         break;
     default:
         throw effect_exception{AL_INVALID_ENUM,
-            "Invalid frequency shifter integer property 0x%04x", param};
+                               "Invalid frequency shifter integer property 0x%04x", param};
     }
 }
 void Fshifter_getParamiv(const EffectProps *props, ALenum param, int *vals)
-{ Fshifter_getParami(props, param, vals); }
+{
+    Fshifter_getParami(props, param, vals);
+}
 
 void Fshifter_getParamf(const EffectProps *props, ALenum param, float *val)
 {
@@ -290,19 +297,25 @@ void Fshifter_getParamf(const EffectProps *props, ALenum param, float *val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid frequency shifter float property 0x%04x",
-            param};
+                               param};
     }
 }
 void Fshifter_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Fshifter_getParamf(props, param, vals); }
+{
+    Fshifter_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Fshifter);
 
 
 struct FshifterStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new FshifterState{}; }
+    EffectState *create() override {
+        return new FshifterState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Fshifter_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Fshifter_vtable;
+    }
 };
 
 EffectProps FshifterStateFactory::getDefaultProps() const noexcept

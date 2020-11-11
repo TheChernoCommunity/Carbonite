@@ -50,7 +50,7 @@
 #include "vector.h"
 
 
-const EffectList gEffectList[15]{
+const EffectList gEffectList[15] {
     { "eaxreverb",  EAXREVERB_EFFECT,  AL_EFFECT_EAXREVERB },
     { "reverb",     REVERB_EFFECT,     AL_EFFECT_REVERB },
     { "autowah",    AUTOWAH_EFFECT,    AL_EFFECT_AUTOWAH },
@@ -105,22 +105,38 @@ constexpr struct FactoryItem {
 
 
 void ALeffect_setParami(ALeffect *effect, ALenum param, int value)
-{ effect->vtab->setParami(&effect->Props, param, value); }
+{
+    effect->vtab->setParami(&effect->Props, param, value);
+}
 void ALeffect_setParamiv(ALeffect *effect, ALenum param, const int *values)
-{ effect->vtab->setParamiv(&effect->Props, param, values); }
+{
+    effect->vtab->setParamiv(&effect->Props, param, values);
+}
 void ALeffect_setParamf(ALeffect *effect, ALenum param, float value)
-{ effect->vtab->setParamf(&effect->Props, param, value); }
+{
+    effect->vtab->setParamf(&effect->Props, param, value);
+}
 void ALeffect_setParamfv(ALeffect *effect, ALenum param, const float *values)
-{ effect->vtab->setParamfv(&effect->Props, param, values); }
+{
+    effect->vtab->setParamfv(&effect->Props, param, values);
+}
 
 void ALeffect_getParami(const ALeffect *effect, ALenum param, int *value)
-{ effect->vtab->getParami(&effect->Props, param, value); }
+{
+    effect->vtab->getParami(&effect->Props, param, value);
+}
 void ALeffect_getParamiv(const ALeffect *effect, ALenum param, int *values)
-{ effect->vtab->getParamiv(&effect->Props, param, values); }
+{
+    effect->vtab->getParamiv(&effect->Props, param, values);
+}
 void ALeffect_getParamf(const ALeffect *effect, ALenum param, float *value)
-{ effect->vtab->getParamf(&effect->Props, param, value); }
+{
+    effect->vtab->getParamf(&effect->Props, param, value);
+}
 void ALeffect_getParamfv(const ALeffect *effect, ALenum param, float *values)
-{ effect->vtab->getParamfv(&effect->Props, param, values); }
+{
+    effect->vtab->getParamfv(&effect->Props, param, values);
+}
 
 
 void InitEffectParams(ALeffect *effect, ALenum type)
@@ -142,9 +158,9 @@ void InitEffectParams(ALeffect *effect, ALenum type)
 bool EnsureEffects(ALCdevice *device, size_t needed)
 {
     size_t count{std::accumulate(device->EffectList.cbegin(), device->EffectList.cend(), size_t{0},
-        [](size_t cur, const EffectSubList &sublist) noexcept -> size_t
-        { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
-    )};
+                                 [](size_t cur, const EffectSubList &sublist) noexcept -> size_t
+    { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
+                                )};
 
     while(needed > count)
     {
@@ -168,9 +184,11 @@ bool EnsureEffects(ALCdevice *device, size_t needed)
 ALeffect *AllocEffect(ALCdevice *device)
 {
     auto sublist = std::find_if(device->EffectList.begin(), device->EffectList.end(),
-        [](const EffectSubList &entry) noexcept -> bool
-        { return entry.FreeMask != 0; }
-    );
+                                [](const EffectSubList &entry) noexcept -> bool
+    {
+        return entry.FreeMask != 0;
+    }
+                               );
     auto lidx = static_cast<ALuint>(std::distance(device->EffectList.begin(), sublist));
     auto slidx = static_cast<ALuint>(CTZ64(sublist->FreeMask));
 
@@ -334,13 +352,13 @@ START_API_FUNC
             context->setError(AL_INVALID_VALUE, "Effect type 0x%04x not supported", value);
     }
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_setParami(aleffect, param, value);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_setParami(aleffect, param, value);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -364,13 +382,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_setParamiv(aleffect, param, values);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_setParamiv(aleffect, param, values);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -387,13 +405,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_setParamf(aleffect, param, value);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_setParamf(aleffect, param, value);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -410,13 +428,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_setParamfv(aleffect, param, values);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_setParamfv(aleffect, param, values);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -435,13 +453,13 @@ START_API_FUNC
     else if(param == AL_EFFECT_TYPE)
         *value = aleffect->type;
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_getParami(aleffect, param, value);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_getParami(aleffect, param, value);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -465,13 +483,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_getParamiv(aleffect, param, values);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_getParamiv(aleffect, param, values);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -488,13 +506,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_getParamf(aleffect, param, value);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_getParamf(aleffect, param, value);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -511,13 +529,13 @@ START_API_FUNC
     if UNLIKELY(!aleffect)
         context->setError(AL_INVALID_NAME, "Invalid effect ID %u", effect);
     else try
-    {
-        /* Call the appropriate handler */
-        ALeffect_getParamfv(aleffect, param, values);
-    }
-    catch(effect_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            ALeffect_getParamfv(aleffect, param, values);
+        }
+        catch(effect_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -545,9 +563,11 @@ EffectSubList::~EffectSubList()
 EffectStateFactory *getFactoryByType(ALenum type)
 {
     auto iter = std::find_if(std::begin(FactoryList), std::end(FactoryList),
-        [type](const FactoryItem &item) noexcept -> bool
-        { return item.Type == type; }
-    );
+                             [type](const FactoryItem &item) noexcept -> bool
+    {
+        return item.Type == type;
+    }
+                            );
     return (iter != std::end(FactoryList)) ? iter->GetFactory() : nullptr;
 }
 

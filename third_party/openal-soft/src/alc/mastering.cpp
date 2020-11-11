@@ -69,7 +69,7 @@ float UpdateSlidingHold(SlidingHold *Hold, const ALuint i, const float in)
             } while(lowerIndex--);
             lowerIndex = mask;
         } while(1);
-    found_place:
+found_place:
 
         lowerIndex = (lowerIndex + 1) & mask;
         values[lowerIndex] = in;
@@ -89,10 +89,10 @@ void ShiftSlidingHold(SlidingHold *Hold, const ALuint n)
     if(exp_last-exp_begin < 0)
     {
         std::transform(exp_begin, std::end(Hold->mExpiries), exp_begin,
-            std::bind(std::minus<ALuint>{}, _1, n));
+                       std::bind(std::minus<ALuint> {}, _1, n));
         exp_begin = std::begin(Hold->mExpiries);
     }
-    std::transform(exp_begin, exp_last+1, exp_begin, std::bind(std::minus<ALuint>{}, _1, n));
+    std::transform(exp_begin, exp_last+1, exp_begin, std::bind(std::minus<ALuint> {}, _1, n));
 }
 
 
@@ -157,7 +157,7 @@ void PeakDetector(Compressor *Comp, const ALuint SamplesToDo)
     /* Clamp the minimum amplitude to near-zero and convert to logarithm. */
     auto side_begin = std::begin(Comp->mSideChain) + Comp->mLookAhead;
     std::transform(side_begin, side_begin+SamplesToDo, side_begin,
-        [](const float s) -> float { return std::log(maxf(0.000001f, s)); });
+                   [](const float s) -> float { return std::log(maxf(0.000001f, s)); });
 }
 
 /* An optional hold can be used to extend the peak detector so it can more
@@ -213,7 +213,7 @@ void GainCompressor(Compressor *Comp, const ALuint SamplesToDo)
 
     ASSUME(SamplesToDo > 0);
 
-    for(float &sideChain : al::span<float>{Comp->mSideChain, SamplesToDo})
+    for(float &sideChain : al::span<float> {Comp->mSideChain, SamplesToDo})
     {
         if(autoKnee)
             knee = maxf(0.0f, 2.5f * (c_dev + c_est));
@@ -291,7 +291,7 @@ void SignalDelay(Compressor *Comp, const ALuint SamplesToDo, FloatBufferLine *Ou
     ASSUME(numChans > 0);
     ASSUME(lookAhead > 0);
 
-    for(size_t c{0};c < numChans;c++)
+    for(size_t c{0}; c < numChans; c++)
     {
         float *inout{al::assume_aligned<16>(OutBuffer[c].data())};
         float *delaybuf{al::assume_aligned<16>(Comp->mDelay[c].data())};
@@ -314,15 +314,15 @@ void SignalDelay(Compressor *Comp, const ALuint SamplesToDo, FloatBufferLine *Ou
 
 
 std::unique_ptr<Compressor> Compressor::Create(const size_t NumChans, const float SampleRate,
-    const bool AutoKnee, const bool AutoAttack, const bool AutoRelease, const bool AutoPostGain,
-    const bool AutoDeclip, const float LookAheadTime, const float HoldTime, const float PreGainDb,
-    const float PostGainDb, const float ThresholdDb, const float Ratio, const float KneeDb,
-    const float AttackTime, const float ReleaseTime)
+        const bool AutoKnee, const bool AutoAttack, const bool AutoRelease, const bool AutoPostGain,
+        const bool AutoDeclip, const float LookAheadTime, const float HoldTime, const float PreGainDb,
+        const float PostGainDb, const float ThresholdDb, const float Ratio, const float KneeDb,
+        const float AttackTime, const float ReleaseTime)
 {
     const auto lookAhead = static_cast<ALuint>(
-        clampf(std::round(LookAheadTime*SampleRate), 0.0f, BUFFERSIZE-1));
+                               clampf(std::round(LookAheadTime*SampleRate), 0.0f, BUFFERSIZE-1));
     const auto hold = static_cast<ALuint>(
-        clampf(std::round(HoldTime*SampleRate), 0.0f, BUFFERSIZE-1));
+                          clampf(std::round(HoldTime*SampleRate), 0.0f, BUFFERSIZE-1));
 
     size_t size{sizeof(Compressor)};
     if(lookAhead > 0)
@@ -336,7 +336,7 @@ std::unique_ptr<Compressor> Compressor::Create(const size_t NumChans, const floa
             size += sizeof(*Compressor::mHold);
     }
 
-    auto Comp = std::unique_ptr<Compressor>{new (al_calloc(16, size)) Compressor{}};
+    auto Comp = std::unique_ptr<Compressor> {new (al_calloc(16, size)) Compressor{}};
     Comp->mNumChans = NumChans;
     Comp->mAuto.Knee = AutoKnee != AL_FALSE;
     Comp->mAuto.Attack = AutoAttack != AL_FALSE;
@@ -408,7 +408,7 @@ void Compressor::process(const ALuint SamplesToDo, FloatBufferLine *OutBuffer)
         {
             float *buffer{al::assume_aligned<16>(input.data())};
             std::transform(buffer, buffer+SamplesToDo, buffer,
-                std::bind(std::multiplies<float>{}, _1, preGain));
+                           std::bind(std::multiplies<float> {}, _1, preGain));
         };
         std::for_each(OutBuffer, OutBuffer+numChans, apply_gain);
     }
@@ -434,7 +434,7 @@ void Compressor::process(const ALuint SamplesToDo, FloatBufferLine *OutBuffer)
         float *buffer{al::assume_aligned<16>(input.data())};
         const float *gains{al::assume_aligned<16>(&sideChain[0])};
         std::transform(gains, gains+SamplesToDo, buffer, buffer,
-            std::bind(std::multiplies<float>{}, _1, _2));
+                       std::bind(std::multiplies<float> {}, _1, _2));
     };
     std::for_each(OutBuffer, OutBuffer+numChans, apply_comp);
 

@@ -55,7 +55,9 @@ class BiquadFilterR {
      * \param slope 0 < slope <= 1
      */
     static Real rcpQFromSlope(Real gain, Real slope)
-    { return std::sqrt((gain + 1.0f/gain)*(1.0f/slope - 1.0f) + 2.0f); }
+    {
+        return std::sqrt((gain + 1.0f/gain)*(1.0f/slope - 1.0f) + 2.0f);
+    }
 
     /**
      * Calculates the rcpQ (i.e. 1/Q) coefficient for filters, using the
@@ -70,7 +72,9 @@ class BiquadFilterR {
     }
 
 public:
-    void clear() noexcept { mZ1 = mZ2 = 0.0f; }
+    void clear() noexcept {
+        mZ1 = mZ2 = 0.0f;
+    }
 
     /**
      * Sets the filter state for the specified filter type and its parameters.
@@ -103,7 +107,9 @@ public:
      * \param bandwidth Normalized bandwidth of the transition band.
      */
     void setParamsFromBandwidth(BiquadType type, Real f0norm, Real gain, Real bandwidth)
-    { setParams(type, f0norm, gain, rcpQFromBandwidth(f0norm, bandwidth)); }
+    {
+        setParams(type, f0norm, gain, rcpQFromBandwidth(f0norm, bandwidth));
+    }
 
     void copyParamsFrom(const BiquadFilterR &other)
     {
@@ -119,8 +125,13 @@ public:
     void dualProcess(BiquadFilterR &other, const al::span<const Real> src, Real *dst);
 
     /* Rather hacky. It's just here to support "manual" processing. */
-    std::pair<Real,Real> getComponents() const noexcept { return {mZ1, mZ2}; }
-    void setComponents(Real z1, Real z2) noexcept { mZ1 = z1; mZ2 = z2; }
+    std::pair<Real,Real> getComponents() const noexcept {
+        return {mZ1, mZ2};
+    }
+    void setComponents(Real z1, Real z2) noexcept {
+        mZ1 = z1;
+        mZ2 = z2;
+    }
     Real processOne(const Real in, Real &z1, Real &z2) const noexcept
     {
         const Real out{in*mB0 + z1};
@@ -135,7 +146,9 @@ struct DualBiquadR {
     BiquadFilterR<Real> &f0, &f1;
 
     void process(const al::span<const Real> src, Real *dst)
-    { f0.dualProcess(f1, src, dst); }
+    {
+        f0.dualProcess(f1, src, dst);
+    }
 };
 
 using BiquadFilter = BiquadFilterR<float>;

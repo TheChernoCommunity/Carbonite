@@ -88,9 +88,11 @@ void AddActiveEffectSlots(const ALuint *slotids, size_t count, ALCcontext *conte
      */
     ALeffectslotArray *newarray = ALeffectslot::CreatePtrArray(newcount);
     auto slotiter = std::transform(slotids, slotids+count, newarray->begin(),
-        [context](ALuint id) noexcept -> ALeffectslot*
-        { return LookupEffectSlot(context, id); }
-    );
+                                   [context](ALuint id) noexcept -> ALeffectslot*
+    {
+        return LookupEffectSlot(context, id);
+    }
+                                  );
     std::copy(curarray->begin(), curarray->end(), slotiter);
 
     /* Remove any duplicates (first instance of each will be kept). */
@@ -136,9 +138,9 @@ void RemoveActiveEffectSlots(const ALuint *slotids, size_t count, ALCcontext *co
     /* Copy each element in curarray to newarray whose ID is not in slotids. */
     const ALuint *slotids_end{slotids + count};
     auto slotiter = std::copy_if(curarray->begin(), curarray->end(), newarray->begin(),
-        [slotids, slotids_end](const ALeffectslot *slot) -> bool
-        { return std::find(slotids, slotids_end, slot->id) == slotids_end; }
-    );
+                                 [slotids, slotids_end](const ALeffectslot *slot) -> bool
+    { return std::find(slotids, slotids_end, slot->id) == slotids_end; }
+                                );
 
     /* Reallocate with the new size. */
     auto newsize = static_cast<size_t>(std::distance(newarray->begin(), slotiter));
@@ -164,10 +166,10 @@ void RemoveActiveEffectSlots(const ALuint *slotids, size_t count, ALCcontext *co
 bool EnsureEffectSlots(ALCcontext *context, size_t needed)
 {
     size_t count{std::accumulate(context->mEffectSlotList.cbegin(),
-        context->mEffectSlotList.cend(), size_t{0},
-        [](size_t cur, const EffectSlotSubList &sublist) noexcept -> size_t
-        { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
-    )};
+                                 context->mEffectSlotList.cend(), size_t{0},
+                                 [](size_t cur, const EffectSlotSubList &sublist) noexcept -> size_t
+    { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
+                                )};
 
     while(needed > count)
     {
@@ -178,7 +180,7 @@ bool EnsureEffectSlots(ALCcontext *context, size_t needed)
         auto sublist = context->mEffectSlotList.end() - 1;
         sublist->FreeMask = ~0_u64;
         sublist->EffectSlots = static_cast<ALeffectslot*>(
-            al_calloc(alignof(ALeffectslot), sizeof(ALeffectslot)*64));
+                                   al_calloc(alignof(ALeffectslot), sizeof(ALeffectslot)*64));
         if UNLIKELY(!sublist->EffectSlots)
         {
             context->mEffectSlotList.pop_back();
@@ -192,9 +194,11 @@ bool EnsureEffectSlots(ALCcontext *context, size_t needed)
 ALeffectslot *AllocEffectSlot(ALCcontext *context)
 {
     auto sublist = std::find_if(context->mEffectSlotList.begin(), context->mEffectSlotList.end(),
-        [](const EffectSlotSubList &entry) noexcept -> bool
-        { return entry.FreeMask != 0; }
-    );
+                                [](const EffectSlotSubList &entry) noexcept -> bool
+    {
+        return entry.FreeMask != 0;
+    }
+                               );
     auto lidx = static_cast<ALuint>(std::distance(context->mEffectSlotList.begin(), sublist));
     auto slidx = static_cast<ALuint>(CTZ64(sublist->FreeMask));
 
@@ -263,13 +267,13 @@ START_API_FUNC
     if(static_cast<ALuint>(n) > device->AuxiliaryEffectSlotMax-context->mNumEffectSlots)
     {
         context->setError(AL_OUT_OF_MEMORY, "Exceeding %u effect slot limit (%u + %d)",
-            device->AuxiliaryEffectSlotMax, context->mNumEffectSlots, n);
+                          device->AuxiliaryEffectSlotMax, context->mNumEffectSlots, n);
         return;
     }
     if(!EnsureEffectSlots(context.get(), static_cast<ALuint>(n)))
     {
         context->setError(AL_OUT_OF_MEMORY, "Failed to allocate %d effectslot%s", n,
-            (n==1) ? "" : "s");
+                          (n==1) ? "" : "s");
         return;
     }
 
@@ -377,7 +381,7 @@ START_API_FUNC
     case AL_EFFECTSLOT_EFFECT:
         device = context->mDevice.get();
 
-        { std::lock_guard<std::mutex> ___{device->EffectLock};
+        {   std::lock_guard<std::mutex> ___{device->EffectLock};
             ALeffect *effect{value ? LookupEffect(device, static_cast<ALuint>(value)) : nullptr};
             if(!(value == 0 || effect != nullptr))
                 SETERR_RETURN(context, AL_INVALID_VALUE,, "Invalid effect ID %u", value);
@@ -393,7 +397,7 @@ START_API_FUNC
     case AL_EFFECTSLOT_AUXILIARY_SEND_AUTO:
         if(!(value == AL_TRUE || value == AL_FALSE))
             SETERR_RETURN(context, AL_INVALID_VALUE,,
-                "Effect slot auxiliary send auto out of range");
+                          "Effect slot auxiliary send auto out of range");
         slot->AuxSendAuto = !!value;
         break;
 
@@ -408,8 +412,8 @@ START_API_FUNC
                 checker = checker->Target;
             if(checker)
                 SETERR_RETURN(context, AL_INVALID_OPERATION,,
-                    "Setting target of effect slot ID %u to %u creates circular chain", slot->id,
-                    target->id);
+                              "Setting target of effect slot ID %u to %u creates circular chain", slot->id,
+                              target->id);
         }
 
         if(ALeffectslot *oldtarget{slot->Target})
@@ -430,7 +434,7 @@ START_API_FUNC
 
     default:
         SETERR_RETURN(context, AL_INVALID_ENUM,, "Invalid effect slot integer property 0x%04x",
-            param);
+                      param);
     }
     DO_UPDATEPROPS();
 }
@@ -460,7 +464,7 @@ START_API_FUNC
     {
     default:
         SETERR_RETURN(context, AL_INVALID_ENUM,,
-            "Invalid effect slot integer-vector property 0x%04x", param);
+                      "Invalid effect slot integer-vector property 0x%04x", param);
     }
 }
 END_API_FUNC
@@ -487,7 +491,7 @@ START_API_FUNC
 
     default:
         SETERR_RETURN(context, AL_INVALID_ENUM,, "Invalid effect slot float property 0x%04x",
-            param);
+                      param);
     }
     DO_UPDATEPROPS();
 }
@@ -515,7 +519,7 @@ START_API_FUNC
     {
     default:
         SETERR_RETURN(context, AL_INVALID_ENUM,,
-            "Invalid effect slot float-vector property 0x%04x", param);
+                      "Invalid effect slot float-vector property 0x%04x", param);
     }
 }
 END_API_FUNC
@@ -575,7 +579,7 @@ START_API_FUNC
     {
     default:
         context->setError(AL_INVALID_ENUM, "Invalid effect slot integer-vector property 0x%04x",
-            param);
+                          param);
     }
 }
 END_API_FUNC
@@ -625,7 +629,7 @@ START_API_FUNC
     {
     default:
         context->setError(AL_INVALID_ENUM, "Invalid effect slot float-vector property 0x%04x",
-            param);
+                          param);
     }
 }
 END_API_FUNC
@@ -707,7 +711,9 @@ ALeffectslot::~ALeffectslot()
     {
         if(props->State) props->State->release();
         TRACE("Freed unapplied AuxiliaryEffectSlot update %p\n",
-            decltype(std::declval<void*>()){props});
+        decltype(std::declval<void*>()) {
+            props
+        });
         delete props;
     }
 

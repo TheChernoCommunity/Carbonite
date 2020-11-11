@@ -10,16 +10,16 @@
 
 namespace gp1
 {
-	Logger AudioCore::s_AudioLogger = Logger { "AudioCore" };
+Logger AudioCore::s_AudioLogger = Logger { "AudioCore" };
 
-	void AudioCore::Init()
-	{
-		InitAL(s_AudioLogger);
-		Audio::Init();
-	}
+void AudioCore::Init()
+{
+    InitAL(s_AudioLogger);
+    Audio::Init();
+}
 
-	void AudioCore::Shutdown()
-	{
-		ShutdownAL(s_AudioLogger);
-	}
+void AudioCore::Shutdown()
+{
+    ShutdownAL(s_AudioLogger);
+}
 }

@@ -13,58 +13,104 @@
 #include "opthelpers.h"
 
 
-inline constexpr int64_t operator "" _i64(unsigned long long int n) noexcept { return static_cast<int64_t>(n); }
-inline constexpr uint64_t operator "" _u64(unsigned long long int n) noexcept { return static_cast<uint64_t>(n); }
+inline constexpr int64_t operator "" _i64(unsigned long long int n) noexcept {
+    return static_cast<int64_t>(n);
+}
+inline constexpr uint64_t operator "" _u64(unsigned long long int n) noexcept {
+    return static_cast<uint64_t>(n);
+}
 
 
 constexpr inline float minf(float a, float b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline float maxf(float a, float b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline float clampf(float val, float min, float max) noexcept
-{ return minf(max, maxf(min, val)); }
+{
+    return minf(max, maxf(min, val));
+}
 
 constexpr inline double mind(double a, double b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline double maxd(double a, double b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline double clampd(double val, double min, double max) noexcept
-{ return mind(max, maxd(min, val)); }
+{
+    return mind(max, maxd(min, val));
+}
 
 constexpr inline unsigned int minu(unsigned int a, unsigned int b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline unsigned int maxu(unsigned int a, unsigned int b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline unsigned int clampu(unsigned int val, unsigned int min, unsigned int max) noexcept
-{ return minu(max, maxu(min, val)); }
+{
+    return minu(max, maxu(min, val));
+}
 
 constexpr inline int mini(int a, int b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline int maxi(int a, int b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline int clampi(int val, int min, int max) noexcept
-{ return mini(max, maxi(min, val)); }
+{
+    return mini(max, maxi(min, val));
+}
 
 constexpr inline int64_t mini64(int64_t a, int64_t b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline int64_t maxi64(int64_t a, int64_t b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline int64_t clampi64(int64_t val, int64_t min, int64_t max) noexcept
-{ return mini64(max, maxi64(min, val)); }
+{
+    return mini64(max, maxi64(min, val));
+}
 
 constexpr inline uint64_t minu64(uint64_t a, uint64_t b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline uint64_t maxu64(uint64_t a, uint64_t b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline uint64_t clampu64(uint64_t val, uint64_t min, uint64_t max) noexcept
-{ return minu64(max, maxu64(min, val)); }
+{
+    return minu64(max, maxu64(min, val));
+}
 
 constexpr inline size_t minz(size_t a, size_t b) noexcept
-{ return ((a > b) ? b : a); }
+{
+    return ((a > b) ? b : a);
+}
 constexpr inline size_t maxz(size_t a, size_t b) noexcept
-{ return ((a > b) ? a : b); }
+{
+    return ((a > b) ? a : b);
+}
 constexpr inline size_t clampz(size_t val, size_t min, size_t max) noexcept
-{ return minz(max, maxz(min, val)); }
+{
+    return minz(max, maxz(min, val));
+}
 
 
 /** Find the next power-of-2 for non-power-of-2 numbers. */
@@ -173,10 +219,14 @@ inline int msvc_ctz64(uint64_t v)
 #else
 
 inline int fallback_ctz32(uint32_t value)
-{ return POPCNT32(~value & (value - 1)); }
+{
+    return POPCNT32(~value & (value - 1));
+}
 #define CTZ32 fallback_ctz32
 inline int fallback_ctz64(uint64_t value)
-{ return POPCNT64(~value & (value - 1)); }
+{
+    return POPCNT64(~value & (value - 1));
+}
 #define CTZ64 fallback_ctz64
 
 #endif
@@ -217,7 +267,9 @@ inline int fastf2i(float f) noexcept
 #endif
 }
 inline unsigned int fastf2u(float f) noexcept
-{ return static_cast<unsigned int>(fastf2i(f)); }
+{
+    return static_cast<unsigned int>(fastf2i(f));
+}
 
 /** Converts float-to-int using standard behavior (truncation). */
 inline int float2int(float f) noexcept
@@ -252,7 +304,9 @@ inline int float2int(float f) noexcept
 #endif
 }
 inline unsigned int float2uint(float f) noexcept
-{ return static_cast<unsigned int>(float2int(f)); }
+{
+    return static_cast<unsigned int>(float2int(f));
+}
 
 /** Converts double-to-int using standard behavior (truncation). */
 inline int double2int(double d) noexcept
@@ -308,8 +362,8 @@ inline float fast_roundf(float f) noexcept
     /* Integral limit, where sub-integral precision is not available for
      * floats.
      */
-    static const float ilim[2]{
-         8388608.0f /*  0x1.0p+23 */,
+    static const float ilim[2] {
+        8388608.0f /*  0x1.0p+23 */,
         -8388608.0f /* -0x1.0p+23 */
     };
     unsigned int sign, expo;

@@ -19,8 +19,8 @@ struct ALeffectslot;
 
 
 using MixerFunc = void(*)(const al::span<const float> InSamples,
-    const al::span<FloatBufferLine> OutBuffer, float *CurrentGains, const float *TargetGains,
-    const size_t Counter, const size_t OutPos);
+                          const al::span<FloatBufferLine> OutBuffer, float *CurrentGains, const float *TargetGains,
+                          const size_t Counter, const size_t OutPos);
 
 extern MixerFunc MixSamples;
 
@@ -41,7 +41,9 @@ extern MixerFunc MixSamples;
 
 
 inline float lerp(float val1, float val2, float mu) noexcept
-{ return val1 + (val2-val1)*mu; }
+{
+    return val1 + (val2-val1)*mu;
+}
 inline float cubic(float val1, float val2, float val3, float val4, float mu) noexcept
 {
     const float mu2{mu*mu}, mu3{mu2*mu};
@@ -69,7 +71,7 @@ void aluInitMixer(void);
  * properties.
  */
 void aluInitRenderer(ALCdevice *device, int hrtf_id, HrtfRequestMode hrtf_appreq,
-    HrtfRequestMode hrtf_userreq);
+                     HrtfRequestMode hrtf_userreq);
 
 void aluInitEffectPanning(ALeffectslot *slot, ALCdevice *device);
 
@@ -88,7 +90,7 @@ void aluInitEffectPanning(ALeffectslot *slot, ALCdevice *device);
  * second, and third parameters respectively -- simply negate X and Z.
  */
 std::array<float,MAX_AMBI_CHANNELS> CalcAmbiCoeffs(const float y, const float z, const float x,
-    const float spread);
+        const float spread);
 
 /**
  * CalcDirectionCoeffs
@@ -98,7 +100,7 @@ std::array<float,MAX_AMBI_CHANNELS> CalcAmbiCoeffs(const float y, const float z,
  * of the sound (0...tau).
  */
 inline std::array<float,MAX_AMBI_CHANNELS> CalcDirectionCoeffs(const float (&dir)[3],
-    const float spread)
+        const float spread)
 {
     /* Convert from OpenAL coords to Ambisonics. */
     return CalcAmbiCoeffs(-dir[0], dir[1], -dir[2], spread);
@@ -112,7 +114,7 @@ inline std::array<float,MAX_AMBI_CHANNELS> CalcDirectionCoeffs(const float (&dir
  * respectively.
  */
 inline std::array<float,MAX_AMBI_CHANNELS> CalcAngleCoeffs(const float azimuth,
-    const float elevation, const float spread)
+        const float elevation, const float spread)
 {
     const float x{-std::sin(azimuth) * std::cos(elevation)};
     const float y{ std::sin(elevation)};
@@ -131,7 +133,7 @@ inline std::array<float,MAX_AMBI_CHANNELS> CalcAngleCoeffs(const float azimuth,
  * scale and orient the sound samples.
  */
 void ComputePanGains(const MixParams *mix, const float*RESTRICT coeffs, const float ingain,
-    const al::span<float,MAX_OUTPUT_CHANNELS> gains);
+                     const al::span<float,MAX_OUTPUT_CHANNELS> gains);
 
 
 inline std::array<float,MAX_AMBI_CHANNELS> GetAmbiIdentityRow(size_t i) noexcept
@@ -143,7 +145,7 @@ inline std::array<float,MAX_AMBI_CHANNELS> GetAmbiIdentityRow(size_t i) noexcept
 
 
 void aluMixData(ALCdevice *device, void *OutBuffer, const ALuint NumSamples,
-    const size_t FrameStep);
+                const size_t FrameStep);
 /* Caller must lock the device state, and the mixer must not be running. */
 [[gnu::format(printf,2,3)]] void aluHandleDisconnect(ALCdevice *device, const char *msg, ...);
 

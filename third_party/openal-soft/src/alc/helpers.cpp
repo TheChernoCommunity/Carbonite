@@ -151,7 +151,9 @@ void DirectorySearch(const char *path, const char *ext, al::vector<std::string> 
 
 al::vector<std::string> SearchDataFiles(const char *ext, const char *subdir)
 {
-    auto is_slash = [](int c) noexcept -> int { return (c == '\\' || c == '/'); };
+    auto is_slash = [](int c) noexcept -> int {
+        return (c == '\\' || c == '/');
+    };
 
     static std::mutex search_lock;
     std::lock_guard<std::mutex> _{search_lock};
@@ -193,7 +195,7 @@ al::vector<std::string> SearchDataFiles(const char *ext, const char *subdir)
     DirectorySearch(path.c_str(), ext, &results);
 
     /* Search the local and global data dirs. */
-    static const int ids[2]{ CSIDL_APPDATA, CSIDL_COMMON_APPDATA };
+    static const int ids[2] { CSIDL_APPDATA, CSIDL_COMMON_APPDATA };
     for(int id : ids)
     {
         WCHAR buffer[MAX_PATH];
@@ -259,7 +261,7 @@ const PathNamePair &GetProcBinary()
 #ifdef HAVE_PROC_PIDPATH
     if(pathname.empty())
     {
-        char procpath[PROC_PIDPATHINFO_MAXSIZE]{};
+        char procpath[PROC_PIDPATHINFO_MAXSIZE] {};
         const pid_t pid{getpid()};
         if(proc_pidpath(pid, procpath, sizeof(procpath)) < 1)
             ERR("proc_pidpath(%d, ...) failed: %s\n", pid, strerror(errno));
@@ -269,7 +271,7 @@ const PathNamePair &GetProcBinary()
 #endif
     if(pathname.empty())
     {
-        static const char SelfLinkNames[][32]{
+        static const char SelfLinkNames[][32] {
             "/proc/self/exe",
             "/proc/self/file",
             "/proc/curproc/exe",
@@ -430,7 +432,7 @@ al::vector<std::string> SearchDataFiles(const char *ext, const char *subdir)
         size_t nextpos{datadirs.find(':', curpos)};
 
         std::string path{(nextpos != std::string::npos) ?
-            datadirs.substr(curpos, nextpos++ - curpos) : datadirs.substr(curpos)};
+                         datadirs.substr(curpos, nextpos++ - curpos) : datadirs.substr(curpos)};
         curpos = nextpos;
 
         if(path.empty()) continue;
@@ -449,7 +451,7 @@ void SetRTPriority()
 #if defined(HAVE_PTHREAD_SETSCHEDPARAM) && !defined(__OpenBSD__)
     if(RTPrioLevel > 0)
     {
-        struct sched_param param{};
+        struct sched_param param {};
         /* Use the minimum real-time priority possible for now (on Linux this
          * should be 1 for SCHED_RR).
          */

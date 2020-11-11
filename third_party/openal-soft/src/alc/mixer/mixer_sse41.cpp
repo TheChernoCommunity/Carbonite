@@ -33,7 +33,7 @@ struct LerpTag;
 
 template<>
 const float *Resample_<LerpTag,SSE4Tag>(const InterpState*, const float *RESTRICT src, ALuint frac,
-    ALuint increment, const al::span<float> dst)
+                                        ALuint increment, const al::span<float> dst)
 {
     const __m128i increment4{_mm_set1_epi32(static_cast<int>(increment*4))};
     const __m128 fracOne4{_mm_set1_ps(1.0f/FRACTIONONE)};
@@ -42,9 +42,9 @@ const float *Resample_<LerpTag,SSE4Tag>(const InterpState*, const float *RESTRIC
     alignas(16) ALuint pos_[4], frac_[4];
     InitPosArrays(frac, increment, frac_, pos_, 4);
     __m128i frac4{_mm_setr_epi32(static_cast<int>(frac_[0]), static_cast<int>(frac_[1]),
-        static_cast<int>(frac_[2]), static_cast<int>(frac_[3]))};
+                                 static_cast<int>(frac_[2]), static_cast<int>(frac_[3]))};
     __m128i pos4{_mm_setr_epi32(static_cast<int>(pos_[0]), static_cast<int>(pos_[1]),
-        static_cast<int>(pos_[2]), static_cast<int>(pos_[3]))};
+                                static_cast<int>(pos_[2]), static_cast<int>(pos_[3]))};
 
     auto dst_iter = dst.begin();
     const auto aligned_end = (dst.size()&~3u) + dst_iter;

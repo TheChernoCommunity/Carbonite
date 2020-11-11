@@ -32,7 +32,9 @@ struct BackendBase {
 
     ALCdevice *const mDevice;
 
-    BackendBase(ALCdevice *device) noexcept : mDevice{device} { }
+    BackendBase(ALCdevice *device) noexcept : mDevice {
+        device
+    } { }
     virtual ~BackendBase() = default;
 };
 using BackendPtr = std::unique_ptr<BackendBase>;

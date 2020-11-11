@@ -74,12 +74,19 @@ struct SourceSubList {
     SourceSubList() noexcept = default;
     SourceSubList(const SourceSubList&) = delete;
     SourceSubList(SourceSubList&& rhs) noexcept : FreeMask{rhs.FreeMask}, Sources{rhs.Sources}
-    { rhs.FreeMask = ~0_u64; rhs.Sources = nullptr; }
+    {
+        rhs.FreeMask = ~0_u64;
+        rhs.Sources = nullptr;
+    }
     ~SourceSubList();
 
     SourceSubList& operator=(const SourceSubList&) = delete;
     SourceSubList& operator=(SourceSubList&& rhs) noexcept
-    { std::swap(FreeMask, rhs.FreeMask); std::swap(Sources, rhs.Sources); return *this; }
+    {
+        std::swap(FreeMask, rhs.FreeMask);
+        std::swap(Sources, rhs.Sources);
+        return *this;
+    }
 };
 
 struct EffectSlotSubList {
@@ -89,13 +96,20 @@ struct EffectSlotSubList {
     EffectSlotSubList() noexcept = default;
     EffectSlotSubList(const EffectSlotSubList&) = delete;
     EffectSlotSubList(EffectSlotSubList&& rhs) noexcept
-      : FreeMask{rhs.FreeMask}, EffectSlots{rhs.EffectSlots}
-    { rhs.FreeMask = ~0_u64; rhs.EffectSlots = nullptr; }
+        : FreeMask{rhs.FreeMask}, EffectSlots{rhs.EffectSlots}
+    {
+        rhs.FreeMask = ~0_u64;
+        rhs.EffectSlots = nullptr;
+    }
     ~EffectSlotSubList();
 
     EffectSlotSubList& operator=(const EffectSlotSubList&) = delete;
     EffectSlotSubList& operator=(EffectSlotSubList&& rhs) noexcept
-    { std::swap(FreeMask, rhs.FreeMask); std::swap(EffectSlots, rhs.EffectSlots); return *this; }
+    {
+        std::swap(FreeMask, rhs.FreeMask);
+        std::swap(EffectSlots, rhs.EffectSlots);
+        return *this;
+    }
 };
 
 struct ALCcontext : public al::intrusive_ref<ALCcontext> {
@@ -169,12 +183,12 @@ struct ALCcontext : public al::intrusive_ref<ALCcontext> {
     al::span<Voice*> getVoicesSpan() const noexcept
     {
         return {mVoices.load(std::memory_order_relaxed)->data(),
-            mActiveVoiceCount.load(std::memory_order_relaxed)};
+                mActiveVoiceCount.load(std::memory_order_relaxed)};
     }
     al::span<Voice*> getVoicesSpanAcquired() const noexcept
     {
         return {mVoices.load(std::memory_order_acquire)->data(),
-            mActiveVoiceCount.load(std::memory_order_acquire)};
+                mActiveVoiceCount.load(std::memory_order_acquire)};
     }
 
 
@@ -216,7 +230,9 @@ struct ALCcontext : public al::intrusive_ref<ALCcontext> {
      * This does *NOT* stop mixing, but rather prevents certain property
      * changes from taking effect.
      */
-    void deferUpdates() noexcept { mDeferUpdates.exchange(true, std::memory_order_acq_rel); }
+    void deferUpdates() noexcept {
+        mDeferUpdates.exchange(true, std::memory_order_acq_rel);
+    }
 
     /** Resumes update processing after being deferred. */
     void processUpdates();

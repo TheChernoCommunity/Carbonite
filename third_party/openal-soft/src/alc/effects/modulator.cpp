@@ -49,17 +49,23 @@ inline float Sin(ALuint index)
 }
 
 inline float Saw(ALuint index)
-{ return static_cast<float>(index)*(2.0f/WAVEFORM_FRACONE) - 1.0f; }
+{
+    return static_cast<float>(index)*(2.0f/WAVEFORM_FRACONE) - 1.0f;
+}
 
 inline float Square(ALuint index)
-{ return static_cast<float>(static_cast<int>((index>>(WAVEFORM_FRACBITS-2))&2) - 1); }
+{
+    return static_cast<float>(static_cast<int>((index>>(WAVEFORM_FRACBITS-2))&2) - 1);
+}
 
-inline float One(ALuint) { return 1.0f; }
+inline float One(ALuint) {
+    return 1.0f;
+}
 
 template<float (&func)(ALuint)>
 void Modulate(float *RESTRICT dst, ALuint index, const ALuint step, size_t todo)
 {
-    for(size_t i{0u};i < todo;i++)
+    for(size_t i{0u}; i < todo; i++)
     {
         index += step;
         index &= WAVEFORM_FRACMASK;
@@ -69,7 +75,7 @@ void Modulate(float *RESTRICT dst, ALuint index, const ALuint step, size_t todo)
 
 
 struct ModulatorState final : public EffectState {
-    void (*mGetSamples)(float*RESTRICT, ALuint, const ALuint, size_t){};
+    void (*mGetSamples)(float*RESTRICT, ALuint, const ALuint, size_t) {};
 
     ALuint mIndex{0};
     ALuint mStep{1};
@@ -77,8 +83,8 @@ struct ModulatorState final : public EffectState {
     struct {
         BiquadFilter Filter;
 
-        float CurrentGains[MAX_OUTPUT_CHANNELS]{};
-        float TargetGains[MAX_OUTPUT_CHANNELS]{};
+        float CurrentGains[MAX_OUTPUT_CHANNELS] {};
+        float TargetGains[MAX_OUTPUT_CHANNELS] {};
     } mChans[MAX_AMBI_CHANNELS];
 
 
@@ -118,11 +124,11 @@ void ModulatorState::update(const ALCcontext *context, const ALeffectslot *slot,
     f0norm = clampf(f0norm, 1.0f/512.0f, 0.49f);
     /* Bandwidth value is constant in octaves. */
     mChans[0].Filter.setParamsFromBandwidth(BiquadType::HighPass, f0norm, 1.0f, 0.75f);
-    for(size_t i{1u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{1u}; i < slot->Wet.Buffer.size(); ++i)
         mChans[i].Filter.copyParamsFrom(mChans[0].Filter);
 
     mOutTarget = target.Main->Buffer;
-    for(size_t i{0u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{0u}; i < slot->Wet.Buffer.size(); ++i)
     {
         auto coeffs = GetAmbiIdentityRow(i);
         ComputePanGains(target.Main, coeffs.data(), slot->Params.Gain, mChans[i].TargetGains);
@@ -131,7 +137,7 @@ void ModulatorState::update(const ALCcontext *context, const ALeffectslot *slot,
 
 void ModulatorState::process(const size_t samplesToDo, const al::span<const FloatBufferLine> samplesIn, const al::span<FloatBufferLine> samplesOut)
 {
-    for(size_t base{0u};base < samplesToDo;)
+    for(size_t base{0u}; base < samplesToDo;)
     {
         alignas(16) float modsamples[MAX_UPDATE_SAMPLES];
         size_t td{minz(MAX_UPDATE_SAMPLES, samplesToDo-base)};
@@ -146,11 +152,11 @@ void ModulatorState::process(const size_t samplesToDo, const al::span<const Floa
             alignas(16) float temps[MAX_UPDATE_SAMPLES];
 
             chandata->Filter.process({&input[base], td}, temps);
-            for(size_t i{0u};i < td;i++)
+            for(size_t i{0u}; i < td; i++)
                 temps[i] *= modsamples[i];
 
             MixSamples({temps, td}, samplesOut, chandata->CurrentGains, chandata->TargetGains,
-                samplesToDo-base, base);
+                       samplesToDo-base, base);
             ++chandata;
         }
 
@@ -180,7 +186,9 @@ void Modulator_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Modulator_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Modulator_setParamf(props, param, vals[0]); }
+{
+    Modulator_setParamf(props, param, vals[0]);
+}
 void Modulator_setParami(EffectProps *props, ALenum param, int val)
 {
     switch(param)
@@ -198,11 +206,13 @@ void Modulator_setParami(EffectProps *props, ALenum param, int val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid modulator integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void Modulator_setParamiv(EffectProps *props, ALenum param, const int *vals)
-{ Modulator_setParami(props, param, vals[0]); }
+{
+    Modulator_setParami(props, param, vals[0]);
+}
 
 void Modulator_getParami(const EffectProps *props, ALenum param, int *val)
 {
@@ -220,11 +230,13 @@ void Modulator_getParami(const EffectProps *props, ALenum param, int *val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid modulator integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void Modulator_getParamiv(const EffectProps *props, ALenum param, int *vals)
-{ Modulator_getParami(props, param, vals); }
+{
+    Modulator_getParami(props, param, vals);
+}
 void Modulator_getParamf(const EffectProps *props, ALenum param, float *val)
 {
     switch(param)
@@ -241,15 +253,21 @@ void Modulator_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Modulator_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Modulator_getParamf(props, param, vals); }
+{
+    Modulator_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Modulator);
 
 
 struct ModulatorStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new ModulatorState{}; }
+    EffectState *create() override {
+        return new ModulatorState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Modulator_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Modulator_vtable;
+    }
 };
 
 EffectProps ModulatorStateFactory::getDefaultProps() const noexcept

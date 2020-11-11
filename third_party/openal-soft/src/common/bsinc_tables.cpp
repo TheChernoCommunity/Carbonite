@@ -148,7 +148,7 @@ constexpr double Kaiser(const double beta, const double k, const double besseli_
 constexpr double CalcKaiserWidth(const double rejection, const int order)
 {
     if(rejection > 21.19)
-       return (rejection - 7.95) / (order * 2.285 * al::MathDefs<double>::Tau());
+        return (rejection - 7.95) / (order * 2.285 * al::MathDefs<double>::Tau());
     /* This enforces a minimum rejection of just above 21.18dB */
     return 5.79 / (order * al::MathDefs<double>::Tau());
 }
@@ -157,9 +157,9 @@ constexpr double CalcKaiserWidth(const double rejection, const int order)
 constexpr double CalcKaiserBeta(const double rejection)
 {
     if(rejection > 50.0)
-       return 0.1102 * (rejection-8.7);
+        return 0.1102 * (rejection-8.7);
     else if(rejection >= 21.0)
-       return (0.5842 * std::pow(rejection-21.0, 0.4)) + (0.07886 * (rejection-21.0));
+        return (0.5842 * std::pow(rejection-21.0, 0.4)) + (0.07886 * (rejection-21.0));
     return 0.0;
 }
 
@@ -185,7 +185,7 @@ constexpr BSincHeader GenerateBSincHeader(int Rejection, int Order)
     ret.besseli_0_beta = BesselI_0(ret.beta);
 
     int num_points{Order+1};
-    for(int si{0};si < BSincScaleCount;++si)
+    for(int si{0}; si < BSincScaleCount; ++si)
     {
         const double scale{ret.scaleBase + (ret.scaleRange * si / (BSincScaleCount - 1))};
         const int a{std::min(static_cast<int>(num_points / 2.0 / scale), num_points)};
@@ -218,7 +218,7 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
     /* Calculate the Kaiser-windowed Sinc filter coefficients for each scale
      * and phase index.
      */
-    for(unsigned int si{0};si < BSincScaleCount;++si)
+    for(unsigned int si{0}; si < BSincScaleCount; ++si)
     {
         const int m{hdr.a[si] * 2};
         const int o{BSincPointsHalf - (m/2)};
@@ -230,15 +230,15 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
         /* Do one extra phase index so that the phase delta has a proper target
          * for its last index.
          */
-        for(int pi{0};pi <= BSincPhaseCount;++pi)
+        for(int pi{0}; pi <= BSincPhaseCount; ++pi)
         {
             const double phase{l + (pi/double{BSincPhaseCount})};
 
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
             {
                 const double x{i - phase};
                 filter[si][pi][o+i] = Kaiser(hdr.beta, x/a, hdr.besseli_0_beta) * cutoff *
-                    Sinc(cutoff*x);
+                                      Sinc(cutoff*x);
             }
         }
     }
@@ -246,23 +246,23 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
     auto ret = std::make_unique<std::array<float,total_size>>();
     size_t idx{0};
 
-    for(unsigned int si{0};si < BSincScaleCount-1;++si)
+    for(unsigned int si{0}; si < BSincScaleCount-1; ++si)
     {
         const int m{((hdr.a[si]*2) + 3) & ~3};
         const int o{BSincPointsHalf - (m/2)};
 
-        for(int pi{0};pi < BSincPhaseCount;++pi)
+        for(int pi{0}; pi < BSincPhaseCount; ++pi)
         {
             /* Write out the filter. Also calculate and write out the phase and
              * scale deltas.
              */
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
                 (*ret)[idx++] = static_cast<float>(filter[si][pi][o+i]);
 
             /* Linear interpolation between phases is simplified by pre-
              * calculating the delta (b - a) in: x = a + f (b - a)
              */
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
             {
                 const double phDelta{filter[si][pi+1][o+i] - filter[si][pi][o+i]};
                 (*ret)[idx++] = static_cast<float>(phDelta);
@@ -273,7 +273,7 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
              * Given a difference in points between scales, the destination
              * points will be 0, thus: x = a + f (-a)
              */
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
             {
                 const double scDelta{filter[si+1][pi][o+i] - filter[si][pi][o+i]};
                 (*ret)[idx++] = static_cast<float>(scDelta);
@@ -282,10 +282,10 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
             /* This last simplification is done to complete the bilinear
              * equation for the combination of phase and scale.
              */
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
             {
                 const double spDelta{(filter[si+1][pi+1][o+i] - filter[si+1][pi][o+i]) -
-                    (filter[si][pi+1][o+i] - filter[si][pi][o+i])};
+                                     (filter[si][pi+1][o+i] - filter[si][pi][o+i])};
                 (*ret)[idx++] = static_cast<float>(spDelta);
             }
         }
@@ -296,18 +296,18 @@ std::array<float,total_size> GenerateBSincCoeffs(const BSincHeader &hdr)
         const int m{((hdr.a[si]*2) + 3) & ~3};
         const int o{BSincPointsHalf - (m/2)};
 
-        for(int pi{0};pi < BSincPhaseCount;++pi)
+        for(int pi{0}; pi < BSincPhaseCount; ++pi)
         {
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
                 (*ret)[idx++] = static_cast<float>(filter[si][pi][o+i]);
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
             {
                 const double phDelta{filter[si][pi+1][o+i] - filter[si][pi][o+i]};
                 (*ret)[idx++] = static_cast<float>(phDelta);
             }
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
                 (*ret)[idx++] = 0.0f;
-            for(int i{0};i < m;++i)
+            for(int i{0}; i < m; ++i)
                 (*ret)[idx++] = 0.0f;
         }
     }
@@ -328,10 +328,10 @@ constexpr BSincTable GenerateBSincTable(const BSincHeader &hdr, const float *tab
     BSincTable ret{};
     ret.scaleBase = static_cast<float>(hdr.scaleBase);
     ret.scaleRange = static_cast<float>(1.0 / hdr.scaleRange);
-    for(int i{0};i < BSincScaleCount;++i)
+    for(int i{0}; i < BSincScaleCount; ++i)
         ret.m[i] = static_cast<unsigned int>(((hdr.a[i]*2) + 3) & ~3);
     ret.filterOffset[0] = 0;
-    for(int i{1};i < BSincScaleCount;++i)
+    for(int i{1}; i < BSincScaleCount; ++i)
         ret.filterOffset[i] = ret.filterOffset[i-1] + ret.m[i-1]*4*BSincPhaseCount;
     ret.Tab = tab;
     return ret;

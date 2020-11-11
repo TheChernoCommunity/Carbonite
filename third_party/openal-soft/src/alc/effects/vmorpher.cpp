@@ -51,17 +51,23 @@ inline float Sin(ALuint index)
 }
 
 inline float Saw(ALuint index)
-{ return static_cast<float>(index) / float{WAVEFORM_FRACONE}; }
+{
+    return static_cast<float>(index) / float{WAVEFORM_FRACONE};
+}
 
 inline float Triangle(ALuint index)
-{ return std::fabs(static_cast<float>(index)*(2.0f/WAVEFORM_FRACONE) - 1.0f); }
+{
+    return std::fabs(static_cast<float>(index)*(2.0f/WAVEFORM_FRACONE) - 1.0f);
+}
 
-inline float Half(ALuint) { return 0.5f; }
+inline float Half(ALuint) {
+    return 0.5f;
+}
 
 template<float (&func)(ALuint)>
 void Oscillate(float *RESTRICT dst, ALuint index, const ALuint step, size_t todo)
 {
-    for(size_t i{0u};i < todo;i++)
+    for(size_t i{0u}; i < todo; i++)
     {
         index += step;
         index &= WAVEFORM_FRACMASK;
@@ -78,7 +84,7 @@ struct FormantFilter
 
     FormantFilter() = default;
     FormantFilter(float f0norm, float gain)
-      : mCoeff{std::tan(al::MathDefs<float>::Pi() * f0norm)}, mGain{gain}
+        : mCoeff{std::tan(al::MathDefs<float>::Pi() * f0norm)}, mGain{gain}
     { }
 
     inline void process(const float *samplesIn, float *samplesOut, const size_t numInput)
@@ -92,7 +98,7 @@ struct FormantFilter
         float s1{mS1};
         float s2{mS2};
 
-        for(size_t i{0u};i < numInput;i++)
+        for(size_t i{0u}; i < numInput; i++)
         {
             const float H{(samplesIn[i] - (1.0f/Q_FACTOR + g)*s1 - s2)*h};
             const float B{g*H + s1};
@@ -122,18 +128,18 @@ struct VmorpherState final : public EffectState {
         FormantFilter Formants[NUM_FILTERS][NUM_FORMANTS];
 
         /* Effect gains for each channel */
-        float CurrentGains[MAX_OUTPUT_CHANNELS]{};
-        float TargetGains[MAX_OUTPUT_CHANNELS]{};
+        float CurrentGains[MAX_OUTPUT_CHANNELS] {};
+        float TargetGains[MAX_OUTPUT_CHANNELS] {};
     } mChans[MAX_AMBI_CHANNELS];
 
-    void (*mGetSamples)(float*RESTRICT, ALuint, const ALuint, size_t){};
+    void (*mGetSamples)(float*RESTRICT, ALuint, const ALuint, size_t) {};
 
     ALuint mIndex{0};
     ALuint mStep{1};
 
     /* Effects buffers */
-    float mSampleBufferA[MAX_UPDATE_SAMPLES]{};
-    float mSampleBufferB[MAX_UPDATE_SAMPLES]{};
+    float mSampleBufferA[MAX_UPDATE_SAMPLES] {};
+    float mSampleBufferB[MAX_UPDATE_SAMPLES] {};
 
     void deviceUpdate(const ALCdevice *device) override;
     void update(const ALCcontext *context, const ALeffectslot *slot, const EffectProps *props, const EffectTarget target) override;
@@ -155,39 +161,39 @@ std::array<FormantFilter,4> VmorpherState::getFiltersByPhoneme(ALenum phoneme, f
     {
     case AL_VOCAL_MORPHER_PHONEME_A:
         return {{
-            {( 800 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
-            {(1150 * pitch) / frequency, 0.501187f}, /* std::pow(10.0f,  -6 / 20.0f); */
-            {(2900 * pitch) / frequency, 0.025118f}, /* std::pow(10.0f, -32 / 20.0f); */
-            {(3900 * pitch) / frequency, 0.100000f}  /* std::pow(10.0f, -20 / 20.0f); */
-        }};
+                {( 800 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
+                {(1150 * pitch) / frequency, 0.501187f}, /* std::pow(10.0f,  -6 / 20.0f); */
+                {(2900 * pitch) / frequency, 0.025118f}, /* std::pow(10.0f, -32 / 20.0f); */
+                {(3900 * pitch) / frequency, 0.100000f}  /* std::pow(10.0f, -20 / 20.0f); */
+            }};
     case AL_VOCAL_MORPHER_PHONEME_E:
         return {{
-            {( 350 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
-            {(2000 * pitch) / frequency, 0.100000f}, /* std::pow(10.0f, -20 / 20.0f); */
-            {(2800 * pitch) / frequency, 0.177827f}, /* std::pow(10.0f, -15 / 20.0f); */
-            {(3600 * pitch) / frequency, 0.009999f}  /* std::pow(10.0f, -40 / 20.0f); */
-        }};
+                {( 350 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
+                {(2000 * pitch) / frequency, 0.100000f}, /* std::pow(10.0f, -20 / 20.0f); */
+                {(2800 * pitch) / frequency, 0.177827f}, /* std::pow(10.0f, -15 / 20.0f); */
+                {(3600 * pitch) / frequency, 0.009999f}  /* std::pow(10.0f, -40 / 20.0f); */
+            }};
     case AL_VOCAL_MORPHER_PHONEME_I:
         return {{
-            {( 270 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
-            {(2140 * pitch) / frequency, 0.251188f}, /* std::pow(10.0f, -12 / 20.0f); */
-            {(2950 * pitch) / frequency, 0.050118f}, /* std::pow(10.0f, -26 / 20.0f); */
-            {(3900 * pitch) / frequency, 0.050118f}  /* std::pow(10.0f, -26 / 20.0f); */
-        }};
+                {( 270 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
+                {(2140 * pitch) / frequency, 0.251188f}, /* std::pow(10.0f, -12 / 20.0f); */
+                {(2950 * pitch) / frequency, 0.050118f}, /* std::pow(10.0f, -26 / 20.0f); */
+                {(3900 * pitch) / frequency, 0.050118f}  /* std::pow(10.0f, -26 / 20.0f); */
+            }};
     case AL_VOCAL_MORPHER_PHONEME_O:
         return {{
-            {( 450 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
-            {( 800 * pitch) / frequency, 0.281838f}, /* std::pow(10.0f, -11 / 20.0f); */
-            {(2830 * pitch) / frequency, 0.079432f}, /* std::pow(10.0f, -22 / 20.0f); */
-            {(3800 * pitch) / frequency, 0.079432f}  /* std::pow(10.0f, -22 / 20.0f); */
-        }};
+                {( 450 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
+                {( 800 * pitch) / frequency, 0.281838f}, /* std::pow(10.0f, -11 / 20.0f); */
+                {(2830 * pitch) / frequency, 0.079432f}, /* std::pow(10.0f, -22 / 20.0f); */
+                {(3800 * pitch) / frequency, 0.079432f}  /* std::pow(10.0f, -22 / 20.0f); */
+            }};
     case AL_VOCAL_MORPHER_PHONEME_U:
         return {{
-            {( 325 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
-            {( 700 * pitch) / frequency, 0.158489f}, /* std::pow(10.0f, -16 / 20.0f); */
-            {(2700 * pitch) / frequency, 0.017782f}, /* std::pow(10.0f, -35 / 20.0f); */
-            {(3800 * pitch) / frequency, 0.009999f}  /* std::pow(10.0f, -40 / 20.0f); */
-        }};
+                {( 325 * pitch) / frequency, 1.000000f}, /* std::pow(10.0f,   0 / 20.0f); */
+                {( 700 * pitch) / frequency, 0.158489f}, /* std::pow(10.0f, -16 / 20.0f); */
+                {(2700 * pitch) / frequency, 0.017782f}, /* std::pow(10.0f, -35 / 20.0f); */
+                {(3800 * pitch) / frequency, 0.009999f}  /* std::pow(10.0f, -40 / 20.0f); */
+            }};
     }
     return {};
 }
@@ -198,9 +204,9 @@ void VmorpherState::deviceUpdate(const ALCdevice* /*device*/)
     for(auto &e : mChans)
     {
         std::for_each(std::begin(e.Formants[VOWEL_A_INDEX]), std::end(e.Formants[VOWEL_A_INDEX]),
-            std::mem_fn(&FormantFilter::clear));
+                      std::mem_fn(&FormantFilter::clear));
         std::for_each(std::begin(e.Formants[VOWEL_B_INDEX]), std::end(e.Formants[VOWEL_B_INDEX]),
-            std::mem_fn(&FormantFilter::clear));
+                      std::mem_fn(&FormantFilter::clear));
         std::fill(std::begin(e.CurrentGains), std::end(e.CurrentGains), 0.0f);
     }
 }
@@ -222,22 +228,22 @@ void VmorpherState::update(const ALCcontext *context, const ALeffectslot *slot, 
         mGetSamples = Oscillate<Triangle>;
 
     const float pitchA{std::pow(2.0f,
-        static_cast<float>(props->Vmorpher.PhonemeACoarseTuning) / 12.0f)};
+                                static_cast<float>(props->Vmorpher.PhonemeACoarseTuning) / 12.0f)};
     const float pitchB{std::pow(2.0f,
-        static_cast<float>(props->Vmorpher.PhonemeBCoarseTuning) / 12.0f)};
+                                static_cast<float>(props->Vmorpher.PhonemeBCoarseTuning) / 12.0f)};
 
     auto vowelA = getFiltersByPhoneme(props->Vmorpher.PhonemeA, frequency, pitchA);
     auto vowelB = getFiltersByPhoneme(props->Vmorpher.PhonemeB, frequency, pitchB);
 
     /* Copy the filter coefficients to the input channels. */
-    for(size_t i{0u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{0u}; i < slot->Wet.Buffer.size(); ++i)
     {
         std::copy(vowelA.begin(), vowelA.end(), std::begin(mChans[i].Formants[VOWEL_A_INDEX]));
         std::copy(vowelB.begin(), vowelB.end(), std::begin(mChans[i].Formants[VOWEL_B_INDEX]));
     }
 
     mOutTarget = target.Main->Buffer;
-    for(size_t i{0u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{0u}; i < slot->Wet.Buffer.size(); ++i)
     {
         auto coeffs = GetAmbiIdentityRow(i);
         ComputePanGains(target.Main, coeffs.data(), slot->Params.Gain, mChans[i].TargetGains);
@@ -249,7 +255,7 @@ void VmorpherState::process(const size_t samplesToDo, const al::span<const Float
     /* Following the EFX specification for a conformant implementation which describes
      * the effect as a pair of 4-band formant filters blended together using an LFO.
      */
-    for(size_t base{0u};base < samplesToDo;)
+    for(size_t base{0u}; base < samplesToDo;)
     {
         alignas(16) float lfo[MAX_UPDATE_SAMPLES];
         const size_t td{minz(MAX_UPDATE_SAMPLES, samplesToDo-base)};
@@ -280,12 +286,12 @@ void VmorpherState::process(const size_t samplesToDo, const al::span<const Float
             vowelB[3].process(&input[base], mSampleBufferB, td);
 
             alignas(16) float blended[MAX_UPDATE_SAMPLES];
-            for(size_t i{0u};i < td;i++)
+            for(size_t i{0u}; i < td; i++)
                 blended[i] = lerp(mSampleBufferA[i], mSampleBufferB[i], lfo[i]);
 
             /* Now, mix the processed sound data to the output. */
             MixSamples({blended, td}, samplesOut, chandata->CurrentGains, chandata->TargetGains,
-                samplesToDo-base, base);
+                       samplesToDo-base, base);
             ++chandata;
         }
 
@@ -330,13 +336,13 @@ void Vmorpher_setParami(EffectProps *props, ALenum param, int val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void Vmorpher_setParamiv(EffectProps*, ALenum param, const int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Vmorpher_setParamf(EffectProps *props, ALenum param, float val)
 {
@@ -350,11 +356,13 @@ void Vmorpher_setParamf(EffectProps *props, ALenum param, float val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher float property 0x%04x",
-            param};
+                               param};
     }
 }
 void Vmorpher_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Vmorpher_setParamf(props, param, vals[0]); }
+{
+    Vmorpher_setParamf(props, param, vals[0]);
+}
 
 void Vmorpher_getParami(const EffectProps *props, ALenum param, int* val)
 {
@@ -382,13 +390,13 @@ void Vmorpher_getParami(const EffectProps *props, ALenum param, int* val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void Vmorpher_getParamiv(const EffectProps*, ALenum param, int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Vmorpher_getParamf(const EffectProps *props, ALenum param, float *val)
 {
@@ -400,19 +408,25 @@ void Vmorpher_getParamf(const EffectProps *props, ALenum param, float *val)
 
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid vocal morpher float property 0x%04x",
-            param};
+                               param};
     }
 }
 void Vmorpher_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Vmorpher_getParamf(props, param, vals); }
+{
+    Vmorpher_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Vmorpher);
 
 
 struct VmorpherStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new VmorpherState{}; }
+    EffectState *create() override {
+        return new VmorpherState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Vmorpher_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Vmorpher_vtable;
+    }
 };
 
 EffectProps VmorpherStateFactory::getDefaultProps() const noexcept

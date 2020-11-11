@@ -3,9 +3,9 @@
 
 class FPUCtl {
 #if defined(HAVE_SSE_INTRINSICS) || (defined(__GNUC__) && defined(HAVE_SSE))
-    unsigned int sse_state{};
+    unsigned int sse_state {};
 #endif
-    bool in_mode{};
+    bool in_mode {};
 
 public:
     FPUCtl();
@@ -14,7 +14,9 @@ public:
      * error. No idea why it's these methods specifically, but this is needed
      * to get it to compile.
      */
-    ~FPUCtl() noexcept(false) { leave(); }
+    ~FPUCtl() noexcept(false) {
+        leave();
+    }
 
     FPUCtl(const FPUCtl&) = delete;
     FPUCtl& operator=(const FPUCtl&) = delete;

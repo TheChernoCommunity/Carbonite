@@ -65,7 +65,7 @@ union InterpState {
 };
 
 using ResamplerFunc = const float*(*)(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst);
+                                      ALuint frac, ALuint increment, const al::span<float> dst);
 
 ResamplerFunc PrepareResampler(Resampler resampler, ALuint increment, InterpState *state);
 
@@ -254,7 +254,9 @@ struct Voice {
 
     Voice() = default;
     Voice(const Voice&) = delete;
-    ~Voice() { delete mUpdate.exchange(nullptr, std::memory_order_acq_rel); }
+    ~Voice() {
+        delete mUpdate.exchange(nullptr, std::memory_order_acq_rel);
+    }
     Voice& operator=(const Voice&) = delete;
 
     void mix(const State vstate, ALCcontext *Context, const ALuint SamplesToDo);

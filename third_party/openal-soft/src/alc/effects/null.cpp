@@ -48,7 +48,7 @@ void NullState::deviceUpdate(const ALCdevice* /*device*/)
  * the effect is (re)loaded into a slot.
  */
 void NullState::update(const ALCcontext* /*context*/, const ALeffectslot* /*slot*/,
-    const EffectProps* /*props*/, const EffectTarget /*target*/)
+                       const EffectProps* /*props*/, const EffectTarget /*target*/)
 {
 }
 
@@ -57,8 +57,8 @@ void NullState::update(const ALCcontext* /*context*/, const ALeffectslot* /*slot
  * not replace it.
  */
 void NullState::process(const size_t/*samplesToDo*/,
-    const al::span<const FloatBufferLine> /*samplesIn*/,
-    const al::span<FloatBufferLine> /*samplesOut*/)
+                        const al::span<const FloatBufferLine> /*samplesIn*/,
+                        const al::span<FloatBufferLine> /*samplesOut*/)
 {
 }
 
@@ -69,7 +69,7 @@ void NullEffect_setParami(EffectProps* /*props*/, ALenum param, int /*val*/)
     {
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid null effect integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void NullEffect_setParamiv(EffectProps *props, ALenum param, const int *vals)
@@ -86,7 +86,7 @@ void NullEffect_setParamf(EffectProps* /*props*/, ALenum param, float /*val*/)
     {
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid null effect float property 0x%04x",
-            param};
+                               param};
     }
 }
 void NullEffect_setParamfv(EffectProps *props, ALenum param, const float *vals)
@@ -104,7 +104,7 @@ void NullEffect_getParami(const EffectProps* /*props*/, ALenum param, int* /*val
     {
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid null effect integer property 0x%04x",
-            param};
+                               param};
     }
 }
 void NullEffect_getParamiv(const EffectProps *props, ALenum param, int *vals)
@@ -121,7 +121,7 @@ void NullEffect_getParamf(const EffectProps* /*props*/, ALenum param, float* /*v
     {
     default:
         throw effect_exception{AL_INVALID_ENUM, "Invalid null effect float property 0x%04x",
-            param};
+                               param};
     }
 }
 void NullEffect_getParamfv(const EffectProps *props, ALenum param, float *vals)
@@ -144,7 +144,9 @@ struct NullStateFactory final : public EffectStateFactory {
 
 /* Creates EffectState objects of the appropriate type. */
 EffectState *NullStateFactory::create()
-{ return new NullState{}; }
+{
+    return new NullState{};
+}
 
 /* Returns an ALeffectProps initialized with this effect type's default
  * property values.
@@ -157,7 +159,9 @@ EffectProps NullStateFactory::getDefaultProps() const noexcept
 
 /* Returns a pointer to this effect type's global set/get vtable. */
 const EffectVtable *NullStateFactory::getEffectVtable() const noexcept
-{ return &NullEffect_vtable; }
+{
+    return &NullEffect_vtable;
+}
 
 } // namespace
 

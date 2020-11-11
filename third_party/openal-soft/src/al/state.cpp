@@ -62,32 +62,60 @@ constexpr ALchar alErrOutOfMemory[] = "Out of Memory";
 /* Resampler strings */
 template<Resampler rtype> struct ResamplerName { };
 template<> struct ResamplerName<Resampler::Point>
-{ static constexpr const ALchar *Get() noexcept { return "Nearest"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "Nearest";
+    }
+};
 template<> struct ResamplerName<Resampler::Linear>
-{ static constexpr const ALchar *Get() noexcept { return "Linear"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "Linear";
+    }
+};
 template<> struct ResamplerName<Resampler::Cubic>
-{ static constexpr const ALchar *Get() noexcept { return "Cubic"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "Cubic";
+    }
+};
 template<> struct ResamplerName<Resampler::FastBSinc12>
-{ static constexpr const ALchar *Get() noexcept { return "11th order Sinc (fast)"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "11th order Sinc (fast)";
+    }
+};
 template<> struct ResamplerName<Resampler::BSinc12>
-{ static constexpr const ALchar *Get() noexcept { return "11th order Sinc"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "11th order Sinc";
+    }
+};
 template<> struct ResamplerName<Resampler::FastBSinc24>
-{ static constexpr const ALchar *Get() noexcept { return "23rd order Sinc (fast)"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "23rd order Sinc (fast)";
+    }
+};
 template<> struct ResamplerName<Resampler::BSinc24>
-{ static constexpr const ALchar *Get() noexcept { return "23rd order Sinc"; } };
+{
+    static constexpr const ALchar *Get() noexcept {
+        return "23rd order Sinc";
+    }
+};
 
 const ALchar *GetResamplerName(const Resampler rtype)
 {
 #define HANDLE_RESAMPLER(r) case r: return ResamplerName<r>::Get()
     switch(rtype)
     {
-    HANDLE_RESAMPLER(Resampler::Point);
-    HANDLE_RESAMPLER(Resampler::Linear);
-    HANDLE_RESAMPLER(Resampler::Cubic);
-    HANDLE_RESAMPLER(Resampler::FastBSinc12);
-    HANDLE_RESAMPLER(Resampler::BSinc12);
-    HANDLE_RESAMPLER(Resampler::FastBSinc24);
-    HANDLE_RESAMPLER(Resampler::BSinc24);
+        HANDLE_RESAMPLER(Resampler::Point);
+        HANDLE_RESAMPLER(Resampler::Linear);
+        HANDLE_RESAMPLER(Resampler::Cubic);
+        HANDLE_RESAMPLER(Resampler::FastBSinc12);
+        HANDLE_RESAMPLER(Resampler::BSinc12);
+        HANDLE_RESAMPLER(Resampler::FastBSinc24);
+        HANDLE_RESAMPLER(Resampler::BSinc24);
     }
 #undef HANDLE_RESAMPLER
     /* Should never get here. */
@@ -472,16 +500,16 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_DOPPLER_FACTOR:
-            case AL_DOPPLER_VELOCITY:
-            case AL_DISTANCE_MODEL:
-            case AL_SPEED_OF_SOUND:
-            case AL_DEFERRED_UPDATES_SOFT:
-            case AL_GAIN_LIMIT_SOFT:
-            case AL_NUM_RESAMPLERS_SOFT:
-            case AL_DEFAULT_RESAMPLER_SOFT:
-                values[0] = alGetBoolean(pname);
-                return;
+        case AL_DOPPLER_FACTOR:
+        case AL_DOPPLER_VELOCITY:
+        case AL_DISTANCE_MODEL:
+        case AL_SPEED_OF_SOUND:
+        case AL_DEFERRED_UPDATES_SOFT:
+        case AL_GAIN_LIMIT_SOFT:
+        case AL_NUM_RESAMPLERS_SOFT:
+        case AL_DEFAULT_RESAMPLER_SOFT:
+            values[0] = alGetBoolean(pname);
+            return;
         }
     }
 
@@ -491,10 +519,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid boolean-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid boolean-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -505,16 +533,16 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_DOPPLER_FACTOR:
-            case AL_DOPPLER_VELOCITY:
-            case AL_DISTANCE_MODEL:
-            case AL_SPEED_OF_SOUND:
-            case AL_DEFERRED_UPDATES_SOFT:
-            case AL_GAIN_LIMIT_SOFT:
-            case AL_NUM_RESAMPLERS_SOFT:
-            case AL_DEFAULT_RESAMPLER_SOFT:
-                values[0] = alGetDouble(pname);
-                return;
+        case AL_DOPPLER_FACTOR:
+        case AL_DOPPLER_VELOCITY:
+        case AL_DISTANCE_MODEL:
+        case AL_SPEED_OF_SOUND:
+        case AL_DEFERRED_UPDATES_SOFT:
+        case AL_GAIN_LIMIT_SOFT:
+        case AL_NUM_RESAMPLERS_SOFT:
+        case AL_DEFAULT_RESAMPLER_SOFT:
+            values[0] = alGetDouble(pname);
+            return;
         }
     }
 
@@ -524,10 +552,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid double-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid double-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -538,16 +566,16 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_DOPPLER_FACTOR:
-            case AL_DOPPLER_VELOCITY:
-            case AL_DISTANCE_MODEL:
-            case AL_SPEED_OF_SOUND:
-            case AL_DEFERRED_UPDATES_SOFT:
-            case AL_GAIN_LIMIT_SOFT:
-            case AL_NUM_RESAMPLERS_SOFT:
-            case AL_DEFAULT_RESAMPLER_SOFT:
-                values[0] = alGetFloat(pname);
-                return;
+        case AL_DOPPLER_FACTOR:
+        case AL_DOPPLER_VELOCITY:
+        case AL_DISTANCE_MODEL:
+        case AL_SPEED_OF_SOUND:
+        case AL_DEFERRED_UPDATES_SOFT:
+        case AL_GAIN_LIMIT_SOFT:
+        case AL_NUM_RESAMPLERS_SOFT:
+        case AL_DEFAULT_RESAMPLER_SOFT:
+            values[0] = alGetFloat(pname);
+            return;
         }
     }
 
@@ -557,10 +585,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid float-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid float-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -571,16 +599,16 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_DOPPLER_FACTOR:
-            case AL_DOPPLER_VELOCITY:
-            case AL_DISTANCE_MODEL:
-            case AL_SPEED_OF_SOUND:
-            case AL_DEFERRED_UPDATES_SOFT:
-            case AL_GAIN_LIMIT_SOFT:
-            case AL_NUM_RESAMPLERS_SOFT:
-            case AL_DEFAULT_RESAMPLER_SOFT:
-                values[0] = alGetInteger(pname);
-                return;
+        case AL_DOPPLER_FACTOR:
+        case AL_DOPPLER_VELOCITY:
+        case AL_DISTANCE_MODEL:
+        case AL_SPEED_OF_SOUND:
+        case AL_DEFERRED_UPDATES_SOFT:
+        case AL_GAIN_LIMIT_SOFT:
+        case AL_NUM_RESAMPLERS_SOFT:
+        case AL_DEFAULT_RESAMPLER_SOFT:
+            values[0] = alGetInteger(pname);
+            return;
         }
     }
 
@@ -590,10 +618,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid integer-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid integer-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -604,16 +632,16 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_DOPPLER_FACTOR:
-            case AL_DOPPLER_VELOCITY:
-            case AL_DISTANCE_MODEL:
-            case AL_SPEED_OF_SOUND:
-            case AL_DEFERRED_UPDATES_SOFT:
-            case AL_GAIN_LIMIT_SOFT:
-            case AL_NUM_RESAMPLERS_SOFT:
-            case AL_DEFAULT_RESAMPLER_SOFT:
-                values[0] = alGetInteger64SOFT(pname);
-                return;
+        case AL_DOPPLER_FACTOR:
+        case AL_DOPPLER_VELOCITY:
+        case AL_DISTANCE_MODEL:
+        case AL_SPEED_OF_SOUND:
+        case AL_DEFERRED_UPDATES_SOFT:
+        case AL_GAIN_LIMIT_SOFT:
+        case AL_NUM_RESAMPLERS_SOFT:
+        case AL_DEFAULT_RESAMPLER_SOFT:
+            values[0] = alGetInteger64SOFT(pname);
+            return;
         }
     }
 
@@ -623,10 +651,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid integer64-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid integer64-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -637,10 +665,10 @@ START_API_FUNC
     {
         switch(pname)
         {
-            case AL_EVENT_CALLBACK_FUNCTION_SOFT:
-            case AL_EVENT_CALLBACK_USER_PARAM_SOFT:
-                values[0] = alGetPointerSOFT(pname);
-                return;
+        case AL_EVENT_CALLBACK_FUNCTION_SOFT:
+        case AL_EVENT_CALLBACK_USER_PARAM_SOFT:
+            values[0] = alGetPointerSOFT(pname);
+            return;
         }
     }
 
@@ -650,10 +678,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(pname)
-    {
-    default:
-        context->setError(AL_INVALID_VALUE, "Invalid pointer-vector property 0x%04x", pname);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_VALUE, "Invalid pointer-vector property 0x%04x", pname);
+        }
 }
 END_API_FUNC
 
@@ -746,7 +774,7 @@ START_API_FUNC
                 "alDopplerVelocity is deprecated in AL1.1, use alSpeedOfSound";
             const ALsizei msglen{sizeof(msg)-1};
             (*context->mEventCb)(AL_EVENT_TYPE_DEPRECATED_SOFT, 0, 0, msglen, msg,
-                context->mEventParam);
+                                 context->mEventParam);
         }
     }
 
@@ -785,9 +813,9 @@ START_API_FUNC
     if UNLIKELY(!context) return;
 
     if(!(value == AL_INVERSE_DISTANCE || value == AL_INVERSE_DISTANCE_CLAMPED ||
-         value == AL_LINEAR_DISTANCE || value == AL_LINEAR_DISTANCE_CLAMPED ||
-         value == AL_EXPONENT_DISTANCE || value == AL_EXPONENT_DISTANCE_CLAMPED ||
-         value == AL_NONE))
+            value == AL_LINEAR_DISTANCE || value == AL_LINEAR_DISTANCE_CLAMPED ||
+            value == AL_EXPONENT_DISTANCE || value == AL_EXPONENT_DISTANCE_CLAMPED ||
+            value == AL_NONE))
         context->setError(AL_INVALID_VALUE, "Distance model 0x%04x out of range", value);
     else
     {

@@ -25,7 +25,7 @@ namespace {
 #define FRAC_PHASE_DIFFONE (1<<FRAC_PHASE_BITDIFF)
 
 inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const HrirArray &Coeffs,
-    const float left, const float right)
+                        const float left, const float right)
 {
     float32x4_t leftright4;
     {
@@ -36,7 +36,7 @@ inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const Hrir
     }
 
     ASSUME(IrSize >= MIN_IR_LENGTH);
-    for(ALuint c{0};c < IrSize;c += 2)
+    for(ALuint c{0}; c < IrSize; c += 2)
     {
         float32x4_t vals = vld1q_f32(&Values[c][0]);
         float32x4_t coefs = vld1q_f32(&Coeffs[c][0]);
@@ -51,7 +51,7 @@ inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const Hrir
 
 template<>
 const float *Resample_<LerpTag,NEONTag>(const InterpState*, const float *RESTRICT src, ALuint frac,
-    ALuint increment, const al::span<float> dst)
+                                        ALuint increment, const al::span<float> dst)
 {
     const int32x4_t increment4 = vdupq_n_s32(static_cast<int>(increment*4));
     const float32x4_t fracOne4 = vdupq_n_f32(1.0f/FRACTIONONE);
@@ -105,7 +105,7 @@ const float *Resample_<LerpTag,NEONTag>(const InterpState*, const float *RESTRIC
 
 template<>
 const float *Resample_<BSincTag,NEONTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
+        ALuint frac, ALuint increment, const al::span<float> dst)
 {
     const float *const filter{state->bsinc.filter};
     const float32x4_t sf4{vdupq_n_f32(state->bsinc.sf)};
@@ -117,7 +117,7 @@ const float *Resample_<BSincTag,NEONTag>(const InterpState *state, const float *
         // Calculate the phase index and factor.
         const ALuint pi{frac >> FRAC_PHASE_BITDIFF};
         const float pf{static_cast<float>(frac & (FRAC_PHASE_DIFFONE-1)) *
-            (1.0f/FRAC_PHASE_DIFFONE)};
+                       (1.0f/FRAC_PHASE_DIFFONE)};
 
         // Apply the scale and phase interpolated filter.
         float32x4_t r4{vdupq_n_f32(0.0f)};
@@ -133,8 +133,8 @@ const float *Resample_<BSincTag,NEONTag>(const InterpState *state, const float *
             do {
                 /* f = ((fil + sf*scd) + pf*(phd + sf*spd)) */
                 const float32x4_t f4 = vmlaq_f32(
-                    vmlaq_f32(vld1q_f32(&fil[j]), sf4, vld1q_f32(&scd[j])),
-                    pf4, vmlaq_f32(vld1q_f32(&phd[j]), sf4, vld1q_f32(&spd[j])));
+                                           vmlaq_f32(vld1q_f32(&fil[j]), sf4, vld1q_f32(&scd[j])),
+                                           pf4, vmlaq_f32(vld1q_f32(&phd[j]), sf4, vld1q_f32(&spd[j])));
                 /* r += f*src */
                 r4 = vmlaq_f32(r4, f4, vld1q_f32(&src[j]));
                 j += 4;
@@ -152,7 +152,7 @@ const float *Resample_<BSincTag,NEONTag>(const InterpState *state, const float *
 
 template<>
 const float *Resample_<FastBSincTag,NEONTag>(const InterpState *state,
-    const float *RESTRICT src, ALuint frac, ALuint increment, const al::span<float> dst)
+        const float *RESTRICT src, ALuint frac, ALuint increment, const al::span<float> dst)
 {
     const float *const filter{state->bsinc.filter};
     const size_t m{state->bsinc.m};
@@ -163,7 +163,7 @@ const float *Resample_<FastBSincTag,NEONTag>(const InterpState *state,
         // Calculate the phase index and factor.
         const ALuint pi{frac >> FRAC_PHASE_BITDIFF};
         const float pf{static_cast<float>(frac & (FRAC_PHASE_DIFFONE-1)) *
-            (1.0f/FRAC_PHASE_DIFFONE)};
+                       (1.0f/FRAC_PHASE_DIFFONE)};
 
         // Apply the phase interpolated filter.
         float32x4_t r4{vdupq_n_f32(0.0f)};
@@ -195,33 +195,37 @@ const float *Resample_<FastBSincTag,NEONTag>(const InterpState *state,
 
 template<>
 void MixHrtf_<NEONTag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const MixHrtfFilter *hrtfparams, const size_t BufferSize)
-{ MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize); }
+                       const MixHrtfFilter *hrtfparams, const size_t BufferSize)
+{
+    MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize);
+}
 
 template<>
 void MixHrtfBlend_<NEONTag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
+                            const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
 {
     MixHrtfBlendBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, oldparams, newparams,
-        BufferSize);
+                                  BufferSize);
 }
 
 template<>
 void MixDirectHrtf_<NEONTag>(FloatBufferLine &LeftOut, FloatBufferLine &RightOut,
-    const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
-    const size_t BufferSize)
-{ MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize); }
+                             const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
+                             const size_t BufferSize)
+{
+    MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize);
+}
 
 
 template<>
 void Mix_<NEONTag>(const al::span<const float> InSamples, const al::span<FloatBufferLine> OutBuffer,
-    float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
+                   float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
 {
     const float delta{(Counter > 0) ? 1.0f / static_cast<float>(Counter) : 0.0f};
     const bool reached_target{InSamples.size() >= Counter};
     const auto min_end = reached_target ? InSamples.begin() + Counter : InSamples.end();
     const auto aligned_end = minz(static_cast<uintptr_t>(min_end-InSamples.begin()+3) & ~3u,
-        InSamples.size()) + InSamples.begin();
+                                  InSamples.size()) + InSamples.begin();
     for(FloatBufferLine &output : OutBuffer)
     {
         float *RESTRICT dst{al::assume_aligned<16>(output.data()+OutPos)};
@@ -252,7 +256,8 @@ void Mix_<NEONTag>(const al::span<const float> InSamples, const al::span<FloatBu
                     dry4 = vmlaq_f32(dry4, val4, vmlaq_f32(gain4, step4, step_count4));
                     step_count4 = vaddq_f32(step_count4, four4);
                     vst1q_f32(dst, dry4);
-                    in_iter += 4; dst += 4;
+                    in_iter += 4;
+                    dst += 4;
                 } while(--todo);
                 /* NOTE: step_count4 now represents the next four counts after
                  * the last four mixed samples, so the lowest element
@@ -289,7 +294,8 @@ void Mix_<NEONTag>(const al::span<const float> InSamples, const al::span<FloatBu
                 float32x4_t dry4 = vld1q_f32(dst);
                 dry4 = vmlaq_f32(dry4, val4, gain4);
                 vst1q_f32(dst, dry4);
-                in_iter += 4; dst += 4;
+                in_iter += 4;
+                dst += 4;
             } while(--todo);
         }
         while(in_iter != InSamples.end())

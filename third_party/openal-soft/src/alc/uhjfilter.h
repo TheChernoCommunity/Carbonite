@@ -8,7 +8,7 @@
 
 
 struct AllPassState {
-    float z[2]{0.0f, 0.0f};
+    float z[2] {0.0f, 0.0f};
 };
 
 /* Encoding 2-channel UHJ from B-Format is done as:
@@ -46,7 +46,7 @@ struct Uhj2Encoder {
      * signal. The input must use FuMa channel ordering and scaling.
      */
     void encode(FloatBufferLine &LeftOut, FloatBufferLine &RightOut, FloatBufferLine *InSamples,
-        const size_t SamplesToDo);
+                const size_t SamplesToDo);
 
     DEF_NEWDEL(Uhj2Encoder)
 };

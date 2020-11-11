@@ -16,24 +16,36 @@ enum class byte : unsigned char { };
 #define REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
 
 template<typename T, REQUIRES(std::is_integral<T>::value)>
-inline constexpr T to_integer(al::byte b) noexcept { return T(b); }
+inline constexpr T to_integer(al::byte b) noexcept {
+    return T(b);
+}
 
 
 template<typename T, REQUIRES(std::is_integral<T>::value)>
 inline constexpr al::byte operator<<(al::byte lhs, T rhs) noexcept
-{ return al::byte(to_integer<unsigned int>(lhs) << rhs); }
+{
+    return al::byte(to_integer<unsigned int>(lhs) << rhs);
+}
 
 template<typename T, REQUIRES(std::is_integral<T>::value)>
 inline constexpr al::byte operator>>(al::byte lhs, T rhs) noexcept
-{ return al::byte(to_integer<unsigned int>(lhs) >> rhs); }
+{
+    return al::byte(to_integer<unsigned int>(lhs) >> rhs);
+}
 
 template<typename T, REQUIRES(std::is_integral<T>::value)>
 inline al::byte& operator<<=(al::byte &lhs, T rhs) noexcept
-{ lhs = lhs << rhs; return lhs; }
+{
+    lhs = lhs << rhs;
+    return lhs;
+}
 
 template<typename T, REQUIRES(std::is_integral<T>::value)>
 inline al::byte& operator>>=(al::byte &lhs, T rhs) noexcept
-{ lhs = lhs >> rhs; return lhs; }
+{
+    lhs = lhs >> rhs;
+    return lhs;
+}
 
 #define AL_DECL_OP(op, opeq)                                                  \
 template<typename T, REQUIRES(std::is_integral<T>::value)>                    \
@@ -54,17 +66,27 @@ AL_DECL_OP(^, ^=)
 #undef AL_DECL_OP
 
 inline constexpr al::byte operator~(al::byte b) noexcept
-{ return al::byte(~to_integer<unsigned int>(b)); }
+{
+    return al::byte(~to_integer<unsigned int>(b));
+}
 
 
 namespace detail_ {
-    template<size_t> struct Elem { };
-    template<> struct Elem<1> { using type = uint8_t; };
-    template<> struct Elem<2> { using type = uint16_t; };
-    template<> struct Elem<3> { using type = uint32_t; };
-    template<> struct Elem<4> { using type = uint32_t; };
+template<size_t> struct Elem { };
+template<> struct Elem<1> {
+    using type = uint8_t;
+};
+template<> struct Elem<2> {
+    using type = uint16_t;
+};
+template<> struct Elem<3> {
+    using type = uint32_t;
+};
+template<> struct Elem<4> {
+    using type = uint32_t;
+};
 
-    template<size_t N> using ElemT = typename Elem<N>::type;
+template<size_t N> using ElemT = typename Elem<N>::type;
 } // namespace detail_
 
 template<size_t N>

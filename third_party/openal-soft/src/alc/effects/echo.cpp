@@ -48,8 +48,8 @@ struct EchoState final : public EffectState {
 
     /* The panning gains for the two taps */
     struct {
-        float Current[MAX_OUTPUT_CHANNELS]{};
-        float Target[MAX_OUTPUT_CHANNELS]{};
+        float Current[MAX_OUTPUT_CHANNELS] {};
+        float Target[MAX_OUTPUT_CHANNELS] {};
     } mGains[2];
 
     BiquadFilter mFilter;
@@ -71,7 +71,7 @@ void EchoState::deviceUpdate(const ALCdevice *Device)
     // Use the next power of 2 for the buffer length, so the tap offsets can be
     // wrapped using a mask instead of a modulo
     const ALuint maxlen{NextPowerOf2(float2uint(AL_ECHO_MAX_DELAY*frequency + 0.5f) +
-        float2uint(AL_ECHO_MAX_LRDELAY*frequency + 0.5f))};
+                                     float2uint(AL_ECHO_MAX_LRDELAY*frequency + 0.5f))};
     if(maxlen != mSampleBuffer.size())
         al::vector<float,16>(maxlen).swap(mSampleBuffer);
 
@@ -120,7 +120,7 @@ void EchoState::process(const size_t samplesToDo, const al::span<const FloatBuff
 
     const BiquadFilter filter{mFilter};
     std::tie(z1, z2) = mFilter.getComponents();
-    for(size_t i{0u};i < samplesToDo;)
+    for(size_t i{0u}; i < samplesToDo;)
     {
         offset &= mask;
         tap1 &= mask;
@@ -145,16 +145,20 @@ void EchoState::process(const size_t samplesToDo, const al::span<const FloatBuff
     mFilter.setComponents(z1, z2);
     mOffset = offset;
 
-    for(ALsizei c{0};c < 2;c++)
+    for(ALsizei c{0}; c < 2; c++)
         MixSamples({mTempBuffer[c], samplesToDo}, samplesOut, mGains[c].Current, mGains[c].Target,
-            samplesToDo, 0);
+                   samplesToDo, 0);
 }
 
 
 void Echo_setParami(EffectProps*, ALenum param, int)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer property 0x%04x", param};
+}
 void Echo_setParamiv(EffectProps*, ALenum param, const int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer-vector property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer-vector property 0x%04x", param};
+}
 void Echo_setParamf(EffectProps *props, ALenum param, float val)
 {
     switch(param)
@@ -194,12 +198,18 @@ void Echo_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Echo_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Echo_setParamf(props, param, vals[0]); }
+{
+    Echo_setParamf(props, param, vals[0]);
+}
 
 void Echo_getParami(const EffectProps*, ALenum param, int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer property 0x%04x", param};
+}
 void Echo_getParamiv(const EffectProps*, ALenum param, int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer-vector property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid echo integer-vector property 0x%04x", param};
+}
 void Echo_getParamf(const EffectProps *props, ALenum param, float *val)
 {
     switch(param)
@@ -229,15 +239,21 @@ void Echo_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Echo_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Echo_getParamf(props, param, vals); }
+{
+    Echo_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Echo);
 
 
 struct EchoStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new EchoState{}; }
+    EffectState *create() override {
+        return new EchoState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Echo_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Echo_vtable;
+    }
 };
 
 EffectProps EchoStateFactory::getDefaultProps() const noexcept
