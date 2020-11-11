@@ -32,48 +32,45 @@
 #include "alstring.h"
 #include "opthelpers.h"
 
-
 AL_API ALboolean AL_APIENTRY alIsExtensionPresent(const ALchar *extName)
-START_API_FUNC
-{
-    ContextRef context{GetContextRef()};
-    if UNLIKELY(!context) return AL_FALSE;
-
-    if(!extName)
-        SETERR_RETURN(context, AL_INVALID_VALUE, AL_FALSE, "NULL pointer");
-
-    size_t len{strlen(extName)};
-    const char *ptr{context->mExtensionList};
-    while(ptr && *ptr)
-    {
-        if(al::strncasecmp(ptr, extName, len) == 0 && (ptr[len] == '\0' || isspace(ptr[len])))
-            return AL_TRUE;
-
-        if((ptr=strchr(ptr, ' ')) != nullptr)
-        {
-            do {
-                ++ptr;
-            } while(isspace(*ptr));
-        }
-    }
-
+    START_API_FUNC {
+  ContextRef context{GetContextRef()};
+  if UNLIKELY (!context)
     return AL_FALSE;
+
+  if (!extName)
+    SETERR_RETURN(context, AL_INVALID_VALUE, AL_FALSE, "NULL pointer");
+
+  size_t len{strlen(extName)};
+  const char *ptr{context->mExtensionList};
+  while (ptr && *ptr) {
+    if (al::strncasecmp(ptr, extName, len) == 0 &&
+        (ptr[len] == '\0' || isspace(ptr[len])))
+      return AL_TRUE;
+
+    if ((ptr = strchr(ptr, ' ')) != nullptr) {
+      do {
+        ++ptr;
+      } while (isspace(*ptr));
+    }
+  }
+
+  return AL_FALSE;
 }
 END_API_FUNC
 
-
-AL_API ALvoid* AL_APIENTRY alGetProcAddress(const ALchar *funcName)
-START_API_FUNC
-{
-    if(!funcName) return nullptr;
-    return alcGetProcAddress(nullptr, funcName);
+AL_API ALvoid *AL_APIENTRY alGetProcAddress(const ALchar *funcName)
+    START_API_FUNC {
+  if (!funcName)
+    return nullptr;
+  return alcGetProcAddress(nullptr, funcName);
 }
 END_API_FUNC
 
 AL_API ALenum AL_APIENTRY alGetEnumValue(const ALchar *enumName)
-START_API_FUNC
-{
-    if(!enumName) return static_cast<ALenum>(0);
-    return alcGetEnumValue(nullptr, enumName);
+    START_API_FUNC {
+  if (!enumName)
+    return static_cast<ALenum>(0);
+  return alcGetEnumValue(nullptr, enumName);
 }
 END_API_FUNC

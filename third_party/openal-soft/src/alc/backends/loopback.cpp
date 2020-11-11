@@ -25,67 +25,44 @@
 #include "alcmain.h"
 #include "alu.h"
 
-
 namespace {
 
 struct LoopbackBackend final : public BackendBase {
-    LoopbackBackend(ALCdevice *device) noexcept : BackendBase {
-        device
-    } { }
+  LoopbackBackend(ALCdevice *device) noexcept : BackendBase{device} {}
 
-    void open(const ALCchar *name) override;
-    bool reset() override;
-    bool start() override;
-    void stop() override;
+  void open(const ALCchar *name) override;
+  bool reset() override;
+  bool start() override;
+  void stop() override;
 
-    DEF_NEWDEL(LoopbackBackend)
+  DEF_NEWDEL(LoopbackBackend)
 };
 
+void LoopbackBackend::open(const ALCchar *name) { mDevice->DeviceName = name; }
 
-void LoopbackBackend::open(const ALCchar *name)
-{
-    mDevice->DeviceName = name;
+bool LoopbackBackend::reset() {
+  SetDefaultWFXChannelOrder(mDevice);
+  return true;
 }
 
-bool LoopbackBackend::reset()
-{
-    SetDefaultWFXChannelOrder(mDevice);
-    return true;
-}
+bool LoopbackBackend::start() { return true; }
 
-bool LoopbackBackend::start()
-{
-    return true;
-}
-
-void LoopbackBackend::stop()
-{ }
+void LoopbackBackend::stop() {}
 
 } // namespace
 
+bool LoopbackBackendFactory::init() { return true; }
 
-bool LoopbackBackendFactory::init()
-{
-    return true;
+bool LoopbackBackendFactory::querySupport(BackendType) { return true; }
+
+std::string LoopbackBackendFactory::probe(BackendType) { return std::string{}; }
+
+BackendPtr LoopbackBackendFactory::createBackend(ALCdevice *device,
+                                                 BackendType) {
+  return BackendPtr{new LoopbackBackend{device}};
 }
 
-bool LoopbackBackendFactory::querySupport(BackendType)
-{
-    return true;
-}
-
-std::string LoopbackBackendFactory::probe(BackendType)
-{
-    return std::string{};
-}
-
-BackendPtr LoopbackBackendFactory::createBackend(ALCdevice *device, BackendType)
-{
-    return BackendPtr{new LoopbackBackend{device}};
-}
-
-BackendFactory &LoopbackBackendFactory::getFactory()
-{
-    static LoopbackBackendFactory factory{};
-    return factory;
+BackendFactory &LoopbackBackendFactory::getFactory() {
+  static LoopbackBackendFactory factory{};
+  return factory;
 }

@@ -8,18 +8,13 @@
 #include "Engine/Audio/AudioCore.h"
 #include "Engine/Audio/Audio.h"
 
-namespace gp1
-{
-Logger AudioCore::s_AudioLogger = Logger { "AudioCore" };
+namespace gp1 {
+Logger AudioCore::s_AudioLogger = Logger{"AudioCore"};
 
-void AudioCore::Init()
-{
-    InitAL(s_AudioLogger);
-    Audio::Init();
+void AudioCore::Init() {
+  InitAL(s_AudioLogger);
+  Audio::Init();
 }
 
-void AudioCore::Shutdown()
-{
-    ShutdownAL(s_AudioLogger);
-}
-}
+void AudioCore::Shutdown() { ShutdownAL(s_AudioLogger); }
+} // namespace gp1

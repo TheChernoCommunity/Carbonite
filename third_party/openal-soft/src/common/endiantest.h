@@ -5,9 +5,9 @@
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 #else
 static const union {
-    unsigned int u;
-    unsigned char b[sizeof(unsigned int)];
-} EndianTest = { 1 };
+  unsigned int u;
+  unsigned char b[sizeof(unsigned int)];
+} EndianTest = {1};
 #define IS_LITTLE_ENDIAN (EndianTest.b[0] == 1)
 #endif
 

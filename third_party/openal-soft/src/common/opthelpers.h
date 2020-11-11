@@ -22,7 +22,11 @@
 #if HAS_BUILTIN(__builtin_assume)
 #define ASSUME __builtin_assume
 #else
-#define ASSUME(x) do { if(!(x)) __builtin_unreachable(); } while(0)
+#define ASSUME(x)                                                              \
+  do {                                                                         \
+    if (!(x))                                                                  \
+      __builtin_unreachable();                                                 \
+  } while (0)
 #endif
 
 #else /* __GNUC__ */
