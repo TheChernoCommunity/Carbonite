@@ -22,63 +22,63 @@ void BiquadFilterR<Real>::setParams(BiquadType type, Real f0norm, Real gain, Rea
     const Real alpha{sin_w0/2.0f * rcpQ};
 
     Real sqrtgain_alpha_2;
-    Real a[3]{ 1.0f, 0.0f, 0.0f };
-    Real b[3]{ 1.0f, 0.0f, 0.0f };
+    Real a[3] { 1.0f, 0.0f, 0.0f };
+    Real b[3] { 1.0f, 0.0f, 0.0f };
 
     /* Calculate filter coefficients depending on filter type */
     switch(type)
     {
-        case BiquadType::HighShelf:
-            sqrtgain_alpha_2 = 2.0f * std::sqrt(gain) * alpha;
-            b[0] =       gain*((gain+1.0f) + (gain-1.0f)*cos_w0 + sqrtgain_alpha_2);
-            b[1] = -2.0f*gain*((gain-1.0f) + (gain+1.0f)*cos_w0                   );
-            b[2] =       gain*((gain+1.0f) + (gain-1.0f)*cos_w0 - sqrtgain_alpha_2);
-            a[0] =             (gain+1.0f) - (gain-1.0f)*cos_w0 + sqrtgain_alpha_2;
-            a[1] =  2.0f*     ((gain-1.0f) - (gain+1.0f)*cos_w0                   );
-            a[2] =             (gain+1.0f) - (gain-1.0f)*cos_w0 - sqrtgain_alpha_2;
-            break;
-        case BiquadType::LowShelf:
-            sqrtgain_alpha_2 = 2.0f * std::sqrt(gain) * alpha;
-            b[0] =       gain*((gain+1.0f) - (gain-1.0f)*cos_w0 + sqrtgain_alpha_2);
-            b[1] =  2.0f*gain*((gain-1.0f) - (gain+1.0f)*cos_w0                   );
-            b[2] =       gain*((gain+1.0f) - (gain-1.0f)*cos_w0 - sqrtgain_alpha_2);
-            a[0] =             (gain+1.0f) + (gain-1.0f)*cos_w0 + sqrtgain_alpha_2;
-            a[1] = -2.0f*     ((gain-1.0f) + (gain+1.0f)*cos_w0                   );
-            a[2] =             (gain+1.0f) + (gain-1.0f)*cos_w0 - sqrtgain_alpha_2;
-            break;
-        case BiquadType::Peaking:
-            b[0] =  1.0f + alpha * gain;
-            b[1] = -2.0f * cos_w0;
-            b[2] =  1.0f - alpha * gain;
-            a[0] =  1.0f + alpha / gain;
-            a[1] = -2.0f * cos_w0;
-            a[2] =  1.0f - alpha / gain;
-            break;
+    case BiquadType::HighShelf:
+        sqrtgain_alpha_2 = 2.0f * std::sqrt(gain) * alpha;
+        b[0] =       gain*((gain+1.0f) + (gain-1.0f)*cos_w0 + sqrtgain_alpha_2);
+        b[1] = -2.0f*gain*((gain-1.0f) + (gain+1.0f)*cos_w0                   );
+        b[2] =       gain*((gain+1.0f) + (gain-1.0f)*cos_w0 - sqrtgain_alpha_2);
+        a[0] =             (gain+1.0f) - (gain-1.0f)*cos_w0 + sqrtgain_alpha_2;
+        a[1] =  2.0f*     ((gain-1.0f) - (gain+1.0f)*cos_w0                   );
+        a[2] =             (gain+1.0f) - (gain-1.0f)*cos_w0 - sqrtgain_alpha_2;
+        break;
+    case BiquadType::LowShelf:
+        sqrtgain_alpha_2 = 2.0f * std::sqrt(gain) * alpha;
+        b[0] =       gain*((gain+1.0f) - (gain-1.0f)*cos_w0 + sqrtgain_alpha_2);
+        b[1] =  2.0f*gain*((gain-1.0f) - (gain+1.0f)*cos_w0                   );
+        b[2] =       gain*((gain+1.0f) - (gain-1.0f)*cos_w0 - sqrtgain_alpha_2);
+        a[0] =             (gain+1.0f) + (gain-1.0f)*cos_w0 + sqrtgain_alpha_2;
+        a[1] = -2.0f*     ((gain-1.0f) + (gain+1.0f)*cos_w0                   );
+        a[2] =             (gain+1.0f) + (gain-1.0f)*cos_w0 - sqrtgain_alpha_2;
+        break;
+    case BiquadType::Peaking:
+        b[0] =  1.0f + alpha * gain;
+        b[1] = -2.0f * cos_w0;
+        b[2] =  1.0f - alpha * gain;
+        a[0] =  1.0f + alpha / gain;
+        a[1] = -2.0f * cos_w0;
+        a[2] =  1.0f - alpha / gain;
+        break;
 
-        case BiquadType::LowPass:
-            b[0] = (1.0f - cos_w0) / 2.0f;
-            b[1] =  1.0f - cos_w0;
-            b[2] = (1.0f - cos_w0) / 2.0f;
-            a[0] =  1.0f + alpha;
-            a[1] = -2.0f * cos_w0;
-            a[2] =  1.0f - alpha;
-            break;
-        case BiquadType::HighPass:
-            b[0] =  (1.0f + cos_w0) / 2.0f;
-            b[1] = -(1.0f + cos_w0);
-            b[2] =  (1.0f + cos_w0) / 2.0f;
-            a[0] =   1.0f + alpha;
-            a[1] =  -2.0f * cos_w0;
-            a[2] =   1.0f - alpha;
-            break;
-        case BiquadType::BandPass:
-            b[0] =  alpha;
-            b[1] =  0.0f;
-            b[2] = -alpha;
-            a[0] =  1.0f + alpha;
-            a[1] = -2.0f * cos_w0;
-            a[2] =  1.0f - alpha;
-            break;
+    case BiquadType::LowPass:
+        b[0] = (1.0f - cos_w0) / 2.0f;
+        b[1] =  1.0f - cos_w0;
+        b[2] = (1.0f - cos_w0) / 2.0f;
+        a[0] =  1.0f + alpha;
+        a[1] = -2.0f * cos_w0;
+        a[2] =  1.0f - alpha;
+        break;
+    case BiquadType::HighPass:
+        b[0] =  (1.0f + cos_w0) / 2.0f;
+        b[1] = -(1.0f + cos_w0);
+        b[2] =  (1.0f + cos_w0) / 2.0f;
+        a[0] =   1.0f + alpha;
+        a[1] =  -2.0f * cos_w0;
+        a[2] =   1.0f - alpha;
+        break;
+    case BiquadType::BandPass:
+        b[0] =  alpha;
+        b[1] =  0.0f;
+        b[2] = -alpha;
+        a[0] =  1.0f + alpha;
+        a[1] = -2.0f * cos_w0;
+        a[2] =  1.0f - alpha;
+        break;
     }
 
     mA1 = a[1] / a[0];
@@ -122,7 +122,7 @@ void BiquadFilterR<Real>::process(const al::span<const Real> src, Real *dst)
 
 template<typename Real>
 void BiquadFilterR<Real>::dualProcess(BiquadFilterR &other, const al::span<const Real> src,
-    Real *dst)
+                                      Real *dst)
 {
     const Real b00{mB0};
     const Real b01{mB1};

@@ -83,25 +83,41 @@ template<DevFmtType T>
 struct DevFmtTypeTraits { };
 
 template<>
-struct DevFmtTypeTraits<DevFmtByte> { using Type = int8_t; };
+struct DevFmtTypeTraits<DevFmtByte> {
+    using Type = int8_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtUByte> { using Type = uint8_t; };
+struct DevFmtTypeTraits<DevFmtUByte> {
+    using Type = uint8_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtShort> { using Type = int16_t; };
+struct DevFmtTypeTraits<DevFmtShort> {
+    using Type = int16_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtUShort> { using Type = uint16_t; };
+struct DevFmtTypeTraits<DevFmtUShort> {
+    using Type = uint16_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtInt> { using Type = int32_t; };
+struct DevFmtTypeTraits<DevFmtInt> {
+    using Type = int32_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtUInt> { using Type = uint32_t; };
+struct DevFmtTypeTraits<DevFmtUInt> {
+    using Type = uint32_t;
+};
 template<>
-struct DevFmtTypeTraits<DevFmtFloat> { using Type = float; };
+struct DevFmtTypeTraits<DevFmtFloat> {
+    using Type = float;
+};
 
 
 ALuint BytesFromDevFmt(DevFmtType type) noexcept;
 ALuint ChannelsFromDevFmt(DevFmtChannels chans, ALuint ambiorder) noexcept;
 inline ALuint FrameSizeFromDevFmt(DevFmtChannels chans, DevFmtType type, ALuint ambiorder) noexcept
-{ return ChannelsFromDevFmt(chans, ambiorder) * BytesFromDevFmt(type); }
+{
+    return ChannelsFromDevFmt(chans, ambiorder) * BytesFromDevFmt(type);
+}
 
 enum class AmbiLayout {
     FuMa = ALC_FUMA_SOFT, /* FuMa channel order */

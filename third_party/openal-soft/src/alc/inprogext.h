@@ -58,8 +58,8 @@ AL_API void AL_APIENTRY alFlushMappedBufferSOFT(ALuint buffer, ALsizei offset, A
 #define AL_EVENT_TYPE_DEPRECATED_SOFT            0x1226
 #define AL_EVENT_TYPE_DISCONNECTED_SOFT          0x1227
 typedef void (AL_APIENTRY*ALEVENTPROCSOFT)(ALenum eventType, ALuint object, ALuint param,
-                                           ALsizei length, const ALchar *message,
-                                           void *userParam);
+        ALsizei length, const ALchar *message,
+        void *userParam);
 typedef void (AL_APIENTRY*LPALEVENTCONTROLSOFT)(ALsizei count, const ALenum *types, ALboolean enable);
 typedef void (AL_APIENTRY*LPALEVENTCALLBACKSOFT)(ALEVENTPROCSOFT callback, void *userParam);
 typedef void* (AL_APIENTRY*LPALGETPOINTERSOFT)(ALenum pname);

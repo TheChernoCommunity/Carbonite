@@ -26,7 +26,7 @@ namespace {
 #define MLA4(x, y, z) _mm_add_ps(x, _mm_mul_ps(y, z))
 
 inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const HrirArray &Coeffs,
-    const float left, const float right)
+                        const float left, const float right)
 {
     const __m128 lrlr{_mm_setr_ps(left, right, left, right)};
 
@@ -62,7 +62,7 @@ inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const Hrir
     }
     else
     {
-        for(size_t i{0};i < IrSize;i += 2)
+        for(size_t i{0}; i < IrSize; i += 2)
         {
             const __m128 coeffs{_mm_load_ps(&Coeffs[i][0])};
             __m128 vals{_mm_load_ps(&Values[i][0])};
@@ -76,7 +76,7 @@ inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const Hrir
 
 template<>
 const float *Resample_<BSincTag,SSETag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
+                                        ALuint frac, ALuint increment, const al::span<float> dst)
 {
     const float *const filter{state->bsinc.filter};
     const __m128 sf4{_mm_set1_ps(state->bsinc.sf)};
@@ -88,7 +88,7 @@ const float *Resample_<BSincTag,SSETag>(const InterpState *state, const float *R
         // Calculate the phase index and factor.
         const ALuint pi{frac >> FRAC_PHASE_BITDIFF};
         const float pf{static_cast<float>(frac & (FRAC_PHASE_DIFFONE-1)) *
-            (1.0f/FRAC_PHASE_DIFFONE)};
+                       (1.0f/FRAC_PHASE_DIFFONE)};
 
         // Apply the scale and phase interpolated filter.
         __m128 r4{_mm_setzero_ps()};
@@ -104,8 +104,8 @@ const float *Resample_<BSincTag,SSETag>(const InterpState *state, const float *R
             do {
                 /* f = ((fil + sf*scd) + pf*(phd + sf*spd)) */
                 const __m128 f4 = MLA4(
-                    MLA4(_mm_load_ps(&fil[j]), sf4, _mm_load_ps(&scd[j])),
-                    pf4, MLA4(_mm_load_ps(&phd[j]), sf4, _mm_load_ps(&spd[j])));
+                                      MLA4(_mm_load_ps(&fil[j]), sf4, _mm_load_ps(&scd[j])),
+                                      pf4, MLA4(_mm_load_ps(&phd[j]), sf4, _mm_load_ps(&spd[j])));
                 /* r += f*src */
                 r4 = MLA4(r4, f4, _mm_loadu_ps(&src[j]));
                 j += 4;
@@ -124,7 +124,7 @@ const float *Resample_<BSincTag,SSETag>(const InterpState *state, const float *R
 
 template<>
 const float *Resample_<FastBSincTag,SSETag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
+        ALuint frac, ALuint increment, const al::span<float> dst)
 {
     const float *const filter{state->bsinc.filter};
     const size_t m{state->bsinc.m};
@@ -135,7 +135,7 @@ const float *Resample_<FastBSincTag,SSETag>(const InterpState *state, const floa
         // Calculate the phase index and factor.
         const ALuint pi{frac >> FRAC_PHASE_BITDIFF};
         const float pf{static_cast<float>(frac & (FRAC_PHASE_DIFFONE-1)) *
-            (1.0f/FRAC_PHASE_DIFFONE)};
+                       (1.0f/FRAC_PHASE_DIFFONE)};
 
         // Apply the phase interpolated filter.
         __m128 r4{_mm_setzero_ps()};
@@ -168,33 +168,37 @@ const float *Resample_<FastBSincTag,SSETag>(const InterpState *state, const floa
 
 template<>
 void MixHrtf_<SSETag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const MixHrtfFilter *hrtfparams, const size_t BufferSize)
-{ MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize); }
+                      const MixHrtfFilter *hrtfparams, const size_t BufferSize)
+{
+    MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize);
+}
 
 template<>
 void MixHrtfBlend_<SSETag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
+                           const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
 {
     MixHrtfBlendBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, oldparams, newparams,
-        BufferSize);
+                                  BufferSize);
 }
 
 template<>
 void MixDirectHrtf_<SSETag>(FloatBufferLine &LeftOut, FloatBufferLine &RightOut,
-    const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
-    const size_t BufferSize)
-{ MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize); }
+                            const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
+                            const size_t BufferSize)
+{
+    MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize);
+}
 
 
 template<>
 void Mix_<SSETag>(const al::span<const float> InSamples, const al::span<FloatBufferLine> OutBuffer,
-    float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
+                  float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
 {
     const float delta{(Counter > 0) ? 1.0f / static_cast<float>(Counter) : 0.0f};
     const bool reached_target{InSamples.size() >= Counter};
     const auto min_end = reached_target ? InSamples.begin() + Counter : InSamples.end();
     const auto aligned_end = minz(static_cast<uintptr_t>(min_end-InSamples.begin()+3) & ~3u,
-        InSamples.size()) + InSamples.begin();
+                                  InSamples.size()) + InSamples.begin();
     for(FloatBufferLine &output : OutBuffer)
     {
         float *RESTRICT dst{al::assume_aligned<16>(output.data()+OutPos)};
@@ -224,7 +228,8 @@ void Mix_<SSETag>(const al::span<const float> InSamples, const al::span<FloatBuf
 
                     _mm_store_ps(dst, dry4);
                     step_count4 = _mm_add_ps(step_count4, four4);
-                    in_iter += 4; dst += 4;
+                    in_iter += 4;
+                    dst += 4;
                 } while(--todo);
                 /* NOTE: step_count4 now represents the next four counts after
                  * the last four mixed samples, so the lowest element
@@ -261,7 +266,8 @@ void Mix_<SSETag>(const al::span<const float> InSamples, const al::span<FloatBuf
                 __m128 dry4{_mm_load_ps(dst)};
                 dry4 = _mm_add_ps(dry4, _mm_mul_ps(val4, gain4));
                 _mm_store_ps(dst, dry4);
-                in_iter += 4; dst += 4;
+                in_iter += 4;
+                dst += 4;
             } while(--todo);
         }
         while(in_iter != InSamples.end())

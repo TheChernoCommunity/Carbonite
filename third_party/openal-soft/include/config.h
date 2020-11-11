@@ -1,5 +1,5 @@
 /* API declaration export attribute */
-#define AL_API 
+#define AL_API
 #define ALC_API
 
 /* Define a restrict macro for non-aliased pointers */

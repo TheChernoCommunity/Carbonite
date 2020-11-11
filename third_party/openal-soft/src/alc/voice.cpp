@@ -75,7 +75,7 @@ struct CopyTag;
 
 static_assert((BUFFERSIZE-1)/MAX_PITCH > 0, "MAX_PITCH is too large for BUFFERSIZE!");
 static_assert((INT_MAX>>FRACTIONBITS)/MAX_PITCH > BUFFERSIZE,
-    "MAX_PITCH and/or BUFFERSIZE are too large for FRACTIONBITS!");
+              "MAX_PITCH and/or BUFFERSIZE are too large for FRACTIONBITS!");
 
 
 Resampler ResamplerDefault{Resampler::Linear};
@@ -85,10 +85,10 @@ MixerFunc MixSamples{Mix_<CTag>};
 namespace {
 
 using HrtfMixerFunc = void(*)(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const MixHrtfFilter *hrtfparams, const size_t BufferSize);
+                              const MixHrtfFilter *hrtfparams, const size_t BufferSize);
 using HrtfMixerBlendFunc = void(*)(const float *InSamples, float2 *AccumSamples,
-    const ALuint IrSize, const HrtfFilter *oldparams, const MixHrtfFilter *newparams,
-    const size_t BufferSize);
+                                   const ALuint IrSize, const HrtfFilter *oldparams, const MixHrtfFilter *newparams,
+                                   const size_t BufferSize);
 
 HrtfMixerFunc MixHrtfSamples{MixHrtf_<CTag>};
 HrtfMixerBlendFunc MixHrtfBlendSamples{MixHrtfBlend_<CTag>};
@@ -143,7 +143,7 @@ void aluInitMixer()
             const char name[16];
             const Resampler resampler;
         };
-        constexpr ResamplerEntry ResamplerList[]{
+        constexpr ResamplerEntry ResamplerList[] {
             { "none", Resampler::Point },
             { "point", Resampler::Point },
             { "cubic", Resampler::Cubic },
@@ -166,8 +166,8 @@ void aluInitMixer()
         }
 
         auto iter = std::find_if(std::begin(ResamplerList), std::end(ResamplerList),
-            [str](const ResamplerEntry &entry) -> bool
-            { return al::strcasecmp(str, entry.name) == 0; });
+                                 [str](const ResamplerEntry &entry) -> bool
+        { return al::strcasecmp(str, entry.name) == 0; });
         if(iter == std::end(ResamplerList))
             ERR("Invalid resampler: %s\n", str);
         else
@@ -186,75 +186,75 @@ namespace {
  * signed 16-bit sample */
 constexpr int16_t muLawDecompressionTable[256] = {
     -32124,-31100,-30076,-29052,-28028,-27004,-25980,-24956,
-    -23932,-22908,-21884,-20860,-19836,-18812,-17788,-16764,
-    -15996,-15484,-14972,-14460,-13948,-13436,-12924,-12412,
-    -11900,-11388,-10876,-10364, -9852, -9340, -8828, -8316,
-     -7932, -7676, -7420, -7164, -6908, -6652, -6396, -6140,
-     -5884, -5628, -5372, -5116, -4860, -4604, -4348, -4092,
-     -3900, -3772, -3644, -3516, -3388, -3260, -3132, -3004,
-     -2876, -2748, -2620, -2492, -2364, -2236, -2108, -1980,
-     -1884, -1820, -1756, -1692, -1628, -1564, -1500, -1436,
-     -1372, -1308, -1244, -1180, -1116, -1052,  -988,  -924,
-      -876,  -844,  -812,  -780,  -748,  -716,  -684,  -652,
-      -620,  -588,  -556,  -524,  -492,  -460,  -428,  -396,
-      -372,  -356,  -340,  -324,  -308,  -292,  -276,  -260,
-      -244,  -228,  -212,  -196,  -180,  -164,  -148,  -132,
-      -120,  -112,  -104,   -96,   -88,   -80,   -72,   -64,
-       -56,   -48,   -40,   -32,   -24,   -16,    -8,     0,
-     32124, 31100, 30076, 29052, 28028, 27004, 25980, 24956,
-     23932, 22908, 21884, 20860, 19836, 18812, 17788, 16764,
-     15996, 15484, 14972, 14460, 13948, 13436, 12924, 12412,
-     11900, 11388, 10876, 10364,  9852,  9340,  8828,  8316,
-      7932,  7676,  7420,  7164,  6908,  6652,  6396,  6140,
-      5884,  5628,  5372,  5116,  4860,  4604,  4348,  4092,
-      3900,  3772,  3644,  3516,  3388,  3260,  3132,  3004,
-      2876,  2748,  2620,  2492,  2364,  2236,  2108,  1980,
-      1884,  1820,  1756,  1692,  1628,  1564,  1500,  1436,
-      1372,  1308,  1244,  1180,  1116,  1052,   988,   924,
-       876,   844,   812,   780,   748,   716,   684,   652,
-       620,   588,   556,   524,   492,   460,   428,   396,
-       372,   356,   340,   324,   308,   292,   276,   260,
-       244,   228,   212,   196,   180,   164,   148,   132,
-       120,   112,   104,    96,    88,    80,    72,    64,
+        -23932,-22908,-21884,-20860,-19836,-18812,-17788,-16764,
+        -15996,-15484,-14972,-14460,-13948,-13436,-12924,-12412,
+        -11900,-11388,-10876,-10364, -9852, -9340, -8828, -8316,
+        -7932, -7676, -7420, -7164, -6908, -6652, -6396, -6140,
+        -5884, -5628, -5372, -5116, -4860, -4604, -4348, -4092,
+        -3900, -3772, -3644, -3516, -3388, -3260, -3132, -3004,
+        -2876, -2748, -2620, -2492, -2364, -2236, -2108, -1980,
+        -1884, -1820, -1756, -1692, -1628, -1564, -1500, -1436,
+        -1372, -1308, -1244, -1180, -1116, -1052,  -988,  -924,
+        -876,  -844,  -812,  -780,  -748,  -716,  -684,  -652,
+        -620,  -588,  -556,  -524,  -492,  -460,  -428,  -396,
+        -372,  -356,  -340,  -324,  -308,  -292,  -276,  -260,
+        -244,  -228,  -212,  -196,  -180,  -164,  -148,  -132,
+        -120,  -112,  -104,   -96,   -88,   -80,   -72,   -64,
+        -56,   -48,   -40,   -32,   -24,   -16,    -8,     0,
+        32124, 31100, 30076, 29052, 28028, 27004, 25980, 24956,
+        23932, 22908, 21884, 20860, 19836, 18812, 17788, 16764,
+        15996, 15484, 14972, 14460, 13948, 13436, 12924, 12412,
+        11900, 11388, 10876, 10364,  9852,  9340,  8828,  8316,
+        7932,  7676,  7420,  7164,  6908,  6652,  6396,  6140,
+        5884,  5628,  5372,  5116,  4860,  4604,  4348,  4092,
+        3900,  3772,  3644,  3516,  3388,  3260,  3132,  3004,
+        2876,  2748,  2620,  2492,  2364,  2236,  2108,  1980,
+        1884,  1820,  1756,  1692,  1628,  1564,  1500,  1436,
+        1372,  1308,  1244,  1180,  1116,  1052,   988,   924,
+        876,   844,   812,   780,   748,   716,   684,   652,
+        620,   588,   556,   524,   492,   460,   428,   396,
+        372,   356,   340,   324,   308,   292,   276,   260,
+        244,   228,   212,   196,   180,   164,   148,   132,
+        120,   112,   104,    96,    88,    80,    72,    64,
         56,    48,    40,    32,    24,    16,     8,     0
-};
+    };
 
 /* A quick'n'dirty lookup table to decode an aLaw-encoded byte sample into a
  * signed 16-bit sample */
 constexpr int16_t aLawDecompressionTable[256] = {
-     -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
-     -7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
-     -2752, -2624, -3008, -2880, -2240, -2112, -2496, -2368,
-     -3776, -3648, -4032, -3904, -3264, -3136, -3520, -3392,
-    -22016,-20992,-24064,-23040,-17920,-16896,-19968,-18944,
-    -30208,-29184,-32256,-31232,-26112,-25088,-28160,-27136,
-    -11008,-10496,-12032,-11520, -8960, -8448, -9984, -9472,
-    -15104,-14592,-16128,-15616,-13056,-12544,-14080,-13568,
-      -344,  -328,  -376,  -360,  -280,  -264,  -312,  -296,
-      -472,  -456,  -504,  -488,  -408,  -392,  -440,  -424,
-       -88,   -72,  -120,  -104,   -24,    -8,   -56,   -40,
-      -216,  -200,  -248,  -232,  -152,  -136,  -184,  -168,
-     -1376, -1312, -1504, -1440, -1120, -1056, -1248, -1184,
-     -1888, -1824, -2016, -1952, -1632, -1568, -1760, -1696,
-      -688,  -656,  -752,  -720,  -560,  -528,  -624,  -592,
-      -944,  -912, -1008,  -976,  -816,  -784,  -880,  -848,
-      5504,  5248,  6016,  5760,  4480,  4224,  4992,  4736,
-      7552,  7296,  8064,  7808,  6528,  6272,  7040,  6784,
-      2752,  2624,  3008,  2880,  2240,  2112,  2496,  2368,
-      3776,  3648,  4032,  3904,  3264,  3136,  3520,  3392,
-     22016, 20992, 24064, 23040, 17920, 16896, 19968, 18944,
-     30208, 29184, 32256, 31232, 26112, 25088, 28160, 27136,
-     11008, 10496, 12032, 11520,  8960,  8448,  9984,  9472,
-     15104, 14592, 16128, 15616, 13056, 12544, 14080, 13568,
-       344,   328,   376,   360,   280,   264,   312,   296,
-       472,   456,   504,   488,   408,   392,   440,   424,
+    -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
+        -7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
+        -2752, -2624, -3008, -2880, -2240, -2112, -2496, -2368,
+        -3776, -3648, -4032, -3904, -3264, -3136, -3520, -3392,
+        -22016,-20992,-24064,-23040,-17920,-16896,-19968,-18944,
+        -30208,-29184,-32256,-31232,-26112,-25088,-28160,-27136,
+        -11008,-10496,-12032,-11520, -8960, -8448, -9984, -9472,
+        -15104,-14592,-16128,-15616,-13056,-12544,-14080,-13568,
+        -344,  -328,  -376,  -360,  -280,  -264,  -312,  -296,
+        -472,  -456,  -504,  -488,  -408,  -392,  -440,  -424,
+        -88,   -72,  -120,  -104,   -24,    -8,   -56,   -40,
+        -216,  -200,  -248,  -232,  -152,  -136,  -184,  -168,
+        -1376, -1312, -1504, -1440, -1120, -1056, -1248, -1184,
+        -1888, -1824, -2016, -1952, -1632, -1568, -1760, -1696,
+        -688,  -656,  -752,  -720,  -560,  -528,  -624,  -592,
+        -944,  -912, -1008,  -976,  -816,  -784,  -880,  -848,
+        5504,  5248,  6016,  5760,  4480,  4224,  4992,  4736,
+        7552,  7296,  8064,  7808,  6528,  6272,  7040,  6784,
+        2752,  2624,  3008,  2880,  2240,  2112,  2496,  2368,
+        3776,  3648,  4032,  3904,  3264,  3136,  3520,  3392,
+        22016, 20992, 24064, 23040, 17920, 16896, 19968, 18944,
+        30208, 29184, 32256, 31232, 26112, 25088, 28160, 27136,
+        11008, 10496, 12032, 11520,  8960,  8448,  9984,  9472,
+        15104, 14592, 16128, 15616, 13056, 12544, 14080, 13568,
+        344,   328,   376,   360,   280,   264,   312,   296,
+        472,   456,   504,   488,   408,   392,   440,   424,
         88,    72,   120,   104,    24,     8,    56,    40,
-       216,   200,   248,   232,   152,   136,   184,   168,
-      1376,  1312,  1504,  1440,  1120,  1056,  1248,  1184,
-      1888,  1824,  2016,  1952,  1632,  1568,  1760,  1696,
-       688,   656,   752,   720,   560,   528,   624,   592,
-       944,   912,  1008,   976,   816,   784,   880,   848
-};
+        216,   200,   248,   232,   152,   136,   184,   168,
+        1376,  1312,  1504,  1440,  1120,  1056,  1248,  1184,
+        1888,  1824,  2016,  1952,  1632,  1568,  1760,  1696,
+        688,   656,   752,   720,   560,   528,   624,   592,
+        944,   912,  1008,   976,   816,   784,   880,   848
+    };
 
 template<FmtType T>
 struct FmtTypeTraits { };
@@ -263,35 +263,47 @@ template<>
 struct FmtTypeTraits<FmtUByte> {
     using Type = uint8_t;
     static constexpr inline float to_float(const Type val) noexcept
-    { return val*(1.0f/128.0f) - 1.0f; }
+    {
+        return val*(1.0f/128.0f) - 1.0f;
+    }
 };
 template<>
 struct FmtTypeTraits<FmtShort> {
     using Type = int16_t;
-    static constexpr inline float to_float(const Type val) noexcept { return val*(1.0f/32768.0f); }
+    static constexpr inline float to_float(const Type val) noexcept {
+        return val*(1.0f/32768.0f);
+    }
 };
 template<>
 struct FmtTypeTraits<FmtFloat> {
     using Type = float;
-    static constexpr inline float to_float(const Type val) noexcept { return val; }
+    static constexpr inline float to_float(const Type val) noexcept {
+        return val;
+    }
 };
 template<>
 struct FmtTypeTraits<FmtDouble> {
     using Type = double;
     static constexpr inline float to_float(const Type val) noexcept
-    { return static_cast<float>(val); }
+    {
+        return static_cast<float>(val);
+    }
 };
 template<>
 struct FmtTypeTraits<FmtMulaw> {
     using Type = uint8_t;
     static constexpr inline float to_float(const Type val) noexcept
-    { return muLawDecompressionTable[val] * (1.0f/32768.0f); }
+    {
+        return muLawDecompressionTable[val] * (1.0f/32768.0f);
+    }
 };
 template<>
 struct FmtTypeTraits<FmtAlaw> {
     using Type = uint8_t;
     static constexpr inline float to_float(const Type val) noexcept
-    { return aLawDecompressionTable[val] * (1.0f/32768.0f); }
+    {
+        return aLawDecompressionTable[val] * (1.0f/32768.0f);
+    }
 };
 
 
@@ -310,7 +322,7 @@ void SendSourceStoppedEvent(ALCcontext *context, ALuint id)
 
 
 const float *DoFilters(BiquadFilter &lpfilter, BiquadFilter &hpfilter, float *dst,
-    const al::span<const float> src, int type)
+                       const al::span<const float> src, int type)
 {
     switch(type)
     {
@@ -338,17 +350,17 @@ const float *DoFilters(BiquadFilter &lpfilter, BiquadFilter &hpfilter, float *ds
 
 template<FmtType T>
 inline void LoadSampleArray(float *RESTRICT dst, const al::byte *src, const size_t srcstep,
-    const size_t samples) noexcept
+                            const size_t samples) noexcept
 {
     using SampleType = typename FmtTypeTraits<T>::Type;
 
     const SampleType *RESTRICT ssrc{reinterpret_cast<const SampleType*>(src)};
-    for(size_t i{0u};i < samples;i++)
+    for(size_t i{0u}; i < samples; i++)
         dst[i] = FmtTypeTraits<T>::to_float(ssrc[i*srcstep]);
 }
 
 void LoadSamples(float *RESTRICT dst, const al::byte *src, const size_t srcstep, FmtType srctype,
-    const size_t samples) noexcept
+                 const size_t samples) noexcept
 {
 #define HANDLE_FMT(T)  case T: LoadSampleArray<T>(dst, src, srcstep, samples); break
     switch(srctype)
@@ -364,8 +376,8 @@ void LoadSamples(float *RESTRICT dst, const al::byte *src, const size_t srcstep,
 }
 
 float *LoadBufferStatic(ALbufferlistitem *BufferListItem, ALbufferlistitem *&BufferLoopItem,
-    const size_t NumChannels, const size_t SampleSize, const size_t chan, size_t DataPosInt,
-    al::span<float> SrcBuffer)
+                        const size_t NumChannels, const size_t SampleSize, const size_t chan, size_t DataPosInt,
+                        al::span<float> SrcBuffer)
 {
     const ALbuffer *Buffer{BufferListItem->mBuffer};
     const ALuint LoopStart{Buffer->LoopStart};
@@ -413,8 +425,8 @@ float *LoadBufferStatic(ALbufferlistitem *BufferListItem, ALbufferlistitem *&Buf
 }
 
 float *LoadBufferCallback(ALbufferlistitem *BufferListItem, const size_t NumChannels,
-    const size_t SampleSize, const size_t chan, size_t NumCallbackSamples,
-    al::span<float> SrcBuffer)
+                          const size_t SampleSize, const size_t chan, size_t NumCallbackSamples,
+                          al::span<float> SrcBuffer)
 {
     const ALbuffer *Buffer{BufferListItem->mBuffer};
 
@@ -430,8 +442,8 @@ float *LoadBufferCallback(ALbufferlistitem *BufferListItem, const size_t NumChan
 }
 
 float *LoadBufferQueue(ALbufferlistitem *BufferListItem, ALbufferlistitem *BufferLoopItem,
-    const size_t NumChannels, const size_t SampleSize, const size_t chan, size_t DataPosInt,
-    al::span<float> SrcBuffer)
+                       const size_t NumChannels, const size_t SampleSize, const size_t chan, size_t DataPosInt,
+                       al::span<float> SrcBuffer)
 {
     /* Crawl the buffer queue to fill in the temp buffer */
     while(BufferListItem && !SrcBuffer.empty())
@@ -464,19 +476,19 @@ float *LoadBufferQueue(ALbufferlistitem *BufferListItem, ALbufferlistitem *Buffe
 
 
 void DoHrtfMix(const float *samples, const ALuint DstBufferSize, DirectParams &parms,
-    const float TargetGain, const ALuint Counter, ALuint OutPos, const ALuint IrSize,
-    ALCdevice *Device)
+               const float TargetGain, const ALuint Counter, ALuint OutPos, const ALuint IrSize,
+               ALCdevice *Device)
 {
     auto &HrtfSamples = Device->HrtfSourceData;
     auto &AccumSamples = Device->HrtfAccumData;
 
     /* Copy the HRTF history and new input samples into a temp buffer. */
     auto src_iter = std::copy(parms.Hrtf.History.begin(), parms.Hrtf.History.end(),
-        std::begin(HrtfSamples));
+                              std::begin(HrtfSamples));
     std::copy_n(samples, DstBufferSize, src_iter);
     /* Copy the last used samples back into the history buffer for later. */
     std::copy_n(std::begin(HrtfSamples) + DstBufferSize, parms.Hrtf.History.size(),
-        parms.Hrtf.History.begin());
+                parms.Hrtf.History.begin());
 
     /* If fading, the old gain is not silence, and this is the first mixing
      * pass, fade between the IRs.
@@ -505,7 +517,7 @@ void DoHrtfMix(const float *samples, const ALuint DstBufferSize, DirectParams &p
         hrtfparams.GainStep = gain / static_cast<float>(fademix);
 
         MixHrtfBlendSamples(HrtfSamples, AccumSamples+OutPos, IrSize, &parms.Hrtf.Old, &hrtfparams,
-            fademix);
+                            fademix);
         /* Update the old parameters with the result. */
         parms.Hrtf.Old = parms.Hrtf.Target;
         parms.Hrtf.Old.Gain = gain;
@@ -538,11 +550,12 @@ void DoHrtfMix(const float *samples, const ALuint DstBufferSize, DirectParams &p
 }
 
 void DoNfcMix(const al::span<const float> samples, FloatBufferLine *OutBuffer, DirectParams &parms,
-    const float *TargetGains, const ALuint Counter, const ALuint OutPos, ALCdevice *Device)
+              const float *TargetGains, const ALuint Counter, const ALuint OutPos, ALCdevice *Device)
 {
     using FilterProc = void (NfcFilter::*)(const al::span<const float>, float*);
-    static constexpr FilterProc NfcProcess[MAX_AMBI_ORDER+1]{
-        nullptr, &NfcFilter::process1, &NfcFilter::process2, &NfcFilter::process3};
+    static constexpr FilterProc NfcProcess[MAX_AMBI_ORDER+1] {
+        nullptr, &NfcFilter::process1, &NfcFilter::process2, &NfcFilter::process3
+    };
 
     float *CurrentGains{parms.Gains.Current.data()};
     MixSamples(samples, {OutBuffer, 1u}, CurrentGains, TargetGains, Counter, OutPos);
@@ -614,7 +627,7 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
                 else
                     parms.Hrtf.Old = parms.Hrtf.Target;
             }
-            for(ALuint send{0};send < NumSends;++send)
+            for(ALuint send{0}; send < NumSends; ++send)
             {
                 if(mSend[send].Buffer.empty())
                     continue;
@@ -655,7 +668,7 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
         DataSize64 += 1 + MAX_RESAMPLER_PADDING;
 
         auto SrcBufferSize = static_cast<ALuint>(
-            minu64(DataSize64, BUFFERSIZE + MAX_RESAMPLER_PADDING + 1));
+                                 minu64(DataSize64, BUFFERSIZE + MAX_RESAMPLER_PADDING + 1));
         if(SrcBufferSize > BUFFERSIZE + MAX_RESAMPLER_PADDING)
         {
             SrcBufferSize = BUFFERSIZE + MAX_RESAMPLER_PADDING;
@@ -675,7 +688,7 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
         }
 
         if((mFlags&(VOICE_IS_CALLBACK|VOICE_CALLBACK_STOPPED)) == VOICE_IS_CALLBACK
-            && BufferListItem)
+                && BufferListItem)
         {
             ALbuffer *buffer{BufferListItem->mBuffer};
 
@@ -687,14 +700,14 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
                 const size_t needBytes{toLoad*FrameSize - byteOffset};
 
                 const ALsizei gotBytes{buffer->Callback(buffer->UserData,
-                    &buffer->mData[byteOffset], static_cast<ALsizei>(needBytes))};
+                                                        &buffer->mData[byteOffset], static_cast<ALsizei>(needBytes))};
                 if(gotBytes < 1)
                     mFlags |= VOICE_CALLBACK_STOPPED;
                 else if(static_cast<ALuint>(gotBytes) < needBytes)
                 {
                     mFlags |= VOICE_CALLBACK_STOPPED;
                     mNumCallbackSamples += static_cast<ALuint>(static_cast<ALuint>(gotBytes) /
-                        FrameSize);
+                                           FrameSize);
                 }
                 else
                     mNumCallbackSamples = toLoad;
@@ -706,27 +719,27 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
         {
             const size_t num_chans{mChans.size()};
             const auto chan = static_cast<size_t>(std::distance(mChans.data(),
-                std::addressof(chandata)));
+                                                  std::addressof(chandata)));
             const al::span<float> SrcData{Device->SourceData, SrcBufferSize};
 
             /* Load the previous samples into the source data first, then load
              * what we can from the buffer queue.
              */
             auto srciter = std::copy_n(chandata.mPrevSamples.begin(), MAX_RESAMPLER_PADDING>>1,
-                SrcData.begin());
+                                       SrcData.begin());
 
             if UNLIKELY(!BufferListItem)
                 srciter = std::copy(chandata.mPrevSamples.begin()+(MAX_RESAMPLER_PADDING>>1),
-                    chandata.mPrevSamples.end(), srciter);
+                                    chandata.mPrevSamples.end(), srciter);
             else if((mFlags&VOICE_IS_STATIC))
                 srciter = LoadBufferStatic(BufferListItem, BufferLoopItem, num_chans,
-                    SampleSize, chan, DataPosInt, {srciter, SrcData.end()});
+                                           SampleSize, chan, DataPosInt, {srciter, SrcData.end()});
             else if((mFlags&VOICE_IS_CALLBACK))
                 srciter = LoadBufferCallback(BufferListItem, num_chans, SampleSize, chan,
-                    mNumCallbackSamples, {srciter, SrcData.end()});
+                                             mNumCallbackSamples, {srciter, SrcData.end()});
             else
                 srciter = LoadBufferQueue(BufferListItem, BufferLoopItem, num_chans,
-                    SampleSize, chan, DataPosInt, {srciter, SrcData.end()});
+                                          SampleSize, chan, DataPosInt, {srciter, SrcData.end()});
 
             if UNLIKELY(srciter != SrcData.end())
             {
@@ -741,12 +754,12 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
 
             /* Store the last source samples used for next time. */
             std::copy_n(&SrcData[(increment*DstBufferSize + DataPosFrac)>>FRACTIONBITS],
-                chandata.mPrevSamples.size(), chandata.mPrevSamples.begin());
+                        chandata.mPrevSamples.size(), chandata.mPrevSamples.begin());
 
             /* Resample, then apply ambisonic upsampling as needed. */
             const float *ResampledData{Resample(&mResampleState,
-                &SrcData[MAX_RESAMPLER_PADDING>>1], DataPosFrac, increment,
-                {Device->ResampledData, DstBufferSize})};
+                                                &SrcData[MAX_RESAMPLER_PADDING>>1], DataPosFrac, increment,
+            {Device->ResampledData, DstBufferSize})};
             if((mFlags&VOICE_IS_AMBISONIC))
             {
                 const float hfscale{chandata.mAmbiScale};
@@ -770,27 +783,27 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
                 if((mFlags&VOICE_HAS_HRTF))
                 {
                     const float TargetGain{UNLIKELY(vstate == Stopping) ? 0.0f :
-                        parms.Hrtf.Target.Gain};
+                                           parms.Hrtf.Target.Gain};
                     DoHrtfMix(samples, DstBufferSize, parms, TargetGain, Counter, OutPos, IrSize,
-                        Device);
+                              Device);
                 }
                 else if((mFlags&VOICE_HAS_NFC))
                 {
                     const float *TargetGains{UNLIKELY(vstate == Stopping) ? SilentTarget.data()
-                        : parms.Gains.Target.data()};
+                                             : parms.Gains.Target.data()};
                     DoNfcMix({samples, DstBufferSize}, mDirect.Buffer.data(), parms, TargetGains,
-                        Counter, OutPos, Device);
+                             Counter, OutPos, Device);
                 }
                 else
                 {
                     const float *TargetGains{UNLIKELY(vstate == Stopping) ? SilentTarget.data()
-                        : parms.Gains.Target.data()};
+                                             : parms.Gains.Target.data()};
                     MixSamples({samples, DstBufferSize}, mDirect.Buffer,
-                        parms.Gains.Current.data(), TargetGains, Counter, OutPos);
+                               parms.Gains.Current.data(), TargetGains, Counter, OutPos);
                 }
             }
 
-            for(ALuint send{0};send < NumSends;++send)
+            for(ALuint send{0}; send < NumSends; ++send)
             {
                 if(mSend[send].Buffer.empty())
                     continue;
@@ -800,9 +813,9 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
                     {ResampledData, DstBufferSize}, mSend[send].FilterType)};
 
                 const float *TargetGains{UNLIKELY(vstate == Stopping) ? SilentTarget.data()
-                    : parms.Gains.Target.data()};
+                                         : parms.Gains.Target.data()};
                 MixSamples({samples, DstBufferSize}, mSend[send].Buffer,
-                    parms.Gains.Current.data(), TargetGains, Counter, OutPos);
+                           parms.Gains.Current.data(), TargetGains, Counter, OutPos);
             }
         }
         /* Update positions */
@@ -850,7 +863,7 @@ void Voice::mix(const State vstate, ALCcontext *Context, const ALuint SamplesToD
                 const size_t byteOffset{SrcSamplesDone*FrameSize};
                 const size_t byteEnd{mNumCallbackSamples*FrameSize};
                 std::copy(buffer->mData.data()+byteOffset, buffer->mData.data()+byteEnd,
-                    buffer->mData.data());
+                          buffer->mData.data());
                 mNumCallbackSamples -= SrcSamplesDone;
             }
             else

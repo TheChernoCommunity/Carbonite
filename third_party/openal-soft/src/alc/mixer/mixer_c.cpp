@@ -25,11 +25,17 @@ namespace {
 #define FRAC_PHASE_DIFFONE (1<<FRAC_PHASE_BITDIFF)
 
 inline float do_point(const InterpState&, const float *RESTRICT vals, const ALuint)
-{ return vals[0]; }
+{
+    return vals[0];
+}
 inline float do_lerp(const InterpState&, const float *RESTRICT vals, const ALuint frac)
-{ return lerp(vals[0], vals[1], static_cast<float>(frac)*(1.0f/FRACTIONONE)); }
+{
+    return lerp(vals[0], vals[1], static_cast<float>(frac)*(1.0f/FRACTIONONE));
+}
 inline float do_cubic(const InterpState&, const float *RESTRICT vals, const ALuint frac)
-{ return cubic(vals[0], vals[1], vals[2], vals[3], static_cast<float>(frac)*(1.0f/FRACTIONONE)); }
+{
+    return cubic(vals[0], vals[1], vals[2], vals[3], static_cast<float>(frac)*(1.0f/FRACTIONONE));
+}
 inline float do_bsinc(const InterpState &istate, const float *RESTRICT vals, const ALuint frac)
 {
     const size_t m{istate.bsinc.m};
@@ -45,7 +51,7 @@ inline float do_bsinc(const InterpState &istate, const float *RESTRICT vals, con
 
     // Apply the scale and phase interpolated filter.
     float r{0.0f};
-    for(size_t j_f{0};j_f < m;j_f++)
+    for(size_t j_f{0}; j_f < m; j_f++)
         r += (fil[j_f] + istate.bsinc.sf*scd[j_f] + pf*(phd[j_f] + istate.bsinc.sf*spd[j_f])) * vals[j_f];
     return r;
 }
@@ -62,7 +68,7 @@ inline float do_fastbsinc(const InterpState &istate, const float *RESTRICT vals,
 
     // Apply the phase interpolated filter.
     float r{0.0f};
-    for(size_t j_f{0};j_f < m;j_f++)
+    for(size_t j_f{0}; j_f < m; j_f++)
         r += (fil[j_f] + pf*phd[j_f]) * vals[j_f];
     return r;
 }
@@ -70,7 +76,7 @@ inline float do_fastbsinc(const InterpState &istate, const float *RESTRICT vals,
 using SamplerT = float(&)(const InterpState&, const float*RESTRICT, const ALuint);
 template<SamplerT Sampler>
 const float *DoResample(const InterpState *state, const float *RESTRICT src, ALuint frac,
-    ALuint increment, const al::span<float> dst)
+                        ALuint increment, const al::span<float> dst)
 {
     const InterpState istate{*state};
     for(float &out : dst)
@@ -85,10 +91,10 @@ const float *DoResample(const InterpState *state, const float *RESTRICT src, ALu
 }
 
 inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const HrirArray &Coeffs,
-    const float left, const float right)
+                        const float left, const float right)
 {
     ASSUME(IrSize >= MIN_IR_LENGTH);
-    for(ALuint c{0};c < IrSize;++c)
+    for(ALuint c{0}; c < IrSize; ++c)
     {
         Values[c][0] += Coeffs[c][0] * left;
         Values[c][1] += Coeffs[c][1] * right;
@@ -99,7 +105,7 @@ inline void ApplyCoeffs(float2 *RESTRICT Values, const ALuint IrSize, const Hrir
 
 template<>
 const float *Resample_<CopyTag,CTag>(const InterpState*, const float *RESTRICT src, ALuint, ALuint,
-    const al::span<float> dst)
+                                     const al::span<float> dst)
 {
 #if defined(HAVE_SSE) || defined(HAVE_NEON)
     /* Avoid copying the source data if it's aligned like the destination. */
@@ -112,53 +118,67 @@ const float *Resample_<CopyTag,CTag>(const InterpState*, const float *RESTRICT s
 
 template<>
 const float *Resample_<PointTag,CTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
-{ return DoResample<do_point>(state, src, frac, increment, dst); }
+                                      ALuint frac, ALuint increment, const al::span<float> dst)
+{
+    return DoResample<do_point>(state, src, frac, increment, dst);
+}
 
 template<>
 const float *Resample_<LerpTag,CTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
-{ return DoResample<do_lerp>(state, src, frac, increment, dst); }
+                                     ALuint frac, ALuint increment, const al::span<float> dst)
+{
+    return DoResample<do_lerp>(state, src, frac, increment, dst);
+}
 
 template<>
 const float *Resample_<CubicTag,CTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
-{ return DoResample<do_cubic>(state, src-1, frac, increment, dst); }
+                                      ALuint frac, ALuint increment, const al::span<float> dst)
+{
+    return DoResample<do_cubic>(state, src-1, frac, increment, dst);
+}
 
 template<>
 const float *Resample_<BSincTag,CTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
-{ return DoResample<do_bsinc>(state, src-state->bsinc.l, frac, increment, dst); }
+                                      ALuint frac, ALuint increment, const al::span<float> dst)
+{
+    return DoResample<do_bsinc>(state, src-state->bsinc.l, frac, increment, dst);
+}
 
 template<>
 const float *Resample_<FastBSincTag,CTag>(const InterpState *state, const float *RESTRICT src,
-    ALuint frac, ALuint increment, const al::span<float> dst)
-{ return DoResample<do_fastbsinc>(state, src-state->bsinc.l, frac, increment, dst); }
+        ALuint frac, ALuint increment, const al::span<float> dst)
+{
+    return DoResample<do_fastbsinc>(state, src-state->bsinc.l, frac, increment, dst);
+}
 
 
 template<>
 void MixHrtf_<CTag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const MixHrtfFilter *hrtfparams, const size_t BufferSize)
-{ MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize); }
+                    const MixHrtfFilter *hrtfparams, const size_t BufferSize)
+{
+    MixHrtfBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, hrtfparams, BufferSize);
+}
 
 template<>
 void MixHrtfBlend_<CTag>(const float *InSamples, float2 *AccumSamples, const ALuint IrSize,
-    const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
+                         const HrtfFilter *oldparams, const MixHrtfFilter *newparams, const size_t BufferSize)
 {
     MixHrtfBlendBase<ApplyCoeffs>(InSamples, AccumSamples, IrSize, oldparams, newparams,
-        BufferSize);
+                                  BufferSize);
 }
 
 template<>
 void MixDirectHrtf_<CTag>(FloatBufferLine &LeftOut, FloatBufferLine &RightOut,
-    const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
-    const size_t BufferSize)
-{ MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize); }
+                          const al::span<const FloatBufferLine> InSamples, float2 *AccumSamples, DirectHrtfState *State,
+                          const size_t BufferSize)
+{
+    MixDirectHrtfBase<ApplyCoeffs>(LeftOut, RightOut, InSamples, AccumSamples, State, BufferSize);
+}
 
 
 template<>
 void Mix_<CTag>(const al::span<const float> InSamples, const al::span<FloatBufferLine> OutBuffer,
-    float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
+                float *CurrentGains, const float *TargetGains, const size_t Counter, const size_t OutPos)
 {
     const float delta{(Counter > 0) ? 1.0f / static_cast<float>(Counter) : 0.0f};
     const bool reached_target{InSamples.size() >= Counter};

@@ -48,7 +48,9 @@ constexpr ALCchar nullDevice[] = "No Output";
 
 
 struct NullBackend final : public BackendBase {
-    NullBackend(ALCdevice *device) noexcept : BackendBase{device} { }
+    NullBackend(ALCdevice *device) noexcept : BackendBase {
+        device
+    } { }
 
     int mixerProc();
 
@@ -73,7 +75,7 @@ int NullBackend::mixerProc()
     int64_t done{0};
     auto start = std::chrono::steady_clock::now();
     while(!mKillNow.load(std::memory_order_acquire) &&
-          mDevice->Connected.load(std::memory_order_acquire))
+            mDevice->Connected.load(std::memory_order_acquire))
     {
         auto now = std::chrono::steady_clock::now();
 
@@ -149,10 +151,14 @@ void NullBackend::stop()
 
 
 bool NullBackendFactory::init()
-{ return true; }
+{
+    return true;
+}
 
 bool NullBackendFactory::querySupport(BackendType type)
-{ return (type == BackendType::Playback); }
+{
+    return (type == BackendType::Playback);
+}
 
 std::string NullBackendFactory::probe(BackendType type)
 {

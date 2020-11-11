@@ -118,7 +118,7 @@ void AutowahState::update(const ALCcontext *context, const ALeffectslot *slot, c
     mBandwidthNorm = (MAX_FREQ-MIN_FREQ) / frequency;
 
     mOutTarget = target.Main->Buffer;
-    for(size_t i{0u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{0u}; i < slot->Wet.Buffer.size(); ++i)
     {
         auto coeffs = GetAmbiIdentityRow(i);
         ComputePanGains(target.Main, coeffs.data(), slot->Params.Gain, mChans[i].TargetGains);
@@ -135,7 +135,7 @@ void AutowahState::process(const size_t samplesToDo, const al::span<const FloatB
     const float bandwidth{mBandwidthNorm};
 
     float env_delay{mEnvDelay};
-    for(size_t i{0u};i < samplesToDo;i++)
+    for(size_t i{0u}; i < samplesToDo; i++)
     {
         float w0, sample, a;
 
@@ -165,7 +165,7 @@ void AutowahState::process(const size_t samplesToDo, const al::span<const FloatB
         float z1{chandata->Filter.z1};
         float z2{chandata->Filter.z2};
 
-        for(size_t i{0u};i < samplesToDo;i++)
+        for(size_t i{0u}; i < samplesToDo; i++)
         {
             const float alpha{mEnv[i].alpha};
             const float cos_w0{mEnv[i].cos_w0};
@@ -190,7 +190,7 @@ void AutowahState::process(const size_t samplesToDo, const al::span<const FloatB
 
         /* Now, mix the processed sound data to the output. */
         MixSamples({mBufferOut, samplesToDo}, samplesOut, chandata->CurrentGains,
-            chandata->TargetGains, samplesToDo, 0);
+                   chandata->TargetGains, samplesToDo, 0);
         ++chandata;
     }
 }
@@ -229,14 +229,18 @@ void Autowah_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Autowah_setParamfv(EffectProps *props,  ALenum param, const float *vals)
-{ Autowah_setParamf(props, param, vals[0]); }
+{
+    Autowah_setParamf(props, param, vals[0]);
+}
 
 void Autowah_setParami(EffectProps*, ALenum param, int)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer property 0x%04x", param};
+}
 void Autowah_setParamiv(EffectProps*, ALenum param, const int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer vector property 0x%04x",
-        param};
+                           param};
 }
 
 void Autowah_getParamf(const EffectProps *props, ALenum param, float *val)
@@ -265,23 +269,31 @@ void Autowah_getParamf(const EffectProps *props, ALenum param, float *val)
 
 }
 void Autowah_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Autowah_getParamf(props, param, vals); }
+{
+    Autowah_getParamf(props, param, vals);
+}
 
 void Autowah_getParami(const EffectProps*, ALenum param, int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer property 0x%04x", param};
+}
 void Autowah_getParamiv(const EffectProps*, ALenum param, int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid autowah integer vector property 0x%04x",
-        param};
+                           param};
 }
 
 DEFINE_ALEFFECT_VTABLE(Autowah);
 
 
 struct AutowahStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new AutowahState{}; }
+    EffectState *create() override {
+        return new AutowahState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Autowah_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Autowah_vtable;
+    }
 };
 
 EffectProps AutowahStateFactory::getDefaultProps() const noexcept

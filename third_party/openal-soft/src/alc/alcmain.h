@@ -63,7 +63,10 @@ enum RenderMode {
 
 
 struct InputRemixMap {
-    struct TargetMix { Channel channel; float mix; };
+    struct TargetMix {
+        Channel channel;
+        float mix;
+    };
 
     Channel channel;
     std::array<TargetMix,2> targets;
@@ -77,12 +80,19 @@ struct BufferSubList {
     BufferSubList() noexcept = default;
     BufferSubList(const BufferSubList&) = delete;
     BufferSubList(BufferSubList&& rhs) noexcept : FreeMask{rhs.FreeMask}, Buffers{rhs.Buffers}
-    { rhs.FreeMask = ~0_u64; rhs.Buffers = nullptr; }
+    {
+        rhs.FreeMask = ~0_u64;
+        rhs.Buffers = nullptr;
+    }
     ~BufferSubList();
 
     BufferSubList& operator=(const BufferSubList&) = delete;
     BufferSubList& operator=(BufferSubList&& rhs) noexcept
-    { std::swap(FreeMask, rhs.FreeMask); std::swap(Buffers, rhs.Buffers); return *this; }
+    {
+        std::swap(FreeMask, rhs.FreeMask);
+        std::swap(Buffers, rhs.Buffers);
+        return *this;
+    }
 };
 
 struct EffectSubList {
@@ -92,12 +102,19 @@ struct EffectSubList {
     EffectSubList() noexcept = default;
     EffectSubList(const EffectSubList&) = delete;
     EffectSubList(EffectSubList&& rhs) noexcept : FreeMask{rhs.FreeMask}, Effects{rhs.Effects}
-    { rhs.FreeMask = ~0_u64; rhs.Effects = nullptr; }
+    {
+        rhs.FreeMask = ~0_u64;
+        rhs.Effects = nullptr;
+    }
     ~EffectSubList();
 
     EffectSubList& operator=(const EffectSubList&) = delete;
     EffectSubList& operator=(EffectSubList&& rhs) noexcept
-    { std::swap(FreeMask, rhs.FreeMask); std::swap(Effects, rhs.Effects); return *this; }
+    {
+        std::swap(FreeMask, rhs.FreeMask);
+        std::swap(Effects, rhs.Effects);
+        return *this;
+    }
 };
 
 struct FilterSubList {
@@ -107,12 +124,19 @@ struct FilterSubList {
     FilterSubList() noexcept = default;
     FilterSubList(const FilterSubList&) = delete;
     FilterSubList(FilterSubList&& rhs) noexcept : FreeMask{rhs.FreeMask}, Filters{rhs.Filters}
-    { rhs.FreeMask = ~0_u64; rhs.Filters = nullptr; }
+    {
+        rhs.FreeMask = ~0_u64;
+        rhs.Filters = nullptr;
+    }
     ~FilterSubList();
 
     FilterSubList& operator=(const FilterSubList&) = delete;
     FilterSubList& operator=(FilterSubList&& rhs) noexcept
-    { std::swap(FreeMask, rhs.FreeMask); std::swap(Filters, rhs.Filters); return *this; }
+    {
+        std::swap(FreeMask, rhs.FreeMask);
+        std::swap(Filters, rhs.Filters);
+        return *this;
+    }
 };
 
 
@@ -132,7 +156,9 @@ private:
     al::vector<float,16> mSamples;
 
 public:
-    void setSampleCount(size_t new_size) { mSamples.resize(new_size); }
+    void setSampleCount(size_t new_size) {
+        mSamples.resize(new_size);
+    }
     void clear() noexcept
     {
         for(auto &chan : mChannels)
@@ -145,9 +171,13 @@ public:
         SampleVecT{}.swap(mSamples);
     }
 
-    float *getSamples() noexcept { return mSamples.data(); }
+    float *getSamples() noexcept {
+        return mSamples.data();
+    }
 
-    al::span<DistData,MAX_OUTPUT_CHANNELS> as_span() { return mChannels; }
+    al::span<DistData,MAX_OUTPUT_CHANNELS> as_span() {
+        return mChannels;
+    }
 };
 
 struct BFChannelConfig {
@@ -282,7 +312,7 @@ struct ALCdevice : public al::intrusive_ref<ALCdevice> {
 
     /* The "dry" path corresponds to the main output. */
     MixParams Dry;
-    ALuint NumChannelsPerOrder[MAX_AMBI_ORDER+1]{};
+    ALuint NumChannelsPerOrder[MAX_AMBI_ORDER+1] {};
 
     /* "Real" output, which will be written to the device buffer. May alias the
      * dry buffer.
@@ -339,9 +369,15 @@ struct ALCdevice : public al::intrusive_ref<ALCdevice> {
     ALCdevice& operator=(const ALCdevice&) = delete;
     ~ALCdevice();
 
-    ALuint bytesFromFmt() const noexcept { return BytesFromDevFmt(FmtType); }
-    ALuint channelsFromFmt() const noexcept { return ChannelsFromDevFmt(FmtChans, mAmbiOrder); }
-    ALuint frameSizeFromFmt() const noexcept { return bytesFromFmt() * channelsFromFmt(); }
+    ALuint bytesFromFmt() const noexcept {
+        return BytesFromDevFmt(FmtType);
+    }
+    ALuint channelsFromFmt() const noexcept {
+        return ChannelsFromDevFmt(FmtChans, mAmbiOrder);
+    }
+    ALuint frameSizeFromFmt() const noexcept {
+        return bytesFromFmt() * channelsFromFmt();
+    }
 
     ALuint waitForMix() const noexcept
     {
@@ -357,7 +393,9 @@ struct ALCdevice : public al::intrusive_ref<ALCdevice> {
     void ProcessBs2b(const size_t SamplesToDo);
 
     inline void postProcess(const size_t SamplesToDo)
-    { if LIKELY(PostProcess) (this->*PostProcess)(SamplesToDo); }
+    {
+        if LIKELY(PostProcess) (this->*PostProcess)(SamplesToDo);
+    }
 
     DEF_NEWDEL(ALCdevice)
 };
@@ -385,7 +423,9 @@ const ALCchar *DevFmtChannelsString(DevFmtChannels chans) noexcept;
  * INVALID_CHANNEL_INDEX if it doesn't exist.
  */
 inline ALuint GetChannelIdxByName(const RealMixParams &real, Channel chan) noexcept
-{ return real.ChannelIndex[chan]; }
+{
+    return real.ChannelIndex[chan];
+}
 #define INVALID_CHANNEL_INDEX ~0u
 
 

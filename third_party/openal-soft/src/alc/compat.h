@@ -3,7 +3,9 @@
 
 #include <string>
 
-struct PathNamePair { std::string path, fname; };
+struct PathNamePair {
+    std::string path, fname;
+};
 const PathNamePair &GetProcBinary(void);
 
 #endif /* AL_COMPAT_H */

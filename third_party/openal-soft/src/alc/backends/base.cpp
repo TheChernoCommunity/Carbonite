@@ -15,13 +15,19 @@
 
 
 bool BackendBase::reset()
-{ throw al::backend_exception{ALC_INVALID_DEVICE, "Invalid BackendBase call"}; }
+{
+    throw al::backend_exception{ALC_INVALID_DEVICE, "Invalid BackendBase call"};
+}
 
 ALCenum BackendBase::captureSamples(al::byte*, ALCuint)
-{ return ALC_INVALID_DEVICE; }
+{
+    return ALC_INVALID_DEVICE;
+}
 
 ALCuint BackendBase::availableSamples()
-{ return 0; }
+{
+    return 0;
+}
 
 ClockLatency BackendBase::getClockLatency()
 {
@@ -39,7 +45,7 @@ ClockLatency BackendBase::getClockLatency()
      * the output, this is an okay approximation.
      */
     ret.Latency = std::max(std::chrono::seconds{mDevice->BufferSize-mDevice->UpdateSize},
-        std::chrono::seconds::zero());
+                           std::chrono::seconds::zero());
     ret.Latency /= mDevice->Frequency;
 
     return ret;

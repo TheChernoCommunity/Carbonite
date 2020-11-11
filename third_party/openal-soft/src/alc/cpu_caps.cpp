@@ -25,13 +25,17 @@ namespace {
     && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64))
 using reg_type = unsigned int;
 inline void get_cpuid(unsigned int f, reg_type *regs)
-{ __get_cpuid(f, &regs[0], &regs[1], &regs[2], &regs[3]); }
+{
+    __get_cpuid(f, &regs[0], &regs[1], &regs[2], &regs[3]);
+}
 #define CAN_GET_CPUID
 #elif defined(HAVE_CPUID_INTRINSIC) \
     && (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64))
 using reg_type = int;
 inline void get_cpuid(unsigned int f, reg_type *regs)
-{ (__cpuid)(regs, f); }
+{
+    (__cpuid)(regs, f);
+}
 #define CAN_GET_CPUID
 #endif
 
@@ -42,14 +46,14 @@ void FillCPUCaps(int capfilter)
 {
     int caps{0};
 
-/* FIXME: We really should get this for all available CPUs in case different
- * CPUs have different caps (is that possible on one machine?).
- */
+    /* FIXME: We really should get this for all available CPUs in case different
+     * CPUs have different caps (is that possible on one machine?).
+     */
 #ifdef CAN_GET_CPUID
     union {
         reg_type regs[4];
         char str[sizeof(reg_type[4])];
-    } cpuinf[3]{};
+    } cpuinf[3] {};
 
     get_cpuid(0, cpuinf[0].regs);
     if(cpuinf[0].regs[0] == 0)
@@ -102,7 +106,7 @@ void FillCPUCaps(int capfilter)
 #endif
 #endif
 #ifdef HAVE_NEON
-    al::ifstream file{"/proc/cpuinfo"};
+    al::ifstream file {"/proc/cpuinfo"};
     if(!file.is_open())
         ERR("Failed to open /proc/cpuinfo, cannot check for NEON support\n");
     else
@@ -126,7 +130,7 @@ void FillCPUCaps(int capfilter)
         while((extpos=features.find("neon", extpos+1)) != std::string::npos)
         {
             if((extpos == 0 || std::isspace(features[extpos-1])) &&
-                (extpos+4 == features.length() || std::isspace(features[extpos+4])))
+                    (extpos+4 == features.length() || std::isspace(features[extpos+4])))
             {
                 caps |= CPU_CAP_NEON;
                 break;
@@ -136,12 +140,12 @@ void FillCPUCaps(int capfilter)
 #endif
 
     TRACE("Extensions:%s%s%s%s%s%s\n",
-        ((capfilter&CPU_CAP_SSE)    ? ((caps&CPU_CAP_SSE)    ? " +SSE"    : " -SSE")    : ""),
-        ((capfilter&CPU_CAP_SSE2)   ? ((caps&CPU_CAP_SSE2)   ? " +SSE2"   : " -SSE2")   : ""),
-        ((capfilter&CPU_CAP_SSE3)   ? ((caps&CPU_CAP_SSE3)   ? " +SSE3"   : " -SSE3")   : ""),
-        ((capfilter&CPU_CAP_SSE4_1) ? ((caps&CPU_CAP_SSE4_1) ? " +SSE4.1" : " -SSE4.1") : ""),
-        ((capfilter&CPU_CAP_NEON)   ? ((caps&CPU_CAP_NEON)   ? " +NEON"   : " -NEON")   : ""),
-        ((!capfilter) ? " -none-" : "")
-    );
+          ((capfilter&CPU_CAP_SSE)    ? ((caps&CPU_CAP_SSE)    ? " +SSE"    : " -SSE")    : ""),
+          ((capfilter&CPU_CAP_SSE2)   ? ((caps&CPU_CAP_SSE2)   ? " +SSE2"   : " -SSE2")   : ""),
+          ((capfilter&CPU_CAP_SSE3)   ? ((caps&CPU_CAP_SSE3)   ? " +SSE3"   : " -SSE3")   : ""),
+          ((capfilter&CPU_CAP_SSE4_1) ? ((caps&CPU_CAP_SSE4_1) ? " +SSE4.1" : " -SSE4.1") : ""),
+          ((capfilter&CPU_CAP_NEON)   ? ((caps&CPU_CAP_NEON)   ? " +NEON"   : " -NEON")   : ""),
+          ((!capfilter) ? " -none-" : "")
+         );
     CPUCapFlags = caps & capfilter;
 }

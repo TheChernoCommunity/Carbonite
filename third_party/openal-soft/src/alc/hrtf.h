@@ -81,8 +81,12 @@ struct DirectHrtfState {
     DEF_FAM_NEWDEL(DirectHrtfState, Coeffs)
 };
 
-struct EvRadians { float value; };
-struct AzRadians { float value; };
+struct EvRadians {
+    float value;
+};
+struct AzRadians {
+    float value;
+};
 struct AngularPoint {
     EvRadians Elev;
     AzRadians Azim;
@@ -93,7 +97,7 @@ al::vector<std::string> EnumerateHrtf(const char *devname);
 HrtfStorePtr GetLoadedHrtf(const std::string &name, const char *devname, const ALuint devrate);
 
 void GetHrtfCoeffs(const HrtfStore *Hrtf, float elevation, float azimuth, float distance,
-    float spread, HrirArray &coeffs, const al::span<ALuint,2> delays);
+                   float spread, HrirArray &coeffs, const al::span<ALuint,2> delays);
 
 /**
  * Produces HRTF filter coefficients for decoding B-Format, given a set of
@@ -102,7 +106,7 @@ void GetHrtfCoeffs(const HrtfStore *Hrtf, float elevation, float azimuth, float 
  * ordered and scaled according to the matrix input.
  */
 void BuildBFormatHrtf(const HrtfStore *Hrtf, DirectHrtfState *state,
-    const al::span<const AngularPoint> AmbiPoints, const float (*AmbiMatrix)[MAX_AMBI_CHANNELS],
-    const al::span<const float,MAX_AMBI_ORDER+1> AmbiOrderHFGain);
+                      const al::span<const AngularPoint> AmbiPoints, const float (*AmbiMatrix)[MAX_AMBI_CHANNELS],
+                      const al::span<const float,MAX_AMBI_ORDER+1> AmbiOrderHFGain);
 
 #endif /* ALC_HRTF_H */

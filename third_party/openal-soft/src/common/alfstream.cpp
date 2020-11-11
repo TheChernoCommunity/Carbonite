@@ -31,42 +31,42 @@ auto filebuf::seekoff(off_type offset, std::ios_base::seekdir whence, std::ios_b
     LARGE_INTEGER fpos{};
     switch(whence)
     {
-        case std::ios_base::beg:
-            fpos.QuadPart = offset;
-            if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_BEGIN))
-                return traits_type::eof();
-            break;
+    case std::ios_base::beg:
+        fpos.QuadPart = offset;
+        if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_BEGIN))
+            return traits_type::eof();
+        break;
 
-        case std::ios_base::cur:
-            // If the offset remains in the current buffer range, just
-            // update the pointer.
-            if((offset >= 0 && offset < off_type(egptr()-gptr())) ||
+    case std::ios_base::cur:
+        // If the offset remains in the current buffer range, just
+        // update the pointer.
+        if((offset >= 0 && offset < off_type(egptr()-gptr())) ||
                 (offset < 0 && -offset <= off_type(gptr()-eback())))
-            {
-                // Get the current file offset to report the correct read
-                // offset.
-                fpos.QuadPart = 0;
-                if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_CURRENT))
-                    return traits_type::eof();
-                setg(eback(), gptr()+offset, egptr());
-                return fpos.QuadPart - off_type(egptr()-gptr());
-            }
-            // Need to offset for the file offset being at egptr() while
-            // the requested offset is relative to gptr().
-            offset -= off_type(egptr()-gptr());
-            fpos.QuadPart = offset;
+        {
+            // Get the current file offset to report the correct read
+            // offset.
+            fpos.QuadPart = 0;
             if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_CURRENT))
                 return traits_type::eof();
-            break;
-
-        case std::ios_base::end:
-            fpos.QuadPart = offset;
-            if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_END))
-                return traits_type::eof();
-            break;
-
-        default:
+            setg(eback(), gptr()+offset, egptr());
+            return fpos.QuadPart - off_type(egptr()-gptr());
+        }
+        // Need to offset for the file offset being at egptr() while
+        // the requested offset is relative to gptr().
+        offset -= off_type(egptr()-gptr());
+        fpos.QuadPart = offset;
+        if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_CURRENT))
             return traits_type::eof();
+        break;
+
+    case std::ios_base::end:
+        fpos.QuadPart = offset;
+        if(!SetFilePointerEx(mFile, fpos, &fpos, FILE_END))
+            return traits_type::eof();
+        break;
+
+    default:
+        return traits_type::eof();
     }
     setg(nullptr, nullptr, nullptr);
     return fpos.QuadPart;
@@ -99,7 +99,7 @@ bool filebuf::open(const wchar_t *filename, std::ios_base::openmode mode)
     if((mode&std::ios_base::out) || !(mode&std::ios_base::in))
         return false;
     HANDLE f{CreateFileW(filename, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL, nullptr)};
+                         FILE_ATTRIBUTE_NORMAL, nullptr)};
     if(f == INVALID_HANDLE_VALUE) return false;
 
     if(mFile != INVALID_HANDLE_VALUE)
@@ -117,7 +117,7 @@ bool filebuf::open(const char *filename, std::ios_base::openmode mode)
 
 
 ifstream::ifstream(const wchar_t *filename, std::ios_base::openmode mode)
-  : std::istream{nullptr}
+    : std::istream{nullptr}
 {
     init(&mStreamBuf);
 
@@ -127,7 +127,7 @@ ifstream::ifstream(const wchar_t *filename, std::ios_base::openmode mode)
 }
 
 ifstream::ifstream(const char *filename, std::ios_base::openmode mode)
-  : std::istream{nullptr}
+    : std::istream{nullptr}
 {
     init(&mStreamBuf);
 

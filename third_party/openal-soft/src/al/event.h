@@ -45,7 +45,9 @@ struct AsyncEvent {
     } u{};
 
     AsyncEvent() noexcept = default;
-    constexpr AsyncEvent(unsigned int type) noexcept : EnumType{type} { }
+    constexpr AsyncEvent(unsigned int type) noexcept : EnumType {
+        type
+    } { }
 };
 
 

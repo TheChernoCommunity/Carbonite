@@ -776,9 +776,9 @@ seek_zero:
         int to_fill_bytes = 511;
         int skip_frames = MINIMP3_PREDECODE_FRAMES
 #ifdef MINIMP3_SEEK_IDX_LINEAR_SEARCH
-         + ((dec->index.frames[i].sample == position) ? 0 : 1)
+                          + ((dec->index.frames[i].sample == position) ? 0 : 1)
 #endif
-        ;
+                          ;
         i -= MINIMP3_MIN(i, (size_t)skip_frames);
         if (3 == dec->info.layer)
         {

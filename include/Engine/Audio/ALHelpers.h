@@ -13,8 +13,8 @@
 
 namespace gp1
 {
-	bool CheckALError(Logger logger);
-	bool CheckALCError(Logger logger);
-	bool InitAL(Logger logger);
-	bool ShutdownAL(Logger logger);
+bool CheckALError(Logger logger);
+bool CheckALCError(Logger logger);
+bool InitAL(Logger logger);
+bool ShutdownAL(Logger logger);
 }

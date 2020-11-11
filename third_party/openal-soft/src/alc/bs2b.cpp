@@ -140,14 +140,14 @@ void bs2b_cross_feed(struct bs2b *bs2b, float *Left, float *Right, size_t Sample
     float lsamples[128][2];
     float rsamples[128][2];
 
-    for(size_t base{0};base < SamplesToDo;)
+    for(size_t base{0}; base < SamplesToDo;)
     {
         const size_t todo{std::min<size_t>(128, SamplesToDo-base)};
 
         /* Process left input */
         float z_lo{bs2b->history[0].lo};
         float z_hi{bs2b->history[0].hi};
-        for(size_t i{0};i < todo;i++)
+        for(size_t i{0}; i < todo; i++)
         {
             lsamples[i][0] = a0_lo*Left[i] + z_lo;
             z_lo = b1_lo*lsamples[i][0];
@@ -161,7 +161,7 @@ void bs2b_cross_feed(struct bs2b *bs2b, float *Left, float *Right, size_t Sample
         /* Process right input */
         z_lo = bs2b->history[1].lo;
         z_hi = bs2b->history[1].hi;
-        for(size_t i{0};i < todo;i++)
+        for(size_t i{0}; i < todo; i++)
         {
             rsamples[i][0] = a0_lo*Right[i] + z_lo;
             z_lo = b1_lo*rsamples[i][0];
@@ -173,9 +173,9 @@ void bs2b_cross_feed(struct bs2b *bs2b, float *Left, float *Right, size_t Sample
         bs2b->history[1].hi = z_hi;
 
         /* Crossfeed */
-        for(size_t i{0};i < todo;i++)
+        for(size_t i{0}; i < todo; i++)
             *(Left++) = lsamples[i][1] + rsamples[i][0];
-        for(size_t i{0};i < todo;i++)
+        for(size_t i{0}; i < todo; i++)
             *(Right++) = rsamples[i][1] + lsamples[i][0];
 
         base += todo;

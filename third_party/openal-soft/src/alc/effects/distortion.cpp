@@ -35,7 +35,7 @@ namespace {
 
 struct DistortionState final : public EffectState {
     /* Effect gains for each channel */
-    float mGain[MAX_OUTPUT_CHANNELS]{};
+    float mGain[MAX_OUTPUT_CHANNELS] {};
 
     /* Effect parameters */
     BiquadFilter mLowpass;
@@ -43,7 +43,7 @@ struct DistortionState final : public EffectState {
     float mAttenuation{};
     float mEdgeCoeff{};
 
-    float mBuffer[2][BUFFERSIZE]{};
+    float mBuffer[2][BUFFERSIZE] {};
 
 
     void deviceUpdate(const ALCdevice *device) override;
@@ -65,7 +65,7 @@ void DistortionState::update(const ALCcontext *context, const ALeffectslot *slot
 
     /* Store waveshaper edge settings. */
     const float edge{minf(std::sin(al::MathDefs<float>::Pi()*0.5f * props->Distortion.Edge),
-        0.99f)};
+                          0.99f)};
     mEdgeCoeff = 2.0f * edge / (1.0f-edge);
 
     float cutoff{props->Distortion.LowpassCutoff};
@@ -91,7 +91,7 @@ void DistortionState::update(const ALCcontext *context, const ALeffectslot *slot
 void DistortionState::process(const size_t samplesToDo, const al::span<const FloatBufferLine> samplesIn, const al::span<FloatBufferLine> samplesOut)
 {
     const float fc{mEdgeCoeff};
-    for(size_t base{0u};base < samplesToDo;)
+    for(size_t base{0u}; base < samplesToDo;)
     {
         /* Perform 4x oversampling to avoid aliasing. Oversampling greatly
          * improves distortion quality and allows to implement lowpass and
@@ -103,7 +103,7 @@ void DistortionState::process(const size_t samplesToDo, const al::span<const Flo
         /* Fill oversample buffer using zero stuffing. Multiply the sample by
          * the amount of oversampling to maintain the signal's power.
          */
-        for(size_t i{0u};i < todo;i++)
+        for(size_t i{0u}; i < todo; i++)
             mBuffer[0][i] = !(i&3) ? samplesIn[0][(i>>2)+base] * 4.0f : 0.0f;
 
         /* First step, do lowpass filtering of original signal. Additionally
@@ -126,7 +126,7 @@ void DistortionState::process(const size_t samplesToDo, const al::span<const Flo
             return smp;
         };
         std::transform(std::begin(mBuffer[1]), std::begin(mBuffer[1])+todo, std::begin(mBuffer[0]),
-            proc_sample);
+                       proc_sample);
 
         /* Third step, do bandpass filtering of distorted signal. */
         mBandpass.process({mBuffer[0], todo}, mBuffer[1]);
@@ -142,7 +142,7 @@ void DistortionState::process(const size_t samplesToDo, const al::span<const Flo
             if(!(std::fabs(gain) > GAIN_SILENCE_THRESHOLD))
                 continue;
 
-            for(size_t i{0u};i < todo;i++)
+            for(size_t i{0u}; i < todo; i++)
                 output[base+i] += gain * mBuffer[1][i*4];
         }
 
@@ -152,11 +152,13 @@ void DistortionState::process(const size_t samplesToDo, const al::span<const Flo
 
 
 void Distortion_setParami(EffectProps*, ALenum param, int)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer property 0x%04x", param};
+}
 void Distortion_setParamiv(EffectProps*, ALenum param, const int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Distortion_setParamf(EffectProps *props, ALenum param, float val)
 {
@@ -197,14 +199,18 @@ void Distortion_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Distortion_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Distortion_setParamf(props, param, vals[0]); }
+{
+    Distortion_setParamf(props, param, vals[0]);
+}
 
 void Distortion_getParami(const EffectProps*, ALenum param, int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer property 0x%04x", param};
+}
 void Distortion_getParamiv(const EffectProps*, ALenum param, int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid distortion integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Distortion_getParamf(const EffectProps *props, ALenum param, float *val)
 {
@@ -235,15 +241,21 @@ void Distortion_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Distortion_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Distortion_getParamf(props, param, vals); }
+{
+    Distortion_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Distortion);
 
 
 struct DistortionStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new DistortionState{}; }
+    EffectState *create() override {
+        return new DistortionState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Distortion_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Distortion_vtable;
+    }
 };
 
 EffectProps DistortionStateFactory::getDefaultProps() const noexcept

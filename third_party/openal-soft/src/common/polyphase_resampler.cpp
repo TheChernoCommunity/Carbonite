@@ -127,7 +127,7 @@ double CalcKaiserBeta(const double rejection)
  *   f_t  -- normalized center frequency (or cutoff; 0.5 is nyquist)
  */
 double SincFilter(const uint l, const double b, const double gain, const double cutoff,
-    const uint i)
+                  const uint i)
 {
     const double x{static_cast<double>(i) - l};
     return Kaiser(b, x / l) * 2.0 * gain * cutoff * Sinc(2.0 * cutoff * x);
@@ -165,7 +165,7 @@ void PPhaseResampler::init(const uint srcRate, const uint dstRate)
     mM = l*2 + 1;
     mL = l;
     mF.resize(mM);
-    for(uint i{0};i < mM;i++)
+    for(uint i{0}; i < mM; i++)
         mF[i] = SincFilter(l, beta, mP, cutoff, i);
 }
 
@@ -188,7 +188,7 @@ void PPhaseResampler::process(const uint inN, const double *in, const uint outN,
     // Resample the input.
     const uint p{mP}, q{mQ}, m{mM}, l{mL};
     const double *f{mF.data()};
-    for(uint i{0};i < outN;i++)
+    for(uint i{0}; i < outN; i++)
     {
         // Input starts at l to compensate for the filter delay.  This will
         // drop any build-up from the first half of the filter.
