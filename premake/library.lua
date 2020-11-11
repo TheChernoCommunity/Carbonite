@@ -15,13 +15,17 @@ function library( name )
 		'third_party/glm/glm',
 		'third_party/openal-soft/include',
 		'third_party/openal-soft/src',
-		'third_party/openal-soft/src/common'
+		'third_party/openal-soft/src/common',
+		'third_party/dr',
+		'third_party/minimp3',
 	}
 
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',
 		'src/%{prj.name}/**.h',
+		'third_party/dr/**.cpp',
+		'third_party/minimp3/**.cpp',
 	}
 
 	defines
