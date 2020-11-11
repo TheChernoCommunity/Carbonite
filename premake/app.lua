@@ -19,9 +19,12 @@ function app( name )
 		'include',
 		'third_party/glfw/include',
 		'third_party/glad/include',
-		'third_party/glm/glm'
+		'third_party/glm/glm',
+		'third_party/openal-soft/include',
+		'third_party/openal-soft/src',
+		'third_party/openal-soft/src/common'
 	}
-	
+
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',
