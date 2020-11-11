@@ -14,6 +14,7 @@ configurations { 'Debug', 'Release' }
 third_party_library 'glad'
 third_party_library 'glfw'
 third_party_library 'glm'
+third_party_library 'openal-soft'
 library 'Engine'
 app 'Game'
 
