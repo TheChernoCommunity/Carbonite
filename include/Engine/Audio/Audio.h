@@ -17,61 +17,61 @@
 
 namespace gp1
 {
-	class AudioCore;
+class AudioCore;
 
-	class AudioSource
-	{
-	public:
-		AudioSource() = default;
-		~AudioSource();
+class AudioSource
+{
+public:
+    AudioSource() = default;
+    ~AudioSource();
 
-		void SetPosition(float x, float y, float z);
-		void SetGain(float gain);
-		void SetPitch(float pitch);
-		void SetSpatial(bool spatial);
-		void SetLoop(bool loop);
+    void SetPosition(float x, float y, float z);
+    void SetGain(float gain);
+    void SetPitch(float pitch);
+    void SetSpatial(bool spatial);
+    void SetLoop(bool loop);
 
-		static AudioSource LoadFromFile(const std::string& file, bool spatial = false);
-	private:
-		AudioSource(uint32_t buffer);
+    static AudioSource LoadFromFile(const std::string& file, bool spatial = false);
+private:
+    AudioSource(uint32_t buffer);
 
-		uint32_t m_BufferHandle = 0;
-		uint32_t m_SourceHandle = 0;
+    uint32_t m_BufferHandle = 0;
+    uint32_t m_SourceHandle = 0;
 
-		bool m_Spatial = false;
-		float m_Position[3] = { 0.0f, 0.0f, 0.0f };
-		float m_Gain = 1.0f;
-		float m_Pitch = 1.0f;
-		bool m_Loop = false;
+    bool m_Spatial = false;
+    float m_Position[3] = { 0.0f, 0.0f, 0.0f };
+    float m_Gain = 1.0f;
+    float m_Pitch = 1.0f;
+    bool m_Loop = false;
 
-		friend class Audio;
-	};
+    friend class Audio;
+};
 
-	class Audio
-	{
-	public:
-		static AudioSource LoadAudioSource(const std::string& filename);
+class Audio
+{
+public:
+    static AudioSource LoadAudioSource(const std::string& filename);
 
-		static void Play(const AudioSource& source);
-		static void Stop(const AudioSource& source);
-	private:
-		static void Init();
+    static void Play(const AudioSource& source);
+    static void Stop(const AudioSource& source);
+private:
+    static void Init();
 
-		static AudioSource LoadAudioSourceWAV(const std::string& filename);
-		static AudioSource LoadAudioSourceMP3(const std::string& filename);
+    static AudioSource LoadAudioSourceWAV(const std::string& filename);
+    static AudioSource LoadAudioSourceMP3(const std::string& filename);
 
-		friend class AudioCore;
-	};
+    friend class AudioCore;
+};
 
-	class AudioLibrary
-	{
-	public:
-		void Add(const std::string& name, const std::string& file, bool spatial = false);
-		AudioSource AddAndGet(const std::string& name, const std::string& file, bool spatial = false);
+class AudioLibrary
+{
+public:
+    void Add(const std::string& name, const std::string& file, bool spatial = false);
+    AudioSource AddAndGet(const std::string& name, const std::string& file, bool spatial = false);
 
-		AudioSource Get(const std::string& name);
-		void Remove(const std::string& name);
-	private:
-		std::unordered_map<std::string, AudioSource> m_AudioCache;
-	};
+    AudioSource Get(const std::string& name);
+    void Remove(const std::string& name);
+private:
+    std::unordered_map<std::string, AudioSource> m_AudioCache;
+};
 }

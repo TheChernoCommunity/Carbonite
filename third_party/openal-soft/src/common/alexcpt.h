@@ -22,8 +22,12 @@ protected:
     void setMessage(const char *msg, std::va_list args);
 
 public:
-    const char *what() const noexcept override { return mMessage.c_str(); }
-    ALCenum errorCode() const noexcept { return mErrorCode; }
+    const char *what() const noexcept override {
+        return mMessage.c_str();
+    }
+    ALCenum errorCode() const noexcept {
+        return mErrorCode;
+    }
 };
 
 } // namespace al

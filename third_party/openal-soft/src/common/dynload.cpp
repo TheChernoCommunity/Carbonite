@@ -15,9 +15,13 @@ void *LoadLib(const char *name)
     return LoadLibraryW(wname.c_str());
 }
 void CloseLib(void *handle)
-{ FreeLibrary(static_cast<HMODULE>(handle)); }
+{
+    FreeLibrary(static_cast<HMODULE>(handle));
+}
 void *GetSymbol(void *handle, const char *name)
-{ return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(handle), name)); }
+{
+    return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(handle), name));
+}
 
 #elif defined(HAVE_DLFCN_H)
 
@@ -32,7 +36,9 @@ void *LoadLib(const char *name)
     return handle;
 }
 void CloseLib(void *handle)
-{ dlclose(handle); }
+{
+    dlclose(handle);
+}
 void *GetSymbol(void *handle, const char *name)
 {
     dlerror();

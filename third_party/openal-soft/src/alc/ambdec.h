@@ -36,10 +36,10 @@ struct AmbDecConf {
 
     using CoeffArray = std::array<float,MAX_AMBI_CHANNELS>;
     /* Unused when FreqBands == 1 */
-    float LFOrderGain[MAX_AMBI_ORDER+1]{};
+    float LFOrderGain[MAX_AMBI_ORDER+1] {};
     al::vector<CoeffArray> LFMatrix;
 
-    float HFOrderGain[MAX_AMBI_ORDER+1]{};
+    float HFOrderGain[MAX_AMBI_ORDER+1] {};
     al::vector<CoeffArray> HFMatrix;
 
     int load(const char *fname) noexcept;

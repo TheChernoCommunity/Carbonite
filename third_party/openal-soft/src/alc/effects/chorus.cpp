@@ -67,8 +67,8 @@ struct ChorusState final : public EffectState {
 
     /* Gains for left and right sides */
     struct {
-        float Current[MAX_OUTPUT_CHANNELS]{};
-        float Target[MAX_OUTPUT_CHANNELS]{};
+        float Current[MAX_OUTPUT_CHANNELS] {};
+        float Target[MAX_OUTPUT_CHANNELS] {};
     } mGains[2];
 
     /* effect parameters */
@@ -126,7 +126,7 @@ void ChorusState::update(const ALCcontext *Context, const ALeffectslot *Slot, co
 
     mDelay = maxi(float2int(props->Chorus.Delay*frequency*FRACTIONONE + 0.5f), mindelay);
     mDepth = minf(props->Chorus.Depth * static_cast<float>(mDelay),
-        static_cast<float>(mDelay - mindelay));
+                  static_cast<float>(mDelay - mindelay));
 
     mFeedback = props->Chorus.Feedback;
 
@@ -231,7 +231,7 @@ void ChorusState::process(const size_t samplesToDo, const al::span<const FloatBu
     float *RESTRICT delaybuf{mSampleBuffer.data()};
     ALuint offset{mOffset};
 
-    for(size_t base{0u};base < samplesToDo;)
+    for(size_t base{0u}; base < samplesToDo;)
     {
         const size_t todo{minz(MAX_UPDATE_SAMPLES, samplesToDo-base)};
 
@@ -242,7 +242,7 @@ void ChorusState::process(const size_t samplesToDo, const al::span<const FloatBu
             getTriangleDelays(moddelays, todo);
 
         alignas(16) float temps[2][MAX_UPDATE_SAMPLES];
-        for(size_t i{0u};i < todo;++i)
+        for(size_t i{0u}; i < todo; ++i)
         {
             // Feed the buffer's input first (necessary for delays < 1).
             delaybuf[offset&bufmask] = samplesIn[0][base+i];
@@ -251,22 +251,22 @@ void ChorusState::process(const size_t samplesToDo, const al::span<const FloatBu
             ALuint delay{offset - (moddelays[0][i]>>FRACTIONBITS)};
             float mu{static_cast<float>(moddelays[0][i]&FRACTIONMASK) * (1.0f/FRACTIONONE)};
             temps[0][i] = cubic(delaybuf[(delay+1) & bufmask], delaybuf[(delay  ) & bufmask],
-                delaybuf[(delay-1) & bufmask], delaybuf[(delay-2) & bufmask], mu);
+                                delaybuf[(delay-1) & bufmask], delaybuf[(delay-2) & bufmask], mu);
 
             // Tap for the right output.
             delay = offset - (moddelays[1][i]>>FRACTIONBITS);
             mu = static_cast<float>(moddelays[1][i]&FRACTIONMASK) * (1.0f/FRACTIONONE);
             temps[1][i] = cubic(delaybuf[(delay+1) & bufmask], delaybuf[(delay  ) & bufmask],
-                delaybuf[(delay-1) & bufmask], delaybuf[(delay-2) & bufmask], mu);
+                                delaybuf[(delay-1) & bufmask], delaybuf[(delay-2) & bufmask], mu);
 
             // Accumulate feedback from the average delay of the taps.
             delaybuf[offset&bufmask] += delaybuf[(offset-avgdelay) & bufmask] * feedback;
             ++offset;
         }
 
-        for(ALsizei c{0};c < 2;++c)
+        for(ALsizei c{0}; c < 2; ++c)
             MixSamples({temps[c], todo}, samplesOut, mGains[c].Current, mGains[c].Target,
-                samplesToDo-base, base);
+                       samplesToDo-base, base);
 
         base += todo;
     }
@@ -296,7 +296,9 @@ void Chorus_setParami(EffectProps *props, ALenum param, int val)
     }
 }
 void Chorus_setParamiv(EffectProps *props, ALenum param, const int *vals)
-{ Chorus_setParami(props, param, vals[0]); }
+{
+    Chorus_setParami(props, param, vals[0]);
+}
 void Chorus_setParamf(EffectProps *props, ALenum param, float val)
 {
     switch(param)
@@ -330,7 +332,9 @@ void Chorus_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Chorus_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Chorus_setParamf(props, param, vals[0]); }
+{
+    Chorus_setParamf(props, param, vals[0]);
+}
 
 void Chorus_getParami(const EffectProps *props, ALenum param, int *val)
 {
@@ -349,7 +353,9 @@ void Chorus_getParami(const EffectProps *props, ALenum param, int *val)
     }
 }
 void Chorus_getParamiv(const EffectProps *props, ALenum param, int *vals)
-{ Chorus_getParami(props, param, vals); }
+{
+    Chorus_getParami(props, param, vals);
+}
 void Chorus_getParamf(const EffectProps *props, ALenum param, float *val)
 {
     switch(param)
@@ -375,15 +381,21 @@ void Chorus_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Chorus_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Chorus_getParamf(props, param, vals); }
+{
+    Chorus_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Chorus);
 
 
 struct ChorusStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new ChorusState{}; }
+    EffectState *create() override {
+        return new ChorusState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Chorus_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Chorus_vtable;
+    }
 };
 
 EffectProps ChorusStateFactory::getDefaultProps() const noexcept
@@ -420,7 +432,9 @@ void Flanger_setParami(EffectProps *props, ALenum param, int val)
     }
 }
 void Flanger_setParamiv(EffectProps *props, ALenum param, const int *vals)
-{ Flanger_setParami(props, param, vals[0]); }
+{
+    Flanger_setParami(props, param, vals[0]);
+}
 void Flanger_setParamf(EffectProps *props, ALenum param, float val)
 {
     switch(param)
@@ -454,7 +468,9 @@ void Flanger_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Flanger_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Flanger_setParamf(props, param, vals[0]); }
+{
+    Flanger_setParamf(props, param, vals[0]);
+}
 
 void Flanger_getParami(const EffectProps *props, ALenum param, int *val)
 {
@@ -473,7 +489,9 @@ void Flanger_getParami(const EffectProps *props, ALenum param, int *val)
     }
 }
 void Flanger_getParamiv(const EffectProps *props, ALenum param, int *vals)
-{ Flanger_getParami(props, param, vals); }
+{
+    Flanger_getParami(props, param, vals);
+}
 void Flanger_getParamf(const EffectProps *props, ALenum param, float *val)
 {
     switch(param)
@@ -499,7 +517,9 @@ void Flanger_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Flanger_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Flanger_getParamf(props, param, vals); }
+{
+    Flanger_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Flanger);
 
@@ -508,9 +528,13 @@ DEFINE_ALEFFECT_VTABLE(Flanger);
  * the same processing functions, so piggyback flanger on the chorus functions.
  */
 struct FlangerStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new ChorusState{}; }
+    EffectState *create() override {
+        return new ChorusState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Flanger_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Flanger_vtable;
+    }
 };
 
 EffectProps FlangerStateFactory::getDefaultProps() const noexcept

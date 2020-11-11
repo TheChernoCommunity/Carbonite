@@ -90,7 +90,9 @@ using std::chrono::seconds;
 using ReferenceTime = std::chrono::duration<REFERENCE_TIME,std::ratio<1,10000000>>;
 
 inline constexpr ReferenceTime operator "" _reftime(unsigned long long int n) noexcept
-{ return ReferenceTime{static_cast<REFERENCE_TIME>(n)}; }
+{
+    return ReferenceTime{static_cast<REFERENCE_TIME>(n)};
+}
 
 
 #define MONO SPEAKER_FRONT_CENTER
@@ -138,28 +140,46 @@ public:
     GuidPrinter(const GUID &guid)
     {
         std::snprintf(mMsg, al::size(mMsg), "{%08lx-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-            DWORD{guid.Data1}, guid.Data2, guid.Data3, guid.Data4[0], guid.Data4[1], guid.Data4[2],
-            guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+                      DWORD{guid.Data1}, guid.Data2, guid.Data3, guid.Data4[0], guid.Data4[1], guid.Data4[2],
+                      guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
     }
-    const char *c_str() const { return mMsg; }
+    const char *c_str() const {
+        return mMsg;
+    }
 };
 
 struct PropVariant {
     PROPVARIANT mProp;
 
 public:
-    PropVariant() { PropVariantInit(&mProp); }
-    ~PropVariant() { clear(); }
+    PropVariant() {
+        PropVariantInit(&mProp);
+    }
+    ~PropVariant() {
+        clear();
+    }
 
-    void clear() { PropVariantClear(&mProp); }
+    void clear() {
+        PropVariantClear(&mProp);
+    }
 
-    PROPVARIANT* get() noexcept { return &mProp; }
+    PROPVARIANT* get() noexcept {
+        return &mProp;
+    }
 
-    PROPVARIANT& operator*() noexcept { return mProp; }
-    const PROPVARIANT& operator*() const noexcept { return mProp; }
+    PROPVARIANT& operator*() noexcept {
+        return mProp;
+    }
+    const PROPVARIANT& operator*() const noexcept {
+        return mProp;
+    }
 
-    PROPVARIANT* operator->() noexcept { return &mProp; }
-    const PROPVARIANT* operator->() const noexcept { return &mProp; }
+    PROPVARIANT* operator->() noexcept {
+        return &mProp;
+    }
+    const PROPVARIANT* operator->() const noexcept {
+        return &mProp;
+    }
 };
 
 struct DevMap {
@@ -169,18 +189,18 @@ struct DevMap {
 
     template<typename T0, typename T1, typename T2>
     DevMap(T0&& name_, T1&& guid_, T2&& devid_)
-      : name{std::forward<T0>(name_)}
-      , endpoint_guid{std::forward<T1>(guid_)}
-      , devid{std::forward<T2>(devid_)}
+        : name{std::forward<T0>(name_)}
+        , endpoint_guid{std::forward<T1>(guid_)}
+        , devid{std::forward<T2>(devid_)}
     { }
 };
 
 bool checkName(const al::vector<DevMap> &list, const std::string &name)
 {
     return std::find_if(list.cbegin(), list.cend(),
-        [&name](const DevMap &entry) -> bool
-        { return entry.name == name; }
-    ) != list.cend();
+                        [&name](const DevMap &entry) -> bool
+    { return entry.name == name; }
+                       ) != list.cend();
 }
 
 al::vector<DevMap> PlaybackDevices;
@@ -297,7 +317,7 @@ WCHAR *get_device_id(IMMDevice *device)
 
 void probe_devices(IMMDeviceEnumerator *devenum, EDataFlow flowdir, al::vector<DevMap> &list)
 {
-    al::vector<DevMap>{}.swap(list);
+    al::vector<DevMap> {}.swap(list);
 
     IMMDeviceCollection *coll;
     HRESULT hr{devenum->EnumAudioEndpoints(flowdir, DEVICE_STATE_ACTIVE, &coll)};
@@ -324,7 +344,7 @@ void probe_devices(IMMDeviceEnumerator *devenum, EDataFlow flowdir, al::vector<D
             add_device(defdev, defdevid, list);
     }
 
-    for(UINT i{0};i < count;++i)
+    for(UINT i{0}; i < count; ++i)
     {
         IMMDevice *device;
         hr = coll->Item(i, &device);
@@ -396,32 +416,32 @@ void TraceFormat(const char *msg, const WAVEFORMATEX *format)
         const WAVEFORMATEXTENSIBLE *fmtex{
             CONTAINING_RECORD(format, const WAVEFORMATEXTENSIBLE, Format)};
         TRACE("%s:\n"
-            "    FormatTag      = 0x%04x\n"
-            "    Channels       = %d\n"
-            "    SamplesPerSec  = %lu\n"
-            "    AvgBytesPerSec = %lu\n"
-            "    BlockAlign     = %d\n"
-            "    BitsPerSample  = %d\n"
-            "    Size           = %d\n"
-            "    Samples        = %d\n"
-            "    ChannelMask    = 0x%lx\n"
-            "    SubFormat      = %s\n",
-            msg, fmtex->Format.wFormatTag, fmtex->Format.nChannels, fmtex->Format.nSamplesPerSec,
-            fmtex->Format.nAvgBytesPerSec, fmtex->Format.nBlockAlign, fmtex->Format.wBitsPerSample,
-            fmtex->Format.cbSize, fmtex->Samples.wReserved, fmtex->dwChannelMask,
-            GuidPrinter{fmtex->SubFormat}.c_str());
+              "    FormatTag      = 0x%04x\n"
+              "    Channels       = %d\n"
+              "    SamplesPerSec  = %lu\n"
+              "    AvgBytesPerSec = %lu\n"
+              "    BlockAlign     = %d\n"
+              "    BitsPerSample  = %d\n"
+              "    Size           = %d\n"
+              "    Samples        = %d\n"
+              "    ChannelMask    = 0x%lx\n"
+              "    SubFormat      = %s\n",
+              msg, fmtex->Format.wFormatTag, fmtex->Format.nChannels, fmtex->Format.nSamplesPerSec,
+              fmtex->Format.nAvgBytesPerSec, fmtex->Format.nBlockAlign, fmtex->Format.wBitsPerSample,
+              fmtex->Format.cbSize, fmtex->Samples.wReserved, fmtex->dwChannelMask,
+              GuidPrinter{fmtex->SubFormat}.c_str());
     }
     else
         TRACE("%s:\n"
-            "    FormatTag      = 0x%04x\n"
-            "    Channels       = %d\n"
-            "    SamplesPerSec  = %lu\n"
-            "    AvgBytesPerSec = %lu\n"
-            "    BlockAlign     = %d\n"
-            "    BitsPerSample  = %d\n"
-            "    Size           = %d\n",
-            msg, format->wFormatTag, format->nChannels, format->nSamplesPerSec,
-            format->nAvgBytesPerSec, format->nBlockAlign, format->wBitsPerSample, format->cbSize);
+              "    FormatTag      = 0x%04x\n"
+              "    Channels       = %d\n"
+              "    SamplesPerSec  = %lu\n"
+              "    AvgBytesPerSec = %lu\n"
+              "    BlockAlign     = %d\n"
+              "    BitsPerSample  = %d\n"
+              "    Size           = %d\n",
+              msg, format->wFormatTag, format->nChannels, format->nSamplesPerSec,
+              format->nAvgBytesPerSec, format->nBlockAlign, format->wBitsPerSample, format->cbSize);
 }
 
 
@@ -438,7 +458,7 @@ enum class MsgType {
     Count
 };
 
-constexpr char MessageStr[static_cast<size_t>(MsgType::Count)][20]{
+constexpr char MessageStr[static_cast<size_t>(MsgType::Count)][20] {
     "Open Device",
     "Reset Device",
     "Start Device",
@@ -524,7 +544,7 @@ int WasapiProxy::messageHandler(std::promise<HRESULT> *promise)
 
     void *ptr{};
     HRESULT hr{CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_INPROC_SERVER,
-        IID_IMMDeviceEnumerator, &ptr)};
+                                IID_IMMDeviceEnumerator, &ptr)};
     if(FAILED(hr))
     {
         WARN("Failed to create IMMDeviceEnumerator instance: 0x%08lx\n", hr);
@@ -547,8 +567,10 @@ int WasapiProxy::messageHandler(std::promise<HRESULT> *promise)
     while(popMessage(msg))
     {
         TRACE("Got message \"%s\" (0x%04x, this=%p)\n",
-            MessageStr[static_cast<size_t>(msg.mType)], static_cast<int>(msg.mType),
-            decltype(std::declval<void*>()){msg.mProxy});
+              MessageStr[static_cast<size_t>(msg.mType)], static_cast<int>(msg.mType),
+        decltype(std::declval<void*>()) {
+            msg.mProxy
+        });
 
         switch(msg.mType)
         {
@@ -630,7 +652,9 @@ int WasapiProxy::messageHandler(std::promise<HRESULT> *promise)
 
 
 struct WasapiPlayback final : public BackendBase, WasapiProxy {
-    WasapiPlayback(ALCdevice *device) noexcept : BackendBase{device} { }
+    WasapiPlayback(ALCdevice *device) noexcept : BackendBase {
+        device
+    } { }
     ~WasapiPlayback() override;
 
     int mixerProc();
@@ -760,16 +784,16 @@ void WasapiPlayback::open(const ALCchar *name)
 
             hr = E_FAIL;
             auto iter = std::find_if(PlaybackDevices.cbegin(), PlaybackDevices.cend(),
-                [name](const DevMap &entry) -> bool
-                { return entry.name == name || entry.endpoint_guid == name; }
-            );
+                                     [name](const DevMap &entry) -> bool
+            { return entry.name == name || entry.endpoint_guid == name; }
+                                    );
             if(iter == PlaybackDevices.cend())
             {
                 std::wstring wname{utf8_to_wstr(name)};
                 iter = std::find_if(PlaybackDevices.cbegin(), PlaybackDevices.cend(),
-                    [&wname](const DevMap &entry) -> bool
-                    { return entry.devid == wname; }
-                );
+                                    [&wname](const DevMap &entry) -> bool
+                { return entry.devid == wname; }
+                                   );
             }
             if(iter == PlaybackDevices.cend())
                 WARN("Failed to find device name matching \"%s\"\n", name);
@@ -918,7 +942,7 @@ HRESULT WasapiPlayback::resetProxy()
         break;
     case DevFmtAmbi3D:
         mDevice->FmtChans = DevFmtStereo;
-        /*fall-through*/
+    /*fall-through*/
     case DevFmtStereo:
         OutputType.Format.nChannels = 2;
         OutputType.dwChannelMask = STEREO;
@@ -948,7 +972,7 @@ HRESULT WasapiPlayback::resetProxy()
     {
     case DevFmtByte:
         mDevice->FmtType = DevFmtUByte;
-        /* fall-through */
+    /* fall-through */
     case DevFmtUByte:
         OutputType.Format.wBitsPerSample = 8;
         OutputType.Samples.wValidBitsPerSample = 8;
@@ -956,7 +980,7 @@ HRESULT WasapiPlayback::resetProxy()
         break;
     case DevFmtUShort:
         mDevice->FmtType = DevFmtShort;
-        /* fall-through */
+    /* fall-through */
     case DevFmtShort:
         OutputType.Format.wBitsPerSample = 16;
         OutputType.Samples.wValidBitsPerSample = 16;
@@ -964,7 +988,7 @@ HRESULT WasapiPlayback::resetProxy()
         break;
     case DevFmtUInt:
         mDevice->FmtType = DevFmtInt;
-        /* fall-through */
+    /* fall-through */
     case DevFmtInt:
         OutputType.Format.wBitsPerSample = 32;
         OutputType.Samples.wValidBitsPerSample = 32;
@@ -979,9 +1003,9 @@ HRESULT WasapiPlayback::resetProxy()
     OutputType.Format.nSamplesPerSec = mDevice->Frequency;
 
     OutputType.Format.nBlockAlign = static_cast<WORD>(OutputType.Format.nChannels *
-        OutputType.Format.wBitsPerSample / 8);
+                                    OutputType.Format.wBitsPerSample / 8);
     OutputType.Format.nAvgBytesPerSec = OutputType.Format.nSamplesPerSec *
-        OutputType.Format.nBlockAlign;
+                                        OutputType.Format.nBlockAlign;
 
     TraceFormat("Requesting playback format", &OutputType.Format);
     hr = mClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &OutputType.Format, &wfx);
@@ -1068,12 +1092,12 @@ HRESULT WasapiPlayback::resetProxy()
     EndpointFormFactor formfactor{UnknownFormFactor};
     get_device_formfactor(mMMDev, &formfactor);
     mDevice->IsHeadphones = (mDevice->FmtChans == DevFmtStereo
-        && (formfactor == Headphones || formfactor == Headset));
+                             && (formfactor == Headphones || formfactor == Headset));
 
     SetDefaultWFXChannelOrder(mDevice);
 
     hr = mClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
-        buf_time.count(), 0, &OutputType.Format, nullptr);
+                             buf_time.count(), 0, &OutputType.Format, nullptr);
     if(FAILED(hr))
     {
         ERR("Failed to initialize audio client: 0x%08lx\n", hr);
@@ -1150,7 +1174,9 @@ HRESULT WasapiPlayback::startProxy()
 
 
 void WasapiPlayback::stop()
-{ pushMessage(MsgType::StopDevice).wait(); }
+{
+    pushMessage(MsgType::StopDevice).wait();
+}
 
 void WasapiPlayback::stopProxy()
 {
@@ -1180,7 +1206,9 @@ ClockLatency WasapiPlayback::getClockLatency()
 
 
 struct WasapiCapture final : public BackendBase, WasapiProxy {
-    WasapiCapture(ALCdevice *device) noexcept : BackendBase{device} { }
+    WasapiCapture(ALCdevice *device) noexcept : BackendBase {
+        device
+    } { }
     ~WasapiCapture() override;
 
     int recordProc();
@@ -1274,7 +1302,7 @@ FORCE_ALIGN int WasapiCapture::recordProc()
                     ALuint srcframes{numsamples};
 
                     dstframes = mSampleConv->convert(&srcdata, &srcframes, data.first.buf,
-                        static_cast<ALuint>(minz(data.first.len, INT_MAX)));
+                                                     static_cast<ALuint>(minz(data.first.len, INT_MAX)));
                     if(srcframes > 0 && dstframes == data.first.len && data.second.len > 0)
                     {
                         /* If some source samples remain, all of the first dest
@@ -1282,7 +1310,7 @@ FORCE_ALIGN int WasapiCapture::recordProc()
                          * dest block, do another run for the second block.
                          */
                         dstframes += mSampleConv->convert(&srcdata, &srcframes, data.second.buf,
-                            static_cast<ALuint>(minz(data.second.len, INT_MAX)));
+                                                          static_cast<ALuint>(minz(data.second.len, INT_MAX)));
                     }
                 }
                 else
@@ -1340,16 +1368,16 @@ void WasapiCapture::open(const ALCchar *name)
 
             hr = E_FAIL;
             auto iter = std::find_if(CaptureDevices.cbegin(), CaptureDevices.cend(),
-                [name](const DevMap &entry) -> bool
-                { return entry.name == name || entry.endpoint_guid == name; }
-            );
+                                     [name](const DevMap &entry) -> bool
+            { return entry.name == name || entry.endpoint_guid == name; }
+                                    );
             if(iter == CaptureDevices.cend())
             {
                 std::wstring wname{utf8_to_wstr(name)};
                 iter = std::find_if(CaptureDevices.cbegin(), CaptureDevices.cend(),
-                    [&wname](const DevMap &entry) -> bool
-                    { return entry.devid == wname; }
-                );
+                                    [&wname](const DevMap &entry) -> bool
+                { return entry.devid == wname; }
+                                   );
             }
             if(iter == CaptureDevices.cend())
                 WARN("Failed to find device name matching \"%s\"\n", name);
@@ -1390,7 +1418,7 @@ HRESULT WasapiCapture::openProxy()
 {
     void *ptr;
     HRESULT hr{CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_INPROC_SERVER,
-        IID_IMMDeviceEnumerator, &ptr)};
+                                IID_IMMDeviceEnumerator, &ptr)};
     if(SUCCEEDED(hr))
     {
         auto Enumerator = static_cast<IMMDeviceEnumerator*>(ptr);
@@ -1512,9 +1540,9 @@ HRESULT WasapiCapture::resetProxy()
     OutputType.Format.nSamplesPerSec = mDevice->Frequency;
 
     OutputType.Format.nBlockAlign = static_cast<WORD>(OutputType.Format.nChannels *
-        OutputType.Format.wBitsPerSample / 8);
+                                    OutputType.Format.wBitsPerSample / 8);
     OutputType.Format.nAvgBytesPerSec = OutputType.Format.nSamplesPerSec *
-        OutputType.Format.nBlockAlign;
+                                        OutputType.Format.nBlockAlign;
     OutputType.Format.cbSize = sizeof(OutputType) - sizeof(OutputType.Format);
 
     TraceFormat("Requesting capture format", &OutputType.Format);
@@ -1533,8 +1561,8 @@ HRESULT WasapiCapture::resetProxy()
     {
         TraceFormat("Got capture format", wfx);
         if(!(wfx->nChannels == OutputType.Format.nChannels ||
-             (wfx->nChannels == 1 && OutputType.Format.nChannels == 2) ||
-             (wfx->nChannels == 2 && OutputType.Format.nChannels == 1)))
+                (wfx->nChannels == 1 && OutputType.Format.nChannels == 2) ||
+                (wfx->nChannels == 2 && OutputType.Format.nChannels == 1)))
         {
             ERR("Failed to get matching format, wanted: %s %s %uhz, got: %d channel%s %d-bit %luhz\n",
                 DevFmtChannelsString(mDevice->FmtChans), DevFmtTypeString(mDevice->FmtType),
@@ -1603,7 +1631,7 @@ HRESULT WasapiCapture::resetProxy()
     if(mDevice->Frequency != OutputType.Format.nSamplesPerSec || mDevice->FmtType != srcType)
     {
         mSampleConv = CreateSampleConverter(srcType, mDevice->FmtType, mDevice->channelsFromFmt(),
-            OutputType.Format.nSamplesPerSec, mDevice->Frequency, Resampler::FastBSinc24);
+                                            OutputType.Format.nSamplesPerSec, mDevice->Frequency, Resampler::FastBSinc24);
         if(!mSampleConv)
         {
             ERR("Failed to create converter for %s format, dst: %s %uhz, src: %s %luhz\n",
@@ -1612,12 +1640,12 @@ HRESULT WasapiCapture::resetProxy()
             return E_FAIL;
         }
         TRACE("Created converter for %s format, dst: %s %uhz, src: %s %luhz\n",
-            DevFmtChannelsString(mDevice->FmtChans), DevFmtTypeString(mDevice->FmtType),
-            mDevice->Frequency, DevFmtTypeString(srcType), OutputType.Format.nSamplesPerSec);
+              DevFmtChannelsString(mDevice->FmtChans), DevFmtTypeString(mDevice->FmtType),
+              mDevice->Frequency, DevFmtTypeString(srcType), OutputType.Format.nSamplesPerSec);
     }
 
     hr = mClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
-        buf_time.count(), 0, &OutputType.Format, nullptr);
+                             buf_time.count(), 0, &OutputType.Format, nullptr);
     if(FAILED(hr))
     {
         ERR("Failed to initialize audio client: 0x%08lx\n", hr);
@@ -1695,7 +1723,9 @@ HRESULT WasapiCapture::startProxy()
 
 
 void WasapiCapture::stop()
-{ pushMessage(MsgType::StopDevice).wait(); }
+{
+    pushMessage(MsgType::StopDevice).wait();
+}
 
 void WasapiCapture::stopProxy()
 {
@@ -1713,7 +1743,9 @@ void WasapiCapture::stopProxy()
 
 
 ALCuint WasapiCapture::availableSamples()
-{ return static_cast<ALCuint>(mRing->readSpace()); }
+{
+    return static_cast<ALCuint>(mRing->readSpace());
+}
 
 ALCenum WasapiCapture::captureSamples(al::byte *buffer, ALCuint samples)
 {
@@ -1729,21 +1761,23 @@ bool WasapiBackendFactory::init()
     static HRESULT InitResult{E_FAIL};
 
     if(FAILED(InitResult)) try
-    {
-        std::promise<HRESULT> promise;
-        auto future = promise.get_future();
+        {
+            std::promise<HRESULT> promise;
+            auto future = promise.get_future();
 
-        std::thread{&WasapiProxy::messageHandler, &promise}.detach();
-        InitResult = future.get();
-    }
-    catch(...) {
-    }
+            std::thread{&WasapiProxy::messageHandler, &promise}.detach();
+            InitResult = future.get();
+        }
+        catch(...) {
+        }
 
     return SUCCEEDED(InitResult) ? ALC_TRUE : ALC_FALSE;
 }
 
 bool WasapiBackendFactory::querySupport(BackendType type)
-{ return type == BackendType::Playback || type == BackendType::Capture; }
+{
+    return type == BackendType::Playback || type == BackendType::Capture;
+}
 
 std::string WasapiBackendFactory::probe(BackendType type)
 {

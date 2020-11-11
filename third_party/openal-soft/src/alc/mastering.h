@@ -45,8 +45,8 @@ struct Compressor {
     float mAttack{0.0f};
     float mRelease{0.0f};
 
-    alignas(16) float mSideChain[2*BUFFERSIZE]{};
-    alignas(16) float mCrestFactor[BUFFERSIZE]{};
+    alignas(16) float mSideChain[2*BUFFERSIZE] {};
+    alignas(16) float mCrestFactor[BUFFERSIZE] {};
 
     SlidingHold *mHold{nullptr};
     FloatBufferLine *mDelay{nullptr};
@@ -64,7 +64,9 @@ struct Compressor {
 
     ~Compressor();
     void process(const ALuint SamplesToDo, FloatBufferLine *OutBuffer);
-    ALsizei getLookAhead() const noexcept { return static_cast<ALsizei>(mLookAhead); }
+    ALsizei getLookAhead() const noexcept {
+        return static_cast<ALsizei>(mLookAhead);
+    }
 
     DEF_PLACE_NEWDEL()
 
@@ -95,11 +97,11 @@ struct Compressor {
      *        automating release time.
      */
     static std::unique_ptr<Compressor> Create(const size_t NumChans, const float SampleRate,
-        const bool AutoKnee, const bool AutoAttack, const bool AutoRelease,
-        const bool AutoPostGain, const bool AutoDeclip, const float LookAheadTime,
-        const float HoldTime, const float PreGainDb, const float PostGainDb,
-        const float ThresholdDb, const float Ratio, const float KneeDb, const float AttackTime,
-        const float ReleaseTime);
+            const bool AutoKnee, const bool AutoAttack, const bool AutoRelease,
+            const bool AutoPostGain, const bool AutoDeclip, const float LookAheadTime,
+            const float HoldTime, const float PreGainDb, const float PostGainDb,
+            const float ThresholdDb, const float Ratio, const float KneeDb, const float AttackTime,
+            const float ReleaseTime);
 };
 
 #endif /* MASTERING_H */

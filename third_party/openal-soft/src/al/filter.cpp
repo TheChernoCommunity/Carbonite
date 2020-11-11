@@ -69,11 +69,13 @@ const ALfilter::Vtable T##_vtable = {                              \
 }
 
 void ALlowpass_setParami(ALfilter*, ALenum param, int)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer property 0x%04x", param};
+}
 void ALlowpass_setParamiv(ALfilter*, ALenum param, const int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALlowpass_setParamf(ALfilter *filter, ALenum param, float val)
 {
@@ -96,14 +98,18 @@ void ALlowpass_setParamf(ALfilter *filter, ALenum param, float val)
     }
 }
 void ALlowpass_setParamfv(ALfilter *filter, ALenum param, const float *vals)
-{ ALlowpass_setParamf(filter, param, vals[0]); }
+{
+    ALlowpass_setParamf(filter, param, vals[0]);
+}
 
 void ALlowpass_getParami(const ALfilter*, ALenum param, int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer property 0x%04x", param};
+}
 void ALlowpass_getParamiv(const ALfilter*, ALenum param, int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid low-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALlowpass_getParamf(const ALfilter *filter, ALenum param, float *val)
 {
@@ -122,17 +128,21 @@ void ALlowpass_getParamf(const ALfilter *filter, ALenum param, float *val)
     }
 }
 void ALlowpass_getParamfv(const ALfilter *filter, ALenum param, float *vals)
-{ ALlowpass_getParamf(filter, param, vals); }
+{
+    ALlowpass_getParamf(filter, param, vals);
+}
 
 DEFINE_ALFILTER_VTABLE(ALlowpass);
 
 
 void ALhighpass_setParami(ALfilter*, ALenum param, int)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer property 0x%04x", param};
+}
 void ALhighpass_setParamiv(ALfilter*, ALenum param, const int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALhighpass_setParamf(ALfilter *filter, ALenum param, float val)
 {
@@ -155,14 +165,18 @@ void ALhighpass_setParamf(ALfilter *filter, ALenum param, float val)
     }
 }
 void ALhighpass_setParamfv(ALfilter *filter, ALenum param, const float *vals)
-{ ALhighpass_setParamf(filter, param, vals[0]); }
+{
+    ALhighpass_setParamf(filter, param, vals[0]);
+}
 
 void ALhighpass_getParami(const ALfilter*, ALenum param, int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer property 0x%04x", param};
+}
 void ALhighpass_getParamiv(const ALfilter*, ALenum param, int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid high-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALhighpass_getParamf(const ALfilter *filter, ALenum param, float *val)
 {
@@ -181,17 +195,21 @@ void ALhighpass_getParamf(const ALfilter *filter, ALenum param, float *val)
     }
 }
 void ALhighpass_getParamfv(const ALfilter *filter, ALenum param, float *vals)
-{ ALhighpass_getParamf(filter, param, vals); }
+{
+    ALhighpass_getParamf(filter, param, vals);
+}
 
 DEFINE_ALFILTER_VTABLE(ALhighpass);
 
 
 void ALbandpass_setParami(ALfilter*, ALenum param, int)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer property 0x%04x", param};
+}
 void ALbandpass_setParamiv(ALfilter*, ALenum param, const int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALbandpass_setParamf(ALfilter *filter, ALenum param, float val)
 {
@@ -220,14 +238,18 @@ void ALbandpass_setParamf(ALfilter *filter, ALenum param, float val)
     }
 }
 void ALbandpass_setParamfv(ALfilter *filter, ALenum param, const float *vals)
-{ ALbandpass_setParamf(filter, param, vals[0]); }
+{
+    ALbandpass_setParamf(filter, param, vals[0]);
+}
 
 void ALbandpass_getParami(const ALfilter*, ALenum param, int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer property 0x%04x", param};
+}
 void ALbandpass_getParamiv(const ALfilter*, ALenum param, int*)
 {
     throw filter_exception{AL_INVALID_ENUM, "Invalid band-pass integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void ALbandpass_getParamf(const ALfilter *filter, ALenum param, float *val)
 {
@@ -250,28 +272,46 @@ void ALbandpass_getParamf(const ALfilter *filter, ALenum param, float *val)
     }
 }
 void ALbandpass_getParamfv(const ALfilter *filter, ALenum param, float *vals)
-{ ALbandpass_getParamf(filter, param, vals); }
+{
+    ALbandpass_getParamf(filter, param, vals);
+}
 
 DEFINE_ALFILTER_VTABLE(ALbandpass);
 
 
 void ALnullfilter_setParami(ALfilter*, ALenum param, int)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_setParamiv(ALfilter*, ALenum param, const int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_setParamf(ALfilter*, ALenum param, float)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_setParamfv(ALfilter*, ALenum param, const float*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 
 void ALnullfilter_getParami(const ALfilter*, ALenum param, int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_getParamiv(const ALfilter*, ALenum param, int*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_getParamf(const ALfilter*, ALenum param, float*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 void ALnullfilter_getParamfv(const ALfilter*, ALenum param, float*)
-{ throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param}; }
+{
+    throw filter_exception{AL_INVALID_ENUM, "Invalid null filter property 0x%04x", param};
+}
 
 DEFINE_ALFILTER_VTABLE(ALnullfilter);
 
@@ -320,9 +360,9 @@ void InitFilterParams(ALfilter *filter, ALenum type)
 bool EnsureFilters(ALCdevice *device, size_t needed)
 {
     size_t count{std::accumulate(device->FilterList.cbegin(), device->FilterList.cend(), size_t{0},
-        [](size_t cur, const FilterSubList &sublist) noexcept -> size_t
-        { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
-    )};
+                                 [](size_t cur, const FilterSubList &sublist) noexcept -> size_t
+    { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
+                                )};
 
     while(needed > count)
     {
@@ -347,9 +387,11 @@ bool EnsureFilters(ALCdevice *device, size_t needed)
 ALfilter *AllocFilter(ALCdevice *device)
 {
     auto sublist = std::find_if(device->FilterList.begin(), device->FilterList.end(),
-        [](const FilterSubList &entry) noexcept -> bool
-        { return entry.FreeMask != 0; }
-    );
+                                [](const FilterSubList &entry) noexcept -> bool
+    {
+        return entry.FreeMask != 0;
+    }
+                               );
     auto lidx = static_cast<ALuint>(std::distance(device->FilterList.begin(), sublist));
     auto slidx = static_cast<ALuint>(CTZ64(sublist->FreeMask));
 
@@ -499,19 +541,19 @@ START_API_FUNC
         if(param == AL_FILTER_TYPE)
         {
             if(value == AL_FILTER_NULL || value == AL_FILTER_LOWPASS
-                || value == AL_FILTER_HIGHPASS || value == AL_FILTER_BANDPASS)
+                    || value == AL_FILTER_HIGHPASS || value == AL_FILTER_BANDPASS)
                 InitFilterParams(alfilt, value);
             else
                 context->setError(AL_INVALID_VALUE, "Invalid filter type 0x%04x", value);
         }
         else try
-        {
-            /* Call the appropriate handler */
-            alfilt->setParami(param, value);
-        }
-        catch(filter_exception &e) {
-            context->setError(e.errorCode(), "%s", e.what());
-        }
+            {
+                /* Call the appropriate handler */
+                alfilt->setParami(param, value);
+            }
+            catch(filter_exception &e) {
+                context->setError(e.errorCode(), "%s", e.what());
+            }
     }
 }
 END_API_FUNC
@@ -536,13 +578,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->setParamiv(param, values);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->setParamiv(param, values);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -559,13 +601,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->setParamf(param, value);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->setParamf(param, value);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -582,13 +624,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->setParamfv(param, values);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->setParamfv(param, values);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -609,13 +651,13 @@ START_API_FUNC
         if(param == AL_FILTER_TYPE)
             *value = alfilt->type;
         else try
-        {
-            /* Call the appropriate handler */
-            alfilt->getParami(param, value);
-        }
-        catch(filter_exception &e) {
-            context->setError(e.errorCode(), "%s", e.what());
-        }
+            {
+                /* Call the appropriate handler */
+                alfilt->getParami(param, value);
+            }
+            catch(filter_exception &e) {
+                context->setError(e.errorCode(), "%s", e.what());
+            }
     }
 }
 END_API_FUNC
@@ -640,13 +682,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->getParamiv(param, values);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->getParamiv(param, values);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -663,13 +705,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->getParamf(param, value);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->getParamf(param, value);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 
@@ -686,13 +728,13 @@ START_API_FUNC
     if UNLIKELY(!alfilt)
         context->setError(AL_INVALID_NAME, "Invalid filter ID %u", filter);
     else try
-    {
-        /* Call the appropriate handler */
-        alfilt->getParamfv(param, values);
-    }
-    catch(filter_exception &e) {
-        context->setError(e.errorCode(), "%s", e.what());
-    }
+        {
+            /* Call the appropriate handler */
+            alfilt->getParamfv(param, values);
+        }
+        catch(filter_exception &e) {
+            context->setError(e.errorCode(), "%s", e.what());
+        }
 }
 END_API_FUNC
 

@@ -137,7 +137,7 @@ START_API_FUNC
     {
     case AL_ORIENTATION:
         if(!(std::isfinite(values[0]) && std::isfinite(values[1]) && std::isfinite(values[2]) &&
-             std::isfinite(values[3]) && std::isfinite(values[4]) && std::isfinite(values[5])))
+                std::isfinite(values[3]) && std::isfinite(values[4]) && std::isfinite(values[5])))
             SETERR_RETURN(context, AL_INVALID_VALUE,, "Listener orientation out of range");
         /* AT then UP */
         listener.OrientAt[0] = values[0];
@@ -226,10 +226,10 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener integer-vector property");
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener integer-vector property");
+        }
 }
 END_API_FUNC
 
@@ -245,18 +245,18 @@ START_API_FUNC
     if(!value)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_GAIN:
-        *value = listener.Gain;
-        break;
+        {
+        case AL_GAIN:
+            *value = listener.Gain;
+            break;
 
-    case AL_METERS_PER_UNIT:
-        *value = listener.mMetersPerUnit;
-        break;
+        case AL_METERS_PER_UNIT:
+            *value = listener.mMetersPerUnit;
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener float property");
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener float property");
+        }
 }
 END_API_FUNC
 
@@ -271,22 +271,22 @@ START_API_FUNC
     if(!value1 || !value2 || !value3)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_POSITION:
-        *value1 = listener.Position[0];
-        *value2 = listener.Position[1];
-        *value3 = listener.Position[2];
-        break;
+        {
+        case AL_POSITION:
+            *value1 = listener.Position[0];
+            *value2 = listener.Position[1];
+            *value3 = listener.Position[2];
+            break;
 
-    case AL_VELOCITY:
-        *value1 = listener.Velocity[0];
-        *value2 = listener.Velocity[1];
-        *value3 = listener.Velocity[2];
-        break;
+        case AL_VELOCITY:
+            *value1 = listener.Velocity[0];
+            *value2 = listener.Velocity[1];
+            *value3 = listener.Velocity[2];
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener 3-float property");
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener 3-float property");
+        }
 }
 END_API_FUNC
 
@@ -314,20 +314,20 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_ORIENTATION:
-        // AT then UP
-        values[0] = listener.OrientAt[0];
-        values[1] = listener.OrientAt[1];
-        values[2] = listener.OrientAt[2];
-        values[3] = listener.OrientUp[0];
-        values[4] = listener.OrientUp[1];
-        values[5] = listener.OrientUp[2];
-        break;
+        {
+        case AL_ORIENTATION:
+            // AT then UP
+            values[0] = listener.OrientAt[0];
+            values[1] = listener.OrientAt[1];
+            values[2] = listener.OrientAt[2];
+            values[3] = listener.OrientUp[0];
+            values[4] = listener.OrientUp[1];
+            values[5] = listener.OrientUp[2];
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener float-vector property");
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener float-vector property");
+        }
 }
 END_API_FUNC
 
@@ -342,10 +342,10 @@ START_API_FUNC
     if(!value)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener integer property");
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener integer property");
+        }
 }
 END_API_FUNC
 
@@ -360,22 +360,22 @@ START_API_FUNC
     if(!value1 || !value2 || !value3)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_POSITION:
-        *value1 = static_cast<ALint>(listener.Position[0]);
-        *value2 = static_cast<ALint>(listener.Position[1]);
-        *value3 = static_cast<ALint>(listener.Position[2]);
-        break;
+        {
+        case AL_POSITION:
+            *value1 = static_cast<ALint>(listener.Position[0]);
+            *value2 = static_cast<ALint>(listener.Position[1]);
+            *value3 = static_cast<ALint>(listener.Position[2]);
+            break;
 
-    case AL_VELOCITY:
-        *value1 = static_cast<ALint>(listener.Velocity[0]);
-        *value2 = static_cast<ALint>(listener.Velocity[1]);
-        *value3 = static_cast<ALint>(listener.Velocity[2]);
-        break;
+        case AL_VELOCITY:
+            *value1 = static_cast<ALint>(listener.Velocity[0]);
+            *value2 = static_cast<ALint>(listener.Velocity[1]);
+            *value3 = static_cast<ALint>(listener.Velocity[2]);
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener 3-integer property");
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener 3-integer property");
+        }
 }
 END_API_FUNC
 
@@ -398,20 +398,20 @@ START_API_FUNC
     if(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_ORIENTATION:
-        // AT then UP
-        values[0] = static_cast<ALint>(listener.OrientAt[0]);
-        values[1] = static_cast<ALint>(listener.OrientAt[1]);
-        values[2] = static_cast<ALint>(listener.OrientAt[2]);
-        values[3] = static_cast<ALint>(listener.OrientUp[0]);
-        values[4] = static_cast<ALint>(listener.OrientUp[1]);
-        values[5] = static_cast<ALint>(listener.OrientUp[2]);
-        break;
+        {
+        case AL_ORIENTATION:
+            // AT then UP
+            values[0] = static_cast<ALint>(listener.OrientAt[0]);
+            values[1] = static_cast<ALint>(listener.OrientAt[1]);
+            values[2] = static_cast<ALint>(listener.OrientAt[2]);
+            values[3] = static_cast<ALint>(listener.OrientUp[0]);
+            values[4] = static_cast<ALint>(listener.OrientUp[1]);
+            values[5] = static_cast<ALint>(listener.OrientUp[2]);
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid listener integer-vector property");
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid listener integer-vector property");
+        }
 }
 END_API_FUNC
 

@@ -11,18 +11,18 @@
 
 namespace gp1
 {
-	class Audio;
-	class AudioSource;
+class Audio;
+class AudioSource;
 
-	class AudioCore
-	{
-	public:
-		static void Init();
-		static void Shutdown();
-	private:
-		static Logger s_AudioLogger;
+class AudioCore
+{
+public:
+    static void Init();
+    static void Shutdown();
+private:
+    static Logger s_AudioLogger;
 
-		friend class Audio;
-		friend class AudioSource;
-	};
+    friend class Audio;
+    friend class AudioSource;
+};
 }

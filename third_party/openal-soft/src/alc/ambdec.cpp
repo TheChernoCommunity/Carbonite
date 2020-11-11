@@ -18,7 +18,9 @@ namespace {
 
 template<typename T, std::size_t N>
 constexpr inline std::size_t size(const T(&)[N]) noexcept
-{ return N; }
+{
+    return N;
+}
 
 int readline(std::istream &f, std::string &output)
 {

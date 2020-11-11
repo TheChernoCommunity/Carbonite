@@ -59,28 +59,28 @@ constexpr int MaxAdpcmChannels{2};
 
 /* IMA ADPCM Stepsize table */
 constexpr int IMAStep_size[89] = {
-       7,    8,    9,   10,   11,   12,   13,   14,   16,   17,   19,
-      21,   23,   25,   28,   31,   34,   37,   41,   45,   50,   55,
-      60,   66,   73,   80,   88,   97,  107,  118,  130,  143,  157,
-     173,  190,  209,  230,  253,  279,  307,  337,  371,  408,  449,
-     494,  544,  598,  658,  724,  796,  876,  963, 1060, 1166, 1282,
+    7,    8,    9,   10,   11,   12,   13,   14,   16,   17,   19,
+    21,   23,   25,   28,   31,   34,   37,   41,   45,   50,   55,
+    60,   66,   73,   80,   88,   97,  107,  118,  130,  143,  157,
+    173,  190,  209,  230,  253,  279,  307,  337,  371,  408,  449,
+    494,  544,  598,  658,  724,  796,  876,  963, 1060, 1166, 1282,
     1411, 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024, 3327, 3660,
     4026, 4428, 4871, 5358, 5894, 6484, 7132, 7845, 8630, 9493,10442,
-   11487,12635,13899,15289,16818,18500,20350,22358,24633,27086,29794,
-   32767
+    11487,12635,13899,15289,16818,18500,20350,22358,24633,27086,29794,
+    32767
 };
 
 /* IMA4 ADPCM Codeword decode table */
 constexpr int IMA4Codeword[16] = {
     1, 3, 5, 7, 9, 11, 13, 15,
-   -1,-3,-5,-7,-9,-11,-13,-15,
+    -1,-3,-5,-7,-9,-11,-13,-15,
 };
 
 /* IMA4 ADPCM Step index adjust decode table */
 constexpr int IMA4Index_adjust[16] = {
-   -1,-1,-1,-1, 2, 4, 6, 8,
-   -1,-1,-1,-1, 2, 4, 6, 8
-};
+    -1,-1,-1,-1, 2, 4, 6, 8,
+        -1,-1,-1,-1, 2, 4, 6, 8
+    };
 
 
 /* MSADPCM Adaption table */
@@ -103,11 +103,11 @@ constexpr int MSADPCMAdaptionCoeff[7][2] = {
 
 void DecodeIMA4Block(int16_t *dst, const al::byte *src, size_t numchans, size_t align)
 {
-    int sample[MaxAdpcmChannels]{};
-    int index[MaxAdpcmChannels]{};
-    ALuint code[MaxAdpcmChannels]{};
+    int sample[MaxAdpcmChannels] {};
+    int index[MaxAdpcmChannels] {};
+    ALuint code[MaxAdpcmChannels] {};
 
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
     {
         sample[c] = al::to_integer<int>(src[0]) | (al::to_integer<int>(src[1])<<8);
         sample[c] = (sample[c]^0x8000) - 32768;
@@ -119,19 +119,19 @@ void DecodeIMA4Block(int16_t *dst, const al::byte *src, size_t numchans, size_t 
         *(dst++) = static_cast<int16_t>(sample[c]);
     }
 
-    for(size_t i{1};i < align;i++)
+    for(size_t i{1}; i < align; i++)
     {
         if((i&7) == 1)
         {
-            for(size_t c{0};c < numchans;c++)
+            for(size_t c{0}; c < numchans; c++)
             {
                 code[c] = al::to_integer<ALuint>(src[0]) | (al::to_integer<ALuint>(src[1])<< 8) |
-                    (al::to_integer<ALuint>(src[2])<<16) | (al::to_integer<ALuint>(src[3])<<24);
+                          (al::to_integer<ALuint>(src[2])<<16) | (al::to_integer<ALuint>(src[3])<<24);
                 src += 4;
             }
         }
 
-        for(size_t c{0};c < numchans;c++)
+        for(size_t c{0}; c < numchans; c++)
         {
             const ALuint nibble{code[c]&0xf};
             code[c] >>= 4;
@@ -149,44 +149,44 @@ void DecodeIMA4Block(int16_t *dst, const al::byte *src, size_t numchans, size_t 
 
 void DecodeMSADPCMBlock(int16_t *dst, const al::byte *src, size_t numchans, size_t align)
 {
-    uint8_t blockpred[MaxAdpcmChannels]{};
-    int delta[MaxAdpcmChannels]{};
-    int16_t samples[MaxAdpcmChannels][2]{};
+    uint8_t blockpred[MaxAdpcmChannels] {};
+    int delta[MaxAdpcmChannels] {};
+    int16_t samples[MaxAdpcmChannels][2] {};
 
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
     {
         blockpred[c] = std::min<ALubyte>(al::to_integer<ALubyte>(src[0]), 6);
         ++src;
     }
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
     {
         delta[c] = al::to_integer<int>(src[0]) | (al::to_integer<int>(src[1])<<8);
         delta[c] = (delta[c]^0x8000) - 32768;
         src += 2;
     }
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
     {
         samples[c][0] = static_cast<ALshort>(al::to_integer<int>(src[0]) |
-            (al::to_integer<int>(src[1])<<8));
+                                             (al::to_integer<int>(src[1])<<8));
         src += 2;
     }
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
     {
         samples[c][1] = static_cast<ALshort>(al::to_integer<int>(src[0]) |
-            (al::to_integer<int>(src[1])<<8));
+                                             (al::to_integer<int>(src[1])<<8));
         src += 2;
     }
 
     /* Second sample is written first. */
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
         *(dst++) = samples[c][1];
-    for(size_t c{0};c < numchans;c++)
+    for(size_t c{0}; c < numchans; c++)
         *(dst++) = samples[c][0];
 
     int num{0};
-    for(size_t i{2};i < align;i++)
+    for(size_t i{2}; i < align; i++)
     {
-        for(size_t c{0};c < numchans;c++)
+        for(size_t c{0}; c < numchans; c++)
         {
             /* Read the nibble (first is in the upper bits). */
             al::byte nibble;
@@ -196,7 +196,7 @@ void DecodeMSADPCMBlock(int16_t *dst, const al::byte *src, size_t numchans, size
                 nibble = *(src++) & 0x0f;
 
             int pred{(samples[c][0]*MSADPCMAdaptionCoeff[blockpred[c]][0] +
-                samples[c][1]*MSADPCMAdaptionCoeff[blockpred[c]][1]) / 256};
+                      samples[c][1]*MSADPCMAdaptionCoeff[blockpred[c]][1]) / 256};
             pred += (al::to_integer<int>(nibble^0x08) - 0x08) * delta[c];
             pred  = clampi(pred, -32768, 32767);
 
@@ -212,7 +212,7 @@ void DecodeMSADPCMBlock(int16_t *dst, const al::byte *src, size_t numchans, size
 }
 
 void Convert_int16_ima4(int16_t *dst, const al::byte *src, size_t numchans, size_t len,
-    size_t align)
+                        size_t align)
 {
     assert(numchans <= MaxAdpcmChannels);
     const size_t byte_align{((align-1)/2 + 4) * numchans};
@@ -227,7 +227,7 @@ void Convert_int16_ima4(int16_t *dst, const al::byte *src, size_t numchans, size
 }
 
 void Convert_int16_msadpcm(int16_t *dst, const al::byte *src, size_t numchans, size_t len,
-    size_t align)
+                           size_t align)
 {
     assert(numchans <= MaxAdpcmChannels);
     const size_t byte_align{((align-2)/2 + 7) * numchans};
@@ -246,14 +246,22 @@ ALuint BytesFromUserFmt(UserFmtType type) noexcept
 {
     switch(type)
     {
-    case UserFmtUByte: return sizeof(uint8_t);
-    case UserFmtShort: return sizeof(int16_t);
-    case UserFmtFloat: return sizeof(float);
-    case UserFmtDouble: return sizeof(double);
-    case UserFmtMulaw: return sizeof(uint8_t);
-    case UserFmtAlaw: return sizeof(uint8_t);
-    case UserFmtIMA4: break; /* not handled here */
-    case UserFmtMSADPCM: break; /* not handled here */
+    case UserFmtUByte:
+        return sizeof(uint8_t);
+    case UserFmtShort:
+        return sizeof(int16_t);
+    case UserFmtFloat:
+        return sizeof(float);
+    case UserFmtDouble:
+        return sizeof(double);
+    case UserFmtMulaw:
+        return sizeof(uint8_t);
+    case UserFmtAlaw:
+        return sizeof(uint8_t);
+    case UserFmtIMA4:
+        break; /* not handled here */
+    case UserFmtMSADPCM:
+        break; /* not handled here */
     }
     return 0;
 }
@@ -261,33 +269,42 @@ ALuint ChannelsFromUserFmt(UserFmtChannels chans, ALuint ambiorder) noexcept
 {
     switch(chans)
     {
-    case UserFmtMono: return 1;
-    case UserFmtStereo: return 2;
-    case UserFmtRear: return 2;
-    case UserFmtQuad: return 4;
-    case UserFmtX51: return 6;
-    case UserFmtX61: return 7;
-    case UserFmtX71: return 8;
-    case UserFmtBFormat2D: return (ambiorder*2) + 1;
-    case UserFmtBFormat3D: return (ambiorder+1) * (ambiorder+1);
+    case UserFmtMono:
+        return 1;
+    case UserFmtStereo:
+        return 2;
+    case UserFmtRear:
+        return 2;
+    case UserFmtQuad:
+        return 4;
+    case UserFmtX51:
+        return 6;
+    case UserFmtX61:
+        return 7;
+    case UserFmtX71:
+        return 8;
+    case UserFmtBFormat2D:
+        return (ambiorder*2) + 1;
+    case UserFmtBFormat3D:
+        return (ambiorder+1) * (ambiorder+1);
     }
     return 0;
 }
 
 
 constexpr ALbitfieldSOFT INVALID_STORAGE_MASK{~unsigned(AL_MAP_READ_BIT_SOFT |
-    AL_MAP_WRITE_BIT_SOFT | AL_MAP_PERSISTENT_BIT_SOFT | AL_PRESERVE_DATA_BIT_SOFT)};
+            AL_MAP_WRITE_BIT_SOFT | AL_MAP_PERSISTENT_BIT_SOFT | AL_PRESERVE_DATA_BIT_SOFT)};
 constexpr ALbitfieldSOFT MAP_READ_WRITE_FLAGS{AL_MAP_READ_BIT_SOFT | AL_MAP_WRITE_BIT_SOFT};
 constexpr ALbitfieldSOFT INVALID_MAP_FLAGS{~unsigned(AL_MAP_READ_BIT_SOFT | AL_MAP_WRITE_BIT_SOFT |
-    AL_MAP_PERSISTENT_BIT_SOFT)};
+            AL_MAP_PERSISTENT_BIT_SOFT)};
 
 
 bool EnsureBuffers(ALCdevice *device, size_t needed)
 {
     size_t count{std::accumulate(device->BufferList.cbegin(), device->BufferList.cend(), size_t{0},
-        [](size_t cur, const BufferSubList &sublist) noexcept -> size_t
-        { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
-    )};
+                                 [](size_t cur, const BufferSubList &sublist) noexcept -> size_t
+    { return cur + static_cast<ALuint>(POPCNT64(sublist.FreeMask)); }
+                                )};
 
     while(needed > count)
     {
@@ -311,9 +328,11 @@ bool EnsureBuffers(ALCdevice *device, size_t needed)
 ALbuffer *AllocBuffer(ALCdevice *device)
 {
     auto sublist = std::find_if(device->BufferList.begin(), device->BufferList.end(),
-        [](const BufferSubList &entry) noexcept -> bool
-        { return entry.FreeMask != 0; }
-    );
+                                [](const BufferSubList &entry) noexcept -> bool
+    {
+        return entry.FreeMask != 0;
+    }
+                               );
 
     auto lidx = static_cast<ALuint>(std::distance(device->BufferList.begin(), sublist));
     auto slidx = static_cast<ALuint>(CTZ64(sublist->FreeMask));
@@ -391,22 +410,30 @@ const ALchar *NameFromUserFmtType(UserFmtType type)
 {
     switch(type)
     {
-    case UserFmtUByte: return "Unsigned Byte";
-    case UserFmtShort: return "Signed Short";
-    case UserFmtFloat: return "Float32";
-    case UserFmtDouble: return "Float64";
-    case UserFmtMulaw: return "muLaw";
-    case UserFmtAlaw: return "aLaw";
-    case UserFmtIMA4: return "IMA4 ADPCM";
-    case UserFmtMSADPCM: return "MSADPCM";
+    case UserFmtUByte:
+        return "Unsigned Byte";
+    case UserFmtShort:
+        return "Signed Short";
+    case UserFmtFloat:
+        return "Float32";
+    case UserFmtDouble:
+        return "Float64";
+    case UserFmtMulaw:
+        return "muLaw";
+    case UserFmtAlaw:
+        return "aLaw";
+    case UserFmtIMA4:
+        return "IMA4 ADPCM";
+    case UserFmtMSADPCM:
+        return "MSADPCM";
     }
     return "<internal type error>";
 }
 
 /** Loads the specified data into the buffer, using the specified format. */
 void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
-    UserFmtChannels SrcChannels, UserFmtType SrcType, const al::byte *SrcData,
-    ALbitfieldSOFT access)
+              UserFmtChannels SrcChannels, UserFmtType SrcType, const al::byte *SrcData,
+              ALbitfieldSOFT access)
 {
     if UNLIKELY(ReadRef(ALBuf->ref) != 0 || ALBuf->MappedAccess != 0)
         SETERR_RETURN(context, AL_INVALID_OPERATION,, "Modifying storage for in-use buffer %u",
@@ -416,31 +443,65 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
     FmtChannels DstChannels{FmtMono};
     switch(SrcChannels)
     {
-    case UserFmtMono: DstChannels = FmtMono; break;
-    case UserFmtStereo: DstChannels = FmtStereo; break;
-    case UserFmtRear: DstChannels = FmtRear; break;
-    case UserFmtQuad: DstChannels = FmtQuad; break;
-    case UserFmtX51: DstChannels = FmtX51; break;
-    case UserFmtX61: DstChannels = FmtX61; break;
-    case UserFmtX71: DstChannels = FmtX71; break;
-    case UserFmtBFormat2D: DstChannels = FmtBFormat2D; break;
-    case UserFmtBFormat3D: DstChannels = FmtBFormat3D; break;
+    case UserFmtMono:
+        DstChannels = FmtMono;
+        break;
+    case UserFmtStereo:
+        DstChannels = FmtStereo;
+        break;
+    case UserFmtRear:
+        DstChannels = FmtRear;
+        break;
+    case UserFmtQuad:
+        DstChannels = FmtQuad;
+        break;
+    case UserFmtX51:
+        DstChannels = FmtX51;
+        break;
+    case UserFmtX61:
+        DstChannels = FmtX61;
+        break;
+    case UserFmtX71:
+        DstChannels = FmtX71;
+        break;
+    case UserFmtBFormat2D:
+        DstChannels = FmtBFormat2D;
+        break;
+    case UserFmtBFormat3D:
+        DstChannels = FmtBFormat3D;
+        break;
     }
     if UNLIKELY(static_cast<long>(SrcChannels) != static_cast<long>(DstChannels))
-        SETERR_RETURN(context, AL_INVALID_ENUM, , "Invalid format");
+        SETERR_RETURN(context, AL_INVALID_ENUM,, "Invalid format");
 
     /* IMA4 and MSADPCM convert to 16-bit short. */
     FmtType DstType{FmtUByte};
     switch(SrcType)
     {
-    case UserFmtUByte: DstType = FmtUByte; break;
-    case UserFmtShort: DstType = FmtShort; break;
-    case UserFmtFloat: DstType = FmtFloat; break;
-    case UserFmtDouble: DstType = FmtDouble; break;
-    case UserFmtAlaw: DstType = FmtAlaw; break;
-    case UserFmtMulaw: DstType = FmtMulaw; break;
-    case UserFmtIMA4: DstType = FmtShort; break;
-    case UserFmtMSADPCM: DstType = FmtShort; break;
+    case UserFmtUByte:
+        DstType = FmtUByte;
+        break;
+    case UserFmtShort:
+        DstType = FmtShort;
+        break;
+    case UserFmtFloat:
+        DstType = FmtFloat;
+        break;
+    case UserFmtDouble:
+        DstType = FmtDouble;
+        break;
+    case UserFmtAlaw:
+        DstType = FmtAlaw;
+        break;
+    case UserFmtMulaw:
+        DstType = FmtMulaw;
+        break;
+    case UserFmtIMA4:
+        DstType = FmtShort;
+        break;
+    case UserFmtMSADPCM:
+        DstType = FmtShort;
+        break;
     }
 
     /* TODO: Currently we can only map samples when they're not converted. To
@@ -451,17 +512,17 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
     {
         if UNLIKELY(static_cast<long>(SrcType) != static_cast<long>(DstType))
             SETERR_RETURN(context, AL_INVALID_VALUE,, "%s samples cannot be mapped",
-                NameFromUserFmtType(SrcType));
+                          NameFromUserFmtType(SrcType));
     }
 
     const ALuint unpackalign{ALBuf->UnpackAlign};
     const ALuint align{SanitizeAlignment(SrcType, unpackalign)};
     if UNLIKELY(align < 1)
         SETERR_RETURN(context, AL_INVALID_VALUE,, "Invalid unpack alignment %u for %s samples",
-            unpackalign, NameFromUserFmtType(SrcType));
+                      unpackalign, NameFromUserFmtType(SrcType));
 
     const ALuint ambiorder{(DstChannels == FmtBFormat2D || DstChannels == FmtBFormat3D) ?
-        ALBuf->UnpackAmbiOrder : 0};
+                           ALBuf->UnpackAmbiOrder : 0};
 
     if((access&AL_PRESERVE_DATA_BIT_SOFT))
     {
@@ -478,17 +539,17 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
      * block alignment.
      */
     const ALuint SrcByteAlign{ChannelsFromUserFmt(SrcChannels, ambiorder) *
-        ((SrcType == UserFmtIMA4) ? (align-1)/2 + 4 :
-        (SrcType == UserFmtMSADPCM) ? (align-2)/2 + 7 :
-        (align * BytesFromUserFmt(SrcType)))};
+                              ((SrcType == UserFmtIMA4) ? (align-1)/2 + 4 :
+                               (SrcType == UserFmtMSADPCM) ? (align-2)/2 + 7 :
+                               (align * BytesFromUserFmt(SrcType)))};
     if UNLIKELY((size%SrcByteAlign) != 0)
         SETERR_RETURN(context, AL_INVALID_VALUE,,
-            "Data size %d is not a multiple of frame size %d (%d unpack alignment)",
-            size, SrcByteAlign, align);
+                      "Data size %d is not a multiple of frame size %d (%d unpack alignment)",
+                      size, SrcByteAlign, align);
 
     if UNLIKELY(size/SrcByteAlign > std::numeric_limits<ALsizei>::max()/align)
         SETERR_RETURN(context, AL_OUT_OF_MEMORY,,
-            "Buffer size overflow, %d blocks x %d samples per block", size/SrcByteAlign, align);
+                      "Buffer size overflow, %d blocks x %d samples per block", size/SrcByteAlign, align);
     const ALuint frames{size / SrcByteAlign * align};
 
     /* Convert the sample frames to the number of bytes needed for internal
@@ -498,7 +559,7 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
     ALuint FrameSize{NumChannels * BytesFromFmt(DstType)};
     if UNLIKELY(frames > std::numeric_limits<size_t>::max()/FrameSize)
         SETERR_RETURN(context, AL_OUT_OF_MEMORY,,
-            "Buffer size overflow, %d frames x %d bytes per frame", frames, FrameSize);
+                      "Buffer size overflow, %d frames x %d bytes per frame", frames, FrameSize);
     size_t newsize{static_cast<size_t>(frames) * FrameSize};
 
     /* Round up to the next 16-byte multiple. This could reallocate only when
@@ -524,7 +585,7 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
         assert(DstType == FmtShort);
         if(SrcData != nullptr && !ALBuf->mData.empty())
             Convert_int16_ima4(reinterpret_cast<int16_t*>(ALBuf->mData.data()), SrcData,
-                NumChannels, frames, align);
+                               NumChannels, frames, align);
         ALBuf->OriginalAlign = align;
     }
     else if(SrcType == UserFmtMSADPCM)
@@ -532,7 +593,7 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
         assert(DstType == FmtShort);
         if(SrcData != nullptr && !ALBuf->mData.empty())
             Convert_int16_msadpcm(reinterpret_cast<int16_t*>(ALBuf->mData.data()), SrcData,
-                NumChannels, frames, align);
+                                  NumChannels, frames, align);
         ALBuf->OriginalAlign = align;
     }
     else
@@ -561,26 +622,44 @@ void LoadData(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq, ALuint size,
 
 /** Prepares the buffer to use the specified callback, using the specified format. */
 void PrepareCallback(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq,
-    UserFmtChannels SrcChannels, UserFmtType SrcType, LPALBUFFERCALLBACKTYPESOFT callback,
-    void *userptr)
+                     UserFmtChannels SrcChannels, UserFmtType SrcType, LPALBUFFERCALLBACKTYPESOFT callback,
+                     void *userptr)
 {
     if UNLIKELY(ReadRef(ALBuf->ref) != 0 || ALBuf->MappedAccess != 0)
         SETERR_RETURN(context, AL_INVALID_OPERATION,, "Modifying callback for in-use buffer %u",
-            ALBuf->id);
+                      ALBuf->id);
 
     /* Currently no channel configurations need to be converted. */
     FmtChannels DstChannels{FmtMono};
     switch(SrcChannels)
     {
-    case UserFmtMono: DstChannels = FmtMono; break;
-    case UserFmtStereo: DstChannels = FmtStereo; break;
-    case UserFmtRear: DstChannels = FmtRear; break;
-    case UserFmtQuad: DstChannels = FmtQuad; break;
-    case UserFmtX51: DstChannels = FmtX51; break;
-    case UserFmtX61: DstChannels = FmtX61; break;
-    case UserFmtX71: DstChannels = FmtX71; break;
-    case UserFmtBFormat2D: DstChannels = FmtBFormat2D; break;
-    case UserFmtBFormat3D: DstChannels = FmtBFormat3D; break;
+    case UserFmtMono:
+        DstChannels = FmtMono;
+        break;
+    case UserFmtStereo:
+        DstChannels = FmtStereo;
+        break;
+    case UserFmtRear:
+        DstChannels = FmtRear;
+        break;
+    case UserFmtQuad:
+        DstChannels = FmtQuad;
+        break;
+    case UserFmtX51:
+        DstChannels = FmtX51;
+        break;
+    case UserFmtX61:
+        DstChannels = FmtX61;
+        break;
+    case UserFmtX71:
+        DstChannels = FmtX71;
+        break;
+    case UserFmtBFormat2D:
+        DstChannels = FmtBFormat2D;
+        break;
+    case UserFmtBFormat3D:
+        DstChannels = FmtBFormat3D;
+        break;
     }
     if UNLIKELY(static_cast<long>(SrcChannels) != static_cast<long>(DstChannels))
         SETERR_RETURN(context, AL_INVALID_ENUM,, "Invalid format");
@@ -589,23 +668,39 @@ void PrepareCallback(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq,
     FmtType DstType{FmtUByte};
     switch(SrcType)
     {
-    case UserFmtUByte: DstType = FmtUByte; break;
-    case UserFmtShort: DstType = FmtShort; break;
-    case UserFmtFloat: DstType = FmtFloat; break;
-    case UserFmtDouble: DstType = FmtDouble; break;
-    case UserFmtAlaw: DstType = FmtAlaw; break;
-    case UserFmtMulaw: DstType = FmtMulaw; break;
-    case UserFmtIMA4: DstType = FmtShort; break;
-    case UserFmtMSADPCM: DstType = FmtShort; break;
+    case UserFmtUByte:
+        DstType = FmtUByte;
+        break;
+    case UserFmtShort:
+        DstType = FmtShort;
+        break;
+    case UserFmtFloat:
+        DstType = FmtFloat;
+        break;
+    case UserFmtDouble:
+        DstType = FmtDouble;
+        break;
+    case UserFmtAlaw:
+        DstType = FmtAlaw;
+        break;
+    case UserFmtMulaw:
+        DstType = FmtMulaw;
+        break;
+    case UserFmtIMA4:
+        DstType = FmtShort;
+        break;
+    case UserFmtMSADPCM:
+        DstType = FmtShort;
+        break;
     }
     if UNLIKELY(static_cast<long>(SrcType) != static_cast<long>(DstType))
         SETERR_RETURN(context, AL_INVALID_ENUM,, "Unsupported callback format");
 
     const ALuint ambiorder{(DstChannels == FmtBFormat2D || DstChannels == FmtBFormat3D) ?
-        ALBuf->UnpackAmbiOrder : 0};
+                           ALBuf->UnpackAmbiOrder : 0};
 
     al::vector<al::byte,16>(FrameSizeFromFmt(DstChannels, DstType, ambiorder) *
-        size_t{BUFFERSIZE + (MAX_RESAMPLER_PADDING>>1)}).swap(ALBuf->mData);
+                            size_t{BUFFERSIZE + (MAX_RESAMPLER_PADDING>>1)}).swap(ALBuf->mData);
 
     ALBuf->Callback = callback;
     ALBuf->UserData = userptr;
@@ -626,7 +721,10 @@ void PrepareCallback(ALCcontext *context, ALbuffer *ALBuf, ALsizei freq,
 }
 
 
-struct DecompResult { UserFmtChannels channels; UserFmtType type; };
+struct DecompResult {
+    UserFmtChannels channels;
+    UserFmtType type;
+};
 al::optional<DecompResult> DecomposeUserFormat(ALenum format)
 {
     struct FormatMap {
@@ -635,62 +733,62 @@ al::optional<DecompResult> DecomposeUserFormat(ALenum format)
         UserFmtType type;
     };
     static const std::array<FormatMap,46> UserFmtList{{
-        { AL_FORMAT_MONO8,             UserFmtMono, UserFmtUByte   },
-        { AL_FORMAT_MONO16,            UserFmtMono, UserFmtShort   },
-        { AL_FORMAT_MONO_FLOAT32,      UserFmtMono, UserFmtFloat   },
-        { AL_FORMAT_MONO_DOUBLE_EXT,   UserFmtMono, UserFmtDouble  },
-        { AL_FORMAT_MONO_IMA4,         UserFmtMono, UserFmtIMA4    },
-        { AL_FORMAT_MONO_MSADPCM_SOFT, UserFmtMono, UserFmtMSADPCM },
-        { AL_FORMAT_MONO_MULAW,        UserFmtMono, UserFmtMulaw   },
-        { AL_FORMAT_MONO_ALAW_EXT,     UserFmtMono, UserFmtAlaw    },
+            { AL_FORMAT_MONO8,             UserFmtMono, UserFmtUByte   },
+            { AL_FORMAT_MONO16,            UserFmtMono, UserFmtShort   },
+            { AL_FORMAT_MONO_FLOAT32,      UserFmtMono, UserFmtFloat   },
+            { AL_FORMAT_MONO_DOUBLE_EXT,   UserFmtMono, UserFmtDouble  },
+            { AL_FORMAT_MONO_IMA4,         UserFmtMono, UserFmtIMA4    },
+            { AL_FORMAT_MONO_MSADPCM_SOFT, UserFmtMono, UserFmtMSADPCM },
+            { AL_FORMAT_MONO_MULAW,        UserFmtMono, UserFmtMulaw   },
+            { AL_FORMAT_MONO_ALAW_EXT,     UserFmtMono, UserFmtAlaw    },
 
-        { AL_FORMAT_STEREO8,             UserFmtStereo, UserFmtUByte   },
-        { AL_FORMAT_STEREO16,            UserFmtStereo, UserFmtShort   },
-        { AL_FORMAT_STEREO_FLOAT32,      UserFmtStereo, UserFmtFloat   },
-        { AL_FORMAT_STEREO_DOUBLE_EXT,   UserFmtStereo, UserFmtDouble  },
-        { AL_FORMAT_STEREO_IMA4,         UserFmtStereo, UserFmtIMA4    },
-        { AL_FORMAT_STEREO_MSADPCM_SOFT, UserFmtStereo, UserFmtMSADPCM },
-        { AL_FORMAT_STEREO_MULAW,        UserFmtStereo, UserFmtMulaw   },
-        { AL_FORMAT_STEREO_ALAW_EXT,     UserFmtStereo, UserFmtAlaw    },
+            { AL_FORMAT_STEREO8,             UserFmtStereo, UserFmtUByte   },
+            { AL_FORMAT_STEREO16,            UserFmtStereo, UserFmtShort   },
+            { AL_FORMAT_STEREO_FLOAT32,      UserFmtStereo, UserFmtFloat   },
+            { AL_FORMAT_STEREO_DOUBLE_EXT,   UserFmtStereo, UserFmtDouble  },
+            { AL_FORMAT_STEREO_IMA4,         UserFmtStereo, UserFmtIMA4    },
+            { AL_FORMAT_STEREO_MSADPCM_SOFT, UserFmtStereo, UserFmtMSADPCM },
+            { AL_FORMAT_STEREO_MULAW,        UserFmtStereo, UserFmtMulaw   },
+            { AL_FORMAT_STEREO_ALAW_EXT,     UserFmtStereo, UserFmtAlaw    },
 
-        { AL_FORMAT_REAR8,      UserFmtRear, UserFmtUByte },
-        { AL_FORMAT_REAR16,     UserFmtRear, UserFmtShort },
-        { AL_FORMAT_REAR32,     UserFmtRear, UserFmtFloat },
-        { AL_FORMAT_REAR_MULAW, UserFmtRear, UserFmtMulaw },
+            { AL_FORMAT_REAR8,      UserFmtRear, UserFmtUByte },
+            { AL_FORMAT_REAR16,     UserFmtRear, UserFmtShort },
+            { AL_FORMAT_REAR32,     UserFmtRear, UserFmtFloat },
+            { AL_FORMAT_REAR_MULAW, UserFmtRear, UserFmtMulaw },
 
-        { AL_FORMAT_QUAD8_LOKI,  UserFmtQuad, UserFmtUByte },
-        { AL_FORMAT_QUAD16_LOKI, UserFmtQuad, UserFmtShort },
+            { AL_FORMAT_QUAD8_LOKI,  UserFmtQuad, UserFmtUByte },
+            { AL_FORMAT_QUAD16_LOKI, UserFmtQuad, UserFmtShort },
 
-        { AL_FORMAT_QUAD8,      UserFmtQuad, UserFmtUByte },
-        { AL_FORMAT_QUAD16,     UserFmtQuad, UserFmtShort },
-        { AL_FORMAT_QUAD32,     UserFmtQuad, UserFmtFloat },
-        { AL_FORMAT_QUAD_MULAW, UserFmtQuad, UserFmtMulaw },
+            { AL_FORMAT_QUAD8,      UserFmtQuad, UserFmtUByte },
+            { AL_FORMAT_QUAD16,     UserFmtQuad, UserFmtShort },
+            { AL_FORMAT_QUAD32,     UserFmtQuad, UserFmtFloat },
+            { AL_FORMAT_QUAD_MULAW, UserFmtQuad, UserFmtMulaw },
 
-        { AL_FORMAT_51CHN8,      UserFmtX51, UserFmtUByte },
-        { AL_FORMAT_51CHN16,     UserFmtX51, UserFmtShort },
-        { AL_FORMAT_51CHN32,     UserFmtX51, UserFmtFloat },
-        { AL_FORMAT_51CHN_MULAW, UserFmtX51, UserFmtMulaw },
+            { AL_FORMAT_51CHN8,      UserFmtX51, UserFmtUByte },
+            { AL_FORMAT_51CHN16,     UserFmtX51, UserFmtShort },
+            { AL_FORMAT_51CHN32,     UserFmtX51, UserFmtFloat },
+            { AL_FORMAT_51CHN_MULAW, UserFmtX51, UserFmtMulaw },
 
-        { AL_FORMAT_61CHN8,      UserFmtX61, UserFmtUByte },
-        { AL_FORMAT_61CHN16,     UserFmtX61, UserFmtShort },
-        { AL_FORMAT_61CHN32,     UserFmtX61, UserFmtFloat },
-        { AL_FORMAT_61CHN_MULAW, UserFmtX61, UserFmtMulaw },
+            { AL_FORMAT_61CHN8,      UserFmtX61, UserFmtUByte },
+            { AL_FORMAT_61CHN16,     UserFmtX61, UserFmtShort },
+            { AL_FORMAT_61CHN32,     UserFmtX61, UserFmtFloat },
+            { AL_FORMAT_61CHN_MULAW, UserFmtX61, UserFmtMulaw },
 
-        { AL_FORMAT_71CHN8,      UserFmtX71, UserFmtUByte },
-        { AL_FORMAT_71CHN16,     UserFmtX71, UserFmtShort },
-        { AL_FORMAT_71CHN32,     UserFmtX71, UserFmtFloat },
-        { AL_FORMAT_71CHN_MULAW, UserFmtX71, UserFmtMulaw },
+            { AL_FORMAT_71CHN8,      UserFmtX71, UserFmtUByte },
+            { AL_FORMAT_71CHN16,     UserFmtX71, UserFmtShort },
+            { AL_FORMAT_71CHN32,     UserFmtX71, UserFmtFloat },
+            { AL_FORMAT_71CHN_MULAW, UserFmtX71, UserFmtMulaw },
 
-        { AL_FORMAT_BFORMAT2D_8,       UserFmtBFormat2D, UserFmtUByte },
-        { AL_FORMAT_BFORMAT2D_16,      UserFmtBFormat2D, UserFmtShort },
-        { AL_FORMAT_BFORMAT2D_FLOAT32, UserFmtBFormat2D, UserFmtFloat },
-        { AL_FORMAT_BFORMAT2D_MULAW,   UserFmtBFormat2D, UserFmtMulaw },
+            { AL_FORMAT_BFORMAT2D_8,       UserFmtBFormat2D, UserFmtUByte },
+            { AL_FORMAT_BFORMAT2D_16,      UserFmtBFormat2D, UserFmtShort },
+            { AL_FORMAT_BFORMAT2D_FLOAT32, UserFmtBFormat2D, UserFmtFloat },
+            { AL_FORMAT_BFORMAT2D_MULAW,   UserFmtBFormat2D, UserFmtMulaw },
 
-        { AL_FORMAT_BFORMAT3D_8,       UserFmtBFormat3D, UserFmtUByte },
-        { AL_FORMAT_BFORMAT3D_16,      UserFmtBFormat3D, UserFmtShort },
-        { AL_FORMAT_BFORMAT3D_FLOAT32, UserFmtBFormat3D, UserFmtFloat },
-        { AL_FORMAT_BFORMAT3D_MULAW,   UserFmtBFormat3D, UserFmtMulaw },
-    }};
+            { AL_FORMAT_BFORMAT3D_8,       UserFmtBFormat3D, UserFmtUByte },
+            { AL_FORMAT_BFORMAT3D_16,      UserFmtBFormat3D, UserFmtShort },
+            { AL_FORMAT_BFORMAT3D_FLOAT32, UserFmtBFormat3D, UserFmtFloat },
+            { AL_FORMAT_BFORMAT3D_MULAW,   UserFmtBFormat3D, UserFmtMulaw },
+        }};
 
     for(const auto &fmt : UserFmtList)
     {
@@ -826,10 +924,10 @@ START_API_FUNC
         context->setError(AL_INVALID_VALUE, "Invalid sample rate %d", freq);
     else if UNLIKELY((flags&INVALID_STORAGE_MASK) != 0)
         context->setError(AL_INVALID_VALUE, "Invalid storage flags 0x%x",
-            flags&INVALID_STORAGE_MASK);
+                          flags&INVALID_STORAGE_MASK);
     else if UNLIKELY((flags&AL_MAP_PERSISTENT_BIT_SOFT) && !(flags&MAP_READ_WRITE_FLAGS))
         context->setError(AL_INVALID_VALUE,
-            "Declaring persistently mapped storage without read or write access");
+                          "Declaring persistently mapped storage without read or write access");
     else
     {
         auto usrfmt = DecomposeUserFormat(format);
@@ -837,7 +935,7 @@ START_API_FUNC
             context->setError(AL_INVALID_ENUM, "Invalid format 0x%04x", format);
         else
             LoadData(context.get(), albuf, freq, static_cast<ALuint>(size), usrfmt->channels,
-                usrfmt->type, static_cast<const al::byte*>(data), flags);
+                     usrfmt->type, static_cast<const al::byte*>(data), flags);
     }
 }
 END_API_FUNC
@@ -858,29 +956,29 @@ START_API_FUNC
         context->setError(AL_INVALID_VALUE, "Invalid map flags 0x%x", access&INVALID_MAP_FLAGS);
     else if UNLIKELY(!(access&MAP_READ_WRITE_FLAGS))
         context->setError(AL_INVALID_VALUE, "Mapping buffer %u without read or write access",
-            buffer);
+                          buffer);
     else
     {
         ALbitfieldSOFT unavailable = (albuf->Access^access) & access;
         if UNLIKELY(ReadRef(albuf->ref) != 0 && !(access&AL_MAP_PERSISTENT_BIT_SOFT))
             context->setError(AL_INVALID_OPERATION,
-                "Mapping in-use buffer %u without persistent mapping", buffer);
+                              "Mapping in-use buffer %u without persistent mapping", buffer);
         else if UNLIKELY(albuf->MappedAccess != 0)
             context->setError(AL_INVALID_OPERATION, "Mapping already-mapped buffer %u", buffer);
         else if UNLIKELY((unavailable&AL_MAP_READ_BIT_SOFT))
             context->setError(AL_INVALID_VALUE,
-                "Mapping buffer %u for reading without read access", buffer);
+                              "Mapping buffer %u for reading without read access", buffer);
         else if UNLIKELY((unavailable&AL_MAP_WRITE_BIT_SOFT))
             context->setError(AL_INVALID_VALUE,
-                "Mapping buffer %u for writing without write access", buffer);
+                              "Mapping buffer %u for writing without write access", buffer);
         else if UNLIKELY((unavailable&AL_MAP_PERSISTENT_BIT_SOFT))
             context->setError(AL_INVALID_VALUE,
-                "Mapping buffer %u persistently without persistent access", buffer);
+                              "Mapping buffer %u persistently without persistent access", buffer);
         else if UNLIKELY(offset < 0 || length <= 0
-            || static_cast<ALuint>(offset) >= albuf->OriginalSize
-            || static_cast<ALuint>(length) > albuf->OriginalSize - static_cast<ALuint>(offset))
+                         || static_cast<ALuint>(offset) >= albuf->OriginalSize
+                         || static_cast<ALuint>(length) > albuf->OriginalSize - static_cast<ALuint>(offset))
             context->setError(AL_INVALID_VALUE, "Mapping invalid range %d+%d for buffer %u",
-                offset, length, buffer);
+                              offset, length, buffer);
         else
         {
             void *retval = albuf->mData.data() + offset;
@@ -932,12 +1030,12 @@ START_API_FUNC
         context->setError(AL_INVALID_NAME, "Invalid buffer ID %u", buffer);
     else if UNLIKELY(!(albuf->MappedAccess&AL_MAP_WRITE_BIT_SOFT))
         context->setError(AL_INVALID_OPERATION, "Flushing buffer %u while not mapped for writing",
-            buffer);
+                          buffer);
     else if UNLIKELY(offset < albuf->MappedOffset || length <= 0
-        || offset >= albuf->MappedOffset+albuf->MappedSize
-        || length > albuf->MappedOffset+albuf->MappedSize-offset)
+                     || offset >= albuf->MappedOffset+albuf->MappedSize
+                     || length > albuf->MappedOffset+albuf->MappedSize-offset)
         context->setError(AL_INVALID_VALUE, "Flushing invalid range %d+%d on buffer %u", offset,
-            length, buffer);
+                          length, buffer);
     else
     {
         /* FIXME: Need to use some method of double-buffering for the mixer and
@@ -978,14 +1076,14 @@ START_API_FUNC
     if UNLIKELY(align < 1)
         context->setError(AL_INVALID_VALUE, "Invalid unpack alignment %u", unpack_align);
     else if UNLIKELY(long{usrfmt->channels} != long{albuf->mFmtChannels}
-        || usrfmt->type != albuf->OriginalType)
+                     || usrfmt->type != albuf->OriginalType)
         context->setError(AL_INVALID_ENUM, "Unpacking data with mismatched format");
     else if UNLIKELY(align != albuf->OriginalAlign)
         context->setError(AL_INVALID_VALUE,
-            "Unpacking data with alignment %u does not match original alignment %u", align,
-            albuf->OriginalAlign);
+                          "Unpacking data with alignment %u does not match original alignment %u", align,
+                          albuf->OriginalAlign);
     else if UNLIKELY((albuf->mFmtChannels == FmtBFormat2D || albuf->mFmtChannels == FmtBFormat3D)
-        && albuf->UnpackAmbiOrder != albuf->AmbiOrder)
+                     && albuf->UnpackAmbiOrder != albuf->AmbiOrder)
         context->setError(AL_INVALID_VALUE, "Unpacking data with mismatched ambisonic order");
     else if UNLIKELY(albuf->MappedAccess != 0)
         context->setError(AL_INVALID_OPERATION, "Unpacking data into mapped buffer %u", buffer);
@@ -1000,17 +1098,17 @@ START_API_FUNC
         };
 
         if UNLIKELY(offset < 0 || length < 0 || static_cast<ALuint>(offset) > albuf->OriginalSize
-            || static_cast<ALuint>(length) > albuf->OriginalSize-static_cast<ALuint>(offset))
+                    || static_cast<ALuint>(length) > albuf->OriginalSize-static_cast<ALuint>(offset))
             context->setError(AL_INVALID_VALUE, "Invalid data sub-range %d+%d on buffer %u",
-                offset, length, buffer);
+                              offset, length, buffer);
         else if UNLIKELY((static_cast<ALuint>(offset)%byte_align) != 0)
             context->setError(AL_INVALID_VALUE,
-                "Sub-range offset %d is not a multiple of frame size %d (%d unpack alignment)",
-                offset, byte_align, align);
+                              "Sub-range offset %d is not a multiple of frame size %d (%d unpack alignment)",
+                              offset, byte_align, align);
         else if UNLIKELY((static_cast<ALuint>(length)%byte_align) != 0)
             context->setError(AL_INVALID_VALUE,
-                "Sub-range length %d is not a multiple of frame size %d (%d unpack alignment)",
-                length, byte_align, align);
+                              "Sub-range length %d is not a multiple of frame size %d (%d unpack alignment)",
+                              length, byte_align, align);
         else
         {
             /* offset -> byte offset, length -> sample count */
@@ -1020,10 +1118,10 @@ START_API_FUNC
             void *dst = albuf->mData.data() + byteoff;
             if(usrfmt->type == UserFmtIMA4 && albuf->mFmtType == FmtShort)
                 Convert_int16_ima4(static_cast<int16_t*>(dst), static_cast<const al::byte*>(data),
-                    num_chans, samplen, align);
+                                   num_chans, samplen, align);
             else if(usrfmt->type == UserFmtMSADPCM && albuf->mFmtType == FmtShort)
                 Convert_int16_msadpcm(static_cast<int16_t*>(dst),
-                    static_cast<const al::byte*>(data), num_chans, samplen, align);
+                                      static_cast<const al::byte*>(data), num_chans, samplen, align);
             else
             {
                 assert(long{usrfmt->type} == long{albuf->mFmtType});
@@ -1036,8 +1134,8 @@ END_API_FUNC
 
 
 AL_API void AL_APIENTRY alBufferSamplesSOFT(ALuint /*buffer*/, ALuint /*samplerate*/,
-    ALenum /*internalformat*/, ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/,
-    const ALvoid* /*data*/)
+        ALenum /*internalformat*/, ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/,
+        const ALvoid* /*data*/)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1048,7 +1146,7 @@ START_API_FUNC
 END_API_FUNC
 
 AL_API void AL_APIENTRY alBufferSubSamplesSOFT(ALuint /*buffer*/, ALsizei /*offset*/,
-    ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/, const ALvoid* /*data*/)
+        ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/, const ALvoid* /*data*/)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1059,7 +1157,7 @@ START_API_FUNC
 END_API_FUNC
 
 AL_API void AL_APIENTRY alGetBufferSamplesSOFT(ALuint /*buffer*/, ALsizei /*offset*/,
-    ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/, ALvoid* /*data*/)
+        ALsizei /*samples*/, ALenum /*channels*/, ALenum /*type*/, ALvoid* /*data*/)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1093,15 +1191,15 @@ START_API_FUNC
     if UNLIKELY(LookupBuffer(device, buffer) == nullptr)
         context->setError(AL_INVALID_NAME, "Invalid buffer ID %u", buffer);
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer float property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer float property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
 AL_API void AL_APIENTRY alBuffer3f(ALuint buffer, ALenum param,
-    ALfloat /*value1*/, ALfloat /*value2*/, ALfloat /*value3*/)
+                                   ALfloat /*value1*/, ALfloat /*value2*/, ALfloat /*value3*/)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1113,10 +1211,10 @@ START_API_FUNC
     if UNLIKELY(LookupBuffer(device, buffer) == nullptr)
         context->setError(AL_INVALID_NAME, "Invalid buffer ID %u", buffer);
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer 3-float property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer 3-float property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1134,10 +1232,10 @@ START_API_FUNC
     else if UNLIKELY(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer float-vector property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer float-vector property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1155,56 +1253,56 @@ START_API_FUNC
     if UNLIKELY(!albuf)
         context->setError(AL_INVALID_NAME, "Invalid buffer ID %u", buffer);
     else switch(param)
-    {
-    case AL_UNPACK_BLOCK_ALIGNMENT_SOFT:
-        if UNLIKELY(value < 0)
-            context->setError(AL_INVALID_VALUE, "Invalid unpack block alignment %d", value);
-        else
-            albuf->UnpackAlign = static_cast<ALuint>(value);
-        break;
+        {
+        case AL_UNPACK_BLOCK_ALIGNMENT_SOFT:
+            if UNLIKELY(value < 0)
+                context->setError(AL_INVALID_VALUE, "Invalid unpack block alignment %d", value);
+            else
+                albuf->UnpackAlign = static_cast<ALuint>(value);
+            break;
 
-    case AL_PACK_BLOCK_ALIGNMENT_SOFT:
-        if UNLIKELY(value < 0)
-            context->setError(AL_INVALID_VALUE, "Invalid pack block alignment %d", value);
-        else
-            albuf->PackAlign = static_cast<ALuint>(value);
-        break;
+        case AL_PACK_BLOCK_ALIGNMENT_SOFT:
+            if UNLIKELY(value < 0)
+                context->setError(AL_INVALID_VALUE, "Invalid pack block alignment %d", value);
+            else
+                albuf->PackAlign = static_cast<ALuint>(value);
+            break;
 
-    case AL_AMBISONIC_LAYOUT_SOFT:
-        if UNLIKELY(ReadRef(albuf->ref) != 0)
-            context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's ambisonic layout",
-                buffer);
-        else if UNLIKELY(value != AL_FUMA_SOFT && value != AL_ACN_SOFT)
-            context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic layout %04x", value);
-        else
-            albuf->AmbiLayout = value;
-        break;
+        case AL_AMBISONIC_LAYOUT_SOFT:
+            if UNLIKELY(ReadRef(albuf->ref) != 0)
+                context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's ambisonic layout",
+                                  buffer);
+            else if UNLIKELY(value != AL_FUMA_SOFT && value != AL_ACN_SOFT)
+                context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic layout %04x", value);
+            else
+                albuf->AmbiLayout = value;
+            break;
 
-    case AL_AMBISONIC_SCALING_SOFT:
-        if UNLIKELY(ReadRef(albuf->ref) != 0)
-            context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's ambisonic scaling",
-                buffer);
-        else if UNLIKELY(value != AL_FUMA_SOFT && value != AL_SN3D_SOFT && value != AL_N3D_SOFT)
-            context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic scaling %04x", value);
-        else
-            albuf->AmbiScaling = value;
-        break;
+        case AL_AMBISONIC_SCALING_SOFT:
+            if UNLIKELY(ReadRef(albuf->ref) != 0)
+                context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's ambisonic scaling",
+                                  buffer);
+            else if UNLIKELY(value != AL_FUMA_SOFT && value != AL_SN3D_SOFT && value != AL_N3D_SOFT)
+                context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic scaling %04x", value);
+            else
+                albuf->AmbiScaling = value;
+            break;
 
-    case AL_UNPACK_AMBISONIC_ORDER_SOFT:
-        if UNLIKELY(value < 1 || value > 14)
-            context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic order %d", value);
-        else
-            albuf->UnpackAmbiOrder = static_cast<ALuint>(value);
-        break;
+        case AL_UNPACK_AMBISONIC_ORDER_SOFT:
+            if UNLIKELY(value < 1 || value > 14)
+                context->setError(AL_INVALID_VALUE, "Invalid unpack ambisonic order %d", value);
+            else
+                albuf->UnpackAmbiOrder = static_cast<ALuint>(value);
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer integer property 0x%04x", param);
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer integer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
 AL_API void AL_APIENTRY alBuffer3i(ALuint buffer, ALenum param,
-    ALint /*value1*/, ALint /*value2*/, ALint /*value3*/)
+                                   ALint /*value1*/, ALint /*value2*/, ALint /*value3*/)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1216,10 +1314,10 @@ START_API_FUNC
     if UNLIKELY(LookupBuffer(device, buffer) == nullptr)
         context->setError(AL_INVALID_NAME, "Invalid buffer ID %u", buffer);
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer 3-integer property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer 3-integer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1252,25 +1350,25 @@ START_API_FUNC
     else if UNLIKELY(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_LOOP_POINTS_SOFT:
-        if UNLIKELY(ReadRef(albuf->ref) != 0)
-            context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's loop points",
-                buffer);
-        else if UNLIKELY(values[0] < 0 || values[0] >= values[1]
-            || static_cast<ALuint>(values[1]) > albuf->SampleLen)
-            context->setError(AL_INVALID_VALUE, "Invalid loop point range %d -> %d on buffer %u",
-                values[0], values[1], buffer);
-        else
         {
-            albuf->LoopStart = static_cast<ALuint>(values[0]);
-            albuf->LoopEnd = static_cast<ALuint>(values[1]);
-        }
-        break;
+        case AL_LOOP_POINTS_SOFT:
+            if UNLIKELY(ReadRef(albuf->ref) != 0)
+                context->setError(AL_INVALID_OPERATION, "Modifying in-use buffer %u's loop points",
+                                  buffer);
+            else if UNLIKELY(values[0] < 0 || values[0] >= values[1]
+                             || static_cast<ALuint>(values[1]) > albuf->SampleLen)
+                context->setError(AL_INVALID_VALUE, "Invalid loop point range %d -> %d on buffer %u",
+                                  values[0], values[1], buffer);
+            else
+            {
+                albuf->LoopStart = static_cast<ALuint>(values[0]);
+                albuf->LoopEnd = static_cast<ALuint>(values[1]);
+            }
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer integer-vector property 0x%04x", param);
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer integer-vector property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1290,10 +1388,10 @@ START_API_FUNC
     else if UNLIKELY(!value)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer float property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer float property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1311,10 +1409,10 @@ START_API_FUNC
     else if UNLIKELY(!value1 || !value2 || !value3)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer 3-float property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer 3-float property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1339,10 +1437,10 @@ START_API_FUNC
     else if UNLIKELY(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer float-vector property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer float-vector property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1361,46 +1459,46 @@ START_API_FUNC
     else if UNLIKELY(!value)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_FREQUENCY:
-        *value = static_cast<ALint>(albuf->Frequency);
-        break;
+        {
+        case AL_FREQUENCY:
+            *value = static_cast<ALint>(albuf->Frequency);
+            break;
 
-    case AL_BITS:
-        *value = static_cast<ALint>(albuf->bytesFromFmt() * 8);
-        break;
+        case AL_BITS:
+            *value = static_cast<ALint>(albuf->bytesFromFmt() * 8);
+            break;
 
-    case AL_CHANNELS:
-        *value = static_cast<ALint>(albuf->channelsFromFmt());
-        break;
+        case AL_CHANNELS:
+            *value = static_cast<ALint>(albuf->channelsFromFmt());
+            break;
 
-    case AL_SIZE:
-        *value = static_cast<ALint>(albuf->SampleLen * albuf->frameSizeFromFmt());
-        break;
+        case AL_SIZE:
+            *value = static_cast<ALint>(albuf->SampleLen * albuf->frameSizeFromFmt());
+            break;
 
-    case AL_UNPACK_BLOCK_ALIGNMENT_SOFT:
-        *value = static_cast<ALint>(albuf->UnpackAlign);
-        break;
+        case AL_UNPACK_BLOCK_ALIGNMENT_SOFT:
+            *value = static_cast<ALint>(albuf->UnpackAlign);
+            break;
 
-    case AL_PACK_BLOCK_ALIGNMENT_SOFT:
-        *value = static_cast<ALint>(albuf->PackAlign);
-        break;
+        case AL_PACK_BLOCK_ALIGNMENT_SOFT:
+            *value = static_cast<ALint>(albuf->PackAlign);
+            break;
 
-    case AL_AMBISONIC_LAYOUT_SOFT:
-        *value = albuf->AmbiLayout;
-        break;
+        case AL_AMBISONIC_LAYOUT_SOFT:
+            *value = albuf->AmbiLayout;
+            break;
 
-    case AL_AMBISONIC_SCALING_SOFT:
-        *value = albuf->AmbiScaling;
-        break;
+        case AL_AMBISONIC_SCALING_SOFT:
+            *value = albuf->AmbiScaling;
+            break;
 
-    case AL_UNPACK_AMBISONIC_ORDER_SOFT:
-        *value = static_cast<int>(albuf->UnpackAmbiOrder);
-        break;
+        case AL_UNPACK_AMBISONIC_ORDER_SOFT:
+            *value = static_cast<int>(albuf->UnpackAmbiOrder);
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer integer property 0x%04x", param);
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer integer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1417,10 +1515,10 @@ START_API_FUNC
     else if UNLIKELY(!value1 || !value2 || !value3)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer 3-integer property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer 3-integer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1456,21 +1554,21 @@ START_API_FUNC
     else if UNLIKELY(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_LOOP_POINTS_SOFT:
-        values[0] = static_cast<ALint>(albuf->LoopStart);
-        values[1] = static_cast<ALint>(albuf->LoopEnd);
-        break;
+        {
+        case AL_LOOP_POINTS_SOFT:
+            values[0] = static_cast<ALint>(albuf->LoopStart);
+            values[1] = static_cast<ALint>(albuf->LoopEnd);
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer integer-vector property 0x%04x", param);
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer integer-vector property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
 
 AL_API void AL_APIENTRY alBufferCallbackSOFT(ALuint buffer, ALenum format, ALsizei freq,
-    LPALBUFFERCALLBACKTYPESOFT callback, ALvoid *userptr, ALbitfieldSOFT flags)
+        LPALBUFFERCALLBACKTYPESOFT callback, ALvoid *userptr, ALbitfieldSOFT flags)
 START_API_FUNC
 {
     ContextRef context{GetContextRef()};
@@ -1495,7 +1593,7 @@ START_API_FUNC
             context->setError(AL_INVALID_ENUM, "Invalid format 0x%04x", format);
         else
             PrepareCallback(context.get(), albuf, freq, usrfmt->channels, usrfmt->type, callback,
-                userptr);
+                            userptr);
     }
 }
 END_API_FUNC
@@ -1514,17 +1612,17 @@ START_API_FUNC
     else if UNLIKELY(!value)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    case AL_BUFFER_CALLBACK_FUNCTION_SOFT:
-        *value = reinterpret_cast<void*>(albuf->Callback);
-        break;
-    case AL_BUFFER_CALLBACK_USER_PARAM_SOFT:
-        *value = albuf->UserData;
-        break;
+        {
+        case AL_BUFFER_CALLBACK_FUNCTION_SOFT:
+            *value = reinterpret_cast<void*>(albuf->Callback);
+            break;
+        case AL_BUFFER_CALLBACK_USER_PARAM_SOFT:
+            *value = albuf->UserData;
+            break;
 
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer pointer property 0x%04x", param);
-    }
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer pointer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1541,10 +1639,10 @@ START_API_FUNC
     else if UNLIKELY(!value1 || !value2 || !value3)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer 3-pointer property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer 3-pointer property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1569,10 +1667,10 @@ START_API_FUNC
     else if UNLIKELY(!values)
         context->setError(AL_INVALID_VALUE, "NULL pointer");
     else switch(param)
-    {
-    default:
-        context->setError(AL_INVALID_ENUM, "Invalid buffer pointer-vector property 0x%04x", param);
-    }
+        {
+        default:
+            context->setError(AL_INVALID_ENUM, "Invalid buffer pointer-vector property 0x%04x", param);
+        }
 }
 END_API_FUNC
 
@@ -1581,12 +1679,18 @@ ALuint BytesFromFmt(FmtType type) noexcept
 {
     switch(type)
     {
-    case FmtUByte: return sizeof(uint8_t);
-    case FmtShort: return sizeof(int16_t);
-    case FmtFloat: return sizeof(float);
-    case FmtDouble: return sizeof(double);
-    case FmtMulaw: return sizeof(uint8_t);
-    case FmtAlaw: return sizeof(uint8_t);
+    case FmtUByte:
+        return sizeof(uint8_t);
+    case FmtShort:
+        return sizeof(int16_t);
+    case FmtFloat:
+        return sizeof(float);
+    case FmtDouble:
+        return sizeof(double);
+    case FmtMulaw:
+        return sizeof(uint8_t);
+    case FmtAlaw:
+        return sizeof(uint8_t);
     }
     return 0;
 }
@@ -1594,15 +1698,24 @@ ALuint ChannelsFromFmt(FmtChannels chans, ALuint ambiorder) noexcept
 {
     switch(chans)
     {
-    case FmtMono: return 1;
-    case FmtStereo: return 2;
-    case FmtRear: return 2;
-    case FmtQuad: return 4;
-    case FmtX51: return 6;
-    case FmtX61: return 7;
-    case FmtX71: return 8;
-    case FmtBFormat2D: return (ambiorder*2) + 1;
-    case FmtBFormat3D: return (ambiorder+1) * (ambiorder+1);
+    case FmtMono:
+        return 1;
+    case FmtStereo:
+        return 2;
+    case FmtRear:
+        return 2;
+    case FmtQuad:
+        return 4;
+    case FmtX51:
+        return 6;
+    case FmtX61:
+        return 7;
+    case FmtX71:
+        return 8;
+    case FmtBFormat2D:
+        return (ambiorder*2) + 1;
+    case FmtBFormat3D:
+        return (ambiorder+1) * (ambiorder+1);
     }
     return 0;
 }

@@ -69,13 +69,13 @@ static void GetUnicodeArgs(int *argc, char ***argv)
     }
 
     total = sizeof(**argv) * nargs;
-    for(i = 0;i < nargs;i++)
+    for(i = 0; i < nargs; i++)
         total += WideCharToMultiByte(CP_UTF8, 0, args[i], -1, NULL, 0, NULL, NULL);
 
     atexit(cleanup_arglist);
     arglist = *argv = (char**)calloc(1, total);
     (*argv)[0] = (char*)(*argv + nargs);
-    for(i = 0;i < nargs-1;i++)
+    for(i = 0; i < nargs-1; i++)
     {
         int len = WideCharToMultiByte(CP_UTF8, 0, args[i], -1, (*argv)[i], 65535, NULL, NULL);
         (*argv)[i+1] = (*argv)[i] + len;

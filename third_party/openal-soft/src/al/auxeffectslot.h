@@ -85,7 +85,9 @@ struct ALeffectslot {
      */
     MixParams Wet;
 
-    ALeffectslot() { PropsClean.test_and_set(std::memory_order_relaxed); }
+    ALeffectslot() {
+        PropsClean.test_and_set(std::memory_order_relaxed);
+    }
     ALeffectslot(const ALeffectslot&) = delete;
     ALeffectslot& operator=(const ALeffectslot&) = delete;
     ~ALeffectslot();

@@ -43,7 +43,9 @@ void al_free(void *ptr) noexcept;
     void operator delete[](void *block, void*) noexcept { al_free(block); }   \
     void operator delete[](void *block) noexcept { al_free(block); }
 
-struct FamCount { size_t mCount; };
+struct FamCount {
+    size_t mCount;
+};
 
 #define DEF_FAM_NEWDEL(T, FamMem)                                             \
     static constexpr size_t Sizeof(size_t count) noexcept                     \
@@ -91,15 +93,23 @@ struct allocator {
         if(auto p = static_cast<T*>(al_malloc(alignment, n*sizeof(T)))) return p;
         throw std::bad_alloc();
     }
-    void deallocate(T *p, std::size_t) noexcept { al_free(p); }
+    void deallocate(T *p, std::size_t) noexcept {
+        al_free(p);
+    }
 };
 template<typename T, std::size_t N, typename U, std::size_t M>
-bool operator==(const allocator<T,N>&, const allocator<U,M>&) noexcept { return true; }
+bool operator==(const allocator<T,N>&, const allocator<U,M>&) noexcept {
+    return true;
+}
 template<typename T, std::size_t N, typename U, std::size_t M>
-bool operator!=(const allocator<T,N>&, const allocator<U,M>&) noexcept { return false; }
+bool operator!=(const allocator<T,N>&, const allocator<U,M>&) noexcept {
+    return false;
+}
 
 template<size_t alignment, typename T>
-[[gnu::assume_aligned(alignment)]] inline T* assume_aligned(T *ptr) noexcept { return ptr; }
+[[gnu::assume_aligned(alignment)]] inline T* assume_aligned(T *ptr) noexcept {
+    return ptr;
+}
 
 /* At least VS 2015 complains that 'ptr' is unused when the given type's
  * destructor is trivial (a no-op). So disable that warning for this call.
@@ -107,7 +117,9 @@ template<size_t alignment, typename T>
 DIAGNOSTIC_PUSH
 msc_pragma(warning(disable : 4100))
 template<typename T>
-inline void destroy_at(T *ptr) { ptr->~T(); }
+inline void destroy_at(T *ptr) {
+    ptr->~T();
+}
 DIAGNOSTIC_POP
 
 template<typename T>
@@ -179,58 +191,106 @@ struct FlexArray {
 
 
     const index_type mSize;
-DIAGNOSTIC_PUSH
-std_pragma("GCC diagnostic ignored \"-Wpedantic\"")
-msc_pragma(warning(disable : 4200))
+    DIAGNOSTIC_PUSH
+    std_pragma("GCC diagnostic ignored \"-Wpedantic\"")
+    msc_pragma(warning(disable : 4200))
     alignas(alignment) element_type mArray[0];
-DIAGNOSTIC_POP
+    DIAGNOSTIC_POP
 
     static std::unique_ptr<FlexArray> Create(index_type count)
     {
         void *ptr{al_calloc(alignof(FlexArray), Sizeof(count))};
-        return std::unique_ptr<FlexArray>{new(ptr) FlexArray{count}};
+        return std::unique_ptr<FlexArray> {new(ptr) FlexArray{count}};
     }
     static constexpr index_type Sizeof(index_type count, index_type base=0u) noexcept
     {
         return base +
-            std::max<index_type>(offsetof(FlexArray, mArray) + sizeof(T)*count, sizeof(FlexArray));
+               std::max<index_type>(offsetof(FlexArray, mArray) + sizeof(T)*count, sizeof(FlexArray));
     }
 
     FlexArray(index_type size) : mSize{size}
-    { al::uninitialized_default_construct_n(mArray, mSize); }
-    ~FlexArray() { al::destroy_n(mArray, mSize); }
+    {
+        al::uninitialized_default_construct_n(mArray, mSize);
+    }
+    ~FlexArray() {
+        al::destroy_n(mArray, mSize);
+    }
 
     FlexArray(const FlexArray&) = delete;
     FlexArray& operator=(const FlexArray&) = delete;
 
-    index_type size() const noexcept { return mSize; }
-    bool empty() const noexcept { return mSize == 0; }
+    index_type size() const noexcept {
+        return mSize;
+    }
+    bool empty() const noexcept {
+        return mSize == 0;
+    }
 
-    pointer data() noexcept { return mArray; }
-    const_pointer data() const noexcept { return mArray; }
+    pointer data() noexcept {
+        return mArray;
+    }
+    const_pointer data() const noexcept {
+        return mArray;
+    }
 
-    reference operator[](index_type i) noexcept { return mArray[i]; }
-    const_reference operator[](index_type i) const noexcept { return mArray[i]; }
+    reference operator[](index_type i) noexcept {
+        return mArray[i];
+    }
+    const_reference operator[](index_type i) const noexcept {
+        return mArray[i];
+    }
 
-    reference front() noexcept { return mArray[0]; }
-    const_reference front() const noexcept { return mArray[0]; }
+    reference front() noexcept {
+        return mArray[0];
+    }
+    const_reference front() const noexcept {
+        return mArray[0];
+    }
 
-    reference back() noexcept { return mArray[mSize-1]; }
-    const_reference back() const noexcept { return mArray[mSize-1]; }
+    reference back() noexcept {
+        return mArray[mSize-1];
+    }
+    const_reference back() const noexcept {
+        return mArray[mSize-1];
+    }
 
-    iterator begin() noexcept { return mArray; }
-    const_iterator begin() const noexcept { return mArray; }
-    const_iterator cbegin() const noexcept { return mArray; }
-    iterator end() noexcept { return mArray + mSize; }
-    const_iterator end() const noexcept { return mArray + mSize; }
-    const_iterator cend() const noexcept { return mArray + mSize; }
+    iterator begin() noexcept {
+        return mArray;
+    }
+    const_iterator begin() const noexcept {
+        return mArray;
+    }
+    const_iterator cbegin() const noexcept {
+        return mArray;
+    }
+    iterator end() noexcept {
+        return mArray + mSize;
+    }
+    const_iterator end() const noexcept {
+        return mArray + mSize;
+    }
+    const_iterator cend() const noexcept {
+        return mArray + mSize;
+    }
 
-    reverse_iterator rbegin() noexcept { return end(); }
-    const_reverse_iterator rbegin() const noexcept { return end(); }
-    const_reverse_iterator crbegin() const noexcept { return cend(); }
-    reverse_iterator rend() noexcept { return begin(); }
-    const_reverse_iterator rend() const noexcept { return begin(); }
-    const_reverse_iterator crend() const noexcept { return cbegin(); }
+    reverse_iterator rbegin() noexcept {
+        return end();
+    }
+    const_reverse_iterator rbegin() const noexcept {
+        return end();
+    }
+    const_reverse_iterator crbegin() const noexcept {
+        return cend();
+    }
+    reverse_iterator rend() noexcept {
+        return begin();
+    }
+    const_reverse_iterator rend() const noexcept {
+        return begin();
+    }
+    const_reverse_iterator crend() const noexcept {
+        return cbegin();
+    }
 
     DEF_PLACE_NEWDEL()
 };

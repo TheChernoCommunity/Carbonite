@@ -186,11 +186,11 @@ void LoadConfigFromFile(std::istream &f)
                     section = nextp;
 
                     if(((section[1] >= '0' && section[1] <= '9') ||
-                        (section[1] >= 'a' && section[1] <= 'f') ||
-                        (section[1] >= 'A' && section[1] <= 'F')) &&
-                       ((section[2] >= '0' && section[2] <= '9') ||
-                        (section[2] >= 'a' && section[2] <= 'f') ||
-                        (section[2] >= 'A' && section[2] <= 'F')))
+                            (section[1] >= 'a' && section[1] <= 'f') ||
+                            (section[1] >= 'A' && section[1] <= 'F')) &&
+                            ((section[2] >= '0' && section[2] <= '9') ||
+                             (section[2] >= 'a' && section[2] <= 'f') ||
+                             (section[2] >= 'A' && section[2] <= 'F')))
                     {
                         int b{0};
                         if(section[1] >= '0' && section[1] <= '9')
@@ -259,7 +259,7 @@ void LoadConfigFromFile(std::istream &f)
         if(value.size() > 1)
         {
             if((value.front() == '"' && value.back() == '"')
-                || (value.front() == '\'' && value.back() == '\''))
+                    || (value.front() == '\'' && value.back() == '\''))
             {
                 value.pop_back();
                 value.erase(value.begin());
@@ -378,7 +378,7 @@ void ReadALConfig()
         CFURLRef configURL;
 
         if((configURL=CFBundleCopyResourceURL(mainBundle, CFSTR(".alsoftrc"), CFSTR(""), nullptr)) &&
-           CFURLGetFileSystemRepresentation(configURL, true, fileName, sizeof(fileName)))
+                CFURLGetFileSystemRepresentation(configURL, true, fileName, sizeof(fileName)))
         {
             f = al::ifstream{reinterpret_cast<char*>(fileName)};
             if(f.is_open())
@@ -473,9 +473,9 @@ const char *GetConfigValue(const char *devName, const char *blockName, const cha
     }
 
     auto iter = std::find_if(ConfOpts.cbegin(), ConfOpts.cend(),
-        [&key](const ConfigEntry &entry) -> bool
-        { return entry.key == key; }
-    );
+                             [&key](const ConfigEntry &entry) -> bool
+    { return entry.key == key; }
+                            );
     if(iter != ConfOpts.cend())
     {
         TRACE("Found %s = \"%s\"\n", key.c_str(), iter->value.c_str());
@@ -536,8 +536,8 @@ al::optional<bool> ConfigValueBool(const char *devName, const char *blockName, c
     if(!val[0]) return al::nullopt;
 
     return al::make_optional(
-        al::strcasecmp(val, "true") == 0 || al::strcasecmp(val, "yes") == 0 ||
-        al::strcasecmp(val, "on") == 0 || atoi(val) != 0);
+               al::strcasecmp(val, "true") == 0 || al::strcasecmp(val, "yes") == 0 ||
+               al::strcasecmp(val, "on") == 0 || atoi(val) != 0);
 }
 
 int GetConfigValueBool(const char *devName, const char *blockName, const char *keyName, int def)

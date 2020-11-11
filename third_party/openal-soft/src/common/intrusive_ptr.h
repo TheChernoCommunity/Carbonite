@@ -12,7 +12,9 @@ class intrusive_ref {
     RefCount mRef{1u};
 
 public:
-    unsigned int add_ref() noexcept { return IncrementRef(mRef); }
+    unsigned int add_ref() noexcept {
+        return IncrementRef(mRef);
+    }
     unsigned int release() noexcept
     {
         auto ref = DecrementRef(mRef);
@@ -50,13 +52,25 @@ class intrusive_ptr {
 
 public:
     intrusive_ptr() noexcept = default;
-    intrusive_ptr(const intrusive_ptr &rhs) noexcept : mPtr{rhs.mPtr}
-    { if(mPtr) mPtr->add_ref(); }
-    intrusive_ptr(intrusive_ptr&& rhs) noexcept : mPtr{rhs.mPtr}
-    { rhs.mPtr = nullptr; }
+    intrusive_ptr(const intrusive_ptr &rhs) noexcept : mPtr {
+        rhs.mPtr
+    }
+    {
+        if(mPtr) mPtr->add_ref();
+    }
+    intrusive_ptr(intrusive_ptr&& rhs) noexcept : mPtr {
+        rhs.mPtr
+    }
+    {
+        rhs.mPtr = nullptr;
+    }
     intrusive_ptr(std::nullptr_t) noexcept { }
-    explicit intrusive_ptr(T *ptr) noexcept : mPtr{ptr} { }
-    ~intrusive_ptr() { if(mPtr) mPtr->release(); }
+    explicit intrusive_ptr(T *ptr) noexcept : mPtr {
+        ptr
+    } { }
+    ~intrusive_ptr() {
+        if(mPtr) mPtr->release();
+    }
 
     intrusive_ptr& operator=(const intrusive_ptr &rhs) noexcept
     {
@@ -74,11 +88,19 @@ public:
         return *this;
     }
 
-    operator bool() const noexcept { return mPtr != nullptr; }
+    operator bool() const noexcept {
+        return mPtr != nullptr;
+    }
 
-    T& operator*() const noexcept { return *mPtr; }
-    T* operator->() const noexcept { return mPtr; }
-    T* get() const noexcept { return mPtr; }
+    T& operator*() const noexcept {
+        return *mPtr;
+    }
+    T* operator->() const noexcept {
+        return mPtr;
+    }
+    T* get() const noexcept {
+        return mPtr;
+    }
 
     void reset() noexcept
     {
@@ -94,8 +116,12 @@ public:
         return ret;
     }
 
-    void swap(intrusive_ptr &rhs) noexcept { std::swap(mPtr, rhs.mPtr); }
-    void swap(intrusive_ptr&& rhs) noexcept { std::swap(mPtr, rhs.mPtr); }
+    void swap(intrusive_ptr &rhs) noexcept {
+        std::swap(mPtr, rhs.mPtr);
+    }
+    void swap(intrusive_ptr&& rhs) noexcept {
+        std::swap(mPtr, rhs.mPtr);
+    }
 };
 
 #define AL_DECL_OP(op)                                                        \

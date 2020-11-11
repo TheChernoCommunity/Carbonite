@@ -56,7 +56,9 @@ struct ALlistener {
         DistanceModel mDistanceModel;
     } Params;
 
-    ALlistener() { PropsClean.test_and_set(std::memory_order_relaxed); }
+    ALlistener() {
+        PropsClean.test_and_set(std::memory_order_relaxed);
+    }
 
     DISABLE_ALLOC()
 };

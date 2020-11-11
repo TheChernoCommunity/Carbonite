@@ -33,7 +33,9 @@ public:
     bool open(const wchar_t *filename, std::ios_base::openmode mode);
     bool open(const char *filename, std::ios_base::openmode mode);
 
-    bool is_open() const noexcept { return mFile != INVALID_HANDLE_VALUE; }
+    bool is_open() const noexcept {
+        return mFile != INVALID_HANDLE_VALUE;
+    }
 };
 
 // Inherit from std::istream to use our custom streambuf
@@ -43,13 +45,15 @@ class ifstream final : public std::istream {
 public:
     ifstream(const wchar_t *filename, std::ios_base::openmode mode = std::ios_base::in);
     ifstream(const std::wstring &filename, std::ios_base::openmode mode = std::ios_base::in)
-      : ifstream(filename.c_str(), mode) { }
+        : ifstream(filename.c_str(), mode) { }
     ifstream(const char *filename, std::ios_base::openmode mode = std::ios_base::in);
     ifstream(const std::string &filename, std::ios_base::openmode mode = std::ios_base::in)
-      : ifstream(filename.c_str(), mode) { }
+        : ifstream(filename.c_str(), mode) { }
     ~ifstream() override;
 
-    bool is_open() const noexcept { return mStreamBuf.is_open(); }
+    bool is_open() const noexcept {
+        return mStreamBuf.is_open();
+    }
 };
 
 } // namespace al

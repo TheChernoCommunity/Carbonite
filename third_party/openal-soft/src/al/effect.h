@@ -52,7 +52,9 @@ struct ALeffect {
 };
 
 inline bool IsReverbEffect(const ALenum type) noexcept
-{ return type == AL_EFFECT_REVERB || type == AL_EFFECT_EAXREVERB; }
+{
+    return type == AL_EFFECT_REVERB || type == AL_EFFECT_EAXREVERB;
+}
 
 EffectStateFactory *getFactoryByType(ALenum type);
 

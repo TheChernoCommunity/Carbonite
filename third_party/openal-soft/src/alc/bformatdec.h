@@ -42,27 +42,28 @@ class BFormatDec {
 
 public:
     BFormatDec(const AmbDecConf *conf, const bool allow_2band, const ALuint inchans,
-        const ALuint srate, const ALuint (&chanmap)[MAX_OUTPUT_CHANNELS]);
+               const ALuint srate, const ALuint (&chanmap)[MAX_OUTPUT_CHANNELS]);
     BFormatDec(const ALuint inchans, const al::span<const ChannelDec> chancoeffs);
 
     /* Decodes the ambisonic input to the given output channels. */
     void process(const al::span<FloatBufferLine> OutBuffer, const FloatBufferLine *InSamples,
-        const size_t SamplesToDo);
+                 const size_t SamplesToDo);
 
     /* Retrieves per-order HF scaling factors for "upsampling" ambisonic data. */
     static std::array<float,MAX_AMBI_ORDER+1> GetHFOrderScales(const ALuint in_order,
-        const ALuint out_order) noexcept;
+            const ALuint out_order) noexcept;
 
     static std::unique_ptr<BFormatDec> Create(const AmbDecConf *conf, const bool allow_2band,
-        const ALuint inchans, const ALuint srate, const ALuint (&chanmap)[MAX_OUTPUT_CHANNELS])
+            const ALuint inchans, const ALuint srate, const ALuint (&chanmap)[MAX_OUTPUT_CHANNELS])
     {
-        return std::unique_ptr<BFormatDec>{new(FamCount{inchans})
-            BFormatDec{conf, allow_2band, inchans, srate, chanmap}};
+        return std::unique_ptr<BFormatDec> {new(FamCount{inchans})
+            BFormatDec{conf, allow_2band, inchans, srate, chanmap}
+        };
     }
     static std::unique_ptr<BFormatDec> Create(const ALuint inchans,
-        const al::span<const ChannelDec> chancoeffs)
+            const al::span<const ChannelDec> chancoeffs)
     {
-        return std::unique_ptr<BFormatDec>{new(FamCount{inchans}) BFormatDec{inchans, chancoeffs}};
+        return std::unique_ptr<BFormatDec> {new(FamCount{inchans}) BFormatDec{inchans, chancoeffs}};
     }
 
     DEF_FAM_NEWDEL(BFormatDec, mChannelDec)

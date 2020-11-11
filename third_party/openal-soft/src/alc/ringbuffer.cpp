@@ -88,7 +88,7 @@ size_t RingBuffer::read(void *dest, size_t cnt) noexcept
     }
 
     auto outiter = std::copy_n(mBuffer.begin() + read_ptr*mElemSize, n1*mElemSize,
-        static_cast<al::byte*>(dest));
+                               static_cast<al::byte*>(dest));
     read_ptr += n1;
     if(n2 > 0)
     {
@@ -121,7 +121,7 @@ size_t RingBuffer::peek(void *dest, size_t cnt) const noexcept
     }
 
     auto outiter = std::copy_n(mBuffer.begin() + read_ptr*mElemSize, n1*mElemSize,
-        static_cast<al::byte*>(dest));
+                               static_cast<al::byte*>(dest));
     if(n2 > 0)
         std::copy_n(mBuffer.begin(), n2*mElemSize, outiter);
     return to_read;

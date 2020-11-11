@@ -60,7 +60,9 @@ enum FmtChannels : unsigned char {
 ALuint BytesFromFmt(FmtType type) noexcept;
 ALuint ChannelsFromFmt(FmtChannels chans, ALuint ambiorder) noexcept;
 inline ALuint FrameSizeFromFmt(FmtChannels chans, FmtType type, ALuint ambiorder) noexcept
-{ return ChannelsFromFmt(chans, ambiorder) * BytesFromFmt(type); }
+{
+    return ChannelsFromFmt(chans, ambiorder) * BytesFromFmt(type);
+}
 
 
 struct ALbuffer {
@@ -102,10 +104,16 @@ struct ALbuffer {
     /* Self ID */
     ALuint id{0};
 
-    inline ALuint bytesFromFmt() const noexcept { return BytesFromFmt(mFmtType); }
+    inline ALuint bytesFromFmt() const noexcept {
+        return BytesFromFmt(mFmtType);
+    }
     inline ALuint channelsFromFmt() const noexcept
-    { return ChannelsFromFmt(mFmtChannels, AmbiOrder); }
-    inline ALuint frameSizeFromFmt() const noexcept { return channelsFromFmt() * bytesFromFmt(); }
+    {
+        return ChannelsFromFmt(mFmtChannels, AmbiOrder);
+    }
+    inline ALuint frameSizeFromFmt() const noexcept {
+        return channelsFromFmt() * bytesFromFmt();
+    }
 
     DISABLE_ALLOC()
 };

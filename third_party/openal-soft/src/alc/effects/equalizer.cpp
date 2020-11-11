@@ -84,8 +84,8 @@ struct EqualizerState final : public EffectState {
         BiquadFilter filter[4];
 
         /* Effect gains for each channel */
-        float CurrentGains[MAX_OUTPUT_CHANNELS]{};
-        float TargetGains[MAX_OUTPUT_CHANNELS]{};
+        float CurrentGains[MAX_OUTPUT_CHANNELS] {};
+        float TargetGains[MAX_OUTPUT_CHANNELS] {};
     } mChans[MAX_AMBI_CHANNELS];
 
     FloatBufferLine mSampleBuffer{};
@@ -126,19 +126,19 @@ void EqualizerState::update(const ALCcontext *context, const ALeffectslot *slot,
     gain = std::sqrt(props->Equalizer.Mid1Gain);
     f0norm = props->Equalizer.Mid1Center / frequency;
     mChans[0].filter[1].setParamsFromBandwidth(BiquadType::Peaking, f0norm, gain,
-        props->Equalizer.Mid1Width);
+            props->Equalizer.Mid1Width);
 
     gain = std::sqrt(props->Equalizer.Mid2Gain);
     f0norm = props->Equalizer.Mid2Center / frequency;
     mChans[0].filter[2].setParamsFromBandwidth(BiquadType::Peaking, f0norm, gain,
-        props->Equalizer.Mid2Width);
+            props->Equalizer.Mid2Width);
 
     gain = std::sqrt(props->Equalizer.HighGain);
     f0norm = props->Equalizer.HighCutoff / frequency;
     mChans[0].filter[3].setParamsFromSlope(BiquadType::HighShelf, f0norm, gain, 0.75f);
 
     /* Copy the filter coefficients for the other input channels. */
-    for(size_t i{1u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{1u}; i < slot->Wet.Buffer.size(); ++i)
     {
         mChans[i].filter[0].copyParamsFrom(mChans[0].filter[0]);
         mChans[i].filter[1].copyParamsFrom(mChans[0].filter[1]);
@@ -147,7 +147,7 @@ void EqualizerState::update(const ALCcontext *context, const ALeffectslot *slot,
     }
 
     mOutTarget = target.Main->Buffer;
-    for(size_t i{0u};i < slot->Wet.Buffer.size();++i)
+    for(size_t i{0u}; i < slot->Wet.Buffer.size(); ++i)
     {
         auto coeffs = GetAmbiIdentityRow(i);
         ComputePanGains(target.Main, coeffs.data(), slot->Params.Gain, mChans[i].TargetGains);
@@ -166,18 +166,20 @@ void EqualizerState::process(const size_t samplesToDo, const al::span<const Floa
         chandata->filter[3].process(buffer, buffer.begin());
 
         MixSamples(buffer, samplesOut, chandata->CurrentGains, chandata->TargetGains, samplesToDo,
-            0u);
+                   0u);
         ++chandata;
     }
 }
 
 
 void Equalizer_setParami(EffectProps*, ALenum param, int)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer property 0x%04x", param};
+}
 void Equalizer_setParamiv(EffectProps*, ALenum param, const int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Equalizer_setParamf(EffectProps *props, ALenum param, float val)
 {
@@ -248,14 +250,18 @@ void Equalizer_setParamf(EffectProps *props, ALenum param, float val)
     }
 }
 void Equalizer_setParamfv(EffectProps *props, ALenum param, const float *vals)
-{ Equalizer_setParamf(props, param, vals[0]); }
+{
+    Equalizer_setParamf(props, param, vals[0]);
+}
 
 void Equalizer_getParami(const EffectProps*, ALenum param, int*)
-{ throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer property 0x%04x", param}; }
+{
+    throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer property 0x%04x", param};
+}
 void Equalizer_getParamiv(const EffectProps*, ALenum param, int*)
 {
     throw effect_exception{AL_INVALID_ENUM, "Invalid equalizer integer-vector property 0x%04x",
-        param};
+                           param};
 }
 void Equalizer_getParamf(const EffectProps *props, ALenum param, float *val)
 {
@@ -306,15 +312,21 @@ void Equalizer_getParamf(const EffectProps *props, ALenum param, float *val)
     }
 }
 void Equalizer_getParamfv(const EffectProps *props, ALenum param, float *vals)
-{ Equalizer_getParamf(props, param, vals); }
+{
+    Equalizer_getParamf(props, param, vals);
+}
 
 DEFINE_ALEFFECT_VTABLE(Equalizer);
 
 
 struct EqualizerStateFactory final : public EffectStateFactory {
-    EffectState *create() override { return new EqualizerState{}; }
+    EffectState *create() override {
+        return new EqualizerState{};
+    }
     EffectProps getDefaultProps() const noexcept override;
-    const EffectVtable *getEffectVtable() const noexcept override { return &Equalizer_vtable; }
+    const EffectVtable *getEffectVtable() const noexcept override {
+        return &Equalizer_vtable;
+    }
 };
 
 EffectProps EqualizerStateFactory::getDefaultProps() const noexcept
