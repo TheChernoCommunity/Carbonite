@@ -27,45 +27,45 @@
 #include "almalloc.h"
 
 /* Number of crossfeed levels */
-#define BS2B_CLEVELS           3
+#define BS2B_CLEVELS 3
 
 /* Normal crossfeed levels */
-#define BS2B_HIGH_CLEVEL       3
-#define BS2B_MIDDLE_CLEVEL     2
-#define BS2B_LOW_CLEVEL        1
+#define BS2B_HIGH_CLEVEL 3
+#define BS2B_MIDDLE_CLEVEL 2
+#define BS2B_LOW_CLEVEL 1
 
 /* Easy crossfeed levels */
-#define BS2B_HIGH_ECLEVEL      BS2B_HIGH_CLEVEL    + BS2B_CLEVELS
-#define BS2B_MIDDLE_ECLEVEL    BS2B_MIDDLE_CLEVEL  + BS2B_CLEVELS
-#define BS2B_LOW_ECLEVEL       BS2B_LOW_CLEVEL     + BS2B_CLEVELS
+#define BS2B_HIGH_ECLEVEL BS2B_HIGH_CLEVEL + BS2B_CLEVELS
+#define BS2B_MIDDLE_ECLEVEL BS2B_MIDDLE_CLEVEL + BS2B_CLEVELS
+#define BS2B_LOW_ECLEVEL BS2B_LOW_CLEVEL + BS2B_CLEVELS
 
 /* Default crossfeed levels */
-#define BS2B_DEFAULT_CLEVEL    BS2B_HIGH_ECLEVEL
+#define BS2B_DEFAULT_CLEVEL BS2B_HIGH_ECLEVEL
 /* Default sample rate (Hz) */
-#define BS2B_DEFAULT_SRATE     44100
+#define BS2B_DEFAULT_SRATE 44100
 
 struct bs2b {
-    int level;  /* Crossfeed level */
-    int srate;   /* Sample rate (Hz) */
+  int level; /* Crossfeed level */
+  int srate; /* Sample rate (Hz) */
 
-    /* Lowpass IIR filter coefficients */
-    float a0_lo;
-    float b1_lo;
+  /* Lowpass IIR filter coefficients */
+  float a0_lo;
+  float b1_lo;
 
-    /* Highboost IIR filter coefficients */
-    float a0_hi;
-    float a1_hi;
-    float b1_hi;
+  /* Highboost IIR filter coefficients */
+  float a0_hi;
+  float a1_hi;
+  float b1_hi;
 
-    /* Buffer of filter history
-     * [0] - first channel, [1] - second channel
-     */
-    struct t_last_sample {
-        float lo;
-        float hi;
-    } history[2];
+  /* Buffer of filter history
+   * [0] - first channel, [1] - second channel
+   */
+  struct t_last_sample {
+    float lo;
+    float hi;
+  } history[2];
 
-    DEF_NEWDEL(bs2b)
+  DEF_NEWDEL(bs2b)
 };
 
 /* Clear buffers and set new coefficients with new crossfeed level and sample

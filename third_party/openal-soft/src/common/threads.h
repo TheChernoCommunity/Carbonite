@@ -26,24 +26,24 @@ namespace al {
 
 class semaphore {
 #ifdef _WIN32
-    using native_type = HANDLE;
+  using native_type = HANDLE;
 #elif defined(__APPLE__)
-    using native_type = dispatch_semaphore_t;
+  using native_type = dispatch_semaphore_t;
 #else
-    using native_type = sem_t;
+  using native_type = sem_t;
 #endif
-    native_type mSem;
+  native_type mSem;
 
 public:
-    semaphore(unsigned int initial=0);
-    semaphore(const semaphore&) = delete;
-    ~semaphore();
+  semaphore(unsigned int initial = 0);
+  semaphore(const semaphore &) = delete;
+  ~semaphore();
 
-    semaphore& operator=(const semaphore&) = delete;
+  semaphore &operator=(const semaphore &) = delete;
 
-    void post();
-    void wait() noexcept;
-    bool try_wait() noexcept;
+  void post();
+  void wait() noexcept;
+  bool try_wait() noexcept;
 };
 
 } // namespace al

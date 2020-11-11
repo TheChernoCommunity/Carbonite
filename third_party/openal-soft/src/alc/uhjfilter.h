@@ -6,9 +6,8 @@
 #include "alcmain.h"
 #include "almalloc.h"
 
-
 struct AllPassState {
-    float z[2] {0.0f, 0.0f};
+  float z[2]{0.0f, 0.0f};
 };
 
 /* Encoding 2-channel UHJ from B-Format is done as:
@@ -37,18 +36,18 @@ struct AllPassState {
  */
 
 struct Uhj2Encoder {
-    AllPassState mFilter1_Y[4];
-    AllPassState mFilter2_WX[4];
-    AllPassState mFilter1_WX[4];
-    float mLastY{0.0f}, mLastWX{0.0f};
+  AllPassState mFilter1_Y[4];
+  AllPassState mFilter2_WX[4];
+  AllPassState mFilter1_WX[4];
+  float mLastY{0.0f}, mLastWX{0.0f};
 
-    /* Encodes a 2-channel UHJ (stereo-compatible) signal from a B-Format input
-     * signal. The input must use FuMa channel ordering and scaling.
-     */
-    void encode(FloatBufferLine &LeftOut, FloatBufferLine &RightOut, FloatBufferLine *InSamples,
-                const size_t SamplesToDo);
+  /* Encodes a 2-channel UHJ (stereo-compatible) signal from a B-Format input
+   * signal. The input must use FuMa channel ordering and scaling.
+   */
+  void encode(FloatBufferLine &LeftOut, FloatBufferLine &RightOut,
+              FloatBufferLine *InSamples, const size_t SamplesToDo);
 
-    DEF_NEWDEL(Uhj2Encoder)
+  DEF_NEWDEL(Uhj2Encoder)
 };
 
 #endif /* UHJFILTER_H */

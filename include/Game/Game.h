@@ -5,31 +5,31 @@
 #pragma once
 
 #include <Engine/Application.h>
-#include <Engine/Utility/Logger.h>
-#include <Engine/Input/InputHandler.h>
 #include <Engine/Audio/Audio.h>
+#include <Engine/Input/InputHandler.h>
+#include <Engine/Utility/Logger.h>
 
 namespace gp1 {
 
-class Game : public gp1::Application
-{
+class Game : public gp1::Application {
 public:
-    Game();
+  Game();
 
 private:
-    void LookCallback(input::AxisCallbackData data);
+  void LookCallback(input::AxisCallbackData data);
 
-    void OpenMenuCallback(input::ButtonCallbackData data);
-    void CloseMenuCallback(input::ButtonCallbackData data);
+  void OpenMenuCallback(input::ButtonCallbackData data);
+  void CloseMenuCallback(input::ButtonCallbackData data);
 
-    void PlayMP3Callback(input::ButtonCallbackData data);
-    void PlayWAVCallback(input::ButtonCallbackData data);
+  void PlayMP3Callback(input::ButtonCallbackData data);
+  void PlayWAVCallback(input::ButtonCallbackData data);
+
 private:
-    Logger m_Logger;
+  Logger m_Logger;
 
-    // Audio Data
-    AudioSource TestMP3;
-    AudioSource TestWAV;
+  // Audio Data
+  AudioSource TestMP3;
+  AudioSource TestWAV;
 };
 
 } // namespace gp1

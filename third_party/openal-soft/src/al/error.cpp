@@ -44,76 +44,68 @@
 #include "opthelpers.h"
 #include "vector.h"
 
-
 bool TrapALError{false};
 
-void ALCcontext::setError(ALenum errorCode, const char *msg, ...)
-{
-    auto message = al::vector<char>(256);
+void ALCcontext::setError(ALenum errorCode, const char *msg, ...) {
+  auto message = al::vector<char>(256);
 
-    va_list args, args2;
-    va_start(args, msg);
-    va_copy(args2, args);
-    int msglen{std::vsnprintf(message.data(), message.size(), msg, args)};
-    if(msglen >= 0 && static_cast<size_t>(msglen) >= message.size())
-    {
-        message.resize(static_cast<size_t>(msglen) + 1u);
-        msglen = std::vsnprintf(message.data(), message.size(), msg, args2);
-    }
-    va_end(args2);
-    va_end(args);
+  va_list args, args2;
+  va_start(args, msg);
+  va_copy(args2, args);
+  int msglen{std::vsnprintf(message.data(), message.size(), msg, args)};
+  if (msglen >= 0 && static_cast<size_t>(msglen) >= message.size()) {
+    message.resize(static_cast<size_t>(msglen) + 1u);
+    msglen = std::vsnprintf(message.data(), message.size(), msg, args2);
+  }
+  va_end(args2);
+  va_end(args);
 
-    if(msglen >= 0) msg = message.data();
-    else msg = "<internal error constructing message>";
-    msglen = static_cast<int>(strlen(msg));
+  if (msglen >= 0)
+    msg = message.data();
+  else
+    msg = "<internal error constructing message>";
+  msglen = static_cast<int>(strlen(msg));
 
-    WARN("Error generated on context %p, code 0x%04x, \"%s\"\n",
-    decltype(std::declval<void*>()) {
-        this
-    }, errorCode, msg);
-    if(TrapALError)
-    {
+  WARN("Error generated on context %p, code 0x%04x, \"%s\"\n",
+       decltype(std::declval<void *>()){this}, errorCode, msg);
+  if (TrapALError) {
 #ifdef _WIN32
-        /* DebugBreak will cause an exception if there is no debugger */
-        if(IsDebuggerPresent())
-            DebugBreak();
+    /* DebugBreak will cause an exception if there is no debugger */
+    if (IsDebuggerPresent())
+      DebugBreak();
 #elif defined(SIGTRAP)
-        raise(SIGTRAP);
+    raise(SIGTRAP);
 #endif
-    }
+  }
 
-    ALenum curerr{AL_NO_ERROR};
-    mLastError.compare_exchange_strong(curerr, errorCode);
-    if((mEnabledEvts.load(std::memory_order_relaxed)&EventType_Error))
-    {
-        std::lock_guard<std::mutex> _{mEventCbLock};
-        ALbitfieldSOFT enabledevts{mEnabledEvts.load(std::memory_order_relaxed)};
-        if((enabledevts&EventType_Error) && mEventCb)
-            (*mEventCb)(AL_EVENT_TYPE_ERROR_SOFT, 0, static_cast<ALuint>(errorCode), msglen, msg,
-                        mEventParam);
-    }
+  ALenum curerr{AL_NO_ERROR};
+  mLastError.compare_exchange_strong(curerr, errorCode);
+  if ((mEnabledEvts.load(std::memory_order_relaxed) & EventType_Error)) {
+    std::lock_guard<std::mutex> _{mEventCbLock};
+    ALbitfieldSOFT enabledevts{mEnabledEvts.load(std::memory_order_relaxed)};
+    if ((enabledevts & EventType_Error) && mEventCb)
+      (*mEventCb)(AL_EVENT_TYPE_ERROR_SOFT, 0, static_cast<ALuint>(errorCode),
+                  msglen, msg, mEventParam);
+  }
 }
 
-AL_API ALenum AL_APIENTRY alGetError(void)
-START_API_FUNC
-{
-    ContextRef context{GetContextRef()};
-    if UNLIKELY(!context)
-    {
-        constexpr ALenum deferror{AL_INVALID_OPERATION};
-        WARN("Querying error state on null context (implicitly 0x%04x)\n", deferror);
-        if(TrapALError)
-        {
+AL_API ALenum AL_APIENTRY alGetError(void) START_API_FUNC {
+  ContextRef context{GetContextRef()};
+  if UNLIKELY (!context) {
+    constexpr ALenum deferror{AL_INVALID_OPERATION};
+    WARN("Querying error state on null context (implicitly 0x%04x)\n",
+         deferror);
+    if (TrapALError) {
 #ifdef _WIN32
-            if(IsDebuggerPresent())
-                DebugBreak();
+      if (IsDebuggerPresent())
+        DebugBreak();
 #elif defined(SIGTRAP)
-            raise(SIGTRAP);
+      raise(SIGTRAP);
 #endif
-        }
-        return deferror;
     }
+    return deferror;
+  }
 
-    return context->mLastError.exchange(AL_NO_ERROR);
+  return context->mLastError.exchange(AL_NO_ERROR);
 }
 END_API_FUNC

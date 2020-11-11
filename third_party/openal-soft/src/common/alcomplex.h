@@ -11,7 +11,8 @@
  * Transform (DFT) of the time domain data stored in the buffer. The buffer is
  * an array of complex numbers, and MUST BE power of two.
  */
-void complex_fft(const al::span<std::complex<double>> buffer, const double sign);
+void complex_fft(const al::span<std::complex<double>> buffer,
+                 const double sign);
 
 /**
  * Calculate the complex helical sequence (discrete-time analytical signal) of
