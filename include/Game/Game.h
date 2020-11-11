@@ -27,6 +27,7 @@ namespace gp1 {
 	private:
 		Logger m_Logger;
 
+		// Audio Data
 		AudioSource TestMP3;
 		AudioSource TestWAV;
 	};

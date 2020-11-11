@@ -17,6 +17,7 @@ namespace gp1 {
 	Game::Game()
 		: m_Logger("Game"), Application() {
 
+		// Load the sources
 		TestWAV = AudioSource::LoadFromFile("Sounds/TestWAV.wav");
 		TestMP3 = AudioSource::LoadFromFile("Sounds/TestMP3.mp3");
 
@@ -79,11 +80,13 @@ namespace gp1 {
 
 	void Game::PlayMP3Callback(input::ButtonCallbackData data)
 	{
+		// Play the source
 		Audio::Play(TestMP3);
 	}
 
 	void Game::PlayWAVCallback(input::ButtonCallbackData data)
 	{
+		// Play the source
 		Audio::Play(TestWAV);
 	}
 
