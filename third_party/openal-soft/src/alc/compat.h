@@ -4,7 +4,7 @@
 #include <string>
 
 struct PathNamePair {
-    std::string path, fname;
+  std::string path, fname;
 };
 const PathNamePair &GetProcBinary(void);
 

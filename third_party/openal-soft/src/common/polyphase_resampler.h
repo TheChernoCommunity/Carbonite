@@ -3,7 +3,6 @@
 
 #include <vector>
 
-
 /* This is a polyphase sinc-filtered resampler. It is built for very high
  * quality results, rather than real-time performance.
  *
@@ -32,14 +31,14 @@
  */
 
 struct PPhaseResampler {
-    using uint = unsigned int;
+  using uint = unsigned int;
 
-    void init(const uint srcRate, const uint dstRate);
-    void process(const uint inN, const double *in, const uint outN, double *out);
+  void init(const uint srcRate, const uint dstRate);
+  void process(const uint inN, const double *in, const uint outN, double *out);
 
 private:
-    uint mP, mQ, mM, mL;
-    std::vector<double> mF;
+  uint mP, mQ, mM, mL;
+  std::vector<double> mF;
 };
 
 #endif /* POLYPHASE_RESAMPLER_H */
