@@ -1,13 +1,13 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		Class that represents an Audio Source.
-
-	TODOS:
-		- FLAC support
-		- OGG support
-*/
+//
+//	Created by Sausty on Nov. 11. 2020
+//
+//	Description:
+//		Class that represents an Audio Source.
+//
+//	TODOS:
+//		- FLAC support
+//		- OGG support
+//
 
 #pragma once
 

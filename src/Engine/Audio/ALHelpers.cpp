@@ -1,9 +1,9 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		Implementation of ALHelpers.h
-*/
+//
+//	Created by Sausty on Nov. 11. 2020
+//
+//	Description:
+//		Functions used to initialise OpenAL device and context, must be initialized before using any audio sources
+//
 
 #include "Engine/Audio/ALHelpers.h"
 
