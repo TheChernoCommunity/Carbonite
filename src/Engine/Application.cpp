@@ -15,6 +15,8 @@
 #include "Engine/Renderer/Mesh/StaticMesh.h"
 #include "Engine/Renderer/Shader/Material.h"
 
+#include "Engine/Audio/AudioCore.h"
+
 namespace gp1 {
 
 	TestEntity::TestEntity()
@@ -51,6 +53,7 @@ namespace gp1 {
 
 	Application::Application() {
 		Logger::Init();
+		AudioCore::Init();
 		m_Window.Init();
 		input::InputHandler::m_Window = &m_Window;
 		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
@@ -75,6 +78,7 @@ namespace gp1 {
 		m_Window.DeInit();
 		input::InputHandler::CleanUp();
 		config::ConfigManager::SaveConfigs();
+		AudioCore::Shutdown();
 		Logger::DeInit();
 	}
 
