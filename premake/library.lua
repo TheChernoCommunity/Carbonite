@@ -17,7 +17,7 @@ function library( name )
 		'third_party/openal-soft/src',
 		'third_party/openal-soft/src/common',
 		'third_party/dr_libs',
-		'third_party/MiniMP3',
+		'third_party/minimp3',
 	}
 
 	files {
