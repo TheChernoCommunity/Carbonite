@@ -1,9 +1,9 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		OpenAL utilities for initialising and cleaning up audio device, as well as error handling
-*/
+//
+//	Created by Sausty on Nov. 11. 2020
+//
+//	Description:
+//		OpenAL utilities for initialising and cleaning up audio device, as well as error handling
+//
 
 #pragma once
 

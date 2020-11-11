@@ -1,9 +1,9 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		Implementation of AudioCore.h
-*/
+//
+//	Created by Sausty on Nov. 11. 2020
+//
+//	Description:
+//		Implementation of AudioCore.h
+//
 
 #include "Engine/Audio/AudioCore.h"
 #include "Engine/Audio/Audio.h"

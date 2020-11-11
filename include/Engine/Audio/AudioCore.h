@@ -1,9 +1,9 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		Class used to initialise OpenAL device and context, must be initialized before using any audio sources
-*/
+//
+//	Created by Sausty on Nov. 11. 2020
+//
+//	Description:
+//		Class used to initialise OpenAL device and context, must be initialized before using any audio sources
+//
 
 #pragma once
 
