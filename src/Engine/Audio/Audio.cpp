@@ -1,9 +1,9 @@
-/*
-	Created by Sausty on Nov. 11. 2020
-
-	Description:
-		Implementation of the AudioSource, Audio and AudioLibrary class.
-*/
+// 
+//  Created by Sausty on Nov. 11. 2020
+// 
+//  Description:
+// 		Implementation of the AudioSource, Audio and AudioLibrary class.
+// 
 
 #include "Engine/Audio/Audio.h"
 
