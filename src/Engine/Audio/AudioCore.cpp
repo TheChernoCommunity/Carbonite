@@ -7,6 +7,7 @@
 */
 
 #include "Engine/Audio/AudioCore.h"
+#include "Engine/Audio/Audio.h"
 
 namespace gp1
 {
@@ -15,6 +16,7 @@ namespace gp1
 	void AudioCore::Init()
 	{
 		InitAL(s_AudioLogger);
+		Audio::Init();
 	}
 
 	void AudioCore::Shutdown()

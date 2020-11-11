@@ -17,6 +17,15 @@ namespace gp1 {
 	Game::Game()
 		: m_Logger("Game"), Application() {
 
+		TestWAV = AudioSource::LoadFromFile("Sounds/TestWAV.wav");
+		TestMP3 = AudioSource::LoadFromFile("Sounds/TestMP3.mp3");
+
+		input::InputGroup* audioInput = input::InputHandler::GetOrCreateInputGroup("audioInput");
+		input::ButtonInputBinding* playWav = audioInput->CreateButtonInputBinding("playWav", input::buttons::key0);
+		input::ButtonInputBinding* playMp3 = audioInput->CreateButtonInputBinding("playMp3", input::buttons::key1);
+		playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
+		playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
+
 		// First get or create a new InputGroup with InputHandler::GetOrCreateInputGroup(name):
 		input::InputGroup* onFoot = input::InputHandler::GetOrCreateInputGroup("onFoot");
 		onFoot->SetCaptureMouse(true);
@@ -66,6 +75,16 @@ namespace gp1 {
 	void Game::CloseMenuCallback(input::ButtonCallbackData data) {
 		m_Logger.LogDebug("Closed Menu %u", (uint32_t)data.m_InputType);
 		input::InputHandler::SetCurrentActiveInputGroup("onFoot");
+	}
+
+	void Game::PlayMP3Callback(input::ButtonCallbackData data)
+	{
+		Audio::Play(TestMP3);
+	}
+
+	void Game::PlayWAVCallback(input::ButtonCallbackData data)
+	{
+		Audio::Play(TestWAV);
 	}
 
 } // namespace gp1

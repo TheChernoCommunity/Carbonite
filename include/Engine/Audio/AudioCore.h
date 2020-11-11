@@ -12,6 +12,9 @@
 
 namespace gp1
 {
+	class Audio;
+	class AudioSource;
+
 	class AudioCore
 	{
 	public:
@@ -19,5 +22,8 @@ namespace gp1
 		static void Shutdown();
 	private:
 		static Logger s_AudioLogger;
+
+		friend class Audio;
+		friend class AudioSource;
 	};
 }
