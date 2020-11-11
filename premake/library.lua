@@ -16,16 +16,14 @@ function library( name )
 		'third_party/openal-soft/include',
 		'third_party/openal-soft/src',
 		'third_party/openal-soft/src/common',
-		'third_party/dr',
-		'third_party/minimp3',
+		'third_party/dr_libs',
+		'third_party/MiniMP3',
 	}
 
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',
 		'src/%{prj.name}/**.h',
-		'third_party/dr/**.cpp',
-		'third_party/minimp3/**.cpp',
 	}
 
 	defines
