@@ -57,6 +57,7 @@ namespace gp1
 	private:
 		static void Init();
 
+		static AudioSource LoadAudioSourceFLAC(const std::string& filename);
 		static AudioSource LoadAudioSourceWAV(const std::string& filename);
 		static AudioSource LoadAudioSourceMP3(const std::string& filename);
 
