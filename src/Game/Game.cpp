@@ -63,7 +63,6 @@ namespace gp1 {
 		DebugRenderer::DebugDrawABox({ -2, -2, -7 }, 10.0f);
 	}
 
-
 	void Game::LookCallback(input::AxisCallbackData data) {
 		if (data.m_Id == "lookX") {
 			m_Logger.LogDebug("Moved mouse X to %f", data.m_Value);
