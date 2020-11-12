@@ -3,8 +3,8 @@
 //	
 
 #pragma once
-
 #include "Engine/Input/IInputBinding.h"
+
 #include <functional>
 
 namespace gp1 {
@@ -23,7 +23,7 @@ namespace gp1 {
 
 		struct AxisInputBinding : public IInputBinding {
 		public:
-			AxisInputBinding(InputGroup* inputGroup, std::string id, uint32_t axis, InputLocation location, AxisCallback callback);
+			AxisInputBinding(InputGroup* inputGroup, const std::string& id, uint32_t axis, InputLocation location, AxisCallback callback);
 
 			virtual void HandleEvent(Event& event) override;
 

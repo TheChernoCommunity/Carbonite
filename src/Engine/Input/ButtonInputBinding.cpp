@@ -10,7 +10,7 @@ namespace gp1 {
 
 	namespace input {
 
-		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, std::string id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback)
+		ButtonInputBinding::ButtonInputBinding(InputGroup* inputGroup, const std::string& id, uint32_t button, ButtonInputType inputType, InputLocation location, ButtonCallback callback)
 			: IInputBinding(inputGroup, id, InputType::BUTTON, button, location), m_inputType(inputType), m_callback(callback) {}
 
 		void ButtonInputBinding::HandleEvent(Event& event) {
@@ -24,7 +24,7 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::KEYBOARD)
 					return;
 
-				KeyPressedEvent& pressedEvent = *((KeyPressedEvent*)&event);
+				KeyPressedEvent& pressedEvent = *(reinterpret_cast<KeyPressedEvent*>(&event));
 				if ((uint32_t)pressedEvent.GetKey() != this->GetIndex())
 					return;
 
@@ -45,7 +45,7 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::KEYBOARD)
 					return;
 
-				KeyReleasedEvent& releasedEvent = *((KeyReleasedEvent*)&event);
+				KeyReleasedEvent& releasedEvent = *(reinterpret_cast<KeyReleasedEvent*>(&event));
 				if ((uint32_t)releasedEvent.GetKey() != this->GetIndex())
 					return;
 
@@ -61,7 +61,7 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::MOUSE)
 					return;
 
-				MouseButtonPressedEvent& pressedEvent = *((MouseButtonPressedEvent*)&event);
+				MouseButtonPressedEvent& pressedEvent = *(reinterpret_cast<MouseButtonPressedEvent*>(&event));
 				if ((uint32_t)pressedEvent.GetButton() != this->GetIndex())
 					return;
 
@@ -74,7 +74,7 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::MOUSE)
 					return;
 
-				MouseButtonReleasedEvent& releasedEvent = *((MouseButtonReleasedEvent*)&event);
+				MouseButtonReleasedEvent& releasedEvent = *(reinterpret_cast<MouseButtonReleasedEvent*>(&event));
 				if ((uint32_t)releasedEvent.GetButton() != this->GetIndex())
 					return;
 

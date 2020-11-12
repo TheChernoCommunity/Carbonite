@@ -12,12 +12,23 @@ function library( name )
 	sysincludedirs {
 		'third_party/glfw/include',
 		'third_party/glad/include',
+		'third_party/glm/glm',
+		'third_party/openal-soft/include',
+		'third_party/openal-soft/src',
+		'third_party/openal-soft/src/common',
+		'third_party/dr_libs',
+		'third_party/minimp3_s',
 	}
 
 	files {
 		'include/%{prj.name}/**.h',
 		'src/%{prj.name}/**.cpp',
 		'src/%{prj.name}/**.h',
+	}
+
+	defines
+	{
+		"AL_LIBTYPE_STATIC"
 	}
 
 	filter 'system:macosx or ios'

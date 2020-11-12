@@ -1,0 +1,38 @@
+# See https://github.com/restyled-io/restyled.io/wiki/Configuring-Restyled
+
+enabled: false
+
+exclude:
+  - "premake/**/*"
+  - "third_party/**/*"
+  - "src/*/Assets/**/*"
+  - ".github/**/*"
+
+changed_paths:
+  maximum: 1000
+  outcome: error
+
+remote_files: []
+
+auto: false
+
+commit_template: |
+  Restyled by ${restyler.name}
+
+pull_requests: true
+
+comments: false
+
+statuses: true
+
+request_review: owner
+
+labels: []
+
+ignore_labels:
+  - restyled-ignore
+
+restylers_version: stable
+
+restylers:
+  - clang-format

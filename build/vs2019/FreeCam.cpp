@@ -47,6 +47,7 @@ void gp1::FreeCam::MoveForward(input::ButtonCallbackData /*data*/)
 	m_CameraPos += m_FrontDir * m_CameraSpeed;
 	UpdateView();
 }
+
 void gp1::FreeCam::MoveBackward(input::ButtonCallbackData /*data*/)
 {
 	m_CameraPos -= m_FrontDir * m_CameraSpeed;
@@ -64,8 +65,6 @@ void gp1::FreeCam::MoveRight(input::ButtonCallbackData /*data*/)
 	m_CameraPos += glm::normalize(glm::cross(m_FrontDir, m_UpDir)) * m_CameraSpeed;
 	UpdateView();
 }
-
-
 
 void gp1::FreeCam::UpdateView()
 {

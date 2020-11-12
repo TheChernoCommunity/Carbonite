@@ -4,3 +4,9 @@
 [submodule "third_party/glm"]
 	path = third_party/glm
 	url = https://github.com/g-truc/glm
+[submodule "third_party/dr_libs"]
+	path = third_party/dr_libs
+	url = https://github.com/mackron/dr_libs
+[submodule "third_party/minimp3_s"]
+	path = third_party/minimp3_s
+	url = https://github.com/lieff/minimp3

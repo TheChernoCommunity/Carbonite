@@ -5,24 +5,37 @@
 #pragma once
 
 #include "Engine/Input/InputHandler.h"
-#include "Engine/Configuration/ConfigurationManager.h"
+#include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Events/Event.h"
+#include "Engine/Window/Window.h"
 
 namespace gp1 {
 
 	namespace input {
 
 		std::unordered_map<std::string, InputGroup*> InputHandler::m_inputGroups;
+
 		InputGroup* InputHandler::m_currentInputGroup = nullptr;
+		Window* InputHandler::m_Window = nullptr;
+
+		void InputHandler::CleanUp() {
+			for (auto group : InputHandler::m_inputGroups) {
+				delete group.second;
+			}
+		}
 
 		bool InputHandler::HandleEvent(Event& event) {
 			if (InputHandler::m_currentInputGroup != nullptr) {
+				if (InputHandler::m_Window->GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_NORMAL && InputHandler::m_currentInputGroup->DoesCaptureMouse())
+					InputHandler::m_Window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				else if (InputHandler::m_Window->GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_DISABLED && !InputHandler::m_currentInputGroup->DoesCaptureMouse())
+					InputHandler::m_Window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				InputHandler::m_currentInputGroup->HandleEvent(event);
 			}
 			return event.Handled;
 		}
 
-		void InputHandler::SetCurrentActiveInputGroup(std::string id) {
+		void InputHandler::SetCurrentActiveInputGroup(const std::string& id) {
 			SetCurrentActiveInputGroup(GetInputGroup(id));
 		}
 
@@ -30,7 +43,7 @@ namespace gp1 {
 			InputHandler::m_currentInputGroup = inputGroup;
 		}
 
-		InputGroup* InputHandler::CreateInputGroup(std::string id) {
+		InputGroup* InputHandler::CreateInputGroup(const std::string& id) {
 			if (InputHandler::m_inputGroups.find(id) != InputHandler::m_inputGroups.end())
 				return nullptr;
 
@@ -41,14 +54,14 @@ namespace gp1 {
 			return inputGroup;
 		}
 
-		InputGroup* InputHandler::GetInputGroup(std::string id) {
+		InputGroup* InputHandler::GetInputGroup(const std::string& id) {
 			auto itr = InputHandler::m_inputGroups.find(id);
 			if (itr != InputHandler::m_inputGroups.end())
 				return itr->second;
 			return nullptr;
 		}
 
-		InputGroup* InputHandler::GetOrCreateInputGroup(std::string id) {
+		InputGroup* InputHandler::GetOrCreateInputGroup(const std::string& id) {
 			InputGroup* inputGroup = GetInputGroup(id);
 			if (inputGroup != nullptr)
 				return inputGroup;
@@ -65,26 +78,22 @@ namespace gp1 {
 			delete inputGroup;
 		}
 
-		void InputHandler::SetBindingConfigs(std::string id, InputLocation location, uint32_t index) {
-			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetOrCreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
-			char buf[32];	// 12 For "Loc: , Ind: " and 10 for each number so 32 characters should be the maximum obtainable.
-			sprintf(buf, "Loc: %u, Ind: %u", (uint32_t)location, index);
-			inputBindings->SetConfig(id, buf);
+		void InputHandler::SetBindingConfigs(const std::string& id, InputLocation location, uint32_t index) {
+			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
+			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
+			sec->SetConfigTyped<uint32_t>("Location", static_cast<uint32_t>(location));
+			sec->SetConfigTyped<uint32_t>("Index", index);
 		}
 
-		void InputHandler::GetBindingConfigs(std::string id, InputLocation* location, uint32_t* index) {
-			configuration::ConfigurationFile* inputBindings = configuration::ConfigurationManager::GetOrCreateConfigurationFile("InputBindings", "configs/inputBindings.conf");
-			const std::string* config = inputBindings->GetConfig(id);
-			if (config == nullptr) {
-				SetBindingConfigs(id, *location, *index);
-			} else {
-				uint32_t confLoc;
-				sscanf(config->c_str(), "Loc: %u, Ind: %u", &confLoc, index);
-				if (confLoc > (uint32_t)InputLocation::LAST)
-					*location = InputLocation::UNKNOWN;
-				else
-					*location = (InputLocation)confLoc;
-			}
+		void InputHandler::GetBindingConfigs(const std::string& id, InputLocation* location, uint32_t* index) {
+			config::ConfigFile* inputBindings = config::ConfigManager::GetConfigFile("InputBindings");
+			config::ConfigSection* sec = inputBindings->GetOrCreateSection(id);
+			uint32_t confLoc = sec->GetConfigTyped<uint32_t>("Location", static_cast<uint32_t>(*location));
+			if (confLoc > static_cast<uint32_t>(InputLocation::LAST))
+				*location = InputLocation::UNKNOWN;
+			else
+				*location = static_cast<InputLocation>(confLoc);
+			*index = sec->GetConfigTyped<uint32_t>("Index", *index);
 		}
 
 	} // namespace input

@@ -10,7 +10,7 @@ namespace gp1 {
 
 	namespace input {
 
-		AxisInputBinding::AxisInputBinding(InputGroup* inputGroup, std::string id, uint32_t axis, InputLocation location, AxisCallback callback)
+		AxisInputBinding::AxisInputBinding(InputGroup* inputGroup, const std::string& id, uint32_t axis, InputLocation location, AxisCallback callback)
 			: IInputBinding(inputGroup, id, gp1::input::InputType::AXIS, axis, location), m_callback(callback) {}
 
 		void AxisInputBinding::HandleEvent(Event& event) {
@@ -23,7 +23,7 @@ namespace gp1 {
 			{
 				if (this->GetLocation() != InputLocation::MOUSE)
 					return;
-				MouseMovedEvent& movedEvent = *((MouseMovedEvent*)&event);
+				MouseMovedEvent& movedEvent = *(reinterpret_cast<MouseMovedEvent*>(&event));
 
 				if (this->GetIndex() == axises::mouseX) {
 					this->m_callback({ this->GetLocation(), this->GetIndex(), (double)movedEvent.GetX(), GetId() });

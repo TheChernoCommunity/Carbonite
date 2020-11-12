@@ -1,6 +1,6 @@
 //
 //	Created by rtryan98 on 21. Oct. 2020
-//	Edited by MarcasRealAccount on 4. Nov. 2020
+//	Edited by MarcasRealAccount on 31. Oct. 2020
 //
 
 #include "Engine/Window/Window.h"
@@ -66,6 +66,13 @@ namespace gp1
 				data.Height = height;
 				WindowResizeEvent event{ width, height };
 				EventHandler::PushEvent(event);
+			});
+
+		glfwSetFramebufferSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height)
+			{
+				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+				data.FramebufferWidth = width;
+				data.FramebufferHeight = height;
 			});
 
 		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -154,7 +161,6 @@ namespace gp1
 
 	void Window::OnUpdate()
 	{
-		glfwSwapBuffers(m_NativeHandle);
 		glfwPollEvents();
 	}
 
@@ -194,6 +200,14 @@ namespace gp1
 	{
 		m_WindowData.Title = p_Title;
 		glfwSetWindowTitle(m_NativeHandle, m_WindowData.Title.c_str());
+	}
+
+	int Window::GetInputMode(int mode) {
+		return glfwGetInputMode(m_NativeHandle, mode);
+	}
+
+	void Window::SetInputMode(int mode, int value) {
+		glfwSetInputMode(m_NativeHandle, mode, value);
 	}
 
 	const WindowData& Window::GetWindowData() const
