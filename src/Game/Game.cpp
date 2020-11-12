@@ -20,12 +20,15 @@ namespace gp1 {
 		// Load the sources
 		TestWAV = AudioSource::LoadFromFile("Sounds/TestWAV.wav");
 		TestMP3 = AudioSource::LoadFromFile("Sounds/TestMP3.mp3");
+		TestFLAC = AudioSource::LoadFromFile("Sounds/TestFLAC.flac");
 
 		input::InputGroup* audioInput = input::InputHandler::GetOrCreateInputGroup("audioInput");
 		input::ButtonInputBinding* playWav = audioInput->CreateButtonInputBinding("playWav", input::buttons::key0);
 		input::ButtonInputBinding* playMp3 = audioInput->CreateButtonInputBinding("playMp3", input::buttons::key1);
+		input::ButtonInputBinding* playFlac = audioInput->CreateButtonInputBinding("playFlac", input::buttons::key2);
 		playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
 		playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
+		playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
 
 		// First get or create a new InputGroup with InputHandler::GetOrCreateInputGroup(name):
 		input::InputGroup* onFoot = input::InputHandler::GetOrCreateInputGroup("onFoot");
@@ -88,6 +91,12 @@ namespace gp1 {
 	{
 		// Play the source
 		Audio::Play(TestWAV);
+	}
+
+	void Game::PlayFLACCallback(input::ButtonCallbackData data)
+	{
+		// Play the source
+		Audio::Play(TestFLAC);
 	}
 
 } // namespace gp1
