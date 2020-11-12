@@ -10,6 +10,7 @@
 #include <minimp3.h>
 #include <minimp3_ex.h>
 #include <dr_wav.h>
+#include <dr_flac.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -28,7 +29,7 @@ namespace gp1
 	static uint8_t* s_AudioScratchBuffer;
 	static uint32_t s_AudioScratchBufferSize = 10 * 1024 * 1024;
 
-	struct ReadWavData
+	struct ReadAudioData
 	{
 		unsigned int Channels = 0;
 		unsigned int SampleRate = 0;
@@ -77,9 +78,38 @@ namespace gp1
 	{
 	}
 
+	AudioSource Audio::LoadAudioSourceFLAC(const std::string& filename)
+	{
+		ReadAudioData stereoData;
+		drflac_int16* pSampleData = drflac_open_file_and_read_pcm_frames_s16(filename.c_str(), &stereoData.Channels, &stereoData.SampleRate, &stereoData.TotalPCMFrameCount, nullptr);
+
+		if (pSampleData == NULL)
+			AudioCore::s_AudioLogger.LogError("Failed to load audio file!");
+		if (stereoData.GetTotalSamples() > uint64_t(std::numeric_limits<size_t>::max()))
+			AudioCore::s_AudioLogger.LogError("Too much data in file for 16bit addressed vector!");
+
+		stereoData.PCMData.resize(size_t(stereoData.GetTotalSamples()));
+		std::memcpy(stereoData.PCMData.data(), pSampleData, stereoData.PCMData.size() * 2);
+		drflac_free(pSampleData, nullptr);
+
+		auto alFormat = GetOpenALFormat(stereoData.Channels);
+
+		ALuint buffer;
+		alGenBuffers(1, &buffer);
+		alBufferData(buffer, alFormat, stereoData.PCMData.data(), stereoData.PCMData.size() * 2, stereoData.SampleRate);
+
+		AudioSource result = { buffer };
+		alGenSources(1, &result.m_SourceHandle);
+		alSourcei(result.m_SourceHandle, AL_BUFFER, buffer);
+
+		CheckALError(AudioCore::s_AudioLogger);
+
+		return result;
+	}
+
 	AudioSource Audio::LoadAudioSourceWAV(const std::string& filename)
 	{
-		ReadWavData stereoData;
+		ReadAudioData stereoData;
 		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(filename.c_str(), &stereoData.Channels, &stereoData.SampleRate, &stereoData.TotalPCMFrameCount, nullptr);
 
 		if (pSampleData == NULL)
@@ -193,6 +223,7 @@ namespace gp1
 		{
 			case AudioFileFormat::WAV:  return LoadAudioSourceWAV(filename);
 			case AudioFileFormat::MP3:  return LoadAudioSourceMP3(filename);
+			case AudioFileFormat::FLAC: return LoadAudioSourceFLAC(filename);
 		}
 
 		return AudioSource(0);

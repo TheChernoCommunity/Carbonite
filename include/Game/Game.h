@@ -24,12 +24,14 @@ namespace gp1 {
 
 		void PlayMP3Callback(input::ButtonCallbackData data);
 		void PlayWAVCallback(input::ButtonCallbackData data);
+		void PlayFLACCallback(input::ButtonCallbackData data);
 	private:
 		Logger m_Logger;
 
 		// Audio Data
 		AudioSource TestMP3;
 		AudioSource TestWAV;
+		AudioSource TestFLAC;
 	};
 
 } // namespace gp1
