@@ -5,6 +5,8 @@
 #include "Engine/Input/AxisInputBinding.h"
 #include "Engine/Events/Event.h"
 #include "Engine/Events/MouseEvent.h"
+#include "Engine/Events/GamepadEvent.h"
+#include "Engine/Events/JoystickEvent.h"
 
 namespace gp1 {
 
@@ -45,6 +47,32 @@ namespace gp1 {
 					this->m_callback({ this->GetLocation(), this->GetIndex(), scrollEvent.GetY(), GetId() });
 				}
 
+				break;
+			}
+			case EventType::GAMEPAD_AXIS_CHANGE_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::GAMEPAD)
+					return;
+				GamepadAxisEvent& axisEvent = *static_cast<GamepadAxisEvent*>(&event);
+
+				if (this->GetIndex() != axisEvent.GetAxis())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->GetIndex(), axisEvent.GetValue(), GetId() });
+				axisEvent.Handled = true;
+				break;
+			}
+			case EventType::JOYSTICK_AXIS_CHANGE_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::JOYSTICK)
+					return;
+				JoystickAxisEvent& axisEvent = *static_cast<JoystickAxisEvent*>(&event);
+
+				if (this->GetIndex() != axisEvent.GetAxis())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->GetIndex(), axisEvent.GetValue(), GetId() });
+				axisEvent.Handled = true;
 				break;
 			}
 			}

@@ -22,6 +22,7 @@
 /Makefile
 /*.Make
 
+/src/Game/Assets/Configs/InputBindings.ini
 /src/Game/Assets/logs/
 
 premake5.exe

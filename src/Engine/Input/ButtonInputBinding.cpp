@@ -5,6 +5,8 @@
 #include "Engine/Input/ButtonInputBinding.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
+#include "Engine/Events/GamepadEvent.h"
+#include "Engine/Events/JoystickEvent.h"
 
 namespace gp1 {
 
@@ -45,11 +47,11 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::KEYBOARD)
 					return;
 
-				KeyReleasedEvent& releasedEvent = *(reinterpret_cast<KeyReleasedEvent*>(&event));
-				if ((uint32_t)releasedEvent.GetKey() != this->GetIndex())
+				if (this->m_inputType != ButtonInputType::RELEASE)
 					return;
 
-				if (this->m_inputType != ButtonInputType::RELEASE)
+				KeyReleasedEvent& releasedEvent = *(reinterpret_cast<KeyReleasedEvent*>(&event));
+				if ((uint32_t)releasedEvent.GetKey() != this->GetIndex())
 					return;
 
 				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
@@ -59,6 +61,9 @@ namespace gp1 {
 			case EventType::MOUSE_BUTTON_PRESSED_EVENT:
 			{
 				if (this->GetLocation() != InputLocation::MOUSE)
+					return;
+
+				if (this->m_inputType != ButtonInputType::PRESS)
 					return;
 
 				MouseButtonPressedEvent& pressedEvent = *(reinterpret_cast<MouseButtonPressedEvent*>(&event));
@@ -74,12 +79,79 @@ namespace gp1 {
 				if (this->GetLocation() != InputLocation::MOUSE)
 					return;
 
+				if (this->m_inputType != ButtonInputType::RELEASE)
+					return;
+
 				MouseButtonReleasedEvent& releasedEvent = *(reinterpret_cast<MouseButtonReleasedEvent*>(&event));
 				if ((uint32_t)releasedEvent.GetButton() != this->GetIndex())
 					return;
 
 				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
 				event.Handled = true;
+				break;
+			}
+			case EventType::GAMEPAD_BUTTON_PRESSED_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::GAMEPAD)
+					return;
+
+				if (this->m_inputType != ButtonInputType::PRESS)
+					return;
+
+				GamepadButtonPressedEvent& pressedEvent = *static_cast<GamepadButtonPressedEvent*>(&event);
+				if (pressedEvent.GetButton() != this->GetIndex())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
+				pressedEvent.Handled = true;
+				break;
+			}
+			case EventType::GAMEPAD_BUTTON_RELEASED_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::GAMEPAD)
+					return;
+
+				if (this->m_inputType != ButtonInputType::RELEASE)
+					return;
+
+				GamepadButtonReleasedEvent& releasedEvent = *static_cast<GamepadButtonReleasedEvent*>(&event);
+				if (releasedEvent.GetButton() != this->GetIndex())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
+				releasedEvent.Handled = true;
+				break;
+			}
+			case EventType::JOYSTICK_BUTTON_PRESSED_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::JOYSTICK)
+					return;
+
+				if (this->m_inputType != ButtonInputType::PRESS)
+					return;
+
+				JoystickButtonPressedEvent& pressedEvent = *static_cast<JoystickButtonPressedEvent*>(&event);
+				if (pressedEvent.GetButton() != this->GetIndex())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
+				pressedEvent.Handled = true;
+				break;
+			}
+			case EventType::JOYSTICK_BUTTON_RELEASED_EVENT:
+			{
+				if (this->GetLocation() != InputLocation::JOYSTICK)
+					return;
+
+				if (this->m_inputType != ButtonInputType::RELEASE)
+					return;
+
+				JoystickButtonReleasedEvent& releasedEvent = *static_cast<JoystickButtonReleasedEvent*>(&event);
+				if (releasedEvent.GetButton() != this->GetIndex())
+					return;
+
+				this->m_callback({ this->GetLocation(), this->m_inputType, this->GetIndex(), GetId() });
+				releasedEvent.Handled = true;
 				break;
 			}
 			}

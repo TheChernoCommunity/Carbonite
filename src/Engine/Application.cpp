@@ -9,6 +9,7 @@
 #include "Engine/Utility/Logger.h"
 #include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Input/InputHandler.h"
+#include "Engine/Input/JoystickHandler.h"
 #include "Engine/Renderer/Shader/Shader.h"
 #include "Engine/Scene/Entity.h"
 
@@ -56,6 +57,7 @@ namespace gp1 {
 		AudioCore::Init();
 		m_Window.Init();
 		input::InputHandler::m_Window = &m_Window;
+		input::JoystickHandler::Init();
 		m_Renderer = Renderer::GetRenderer(RendererType::OPENGL, &m_Window);
 		m_Renderer->Init();
 
@@ -68,6 +70,7 @@ namespace gp1 {
 		while (!m_Window.IsCloseRequested()) {
 			m_Renderer->Render(&this->m_Scene);
 			m_Window.OnUpdate();
+			input::JoystickHandler::OnUpdate();
 		}
 	}
 
@@ -76,6 +79,7 @@ namespace gp1 {
 		delete m_Renderer;
 		Shader::CleanUpShaders();
 		m_Window.DeInit();
+		input::JoystickHandler::DeInit();
 		input::InputHandler::CleanUp();
 		config::ConfigManager::SaveConfigs();
 		AudioCore::Shutdown();
