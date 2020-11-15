@@ -21,6 +21,9 @@
 /local.properties
 /Makefile
 /*.Make
+/*.vcxproj
+/*.filters
+/*.user
 
 /src/Game/Assets/Configs/InputBindings.ini
 /src/Game/Assets/logs/

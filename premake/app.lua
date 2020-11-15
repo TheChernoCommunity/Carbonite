@@ -12,7 +12,7 @@ function app( name )
 	debugdir 'src/%{prj.name}/Assets'
 	links( libraries )
 	links( third_party_libraries )
-	location 'build/%{_ACTION}'
+	location ''
 	xcodebuildresources 'src/%{prj.name}/Assets'
 
 	sysincludedirs {

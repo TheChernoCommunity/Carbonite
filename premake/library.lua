@@ -7,7 +7,7 @@ function library( name )
 
 	kind 'StaticLib'
 	links( libraries )
-	location 'build/%{_ACTION}'
+	location ''
 
 	sysincludedirs {
 		'third_party/glfw/include',
