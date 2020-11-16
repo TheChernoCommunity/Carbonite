@@ -15,7 +15,7 @@ namespace gp1 {
 
 	namespace input {
 
-		extern std::vector<std::pair<std::pair<InputType, std::pair<InputLocation, uint32_t>>, std::string>> InputNames;
+		extern EnumVector<std::pair<InputType, std::pair<InputLocation, uint32_t>>> InputNames;
 
 		std::unordered_map<std::string, InputGroup*> InputHandler::m_inputGroups;
 
@@ -95,16 +95,10 @@ namespace gp1 {
 
 			*location = input.second.first;
 			*index = input.second.second;
-			//uint32_t confLoc = sec->GetConfigTyped<uint32_t>("Location", static_cast<uint32_t>(*location));
-			//if (confLoc > static_cast<uint32_t>(InputLocation::LAST))
-			//	*location = InputLocation::UNKNOWN;
-			//else
-			//	*location = static_cast<InputLocation>(confLoc);
-			//*index = sec->GetConfigTyped<uint32_t>("Index", *index);
 		}
 
 		// PLEASE GOD NOOOO:
-		std::vector<std::pair<std::pair<InputType, std::pair<InputLocation, uint32_t>>, std::string>> InputNames = {
+		EnumVector<std::pair<InputType, std::pair<InputLocation, uint32_t>>>  InputNames = {
 			{ { InputType::BUTTON, { InputLocation::KEYBOARD, buttons::keySpace } }, "Key.Space" },
 			{ { InputType::BUTTON, { InputLocation::KEYBOARD, buttons::keyApostrophe } }, "Key.Apostrophe" },
 			{ { InputType::BUTTON, { InputLocation::KEYBOARD, buttons::keyComma } }, "Key.Comma" },

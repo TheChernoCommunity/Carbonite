@@ -8,7 +8,7 @@
 
 namespace gp1 {
 
-	extern std::vector<std::pair<UniformType, std::string>> UniformTypeNames;
+	extern EnumVector<UniformType> UniformTypeNames;
 
 	std::unordered_map<std::string, Shader*> Shader::m_LoadedShaders;
 
@@ -135,7 +135,7 @@ namespace gp1 {
 	}
 
 	// OH GOD NOOOOO NOT AGAIN!
-	std::vector<std::pair<UniformType, std::string>> UniformTypeNames = {
+	EnumVector<UniformType> UniformTypeNames = {
 		{ UniformType::FLOAT, "Float" },
 		{ UniformType::FLOAT_VEC2, "FVec2" },
 		{ UniformType::FLOAT_VEC3, "FVec3" },

@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
+template <typename T>
+using EnumVector = std::vector<std::pair<T, std::string>>;
+
 namespace gp1 {
 
 	namespace config {
@@ -43,7 +46,7 @@ namespace gp1 {
 			T GetConfigTyped(const std::string& key, T def);
 			// Sets a config value with an enum value name.
 			template <typename T>
-			void SetConfigEnum(const std::string& key, T value, const std::vector<std::pair<T, std::string>>& enumNames) {
+			void SetConfigEnum(const std::string& key, T value, const EnumVector<T>& enumNames) {
 				auto itr = enumNames.begin();
 				while (itr != enumNames.end()) {
 					if (itr->first == value) {
@@ -56,19 +59,17 @@ namespace gp1 {
 
 			// Gets the element T that the config's value was the same as.
 			template <typename T>
-			T GetConfigEnum(const std::string& key, T def, const std::vector<std::pair<T, std::string>>& enumNames) {
-				std::string defName = "";
+			T GetConfigEnum(const std::string& key, T def, const EnumVector<T>& enumNames) {
 				auto itr = enumNames.begin();
 				while (itr != enumNames.end()) {
 					if (itr->first == def) {
-						defName = itr->second;
 						break;
 					}
 					itr++;
 				}
 				if (itr == enumNames.end()) return def;
 
-				const std::string& configValue = GetConfig(key, defName);
+				const std::string& configValue = GetConfig(key, itr->second);
 
 				itr = enumNames.begin();
 				while (itr != enumNames.end()) {
