@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtx/rotate_vector.hpp>
 #include <GLFW/glfw3.h>
 #include "Engine/Input/InputHandler.h"
 

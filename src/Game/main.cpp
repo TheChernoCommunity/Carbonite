@@ -1,4 +1,4 @@
-#include "Game/Game.h"
+#include "Game.h"
 
 int main(int /*argc*/, char* /*argv*/[]) {
 	gp1::Application* game = gp1::Application::CreateApplication();

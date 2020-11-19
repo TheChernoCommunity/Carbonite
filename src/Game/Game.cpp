@@ -2,7 +2,7 @@
 //	Created by MarcasRealAccount on 17. Oct. 2020
 //
 
-#include "Game/Game.h"
+#include "Game.h"
 #include "Engine/Application.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
