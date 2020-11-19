@@ -6,6 +6,10 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
+
+template <typename T>
+using EnumVector = std::vector<std::pair<T, std::string>>;
 
 namespace gp1 {
 
@@ -40,6 +44,41 @@ namespace gp1 {
 			// Get T value of a config.
 			template <typename T>
 			T GetConfigTyped(const std::string& key, T def);
+			// Sets a config value with an enum value name.
+			template <typename T>
+			void SetConfigEnum(const std::string& key, T value, const EnumVector<T>& enumNames) {
+				auto itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->first == value) {
+						SetConfig(key, itr->second);
+						break;
+					}
+					itr++;
+				}
+			}
+
+			// Gets the element T that the config's value was the same as.
+			template <typename T>
+			T GetConfigEnum(const std::string& key, T def, const EnumVector<T>& enumNames) {
+				auto itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->first == def) {
+						break;
+					}
+					itr++;
+				}
+				if (itr == enumNames.end()) return def;
+
+				const std::string& configValue = GetConfig(key, itr->second);
+
+				itr = enumNames.begin();
+				while (itr != enumNames.end()) {
+					if (itr->second == configValue)
+						return itr->first;
+					itr++;
+				}
+				return def;
+			}
 
 			// Get the key.
 			const std::string& GetKey() const;

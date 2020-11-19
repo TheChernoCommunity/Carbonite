@@ -8,6 +8,8 @@
 
 namespace gp1 {
 
+	extern EnumVector<UniformType> UniformTypeNames;
+
 	std::unordered_map<std::string, Shader*> Shader::m_LoadedShaders;
 
 	Shader::Shader(const std::string& id)
@@ -72,8 +74,7 @@ namespace gp1 {
 		if (pShaderUniforms) {
 			auto shaderUniforms = pShaderUniforms->GetConfigs();
 			for (auto uniform : shaderUniforms) {
-				uint32_t type = pShaderUniforms->GetConfigTyped<uint32_t>(uniform.first, 0);
-				this->m_Uniforms.insert({ uniform.first, { static_cast<UniformType>(type), 0 } });
+				this->m_Uniforms.insert({ uniform.first, { pShaderUniforms->GetConfigEnum(uniform.first, UniformType::FLOAT, UniformTypeNames), 0 } });
 			}
 		}
 		delete shaderConfig;
@@ -132,5 +133,24 @@ namespace gp1 {
 		} else
 			this->m_Shader->m_Uniforms.insert({ id, { type, location } });
 	}
+
+	// OH GOD NOOOOO NOT AGAIN!
+	EnumVector<UniformType> UniformTypeNames = {
+		{ UniformType::FLOAT, "Float" },
+		{ UniformType::FLOAT_VEC2, "FVec2" },
+		{ UniformType::FLOAT_VEC3, "FVec3" },
+		{ UniformType::FLOAT_VEC4, "FVec4" },
+		{ UniformType::INT, "Int" },
+		{ UniformType::INT_VEC2, "IVec2" },
+		{ UniformType::INT_VEC3, "IVec3" },
+		{ UniformType::INT_VEC4, "IVec4" },
+		{ UniformType::UINT, "UInt" },
+		{ UniformType::UINT_VEC2, "UVec2" },
+		{ UniformType::UINT_VEC3, "UVec3" },
+		{ UniformType::UINT_VEC4, "UVec4" },
+		{ UniformType::FLOAT_MAT2, "FMat2" },
+		{ UniformType::FLOAT_MAT3, "FMat3" },
+		{ UniformType::FLOAT_MAT4, "FMat4" }
+	};
 
 } // namespace gp1
