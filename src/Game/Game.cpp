@@ -7,6 +7,7 @@
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Renderer/DebugRenderer.h"
+#include "Engine/Utility/Locale/LocaleManager.h"
 
 namespace gp1 {
 
@@ -16,6 +17,13 @@ namespace gp1 {
 
 	Game::Game()
 		: m_Logger("Game"), Application() {
+
+		std::string message = locale::LocaleManager::GetLocalizedString("hello");
+		m_Logger.LogDebug("%s", message.c_str());
+		locale::LocaleManager::SetLocalization("no-nb");
+		message = locale::LocaleManager::GetLocalizedString("hello");
+		m_Logger.LogDebug("%s", message.c_str());
+		locale::LocaleManager::SetLocalization("this-does-not-exist");
 
 		// Load the sources
 		TestWAV = AudioSource::LoadFromFile("Sounds/TestWAV.wav");
