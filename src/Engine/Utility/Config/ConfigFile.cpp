@@ -6,6 +6,7 @@
 #include "Engine/Utility/Config/ConfigFile.h"
 #include "Engine/Utility/Config/ConfigManager.h"
 
+#include <string_view>
 #include <stdint.h>
 #include <filesystem>
 
@@ -13,10 +14,10 @@ namespace gp1 {
 
 	namespace config {
 
-		std::string ParsableToString(const std::string& str) {
+		std::string ParsableToString(const std::string_view& str) {
 			uint64_t start = str.find_first_not_of(' ');
 			uint64_t end = str.find_last_not_of(' ');
-			std::string output = str.substr(start, end + 1 - start);
+			std::string output = std::string(str.substr(start, end + 1 - start));
 
 			start = output.find_first_not_of('"');
 			end = output.find_last_not_of('"');
@@ -102,64 +103,60 @@ namespace gp1 {
 			FILE* file = fopen((this->GetKey() + ".ini").c_str(), "r");
 			if (file) {
 				fseek(file, 0, SEEK_END);
-				uint64_t length = (uint64_t)ftell(file);
-				if (length == 0) {
+				std::string str = std::string(static_cast<uint64_t>(ftell(file)), '\0');
+				if (str.length() == 0) {
 					fclose(file);
 					return;
 				}
-				char* buf = new char[length];
 				fseek(file, 0, SEEK_SET);
-				length = fread(buf, sizeof(char), length, file);
-				buf[length] = '\0';
+				str.resize(fread(str.data(), sizeof(char), str.length(), file), '\0');
 				fclose(file);
 
 				ConfigSection* currentSection = this;
 				uint64_t start;
-				for (uint64_t i = 0; i < length; i++) {
-					char c = buf[i];
+				for (uint64_t i = 0; i < str.length(); i++) {
+					char c = str[i];
 					switch (c) {
 					case ';':
 						i++;
-						while (i < length && buf[i] != '\n') i++;
+						while (i < str.length() && str[i] != '\n') i++;
 						break;
 					case '[':
 						i++;
 						start = i;
-						while (i < length && buf[i] != ']') i++;
-						currentSection = GetOrCreateSection(ParsableToString(std::string(buf + start, i - start)));
-						while (i < length && buf[i] != '\n') i++;
+						while (i < str.length() && str[i] != ']') i++;
+						currentSection = GetOrCreateSection(ParsableToString(std::string_view(str).substr(start, i - start)));
+						while (i < str.length() && str[i] != '\n') i++;
 						break;
 					case '\n':
 						break;
 					default:
 						start = i;
 						bool backslash = false;
-						while (i < length) {
-							if (buf[i] == '\\')
+						while (i < str.length()) {
+							if (str[i] == '\\')
 								backslash = true;
 							i++;
-							if (buf[i] == '=' && !backslash)
+							if (str[i] == '=' && !backslash)
 								break;
 							backslash = false;
 						}
-						std::string key = ParsableToString(std::string(buf + start, i - start));
+						std::string key = ParsableToString(std::string_view(str).substr(start, i - start));
 						i++;
 						start = i;
 						backslash = false;
-						while (i < length) {
-							if (buf[i] == '\\')
+						while (i < str.length()) {
+							if (str[i] == '\\')
 								backslash = true;
 							i++;
-							if (buf[i] == '\n' && !backslash)
+							if (str[i] == '\n' && !backslash)
 								break;
 							backslash = false;
 						}
-						std::string value = ParsableToString(std::string(buf + start, i - start));
+						std::string value = ParsableToString(std::string_view(str).substr(start, i - start));
 						currentSection->m_Configs.insert({ key, value });
 					}
 				}
-
-				delete[] buf;
 			}
 		}
 

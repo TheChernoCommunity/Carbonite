@@ -18,6 +18,8 @@
 
 #include "Engine/Audio/AudioCore.h"
 
+#include "Engine/Utility/Locale/LocaleManager.h"
+
 namespace gp1 {
 
 	TestEntity::TestEntity()
@@ -53,6 +55,7 @@ namespace gp1 {
 	}
 
 	Application::Application() {
+		locale::LocaleManager::SetLocalization("en-us");
 		Logger::Init();
 		AudioCore::Init();
 		m_Window.Init();
