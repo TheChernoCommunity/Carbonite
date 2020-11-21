@@ -26,9 +26,14 @@ function library( name )
 		'src/%{prj.name}/**.h',
 	}
 
-	defines
-	{
-		"AL_LIBTYPE_STATIC"
+	vpaths {
+		-- For some reason, the token '%{prj.name}' doesn't work with vpaths
+		[ 'Header Files/*' ] = 'include/' .. name .. '/*',
+		[ 'Source Files/*' ] = 'src/' .. name .. '/*',
+	}
+
+	defines {
+		"AL_LIBTYPE_STATIC",
 	}
 
 	filter 'system:macosx or ios'
