@@ -23,7 +23,7 @@ filter 'configurations:Release'
 
 filter 'system:windows'
 	toolset 'msc'
-	defines { 'NOMINMAX' }
+	defines { 'NOMINMAX', '_CRT_SECURE_NO_WARNINGS' }
 
 filter 'system:not windows'
 	toolset 'gcc'

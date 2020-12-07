@@ -5,22 +5,26 @@
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
 
-namespace gp1 {
-
-	void Scene::AttachEntity(Entity* entity) {
+namespace gp1::scene
+{
+	void Scene::AttachEntity(Entity* entity)
+	{
 		if (entity->m_Scene)
 			entity->m_Scene->DetachEntity(entity);
 		this->m_Entities.push_back(entity);
 		entity->m_Scene = this;
 	}
 
-	void Scene::DetachEntity(Entity* entity) {
+	void Scene::DetachEntity(Entity* entity)
+	{
 		if (entity->m_Scene != this)
 			return;
 
 		auto itr = this->m_Entities.begin();
-		while (itr != this->m_Entities.end()) {
-			if (*itr == entity) {
+		while (itr != this->m_Entities.end())
+		{
+			if (*itr == entity)
+			{
 				this->m_Entities.erase(itr);
 				entity->m_Scene = nullptr;
 				break;
@@ -29,18 +33,22 @@ namespace gp1 {
 		}
 	}
 
-	void Scene::SetMainCamera(Camera* camera) {
-		if (reinterpret_cast<Entity*>(camera)->m_Scene == this) {
+	void Scene::SetMainCamera(Camera* camera)
+	{
+		if (reinterpret_cast<Entity*>(camera)->m_Scene == this)
+		{
 			this->m_MainCamera = camera;
 		}
 	}
 
-	Camera* Scene::GetMainCamera() {
+	Camera* Scene::GetMainCamera()
+	{
 		return this->m_MainCamera;
 	}
 
-	const std::vector<Entity*>& Scene::GetEntities() {
+	const std::vector<Entity*>& Scene::GetEntities()
+	{
 		return this->m_Entities;
 	}
 
-} // namespace gp1
+} // namespace gp1::scene

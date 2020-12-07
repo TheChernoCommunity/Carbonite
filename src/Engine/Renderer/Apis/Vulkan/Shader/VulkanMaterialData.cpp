@@ -1,19 +1,15 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanMaterialData.h"
 #include "Engine/Renderer/Shader/Shader.h"
 
-namespace gp1 {
-
-	VulkanMaterialData::VulkanMaterialData(Material* material)
-		: MaterialData(material) {}
+namespace gp1::renderer::apis::vulkan::shader
+{
+	VulkanMaterialData::VulkanMaterialData(renderer::shader::Material* material)
+	    : VulkanRendererData(material) {}
 
 	void VulkanMaterialData::CleanUp() {}
 
-	RendererType VulkanMaterialData::GetRendererType() const {
-		return RendererType::OPENGL;
-	}
-
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::shader

@@ -1,25 +1,29 @@
-//	
+//
 //	Created by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Renderer.h"
+
+#include "Engine/Renderer/RendererData.h"
 
 #include <stdint.h>
+#include <type_traits>
 #include <vector>
 
-namespace gp1 {
-
-	enum class VertexAttribIndex : uint32_t {
-		POSITION = 0,
-		NORMAL = 1,
-		UV = 2,
-		SSBO_INDEX = 3,
+namespace gp1::renderer::mesh
+{
+	enum class VertexAttribIndex : uint32_t
+	{
+		POSITION      = 0,
+		NORMAL        = 1,
+		UV            = 2,
+		SSBO_INDEX    = 3,
 		JOINT_INDICES = 3,
 		JOINT_WEIGHTS = 4
 	};
 
-	enum class RenderMode : uint32_t {
+	enum class RenderMode : uint32_t
+	{
 		POINTS,
 		LINE_STRIP,
 		LINE_LOOP,
@@ -34,11 +38,14 @@ namespace gp1 {
 		PATCHES
 	};
 
-	struct MeshData;
-
-	struct Mesh {
+	struct Mesh : public Data
+	{
 	public:
-		virtual ~Mesh();
+		template <typename T>
+		Mesh(T* ptr)
+		    : Data(ptr)
+		{
+		}
 
 		// Mark this mesh dirty for recreation.
 		void MarkDirty();
@@ -52,49 +59,16 @@ namespace gp1 {
 		// Is the mesh dynamic.
 		bool IsDynamic();
 
-		// Get this mesh's data.
-		MeshData* GetMeshData(Renderer* renderer);
-
-		friend MeshData;
-
-	private:
-		// Create the custom mesh data.
-		virtual MeshData* CreateCustomMeshData(Renderer* renderer) = 0;
-
 	public:
-		std::vector<uint32_t> m_Indices;	// This mesh's indices.
+		std::vector<uint32_t> m_Indices; // This mesh's indices.
 
-		RenderMode m_RenderMode = RenderMode::TRIANGLES;	// The render mode.
-		float m_LineWidth = 1.0f;							// The line width of this mesh if rendered with points or lines.
+		RenderMode m_RenderMode = RenderMode::TRIANGLES; // The render mode.
+		float      m_LineWidth  = 1.0f;                  // The line width of this mesh if rendered with points or lines.
 
 	protected:
-		bool m_Dirty = true;		// Should this mesh be recreated.
-		bool m_Editable = true;		// Is this mesh editable.
-		bool m_IsDynamic = false;	// Is this mesh dynamic. (i.e. should the vertices and indices be kept after initialization of GL data)
-
-	private:
-		MeshData* m_MeshData = nullptr;	// The renderer specific meshdata.
+		bool m_Dirty     = true;  // Should this mesh be recreated.
+		bool m_Editable  = true;  // Is this mesh editable.
+		bool m_IsDynamic = false; // Is this mesh dynamic. (i.e. should the vertices and indices be kept after initialization of the GL data)
 	};
 
-	struct MeshData {
-	public:
-		MeshData(Mesh* mesh);
-		virtual ~MeshData();
-
-		// Get the renderer type for this mesh data.
-		virtual RendererType GetRendererType() const = 0;
-		// Clean up this mesh data.
-		virtual void CleanUp() = 0;
-
-	protected:
-		// Get the mesh this mesh data is part of.
-		template <typename T>
-		T* GetMesh() const {
-			return reinterpret_cast<T*>(this->m_Mesh);
-		}
-
-	private:
-		Mesh* m_Mesh;
-	};
-
-} // namespace gp1
+} // namespace gp1::renderer::mesh

@@ -1,16 +1,15 @@
-//	
+//
 //	Created by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #pragma once
 
 #include <stdint.h>
 
-namespace gp1 {
-
-	class Material;
-
-	enum class UniformType : uint32_t {
+namespace gp1::renderer::shader
+{
+	enum class UniformType : uint32_t
+	{
 		FLOAT,
 		FLOAT_VEC2,
 		FLOAT_VEC3,
@@ -25,18 +24,22 @@ namespace gp1 {
 		UINT_VEC4,
 		FLOAT_MAT2,
 		FLOAT_MAT3,
-		FLOAT_MAT4
+		FLOAT_MAT4,
+		TEXTURE_2D,
+		TEXTURE_2D_ARRAY,
+		TEXTURE_3D,
+		TEXTURE_CUBE_MAP
 	};
 
 	template <typename T>
-	struct Uniform {
+	struct Uniform
+	{
 	public:
-		Uniform(T defaultValue) : m_Value(defaultValue) {}
-
-		friend Material;
+		Uniform(T defaultValue)
+		    : m_Value(defaultValue) {}
 
 	public:
-		T m_Value;			// The value of this uniform.
+		T m_Value; // The value of this uniform.
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::shader

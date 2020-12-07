@@ -1,7 +1,7 @@
-//	
+//
 //	Created by MarcasRealAccount on 8. Oct. 2020
 //	Edited by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #pragma once
 
@@ -10,31 +10,29 @@
 #include <string>
 #include <unordered_map>
 
-namespace gp1 {
+namespace gp1::config
+{
+	class ConfigFile;
 
-	namespace config {
+	class ConfigManager
+	{
+	public:
+		// Saves all ConfigFiles.
+		static void SaveConfigs();
 
-		class ConfigFile;
+		// Get or create a ConfigFile that can be used to store configs.
+		static ConfigFile* GetConfigFile(const std::string& id);
+		// Get or create a ConfigFile at a custom file path instead of "Configs/".
+		static ConfigFile* GetConfigFilePath(const std::string& filePath);
 
-		class ConfigManager {
-		public:
-			// Saves all ConfigFiles.
-			static void SaveConfigs();
+		friend ConfigFile;
 
-			// Get or create a ConfigFile that can be used to store configs.
-			static ConfigFile* GetConfigFile(const std::string& id);
-			// Get or create a ConfigFile at a custom file path instead of "Configs/".
-			static ConfigFile* GetConfigFilePath(const std::string& filePath);
+	private:
+		// Removes a config file.
+		static void RemoveConfigFile(ConfigFile* configFile);
 
-			friend ConfigFile;
-		private:
-			// Removes a config file.
-			static void RemoveConfigFile(ConfigFile* configFile);
+	private:
+		static std::unordered_map<std::string, ConfigFile*> s_ConfigFiles; // Already created config files.
+	};
 
-		private:
-			static std::unordered_map<std::string, ConfigFile*> ConfigFiles;	// Already created config files.
-		};
-
-	} // namespace config
-
-} // namespace gp1
+} // namespace gp1::config

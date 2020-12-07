@@ -1,5 +1,6 @@
 //
 //	Created by Sausty on Nov. 11. 2020
+//	Edited by MarcasRealAccount on 7. Dec. 2020
 //
 //	Description:
 //		Functions used to initialise OpenAL device and context, must be initialized before using any audio sources
@@ -7,7 +8,7 @@
 
 #include "Engine/Audio/ALHelpers.h"
 
-namespace gp1
+namespace gp1::audio
 {
 	bool CheckALError(Logger logger)
 	{
@@ -43,8 +44,8 @@ namespace gp1
 
 	bool CheckALCError(Logger logger)
 	{
-		ALCcontext* ctx = alcGetCurrentContext();
-		ALCdevice* device = alcGetContextsDevice(ctx);
+		ALCcontext* ctx    = alcGetCurrentContext();
+		ALCdevice*  device = alcGetContextsDevice(ctx);
 
 		ALCenum error = alcGetError(device);
 		if (error != ALC_NO_ERROR)
@@ -79,7 +80,7 @@ namespace gp1
 	bool InitAL(Logger logger)
 	{
 		const ALCchar* defaultDeviceString = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
-		ALCdevice* device = alcOpenDevice(defaultDeviceString);
+		ALCdevice*     device              = alcOpenDevice(defaultDeviceString);
 
 		if (!device)
 		{
@@ -101,7 +102,7 @@ namespace gp1
 	bool ShutdownAL(Logger logger)
 	{
 		ALCcontext* context = alcGetCurrentContext();
-		ALCdevice* device = alcGetContextsDevice(context);
+		ALCdevice*  device  = alcGetContextsDevice(context);
 
 		if (!alcMakeContextCurrent(NULL))
 		{
@@ -119,4 +120,5 @@ namespace gp1
 
 		return true;
 	}
-}
+
+} // namespace gp1::audio

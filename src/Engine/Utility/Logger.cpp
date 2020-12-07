@@ -3,105 +3,122 @@
 //	Edited by MarcasRealAccount on 17. Oct. 2020
 //
 
-#include <ctime>
 #include <cstring>
-#include <stdio.h>
-#include <stdarg.h>
+#include <ctime>
 #include <filesystem>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "Engine/Utility/Logger.h"
 
-namespace gp1 {
+namespace gp1
+{
+	std::unordered_set<Severity> Logger::s_DisabledSeverities;
+	std::vector<std::string>     Logger::s_Buffer;
 
-	std::unordered_set<Severity> Logger::m_DisabledSeverities;
-	std::vector<std::string> Logger::m_Buffer;
-
-	bool Logger::m_LogToFile = true;
-	const char* Logger::m_PreviousFile = "logs/log-previous.txt";
-	const char* Logger::m_CurrentFile = "logs/log-current.txt";
+	bool Logger::s_LogToFile = true;
+#ifdef _DEBUG
+	bool Logger::s_LogToConsole = true;
+#else
+	bool Logger::s_LogToConsole = false;
+#endif
+	const char* Logger::s_PreviousFile = "logs/log-previous.txt";
+	const char* Logger::s_CurrentFile  = "logs/log-current.txt";
 
 	Logger::Logger(const char* name)
-		: m_Name(name) {}
+	    : m_Name(name) {}
 
-	void Logger::Log(Severity severity, const char* format, ...) {
+	void Logger::Log(Severity severity, const char* format, ...)
+	{
 		va_list args;
 		va_start(args, format);
 		Logger::Log(this->m_Name, severity, format, args);
 		va_end(args);
 	}
 
-	void Logger::LogTrace(const char* format, ...) {
+	void Logger::LogTrace(const char* format, ...)
+	{
 		va_list args;
 		va_start(args, format);
 		Logger::Log(this->m_Name, gp1::Severity::Trace, format, args);
 		va_end(args);
 	}
 
-	void Logger::LogDebug(const char* format, ...) {
+	void Logger::LogDebug(const char* format, ...)
+	{
 		va_list args;
 		va_start(args, format);
 		Logger::Log(this->m_Name, gp1::Severity::Debug, format, args);
 		va_end(args);
 	}
 
-	void Logger::LogWarning(const char* format, ...) {
+	void Logger::LogWarning(const char* format, ...)
+	{
 		va_list args;
 		va_start(args, format);
 		Logger::Log(this->m_Name, gp1::Severity::Warning, format, args);
 		va_end(args);
 	}
 
-	void Logger::LogError(const char* format, ...) {
+	void Logger::LogError(const char* format, ...)
+	{
 		va_list args;
 		va_start(args, format);
 		Logger::Log(this->m_Name, gp1::Severity::Error, format, args);
 		va_end(args);
 	}
 
-	void Logger::Init() {
-		if (std::filesystem::exists(Logger::m_CurrentFile)) {
-			if (std::filesystem::exists(Logger::m_PreviousFile)) {
-				std::filesystem::remove(Logger::m_PreviousFile);
-			}
+	void Logger::Init()
+	{
+		if (std::filesystem::exists(Logger::s_CurrentFile))
+		{
+			if (std::filesystem::exists(Logger::s_PreviousFile)) std::filesystem::remove(Logger::s_PreviousFile);
 
-			if (rename(Logger::m_CurrentFile, Logger::m_PreviousFile))
-				Logger("Logger").Log(Severity::Debug, "Failed to rename log file %s to %s", Logger::m_CurrentFile, Logger::m_PreviousFile);
+			if (rename(Logger::s_CurrentFile, Logger::s_PreviousFile))
+				Logger("Logger").Log(Severity::Debug, "Failed to rename log file %s to %s", Logger::s_CurrentFile, Logger::s_PreviousFile);
 		}
 	}
 
-	void Logger::DeInit() {
+	void Logger::DeInit()
+	{
 		Flush();
 	}
 
-	void Logger::EnableSeverity(Severity severity) {
-		Logger::m_DisabledSeverities.erase(severity);
+	void Logger::EnableSeverity(Severity severity)
+	{
+		Logger::s_DisabledSeverities.erase(severity);
 	}
 
-	void Logger::DisableSeverity(Severity severity) {
-		Logger::m_DisabledSeverities.insert(severity);
+	void Logger::DisableSeverity(Severity severity)
+	{
+		Logger::s_DisabledSeverities.insert(severity);
 	}
 
-	void Logger::Flush() {
-		if (!Logger::m_LogToFile)
-			return;
+	void Logger::Flush()
+	{
+		if (!Logger::s_LogToFile) return;
 
-		std::filesystem::path filepath{ Logger::m_CurrentFile };
+		std::filesystem::path filepath { Logger::s_CurrentFile };
 		std::filesystem::create_directories(filepath.parent_path());
 
-		FILE* file = fopen(Logger::m_CurrentFile, "a");
-		if (file) {
-			for (auto message : Logger::m_Buffer) {
+		FILE* file = fopen(Logger::s_CurrentFile, "a");
+		if (file)
+		{
+			for (auto message : Logger::s_Buffer)
 				fwrite(message.c_str(), sizeof(char), message.length(), file);
-			}
 			fclose(file);
-			Logger::m_Buffer.clear();
-		} else {
-			Logger::m_LogToFile = false;
+			Logger::s_Buffer.clear();
+		}
+		else
+		{
+			Logger::s_LogToFile = false;
 		}
 	}
 
-	uint32_t Logger::GetSeverityMaxBufferCount(Severity severity) {
-		switch (severity) {
+	uint32_t Logger::GetSeverityMaxBufferCount(Severity severity)
+	{
+		switch (severity)
+		{
 		case Severity::Debug:
 			return 50;
 		case Severity::Warning:
@@ -114,8 +131,10 @@ namespace gp1 {
 		}
 	}
 
-	const char* Logger::GetSeverityId(Severity severity) {
-		switch (severity) {
+	const char* Logger::GetSeverityId(Severity severity)
+	{
+		switch (severity)
+		{
 		case Severity::Debug:
 			return "Debug";
 		case Severity::Warning:
@@ -128,8 +147,10 @@ namespace gp1 {
 		}
 	}
 
-	const char* Logger::GetSeverityConsoleColor(Severity severity) {
-		switch (severity) {
+	const char* Logger::GetSeverityConsoleColor(Severity severity)
+	{
+		switch (severity)
+		{
 		case Severity::Debug:
 			return "\033[0;36m";
 		case Severity::Warning:
@@ -142,13 +163,13 @@ namespace gp1 {
 		}
 	}
 
-	void Logger::Log(const char* name, Severity severity, const char* format, va_list args) {
-		auto itr = Logger::m_DisabledSeverities.find(severity);
-		if (itr != Logger::m_DisabledSeverities.end())
-			return;
+	void Logger::Log(const char* name, Severity severity, const char* format, va_list args)
+	{
+		auto itr = Logger::s_DisabledSeverities.find(severity);
+		if (itr != Logger::s_DisabledSeverities.end()) return;
 
 		uint32_t length = vsnprintf(nullptr, 0, format, args) + 1;
-		char* buf = new char[length];
+		char*    buf    = new char[length];
 		vsnprintf(buf, length, format, args);
 
 		std::string message(buf);
@@ -157,47 +178,46 @@ namespace gp1 {
 		std::vector<std::string> messages;
 
 		uint32_t lastIndex = 0;
-		for (uint32_t i = 0; i < message.length(); i++) {
-			if (message[i] == '\n') {
+		for (uint32_t i = 0; i < message.length(); i++)
+		{
+			if (message[i] == '\n')
+			{
 				messages.push_back(message.substr(lastIndex, i - lastIndex));
 				lastIndex = i + 1;
-			} else if (i == message.length() - 1) {
+			}
+			else if (i == message.length() - 1)
+			{
 				messages.push_back(message.substr(lastIndex));
 			}
 		}
 
-		for (std::string msg : messages) {
-			std::string logMsg = "";
+		for (std::string msg : messages)
+		{
+			std::string logMsg     = "";
 			std::string consoleMsg = "";
 
 			constexpr uint32_t timeBufferSize = 16;
-			std::time_t currentTime = std::time(nullptr);
-			char timeBuffer[timeBufferSize];
+			std::time_t        currentTime    = std::time(nullptr);
+			char               timeBuffer[timeBufferSize];
 
-			if (Logger::m_LogToFile)
-				logMsg += "[" + std::string(name) + "]";
-			consoleMsg += "[" + std::string(name) + "]";
+			if (Logger::s_LogToFile) logMsg += "[" + std::string(name) + "]";
+			if (Logger::s_LogToConsole) consoleMsg += "[" + std::string(name) + "]";
 
-			if (std::strftime(timeBuffer, timeBufferSize, "[%H:%M:%S]", std::localtime(&currentTime))) {
-				if (Logger::m_LogToFile)
-					logMsg += timeBuffer;
-				consoleMsg += timeBuffer;
+			if (std::strftime(timeBuffer, timeBufferSize, "[%H:%M:%S]", std::localtime(&currentTime)))
+			{
+				if (Logger::s_LogToFile) logMsg += timeBuffer;
+				if (Logger::s_LogToConsole) consoleMsg += timeBuffer;
 			}
 
-			if (Logger::m_LogToFile)
-				logMsg += " " + std::string(Logger::GetSeverityId(severity)) + ": " + msg + "\n";
-			consoleMsg += " " + std::string(Logger::GetSeverityConsoleColor(severity)) + std::string(Logger::GetSeverityId(severity)) + "\033[0m: " + msg + "\n";
+			if (Logger::s_LogToFile) logMsg += " " + std::string(Logger::GetSeverityId(severity)) + ": " + msg + "\n";
+			if (Logger::s_LogToConsole) consoleMsg += " " + std::string(Logger::GetSeverityConsoleColor(severity)) + std::string(Logger::GetSeverityId(severity)) + "\033[0m: " + msg + "\n";
 
-			if (Logger::m_LogToFile)
-				Logger::m_Buffer.push_back(logMsg);
-			printf("%s", consoleMsg.c_str());
+			if (Logger::s_LogToFile) Logger::s_Buffer.push_back(logMsg);
+			if (Logger::s_LogToConsole) printf("%s", consoleMsg.c_str());
 		}
 
-		if (Logger::m_LogToFile) {
-			if (Logger::m_Buffer.size() > Logger::GetSeverityMaxBufferCount(severity)) {
-				Flush();
-			}
-		}
+		if (Logger::s_LogToFile)
+			if (Logger::s_Buffer.size() > Logger::GetSeverityMaxBufferCount(severity)) Flush();
 	}
 
-}
+} // namespace gp1

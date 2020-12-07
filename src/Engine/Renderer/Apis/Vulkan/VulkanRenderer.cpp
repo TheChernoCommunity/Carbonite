@@ -1,61 +1,93 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
 //
 
 #include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
-#include "Engine/Renderer/Apis/Vulkan/VulkanDebugRenderer.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanSkeletalMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticVoxelMeshData.h"
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanMaterialData.h"
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderData.h"
+#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture2DArrayData.h"
+#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture2DData.h"
+#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture3DData.h"
+#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTextureCubeMapData.h"
+#include "Engine/Renderer/Apis/Vulkan/VulkanDebugRenderer.h"
 
-namespace gp1 {
+namespace gp1::renderer::apis::vulkan
+{
+	VulkanRenderer::VulkanRenderer(window::Window* window)
+	    : Renderer(window) {}
 
-	VulkanRenderer::VulkanRenderer(Window* window)
-		: Renderer(window) {}
-
-	RendererType VulkanRenderer::GetRendererType() const {
+	RendererType VulkanRenderer::GetRendererType() const
+	{
 		return RendererType::VULKAN;
 	}
 
-	DebugRenderer* VulkanRenderer::CreateDebugRenderer() {
-		return new VulkanDebugRenderer(this);
+	renderer::debug::DebugRenderer* VulkanRenderer::CreateDebugRenderer()
+	{
+		return new debug::VulkanDebugRenderer(this);
 	}
 
-	MeshData* VulkanRenderer::CreateSkeletalMeshData(Mesh* mesh) {
-		return new VulkanSkeletalMeshData(mesh);
+	RendererData* VulkanRenderer::CreateRendererData(Data* data)
+	{
+		if (!data) return nullptr;
+
+		const type_info& type = data->GetType();
+		if (type == typeid(renderer::mesh::SkeletalMesh))
+		{
+			return new mesh::VulkanSkeletalMeshData(reinterpret_cast<renderer::mesh::SkeletalMesh*>(data));
+		}
+		else if (type == typeid(renderer::mesh::StaticMesh))
+		{
+			return new mesh::VulkanStaticMeshData(reinterpret_cast<renderer::mesh::StaticMesh*>(data));
+		}
+		else if (type == typeid(renderer::mesh::StaticVoxelMesh))
+		{
+			return new mesh::VulkanStaticVoxelMeshData(reinterpret_cast<renderer::mesh::StaticVoxelMesh*>(data));
+		}
+		else if (type == typeid(renderer::shader::Shader))
+		{
+			return new shader::VulkanShaderData(reinterpret_cast<renderer::shader::Shader*>(data));
+		}
+		else if (type == typeid(renderer::shader::Material))
+		{
+			return new shader::VulkanMaterialData(reinterpret_cast<renderer::shader::Material*>(data));
+		}
+		else if (type == typeid(renderer::texture::Texture2D))
+		{
+			return new texture::VulkanTexture2DData(reinterpret_cast<renderer::texture::Texture2D*>(data));
+		}
+		else if (type == typeid(renderer::texture::Texture2DArray))
+		{
+			return new texture::VulkanTexture2DArrayData(reinterpret_cast<renderer::texture::Texture2DArray*>(data));
+		}
+		else if (type == typeid(renderer::texture::Texture3D))
+		{
+			return new texture::VulkanTexture3DData(reinterpret_cast<renderer::texture::Texture3D*>(data));
+		}
+		else if (type == typeid(renderer::texture::TextureCubeMap))
+		{
+			return new texture::VulkanTextureCubeMapData(reinterpret_cast<renderer::texture::TextureCubeMap*>(data));
+		}
+
+		return nullptr;
 	}
 
-	MeshData* VulkanRenderer::CreateStaticMeshData(Mesh* mesh) {
-		return new VulkanStaticMeshData(mesh);
+	void VulkanRenderer::InitRenderer()
+	{
 	}
 
-	MeshData* VulkanRenderer::CreateStaticVoxelMeshData(Mesh* mesh) {
-		return new VulkanStaticVoxelMeshData(mesh);
+	void VulkanRenderer::DeInitRenderer()
+	{
 	}
 
-	ShaderData* VulkanRenderer::CreateShaderData(Shader* shader) {
-		return new VulkanShaderData(shader);
-	}
-
-	MaterialData* VulkanRenderer::CreateMaterialData(Material* material) {
-		return new VulkanMaterialData(material);
-	}
-
-	void VulkanRenderer::InitRenderer() {
-
-	}
-
-	void VulkanRenderer::DeInitRenderer() {
-
-	}
-
-	void VulkanRenderer::RenderScene(Scene* scene, uint32_t width, uint32_t height) {
+	void VulkanRenderer::RenderScene(scene::Scene* scene, uint32_t width, uint32_t height)
+	{
 		_CRT_UNUSED(scene);
 		_CRT_UNUSED(width);
 		_CRT_UNUSED(height);
 	}
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan

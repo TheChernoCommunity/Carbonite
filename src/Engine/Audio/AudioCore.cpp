@@ -1,5 +1,6 @@
 //
 //	Created by Sausty on Nov. 11. 2020
+//	Edited by MarcasRealAccount on 7. Dec. 2020.
 //
 //	Description:
 //		Implementation of AudioCore.h
@@ -8,7 +9,7 @@
 #include "Engine/Audio/AudioCore.h"
 #include "Engine/Audio/Audio.h"
 
-namespace gp1
+namespace gp1::audio
 {
 	Logger AudioCore::s_AudioLogger = Logger { "AudioCore" };
 
@@ -22,4 +23,5 @@ namespace gp1
 	{
 		ShutdownAL(s_AudioLogger);
 	}
-}
+
+} // namespace gp1::audio
