@@ -1,26 +1,22 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
+
+#include "Engine/Renderer/Apis/Vulkan/VulkanRendererData.h"
 #include "Engine/Renderer/Shader/Shader.h"
-#include "Engine/Utility/Logger.h"
 
-namespace gp1 {
-
-	class VulkanRenderer;
-
-	class VulkanShaderData : public ShaderData {
+namespace gp1::renderer::apis::vulkan::shader
+{
+	class VulkanShaderData : public VulkanRendererData
+	{
 	public:
-		VulkanShaderData(Shader* shader);
+		VulkanShaderData(renderer::shader::Shader* shader);
 
-		virtual RendererType GetRendererType() const override;
 		virtual void CleanUp() override;
 
 		friend VulkanRenderer;
-
-	private:
-		static Logger m_Logger;	// The shader's logger.
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::shader

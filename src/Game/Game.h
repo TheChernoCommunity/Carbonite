@@ -5,33 +5,32 @@
 #pragma once
 
 #include <Engine/Application.h>
-#include <Engine/Utility/Logger.h>
-#include <Engine/Input/InputHandler.h>
 #include <Engine/Audio/Audio.h>
+#include <Engine/Input/InputHandler.h>
+#include <Engine/Utility/Logger.h>
 
-namespace gp1 {
+using namespace gp1;
 
-	class Game : public gp1::Application
-	{
-	public:
-		Game();
+class Game : public gp1::Application
+{
+public:
+	Game();
 
-	private:
-		void LookCallback(input::AxisCallbackData data);
+private:
+	void LookCallback(input::AxisCallbackData data);
 
-		void OpenMenuCallback(input::ButtonCallbackData data);
-		void CloseMenuCallback(input::ButtonCallbackData data);
+	void OpenMenuCallback(input::ButtonCallbackData data);
+	void CloseMenuCallback(input::ButtonCallbackData data);
 
-		void PlayMP3Callback(input::ButtonCallbackData data);
-		void PlayWAVCallback(input::ButtonCallbackData data);
-		void PlayFLACCallback(input::ButtonCallbackData data);
-	private:
-		Logger m_Logger;
+	void PlayMP3Callback(input::ButtonCallbackData data);
+	void PlayWAVCallback(input::ButtonCallbackData data);
+	void PlayFLACCallback(input::ButtonCallbackData data);
 
-		// Audio Data
-		AudioSource TestMP3;
-		AudioSource TestWAV;
-		AudioSource TestFLAC;
-	};
+private:
+	Logger m_Logger;
 
-} // namespace gp1
+	// Audio Data
+	audio::AudioSource TestMP3;
+	audio::AudioSource TestWAV;
+	audio::AudioSource TestFLAC;
+};

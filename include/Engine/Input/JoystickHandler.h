@@ -1,6 +1,6 @@
-//	
+//
 //	Created by MarcasRealAccount on 5. Nov. 2020
-//	
+//
 
 #pragma once
 
@@ -10,32 +10,36 @@
 
 struct GLFWgamepadstate;
 
-namespace gp1 {
-
-	class Window;
-
-	namespace input {
-
-		struct JoystickGamepadInput {
-			bool m_Connected = false;
-			bool m_IsGamepad = false;
-			unsigned char* m_Buttons = nullptr;
-			int32_t m_NumButtons = 0;
+namespace gp1
+{
+	namespace input
+	{
+		struct JoystickGamepadInput
+		{
+		public:
+			bool           m_Connected  = false;   // Is this joystick connected.
+			bool           m_IsGamepad  = false;   // Is this joystick a gamepad.
+			unsigned char* m_Buttons    = nullptr; // The buttons this joystick has.
+			int32_t        m_NumButtons = 0;       // The number of buttons this joystick has.
 		};
 
-		class JoystickHandler {
+		class JoystickHandler
+		{
 		public:
+			// Initialize the JoystickHandler.
 			static void Init();
+			// DeInitialize the JoystickHandler.
 			static void DeInit();
+			// Update the JoystickHandler.
 			static void OnUpdate();
 
 		private:
+			// The joystick callback.
 			static void JoystickCallback(int jid, int event);
 
 		private:
-			static JoystickGamepadInput* m_Joysticks;
-
-			static Logger m_Logger;
+			static JoystickGamepadInput* s_Joysticks; // The joysticks this JoystickHandler holds.
+			static Logger                s_Logger;    // The logger that this JoystickHandler uses to report errors.
 		};
 
 	} // namespace input

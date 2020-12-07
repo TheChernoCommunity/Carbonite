@@ -1,59 +1,63 @@
 #include "Engine/Utility/Locale/LocaleManager.h"
-#include "Engine/Utility/Config/ConfigManager.h"
 #include "Engine/Utility/Config/ConfigFile.h"
+#include "Engine/Utility/Config/ConfigManager.h"
 
-namespace gp1 {
+namespace gp1::locale
+{
+	std::string                                  LocaleManager::s_LanguageCode;
+	std::unordered_map<std::string, std::string> LocaleManager::s_Localizations;
 
-	namespace locale {
+	void AddConfigsToMap(config::ConfigSection* section, std::unordered_map<std::string, std::string>& map, const std::string& currentSectionName = "")
+	{
+		if (section == nullptr)
+			return;
 
-		std::string LocaleManager::m_LanguageCode;
-		std::unordered_map<std::string, std::string> LocaleManager::m_Localizations;
-
-		void AddConfigsToMap(config::ConfigSection* section, std::unordered_map<std::string, std::string>& map, const std::string& currentSectionName = "") {
-			if (section == nullptr)
-				return;
-
-			// Loop through all configs in the section and insert them into the map.
-			auto configs = section->GetConfigs();
-			for (auto& config : configs) {
-				map.insert({ currentSectionName + config.first, config.second });
-			}
-
-			// Loop through all sections in the section and add all their configs into the map.
-			auto sections = section->GetSections();
-			for (auto& section : sections) {
-				AddConfigsToMap(section.second, map, currentSectionName + section.second->GetKey() + ".");
-			}
+		// Loop through all configs in the section and insert them into the map.
+		auto configs = section->GetConfigs();
+		for (auto& config : configs)
+		{
+			map.insert({ currentSectionName + config.first, config.second });
 		}
 
-		const std::string& LocaleManager::GetLanguageCode() {
-			return LocaleManager::m_LanguageCode;
+		// Loop through all sections in the section and add all their configs into the map.
+		auto sections = section->GetSections();
+		for (auto& subSection : sections)
+		{
+			AddConfigsToMap(subSection.second, map, currentSectionName + subSection.second->GetKey() + ".");
 		}
+	}
 
-		void LocaleManager::SetLocalization(const std::string& languageCode) {
-			if (languageCode == LocaleManager::m_LanguageCode)
-				return;
+	const std::string& LocaleManager::GetLanguageCode()
+	{
+		return LocaleManager::s_LanguageCode;
+	}
 
-			// Clear the old localizations.
-			LocaleManager::m_Localizations.clear();
+	void LocaleManager::SetLocalization(const std::string& languageCode)
+	{
+		if (languageCode == LocaleManager::s_LanguageCode)
+			return;
 
-			// Load the lang file as an .ini file and add all its configs to the localizations map.
-			config::ConfigFile* config = config::ConfigManager::GetConfigFilePath("locale/" + languageCode);
-			if (config) {
-				AddConfigsToMap(config, LocaleManager::m_Localizations);
-				delete config;	// Delete the config to save ram.
-				LocaleManager::m_LanguageCode = languageCode;
-			}
+		// Clear the old localizations.
+		LocaleManager::s_Localizations.clear();
+
+		// Load the lang file as an .ini file and add all its configs to the localizations map.
+		config::ConfigFile* config = config::ConfigManager::GetConfigFilePath("locale/" + languageCode);
+		if (config)
+		{
+			AddConfigsToMap(config, LocaleManager::s_Localizations);
+			delete config; // Delete the config to save ram.
+			LocaleManager::s_LanguageCode = languageCode;
 		}
+	}
 
-		std::string LocaleManager::GetLocalizedString(const std::string& key) {
-			auto itr = LocaleManager::m_Localizations.find(key);
-			if (itr != LocaleManager::m_Localizations.end()) {
-				return itr->second;
-			}
-			return "";
+	std::string LocaleManager::GetLocalizedString(const std::string& key)
+	{
+		auto itr = LocaleManager::s_Localizations.find(key);
+		if (itr != LocaleManager::s_Localizations.end())
+		{
+			return itr->second;
 		}
+		return "";
+	}
 
-	} // namespace locale
-
-} // namespace gp1
+} // namespace gp1::locale

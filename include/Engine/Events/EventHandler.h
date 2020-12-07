@@ -8,24 +8,27 @@
 #include "Engine/Events/Event.h"
 #include "Engine/Input/InputHandler.h"
 
-namespace gp1
+namespace gp1::events
 {
 	class EventHandler
 	{
 	public:
-		template<typename T>
+		// Push an event to be handled
+		template <typename T>
 		static void PushEvent(T& e)
 		{
 			Dispatch<T>(e, input::InputHandler::HandleEvent);
 		}
 
-		template<typename T, typename F>
+		// Handle an event
+		template <typename T, typename F>
 		static void Dispatch(Event& e, const F& f)
 		{
-			if(e.GetType() == T::GetTypeS() && (e.Handled == false))
+			if (e.GetType() == T::GetTypeS() && (e.Handled == false))
 			{
 				e.Handled = f(static_cast<T&>(e));
 			}
 		}
 	};
-}
+
+} // namespace gp1::events

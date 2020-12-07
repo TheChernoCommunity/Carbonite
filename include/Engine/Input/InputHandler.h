@@ -1,6 +1,6 @@
-//	
+//
 //	Created by MarcasRealAccount on 8. Oct. 2020
-//	
+//
 
 #pragma once
 
@@ -8,21 +8,30 @@
 
 #include <unordered_map>
 
-namespace gp1 {
+namespace gp1
+{
+	namespace events
+	{
+		class Event;
+	}
 
-	class Event;
-	class Window;
+	namespace window
+	{
+		class Window;
+	}
+
 	class Application;
 
-	namespace input {
-
-		class InputHandler {
+	namespace input
+	{
+		class InputHandler
+		{
 		public:
 			// Clearas all input's.
 			static void CleanUp();
 
 			// Handles events for Input Bindings
-			static bool HandleEvent(Event& event);
+			static bool HandleEvent(events::Event& event);
 
 			// Sets the current active input group by using an InputGroups id.
 			static void SetCurrentActiveInputGroup(const std::string& id);
@@ -49,10 +58,10 @@ namespace gp1 {
 			friend Application;
 
 		private:
-			static std::unordered_map<std::string, InputGroup*> m_inputGroups;	// The InputGroups this InputHandler handles.
+			static std::unordered_map<std::string, InputGroup*> s_inputGroups; // The InputGroups this InputHandler handles.
 
-			static InputGroup* m_currentInputGroup;	// The currently active InputGroup.
-			static Window* m_Window;				// The window of this application.
+			static InputGroup*     s_currentInputGroup; // The currently active InputGroup.
+			static window::Window* s_Window;            // The window of this application.
 		};
 
 	} // namespace input

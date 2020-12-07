@@ -14,7 +14,10 @@ configurations { 'Debug', 'Release' }
 third_party_library 'glad'
 third_party_library 'glfw'
 third_party_library 'glm'
+third_party_library 'stb'
 third_party_library 'openal-soft'
+third_party_library 'dr_libs'
+third_party_library 'minimp3_s'
 library 'Engine'
 app 'Game'
 

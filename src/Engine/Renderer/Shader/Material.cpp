@@ -1,28 +1,31 @@
-//	
+//
 //	Created by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #include "Engine/Renderer/Shader/Material.h"
 #include "Engine/Renderer/Shader/Shader.h"
+#include "Engine/Renderer/Texture/Texture2DArray.h"
+#include "Engine/Renderer/Texture/Texture3D.h"
+#include "Engine/Renderer/Texture/TextureCubeMap.h"
 
 #include <glm.hpp>
 
-namespace gp1 {
+namespace gp1::renderer::shader
+{
+	Material::Material()
+	    : Data(this) {}
 
-	Material::~Material() {
-		if (this->m_MaterialData) {
-			this->m_MaterialData->CleanUp();
-			delete m_MaterialData;
-		}
-	}
-
-	void Material::SetShader(Shader* shader) {
+	void Material::SetShader(Shader* shader)
+	{
 		this->m_Shader = shader;
 		this->m_Uniforms.clear();
 
-		if (this->m_Shader) {
-			for (auto uniform : this->m_Shader->m_Uniforms) {
-				switch (uniform.second.first) {
+		if (this->m_Shader)
+		{
+			for (auto uniform : this->m_Shader->m_Uniforms)
+			{
+				switch (uniform.second.first)
+				{
 				case UniformType::FLOAT:
 				{
 					Uniform<float> uniformFloat(0.0f);
@@ -113,40 +116,43 @@ namespace gp1 {
 					this->m_Uniforms.insert({ uniform.first, uniformMat4f });
 					break;
 				}
+				case UniformType::TEXTURE_2D:
+				{
+					Uniform<texture::Texture2D*> uniformTexture2D(nullptr);
+					this->m_Uniforms.insert({ uniform.first, uniformTexture2D });
+					break;
+				}
+				case UniformType::TEXTURE_2D_ARRAY:
+				{
+					Uniform<texture::Texture2DArray*> uniformTexture2DArray(nullptr);
+					this->m_Uniforms.insert({ uniform.first, uniformTexture2DArray });
+					break;
+				}
+				case UniformType::TEXTURE_3D:
+				{
+					Uniform<texture::Texture3D*> uniformTexture3D(nullptr);
+					this->m_Uniforms.insert({ uniform.first, uniformTexture3D });
+					break;
+				}
+				case UniformType::TEXTURE_CUBE_MAP:
+				{
+					Uniform<texture::TextureCubeMap*> uniformTextureCubeMap(nullptr);
+					this->m_Uniforms.insert({ uniform.first, uniformTextureCubeMap });
+					break;
+				}
 				}
 			}
 		}
 	}
 
-	Shader* Material::GetShader() const {
+	Shader* Material::GetShader() const
+	{
 		return this->m_Shader;
 	}
 
-	MaterialData* Material::GetMaterialData(Renderer* renderer) {
-		if (!this->m_MaterialData || !renderer->IsMaterialDataUsable(this->m_MaterialData)) {
-			if (this->m_MaterialData) {
-				this->m_MaterialData->CleanUp();
-				delete this->m_MaterialData;
-			}
-			this->m_MaterialData = CreateCustomMaterialData(renderer);
-		}
-		return this->m_MaterialData;
+	const std::unordered_map<std::string, std::any>& Material::GetUniforms() const
+	{
+		return this->m_Uniforms;
 	}
 
-	MaterialData* Material::CreateCustomMaterialData(Renderer* renderer) {
-		return renderer->CreateMaterialData(this);
-	}
-
-	MaterialData::MaterialData(Material* material)
-		: m_Material(material) {}
-
-	MaterialData::~MaterialData() {
-		if (this->m_Material)
-			this->m_Material->m_MaterialData = nullptr;
-	}
-
-	const std::unordered_map<std::string, std::any>& MaterialData::GetUniforms() const {
-		return this->m_Material->m_Uniforms;
-	}
-
-} // namespace gp1
+} // namespace gp1::renderer::shader

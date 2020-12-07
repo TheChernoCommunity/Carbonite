@@ -7,27 +7,30 @@
 #include <string>
 #include <unordered_map>
 
-namespace gp1 {
+template <typename T>
+class Registry
+{
+public:
+	// Register an element to the registry.
+	static void RegisterElement(const std::string& id, T* element)
+	{
+		Registry<T>::m_Instance->m_Elements.insert({ id, element });
+	}
 
-	template <typename T>
-	class Registry {
-	public:
-		static void RegisterElement(const std::string& id, T element) {
-			Registry<T>::m_Instance->m_Elements.insert({ id, element });
+	// Get an element from the registry.
+	static const T* GetElement(const std::string& id)
+	{
+		auto itr = Registry<T>::m_Instance->m_Elements.find(id);
+		if (itr != Registry<T>::m_Instance->m_Elements.end())
+		{
+			return &itr->second;
 		}
+		return nullptr;
+	}
 
-		static const T* GetElement(const std::string& id) {
-			auto itr = Registry<T>::m_Instance->m_Elements.find(id);
-			if (itr != Registry<T>::m_Instance->m_Elements.end()) {
-				return &itr->second;
-			}
-			return nullptr;
-		}
+private:
+	std::unordered_map<std::string, T> m_Elements; // The elements in the registry.
 
-	private:
-		static Registry<T>* m_Instance;
-
-		std::unordered_map<std::string, T> m_Elements;
-	};
-
-} // namespace gp1
+private:
+	static Registry<T>* m_Instance; // The static registry instance.
+};

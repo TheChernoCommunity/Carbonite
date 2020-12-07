@@ -1,13 +1,12 @@
-//	
+//
 //	Created by MarcasRealAccount on 30. Oct. 2020
-//	
+//
 
 #include "Engine/Renderer/Mesh/StaticVoxelMesh.h"
 
-namespace gp1 {
+namespace gp1::renderer::mesh
+{
+	StaticVoxelMesh::StaticVoxelMesh()
+	    : Mesh(this) {}
 
-	MeshData* StaticVoxelMesh::CreateCustomMeshData(Renderer* renderer) {
-		return renderer->CreateStaticVoxelMeshData(this);
-	}
-
-} // namespace gp1
+} // namespace gp1::renderer::mesh

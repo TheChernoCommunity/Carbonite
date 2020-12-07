@@ -1,16 +1,18 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Mesh/StaticVoxelMesh.h"
+
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanMeshData.h"
+#include "Engine/Renderer/Mesh/StaticVoxelMesh.h"
 
-namespace gp1 {
-
-	struct VulkanStaticVoxelMeshData : public VulkanMeshData {
+namespace gp1::renderer::apis::vulkan::mesh
+{
+	struct VulkanStaticVoxelMeshData : public VulkanMeshData
+	{
 	public:
-		VulkanStaticVoxelMeshData(Mesh* mesh);
+		VulkanStaticVoxelMeshData(renderer::mesh::StaticVoxelMesh* mesh);
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::mesh

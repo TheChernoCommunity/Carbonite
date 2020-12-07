@@ -6,36 +6,56 @@
 
 #include <glm.hpp>
 
-namespace gp1 {
+namespace gp1
+{
+	namespace renderer::mesh
+	{
+		struct Mesh;
+	}
 
-	struct Mesh;
-	class Material;
-	class Scene;
+	namespace renderer::shader
+	{
+		struct Material;
+	}
 
-	class Entity {
-	public:
-		~Entity();
+	namespace scene
+	{
+		class Scene;
 
-		const glm::fmat4& GetTransformationMatrix();
-		virtual Mesh* GetMesh() const;
-		virtual Material* GetMaterial() const;
+		class Entity
+		{
+		public:
+			~Entity();
 
-		Scene* GetScene() const;
+			// Update this entity.
+			virtual void Update(float deltaTime);
 
-		friend Scene;
+			// Get the transformation matrix of this entity.
+			const glm::fmat4& GetTransformationMatrix(bool negativeTranslation = false);
+			// Gets a mesh if this entity has one else returns nullptr.
+			virtual renderer::mesh::Mesh* GetMesh() const;
+			// Gets a material if this entity has one else returns nullptr.
+			virtual renderer::shader::Material* GetMaterial() const;
 
-	public:
-		glm::fvec3 m_Position{ 0.0f, 0.0f, 0.0f };
-		glm::fvec3 m_Rotation{ 0.0f, 0.0f, 0.0f };
-		glm::fvec3 m_Scale{ 1.0f, 1.0f, 1.0f };
+			// Get the scene this entity is part of.
+			Scene* GetScene() const;
 
-	protected:
-		glm::fvec3 m_PPosition{ 0.0f, 0.0f, 0.0f };
-		glm::fvec3 m_PRotation{ 0.0f, 0.0f, 0.0f };
-		glm::fvec3 m_PScale{ 1.0f, 1.0f, 1.0f };
-		glm::fmat4 m_CachedTransformationMatrix = glm::fmat4(1.0f);
+			friend Scene;
 
-		Scene* m_Scene = nullptr;
-	};
+		public:
+			glm::fvec3 m_Position { 0.0f, 0.0f, 0.0f }; // The position of this entity.
+			glm::fvec3 m_Rotation { 0.0f, 0.0f, 0.0f }; // The rotation of this entity.
+			glm::fvec3 m_Scale { 1.0f, 1.0f, 1.0f };    // The scale of this entity.
+
+		protected:
+			glm::fvec3 m_PPosition { 0.0f, 0.0f, 0.0f };                // The previous position of this entity.
+			glm::fvec3 m_PRotation { 0.0f, 0.0f, 0.0f };                // The previous rotation of this entity.
+			glm::fvec3 m_PScale { 1.0f, 1.0f, 1.0f };                   // The previous scale of this entity.
+			glm::fmat4 m_CachedTransformationMatrix = glm::fmat4(1.0f); // The cached transformation matrix of this entity.
+
+			Scene* m_Scene = nullptr; // The scene this entity is part of.
+		};
+
+	} // namespace scene
 
 } // namespace gp1

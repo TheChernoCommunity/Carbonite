@@ -1,23 +1,22 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
+
+#include "Engine/Renderer/Apis/Vulkan/VulkanRendererData.h"
 #include "Engine/Renderer/Shader/Material.h"
 
-namespace gp1 {
-
-	class VulkanRenderer;
-
-	class VulkanMaterialData : public MaterialData {
+namespace gp1::renderer::apis::vulkan::shader
+{
+	class VulkanMaterialData : public VulkanRendererData
+	{
 	public:
-		VulkanMaterialData(Material* material);
+		VulkanMaterialData(renderer::shader::Material* material);
 
 		virtual void CleanUp() override;
-
-		virtual RendererType GetRendererType() const override;
 
 		friend VulkanRenderer;
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::shader

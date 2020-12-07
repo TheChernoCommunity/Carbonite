@@ -1,22 +1,23 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Mesh/StaticVoxelMesh.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLMeshData.h"
+#include "Engine/Renderer/Mesh/StaticVoxelMesh.h"
 
-namespace gp1 {
-
-	struct OpenGLStaticVoxelMeshData : public OpenGLMeshData {
+namespace gp1::renderer::apis::opengl::mesh
+{
+	struct OpenGLStaticVoxelMeshData : public OpenGLMeshData
+	{
 	public:
-		OpenGLStaticVoxelMeshData(Mesh* mesh);
+		OpenGLStaticVoxelMeshData(renderer::mesh::StaticVoxelMesh* staticVoxelMesh);
 
 	private:
-		bool HasVertices() override;
+		bool     HasVertices() override;
 		uint32_t GetCustomDataSize() override;
-		void InitCustomGLData() override;
-		void ClearCustomData() override;
+		void     InitCustomGLData() override;
+		void     ClearCustomData() override;
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::opengl::mesh
