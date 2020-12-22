@@ -44,7 +44,7 @@ namespace gp1
 		m_Mesh->m_Indices.push_back(2);
 		m_Mesh->m_Indices.push_back(1);
 
-		m_Material->SetShader(renderer::shader::Shader::GetShader("shader"));
+		m_Material->SetShader(renderer::shader::Shader::GetShader("shaderMeshDefault"));
 		renderer::shader::Uniform<renderer::texture::TextureCubeMap*>* tex = m_Material->GetUniform<renderer::texture::TextureCubeMap*>("tex");
 		if (tex)
 		{

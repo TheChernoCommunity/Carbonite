@@ -11,33 +11,21 @@ namespace gp1::events::keyboard
 	class KeyboardEvent : public Event
 	{
 	public:
-		virtual EventType GetType() = 0;
+		virtual EventType GetType() const = 0;
 	};
 
 	class KeyPressedEvent : public KeyboardEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, bool repeat)
-		    : m_Keycode(keycode), m_Repeat(repeat) {};
-		virtual EventType GetType() override
-		{
-			return EventType::KEY_PRESSED_EVENT;
-		};
+		KeyPressedEvent(int keycode, bool repeat);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::KEY_PRESSED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the key that was pressed.
-		int GetKey()
-		{
-			return m_Keycode;
-		};
+		int GetKey() const;
 		// Is this a repeat event.
-		bool IsRepeat()
-		{
-			return m_Repeat;
-		};
+		bool IsRepeat() const;
 
 	private:
 		int  m_Keycode; // The key that was pressed.
@@ -47,22 +35,13 @@ namespace gp1::events::keyboard
 	class KeyReleasedEvent : public KeyboardEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
-		    : m_Keycode(keycode) {};
-		virtual EventType GetType() override
-		{
-			return EventType::KEY_RELEASED_EVENT;
-		};
+		KeyReleasedEvent(int keycode);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::KEY_RELEASED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the key that was released.
-		int GetKey()
-		{
-			return m_Keycode;
-		};
+		int GetKey() const;
 
 	private:
 		int m_Keycode; // The key that was released.

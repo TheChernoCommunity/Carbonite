@@ -36,7 +36,7 @@ namespace gp1::events
 	{
 	public:
 		// Get the type of event.
-		virtual EventType GetType() = 0;
+		virtual EventType GetType() const = 0;
 
 	public:
 		bool Handled = false; // Has this event been handled or not

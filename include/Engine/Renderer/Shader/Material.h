@@ -71,8 +71,9 @@ namespace gp1::renderer::shader
 				return nullptr;
 
 			auto itr = this->m_Uniforms.find(id);
-			if (itr != this->m_Uniforms.end())
+			if (itr != this->m_Uniforms.end()) {
 				return std::any_cast<Uniform<T>>(&itr->second);
+			}
 			return nullptr;
 		}
 

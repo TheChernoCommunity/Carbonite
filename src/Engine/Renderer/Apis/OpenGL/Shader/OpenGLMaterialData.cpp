@@ -60,82 +60,82 @@ namespace gp1::renderer::apis::opengl::shader
 			uint32_t           location = material->GetShader()->GetUniformLocation(id);
 			if (uniform.second.type() == typeid(Uniform<float>))
 			{
-				const Uniform<float>* uniformFloat = uniform.second._Cast<Uniform<float>>();
+				const Uniform<float>* uniformFloat = std::any_cast<Uniform<float>>(&uniform.second);
 				glUniform1f(location, uniformFloat->m_Value);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fvec2>))
 			{
-				const Uniform<glm::fvec2>* uniformVec2f = uniform.second._Cast<Uniform<glm::fvec2>>();
+				const Uniform<glm::fvec2>* uniformVec2f = std::any_cast<Uniform<glm::fvec2>>(&uniform.second);
 				glUniform2f(location, uniformVec2f->m_Value.x, uniformVec2f->m_Value.y);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fvec3>))
 			{
-				const Uniform<glm::fvec3>* uniformVec3f = uniform.second._Cast<Uniform<glm::fvec3>>();
+				const Uniform<glm::fvec3>* uniformVec3f = std::any_cast<Uniform<glm::fvec3>>(&uniform.second);
 				glUniform3f(location, uniformVec3f->m_Value.x, uniformVec3f->m_Value.y, uniformVec3f->m_Value.z);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fvec4>))
 			{
-				const Uniform<glm::fvec4>* uniformVec4f = uniform.second._Cast<Uniform<glm::fvec4>>();
+				const Uniform<glm::fvec4>* uniformVec4f = std::any_cast<Uniform<glm::fvec4>>(&uniform.second);
 				glUniform4f(location, uniformVec4f->m_Value.x, uniformVec4f->m_Value.y, uniformVec4f->m_Value.z, uniformVec4f->m_Value.w);
 			}
 			else if (uniform.second.type() == typeid(Uniform<int32_t>))
 			{
-				const Uniform<int32_t>* uniformInt = uniform.second._Cast<Uniform<int32_t>>();
+				const Uniform<int32_t>* uniformInt = std::any_cast<Uniform<int32_t>>(&uniform.second);
 				glUniform1i(location, uniformInt->m_Value);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::ivec2>))
 			{
-				const Uniform<glm::ivec2>* uniformVec2i = uniform.second._Cast<Uniform<glm::ivec2>>();
+				const Uniform<glm::ivec2>* uniformVec2i = std::any_cast<Uniform<glm::ivec2>>(&uniform.second);
 				glUniform2i(location, uniformVec2i->m_Value.x, uniformVec2i->m_Value.y);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::ivec3>))
 			{
-				const Uniform<glm::ivec3>* uniformVec3i = uniform.second._Cast<Uniform<glm::ivec3>>();
+				const Uniform<glm::ivec3>* uniformVec3i = std::any_cast<Uniform<glm::ivec3>>(&uniform.second);
 				glUniform3i(location, uniformVec3i->m_Value.x, uniformVec3i->m_Value.y, uniformVec3i->m_Value.z);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::ivec4>))
 			{
-				const Uniform<glm::ivec4>* uniformVec4i = uniform.second._Cast<Uniform<glm::ivec4>>();
+				const Uniform<glm::ivec4>* uniformVec4i = std::any_cast<Uniform<glm::ivec4>>(&uniform.second);
 				glUniform4i(location, uniformVec4i->m_Value.x, uniformVec4i->m_Value.y, uniformVec4i->m_Value.z, uniformVec4i->m_Value.w);
 			}
 			else if (uniform.second.type() == typeid(Uniform<uint32_t>))
 			{
-				const Uniform<uint32_t>* uniformInt = uniform.second._Cast<Uniform<uint32_t>>();
+				const Uniform<uint32_t>* uniformInt = std::any_cast<Uniform<uint32_t>>(&uniform.second);
 				glUniform1ui(location, uniformInt->m_Value);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::uvec2>))
 			{
-				const Uniform<glm::uvec2>* uniformVec2u = uniform.second._Cast<Uniform<glm::uvec2>>();
+				const Uniform<glm::uvec2>* uniformVec2u = std::any_cast<Uniform<glm::uvec2>>(&uniform.second);
 				glUniform2ui(location, uniformVec2u->m_Value.x, uniformVec2u->m_Value.y);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::uvec3>))
 			{
-				const Uniform<glm::uvec3>* uniformVec3u = uniform.second._Cast<Uniform<glm::uvec3>>();
+				const Uniform<glm::uvec3>* uniformVec3u = std::any_cast<Uniform<glm::uvec3>>(&uniform.second);
 				glUniform3ui(location, uniformVec3u->m_Value.x, uniformVec3u->m_Value.y, uniformVec3u->m_Value.z);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::uvec4>))
 			{
-				const Uniform<glm::uvec4>* uniformVec4u = uniform.second._Cast<Uniform<glm::uvec4>>();
+				const Uniform<glm::uvec4>* uniformVec4u = std::any_cast<Uniform<glm::uvec4>>(&uniform.second);
 				glUniform4ui(location, uniformVec4u->m_Value.x, uniformVec4u->m_Value.y, uniformVec4u->m_Value.z, uniformVec4u->m_Value.w);
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fmat2>))
 			{
-				const Uniform<glm::fmat2>* uniformMat2f = uniform.second._Cast<Uniform<glm::fmat2>>();
+				const Uniform<glm::fmat2>* uniformMat2f = std::any_cast<Uniform<glm::fmat2>>(&uniform.second);
 				glUniformMatrix2fv(location, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&uniformMat2f->m_Value));
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fmat3>))
 			{
-				const Uniform<glm::fmat3>* uniformMat3f = uniform.second._Cast<Uniform<glm::fmat3>>();
+				const Uniform<glm::fmat3>* uniformMat3f = std::any_cast<Uniform<glm::fmat3>>(&uniform.second);
 				glUniformMatrix3fv(location, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&uniformMat3f->m_Value));
 			}
 			else if (uniform.second.type() == typeid(Uniform<glm::fmat4>))
 			{
-				const Uniform<glm::fmat4>* uniformMat4f = uniform.second._Cast<Uniform<glm::fmat4>>();
+				const Uniform<glm::fmat4>* uniformMat4f = std::any_cast<Uniform<glm::fmat4>>(&uniform.second);
 				glUniformMatrix4fv(location, 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&uniformMat4f->m_Value));
 			}
 			else if (uniform.second.type() == typeid(Uniform<renderer::texture::Texture2D*>))
 			{
-				Uniform<renderer::texture::Texture2D*>* uniformTexture2D = const_cast<Uniform<renderer::texture::Texture2D*>*>(uniform.second._Cast<Uniform<renderer::texture::Texture2D*>>());
+				Uniform<renderer::texture::Texture2D*>* uniformTexture2D = const_cast<Uniform<renderer::texture::Texture2D*>*>(std::any_cast<Uniform<renderer::texture::Texture2D*>>(&uniform.second));
 				if (texIndex < reinterpret_cast<OpenGLRenderer*>(renderer)->GetMaxTextureUnits())
 				{
 					if (uniformTexture2D->m_Value)
@@ -157,7 +157,7 @@ namespace gp1::renderer::apis::opengl::shader
 			}
 			else if (uniform.second.type() == typeid(Uniform<renderer::texture::Texture2DArray*>))
 			{
-				Uniform<renderer::texture::Texture2DArray*>* uniformTexture2DArray = const_cast<Uniform<renderer::texture::Texture2DArray*>*>(uniform.second._Cast<Uniform<renderer::texture::Texture2DArray*>>());
+				Uniform<renderer::texture::Texture2DArray*>* uniformTexture2DArray = const_cast<Uniform<renderer::texture::Texture2DArray*>*>(std::any_cast<Uniform<renderer::texture::Texture2DArray*>>(&uniform.second));
 				if (texIndex < reinterpret_cast<OpenGLRenderer*>(renderer)->GetMaxTextureUnits())
 				{
 					if (uniformTexture2DArray->m_Value)
@@ -179,7 +179,7 @@ namespace gp1::renderer::apis::opengl::shader
 			}
 			else if (uniform.second.type() == typeid(Uniform<renderer::texture::Texture3D*>))
 			{
-				Uniform<renderer::texture::Texture3D*>* uniformTexture3D = const_cast<Uniform<renderer::texture::Texture3D*>*>(uniform.second._Cast<Uniform<renderer::texture::Texture3D*>>());
+				Uniform<renderer::texture::Texture3D*>* uniformTexture3D = const_cast<Uniform<renderer::texture::Texture3D*>*>(std::any_cast<Uniform<renderer::texture::Texture3D*>>(&uniform.second));
 				if (texIndex < reinterpret_cast<OpenGLRenderer*>(renderer)->GetMaxTextureUnits())
 				{
 					if (uniformTexture3D->m_Value)
@@ -201,7 +201,7 @@ namespace gp1::renderer::apis::opengl::shader
 			}
 			else if (uniform.second.type() == typeid(Uniform<renderer::texture::TextureCubeMap*>))
 			{
-				Uniform<renderer::texture::TextureCubeMap*>* uniformTextureCubeMap = const_cast<Uniform<renderer::texture::TextureCubeMap*>*>(uniform.second._Cast<Uniform<renderer::texture::TextureCubeMap*>>());
+				Uniform<renderer::texture::TextureCubeMap*>* uniformTextureCubeMap = const_cast<Uniform<renderer::texture::TextureCubeMap*>*>(std::any_cast<Uniform<renderer::texture::TextureCubeMap*>>(&uniform.second));
 				if (texIndex < reinterpret_cast<OpenGLRenderer*>(renderer)->GetMaxTextureUnits())
 				{
 					if (uniformTextureCubeMap->m_Value)

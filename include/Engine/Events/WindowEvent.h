@@ -11,33 +11,21 @@ namespace gp1::events::window
 	class WindowEvent : public Event
 	{
 	public:
-		virtual EventType GetType() = 0;
+		virtual EventType GetType() const = 0;
 	};
 
 	class WindowResizeEvent : public WindowEvent
 	{
 	public:
-		WindowResizeEvent(int width, int height)
-		    : m_Width(width), m_Height(height) {};
-		virtual EventType GetType()
-		{
-			return EventType::WINDOW_RESIZE_EVENT;
-		}
+		WindowResizeEvent(int width, int height);
+
+		virtual EventType GetType() const;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::WINDOW_RESIZE_EVENT;
-		}
+		static EventType GetTypeS();
 		// Get the new width of the window.
-		int GetWidth() const
-		{
-			return this->m_Width;
-		}
+		int GetWidth() const;
 		// Get the new height of the window.
-		int GetHeight() const
-		{
-			return this->m_Height;
-		}
+		int GetHeight() const;
 
 	private:
 		int m_Width;  // The new width of the window.
