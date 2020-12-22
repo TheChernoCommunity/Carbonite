@@ -12,28 +12,19 @@ namespace gp1::events::mouse
 	class MouseEvent : public Event
 	{
 	public:
-		virtual EventType GetType() = 0;
+		virtual EventType GetType() const = 0;
 	};
 
 	class MouseButtonPressedEvent : public MouseEvent
 	{
 	public:
-		MouseButtonPressedEvent(int MouseButton)
-		    : m_MouseButton(MouseButton) {};
-		virtual EventType GetType() override
-		{
-			return EventType::MOUSE_BUTTON_PRESSED_EVENT;
-		};
+		MouseButtonPressedEvent(int MouseButton);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::MOUSE_BUTTON_PRESSED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the button that was pressed.
-		int GetButton()
-		{
-			return m_MouseButton;
-		};
+		int GetButton() const;
 
 	private:
 		int m_MouseButton; // The button that was pressed.
@@ -42,22 +33,13 @@ namespace gp1::events::mouse
 	class MouseButtonReleasedEvent : public MouseEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int MouseButton)
-		    : m_MouseButton(MouseButton) {};
-		virtual EventType GetType() override
-		{
-			return EventType::MOUSE_BUTTON_RELEASED_EVENT;
-		};
+		MouseButtonReleasedEvent(int MouseButton);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::MOUSE_BUTTON_RELEASED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the button that was released.
-		int GetButton()
-		{
-			return m_MouseButton;
-		};
+		int GetButton() const;
 
 	private:
 		int m_MouseButton; // The button that was released.
@@ -66,27 +48,15 @@ namespace gp1::events::mouse
 	class MouseMovedEvent : public MouseEvent
 	{
 	public:
-		MouseMovedEvent(double x, double y)
-		    : m_X(x), m_Y(y) {};
-		virtual EventType GetType() override
-		{
-			return EventType::MOUSE_MOVED_EVENT;
-		};
+		MouseMovedEvent(double x, double y);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::MOUSE_MOVED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the x axis value.
-		double GetX()
-		{
-			return m_X;
-		}
+		double GetX() const;
 		// Get the y axis value.
-		double GetY()
-		{
-			return m_Y;
-		}
+		double GetY() const;
 
 	private:
 		double m_X; // The x axis value.
@@ -96,27 +66,12 @@ namespace gp1::events::mouse
 	class MouseScrollEvent : public MouseEvent
 	{
 	public:
-		MouseScrollEvent(double x, double y)
-		    : m_X(x), m_Y(y) {};
-		virtual EventType GetType() override
-		{
-			return EventType::MOUSE_SCROLLED_EVENT;
-		};
-		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::MOUSE_SCROLLED_EVENT;
-		};
-		// Get the x axis value.
-		double GetX()
-		{
-			return m_X;
-		}
-		// Get the y axis value.
-		double GetY()
-		{
-			return m_Y;
-		}
+		MouseScrollEvent(double x, double y);
+
+		virtual EventType GetType() const override;
+		static EventType  GetTypeS();   // Get the type of event.
+		double            GetX() const; // Get the x axis value.
+		double            GetY() const; // Get the y axis value.
 
 	private:
 		double m_X; // The x axis value.

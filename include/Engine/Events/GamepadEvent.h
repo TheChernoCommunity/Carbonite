@@ -13,14 +13,11 @@ namespace gp1::events::gamepad
 	class GamepadEvent : public Event
 	{
 	public:
-		GamepadEvent(uint32_t joystickIndex)
-		    : m_JoystickIndex(joystickIndex) {};
-		virtual EventType GetType() = 0;
+		GamepadEvent(uint32_t joystickIndex);
+
+		virtual EventType GetType() const = 0;
 		// Get the joystick index this event came from.
-		uint32_t GetJoystickIndex()
-		{
-			return m_JoystickIndex;
-		};
+		uint32_t GetJoystickIndex() const;
 
 	private:
 		uint32_t m_JoystickIndex; // The joystick index this event came from.
@@ -29,27 +26,15 @@ namespace gp1::events::gamepad
 	class GamepadAxisEvent : public GamepadEvent
 	{
 	public:
-		GamepadAxisEvent(uint32_t joystickIndex, uint32_t axis, double value)
-		    : GamepadEvent(joystickIndex), m_Axis(axis), m_Value(value) {};
-		virtual EventType GetType() override
-		{
-			return EventType::GAMEPAD_AXIS_CHANGE_EVENT;
-		};
+		GamepadAxisEvent(uint32_t joystickIndex, uint32_t axis, double value);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::GAMEPAD_AXIS_CHANGE_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the axis that was changed.
-		uint32_t GetAxis()
-		{
-			return m_Axis;
-		};
+		uint32_t GetAxis() const;
 		// Get the new value of the axis.
-		double GetValue()
-		{
-			return m_Value;
-		};
+		double GetValue() const;
 
 	private:
 		uint32_t m_Axis;  // The axis that was changed.
@@ -59,22 +44,13 @@ namespace gp1::events::gamepad
 	class GamepadButtonPressedEvent : public GamepadEvent
 	{
 	public:
-		GamepadButtonPressedEvent(uint32_t joystickIndex, uint32_t button)
-		    : GamepadEvent(joystickIndex), m_Button(button) {};
-		virtual EventType GetType() override
-		{
-			return EventType::GAMEPAD_BUTTON_PRESSED_EVENT;
-		};
+		GamepadButtonPressedEvent(uint32_t joystickIndex, uint32_t button);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::GAMEPAD_BUTTON_PRESSED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the button that was pressed.
-		uint32_t GetButton()
-		{
-			return m_Button;
-		};
+		uint32_t GetButton() const;
 
 	private:
 		uint32_t m_Button; // The button that was pressed.
@@ -83,22 +59,13 @@ namespace gp1::events::gamepad
 	class GamepadButtonReleasedEvent : public GamepadEvent
 	{
 	public:
-		GamepadButtonReleasedEvent(uint32_t joystickIndex, uint32_t button)
-		    : GamepadEvent(joystickIndex), m_Button(button) {};
-		virtual EventType GetType() override
-		{
-			return EventType::GAMEPAD_BUTTON_RELEASED_EVENT;
-		};
+		GamepadButtonReleasedEvent(uint32_t joystickIndex, uint32_t button);
+
+		virtual EventType GetType() const override;
 		// Get the type of event.
-		static EventType GetTypeS()
-		{
-			return EventType::GAMEPAD_BUTTON_RELEASED_EVENT;
-		};
+		static EventType GetTypeS();
 		// Get the button that was released.
-		uint32_t GetButton()
-		{
-			return m_Button;
-		};
+		uint32_t GetButton() const;
 
 	private:
 		uint32_t m_Button; // The button that was released.
