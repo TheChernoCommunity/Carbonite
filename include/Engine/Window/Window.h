@@ -5,18 +5,16 @@
 
 #pragma once
 
-#define GLFW_INCLUDE_NONE
 #include "Engine/Utility/Logger.h"
-#include <GLFW/glfw3.h>
+
+#include <map>
 #include <string>
+
+#define GLFW_INCLUDE_NONE
+#include <glfw/glfw3.h>
 
 namespace gp1
 {
-	namespace renderer
-	{
-		class Renderer;
-	}
-
 	namespace window
 	{
 		enum class WindowMode : int8_t
@@ -77,12 +75,16 @@ namespace gp1
 			// Should this window close.
 			bool IsCloseRequested() const;
 
-			friend renderer::Renderer;
+			void DefaultWindowHints();
+			void SetWindowHint(int hint, int value);
+
+			GLFWwindow* GetNativeHandle() const;
 
 		private:
-			WindowData  m_WindowData;               // The window data.
-			Logger      m_Logger;                   // The logger this window uses to report errors.
-			GLFWwindow* m_NativeHandle { nullptr }; // The native GLFW window.
+			WindowData         m_WindowData; // The window data.
+			std::map<int, int> m_WindowHints;
+			Logger             m_Logger;                   // The logger this window uses to report errors.
+			GLFWwindow*        m_NativeHandle { nullptr }; // The native GLFW window.
 		};
 	} // namespace window
 } // namespace gp1

@@ -8,16 +8,6 @@
 
 namespace gp1
 {
-	namespace renderer::mesh
-	{
-		struct Mesh;
-	}
-
-	namespace renderer::shader
-	{
-		struct Material;
-	}
-
 	namespace scene
 	{
 		class Scene;
@@ -32,10 +22,6 @@ namespace gp1
 
 			// Get the transformation matrix of this entity.
 			const glm::fmat4& GetTransformationMatrix(bool negativeTranslation = false);
-			// Gets a mesh if this entity has one else returns nullptr.
-			virtual renderer::mesh::Mesh* GetMesh() const;
-			// Gets a material if this entity has one else returns nullptr.
-			virtual renderer::shader::Material* GetMaterial() const;
 
 			// Get the scene this entity is part of.
 			Scene* GetScene() const;
@@ -55,7 +41,5 @@ namespace gp1
 
 			Scene* m_Scene = nullptr; // The scene this entity is part of.
 		};
-
 	} // namespace scene
-
 } // namespace gp1

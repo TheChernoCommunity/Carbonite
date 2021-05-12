@@ -33,22 +33,14 @@ namespace gp1::scene
 		}
 	}
 
-	void Scene::SetMainCamera(Camera* camera)
+	void Scene::Update(float deltaTime)
 	{
-		if (reinterpret_cast<Entity*>(camera)->m_Scene == this)
-		{
-			this->m_MainCamera = camera;
-		}
-	}
-
-	Camera* Scene::GetMainCamera()
-	{
-		return this->m_MainCamera;
+		for (auto& entity : m_Entities)
+			entity->Update(deltaTime);
 	}
 
 	const std::vector<Entity*>& Scene::GetEntities()
 	{
 		return this->m_Entities;
 	}
-
 } // namespace gp1::scene

@@ -48,19 +48,8 @@ namespace gp1::scene
 		return m_CachedTransformationMatrix;
 	}
 
-	renderer::mesh::Mesh* Entity::GetMesh() const
-	{
-		return nullptr;
-	}
-
-	renderer::shader::Material* Entity::GetMaterial() const
-	{
-		return nullptr;
-	}
-
 	Scene* Entity::GetScene() const
 	{
 		return this->m_Scene;
 	}
-
 } // namespace gp1::scene

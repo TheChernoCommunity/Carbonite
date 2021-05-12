@@ -12,7 +12,6 @@
 #include "Engine/Application.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
-#include "Engine/Renderer/DebugRenderer.h"
 #include "Engine/Utility/Locale/LocaleManager.h"
 
 Application* Application::CreateApplication()
@@ -61,14 +60,6 @@ Game::Game()
 	input::AxisInputBinding* lookY = onFoot->CreateAxisInputBinding("lookY", input::axises::gamepadRightTrigger, input::InputLocation::GAMEPAD);
 	lookY->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
 	m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), static_cast<uint32_t>(lookY->GetLocation()));
-
-	renderer::debug::DebugRenderer::DebugDrawPoint({ 0, 0, -2 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawSphere({ 0, 0, -2 }, 1.0f, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawLine({ -2, 1, -4 }, { 2, -1, -2 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawBox({ 0, 0, -3 }, { 1, 1, 1 }, { 0, 0, 0 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ 0, -2, -7 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ -1, -2, -7 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ -2, -2, -7 }, 10.0f);
 }
 
 void Game::LookCallback(input::AxisCallbackData data)

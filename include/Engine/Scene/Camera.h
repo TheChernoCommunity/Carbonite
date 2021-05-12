@@ -14,11 +14,6 @@
 
 namespace gp1
 {
-	namespace renderer
-	{
-		class Renderer;
-	}
-
 	namespace scene
 	{
 		enum class CameraMode
@@ -34,9 +29,6 @@ namespace gp1
 
 			virtual void Update(float deltaTime) override;
 
-			// Set this camera as the main camera.
-			void SetAsMainCamera();
-
 			// Get the projection matrix of this camera.
 			const glm::fmat4& GetProjectionMatrix();
 			// Get the projection view matrix of this camera.
@@ -46,8 +38,6 @@ namespace gp1
 			void SetCameraMode(CameraMode mode);
 			// Get the mode of this camera.
 			CameraMode GetCameraMode() const;
-
-			friend renderer::Renderer;
 
 		private:
 			// Move's the camera around.

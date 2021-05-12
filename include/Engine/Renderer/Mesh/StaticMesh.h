@@ -1,28 +1,24 @@
-//
-//	Created by MarcasRealAccount on 30. Oct. 2020
-//
+#pragma once
 
 #include "Engine/Renderer/Mesh/Mesh.h"
 
 #include <glm.hpp>
+#include <vector>
 
-namespace gp1::renderer::mesh
+namespace gp1
 {
 	struct StaticMeshVertex
 	{
 	public:
-		glm::fvec3 position { 0.0f, 0.0f, 0.0f }; // The position of this vertex.
-		glm::fvec3 normal { 0.0f, 0.0f, 0.0f };   // The normal of this vertex.
-		glm::fvec2 uv { 0.0f, 0.0f };             // The uv of this vertex.
+		glm::fvec4 m_Position {};
+		glm::fvec4 m_Normal {};
+		glm::fvec2 m_Uv {};
 	};
 
 	struct StaticMesh : public Mesh
 	{
 	public:
-		StaticMesh();
-
-	public:
-		std::vector<StaticMeshVertex> m_Vertices; // This mesh's vertices.
+		std::vector<StaticMeshVertex> m_Vertices;
+		std::vector<uint32_t>         m_Indices;
 	};
-
-} // namespace gp1::renderer::mesh
+} // namespace gp1

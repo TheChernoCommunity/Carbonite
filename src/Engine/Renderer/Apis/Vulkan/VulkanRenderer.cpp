@@ -1,90 +1,44 @@
-//
-//	Created by MarcasRealAccount on 31. Oct. 2020
-//
+#include "Engine/Utility/Core.h"
 
+#ifdef RENDERER_VULKAN
+
+#include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMesh.h"
 #include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
-#include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanMeshData.h"
-#include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanSkeletalMeshData.h"
-#include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMeshData.h"
-#include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticVoxelMeshData.h"
-#include "Engine/Renderer/Apis/Vulkan/Shader/VulkanMaterialData.h"
-#include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderData.h"
-#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture2DArrayData.h"
-#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture2DData.h"
-#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture3DData.h"
-#include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTextureCubeMapData.h"
-#include "Engine/Renderer/Apis/Vulkan/VulkanDebugRenderer.h"
+#include "Engine/Scene/Camera.h"
+#include "Engine/Window/Window.h"
 
-namespace gp1::renderer::apis::vulkan
+namespace gp1::renderer::vulkan
 {
 	VulkanRenderer::VulkanRenderer(window::Window* window)
 	    : Renderer(window) {}
 
-	RendererType VulkanRenderer::GetRendererType() const
+	StaticMesh* VulkanRenderer::CreateStaticMesh()
 	{
-		return RendererType::VULKAN;
+		return new VulkanStaticMesh();
 	}
 
-	renderer::debug::DebugRenderer* VulkanRenderer::CreateDebugRenderer()
+	bool VulkanRenderer::IsCompatible() const
 	{
-		return new debug::VulkanDebugRenderer(this);
+		return false;
 	}
 
-	RendererData* VulkanRenderer::CreateRendererData(Data* data)
+	void VulkanRenderer::SetWindowHints()
 	{
-		if (!data) return nullptr;
-
-		const std::type_info& type = data->GetType();
-		if (type == typeid(renderer::mesh::SkeletalMesh))
-		{
-			return new mesh::VulkanSkeletalMeshData(reinterpret_cast<renderer::mesh::SkeletalMesh*>(data));
-		}
-		else if (type == typeid(renderer::mesh::StaticMesh))
-		{
-			return new mesh::VulkanStaticMeshData(reinterpret_cast<renderer::mesh::StaticMesh*>(data));
-		}
-		else if (type == typeid(renderer::mesh::StaticVoxelMesh))
-		{
-			return new mesh::VulkanStaticVoxelMeshData(reinterpret_cast<renderer::mesh::StaticVoxelMesh*>(data));
-		}
-		else if (type == typeid(renderer::shader::Shader))
-		{
-			return new shader::VulkanShaderData(reinterpret_cast<renderer::shader::Shader*>(data));
-		}
-		else if (type == typeid(renderer::shader::Material))
-		{
-			return new shader::VulkanMaterialData(reinterpret_cast<renderer::shader::Material*>(data));
-		}
-		else if (type == typeid(renderer::texture::Texture2D))
-		{
-			return new texture::VulkanTexture2DData(reinterpret_cast<renderer::texture::Texture2D*>(data));
-		}
-		else if (type == typeid(renderer::texture::Texture2DArray))
-		{
-			return new texture::VulkanTexture2DArrayData(reinterpret_cast<renderer::texture::Texture2DArray*>(data));
-		}
-		else if (type == typeid(renderer::texture::Texture3D))
-		{
-			return new texture::VulkanTexture3DData(reinterpret_cast<renderer::texture::Texture3D*>(data));
-		}
-		else if (type == typeid(renderer::texture::TextureCubeMap))
-		{
-			return new texture::VulkanTextureCubeMapData(reinterpret_cast<renderer::texture::TextureCubeMap*>(data));
-		}
-
-		return nullptr;
+		m_Window->SetWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	}
 
-	void VulkanRenderer::InitRenderer()
+	void VulkanRenderer::Init()
 	{
 	}
 
-	void VulkanRenderer::DeInitRenderer()
+	void VulkanRenderer::DeInit()
 	{
 	}
 
-	void VulkanRenderer::RenderScene([[maybe_unused]] scene::Scene* scene, [[maybe_unused]] uint32_t width, [[maybe_unused]] uint32_t height)
+	void VulkanRenderer::Render(scene::Camera* camera)
 	{
+		[[maybe_unused]] scene::Scene* scene = camera->GetScene();
 	}
+} // namespace gp1::renderer::vulkan
 
-} // namespace gp1::renderer::apis::vulkan
+#endif

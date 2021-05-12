@@ -19,17 +19,12 @@ namespace gp1::scene
 		// Detach an entity from this scene.
 		void DetachEntity(Entity* entity);
 
-		// Set the main camera of this scene.
-		void SetMainCamera(Camera* camera);
-		// Get the main camera of this scene.
-		Camera* GetMainCamera();
+		void Update(float deltaTime);
 
 		// Get all entities this scene holds.
 		const std::vector<Entity*>& GetEntities();
 
 	private:
-		std::vector<Entity*> m_Entities;             // The entities this scene holds.
-		Camera*              m_MainCamera = nullptr; // The main camera of this scene.
+		std::vector<Entity*> m_Entities; // The entities this scene holds.
 	};
-
 } // namespace gp1::scene

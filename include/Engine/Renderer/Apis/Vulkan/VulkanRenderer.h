@@ -1,27 +1,27 @@
-//
-//	Created by MarcasRealAccount on 31. Oct. 2020
-//
-
 #pragma once
+
+#include "Engine/Utility/Core.h"
+
+#ifdef RENDERER_VULKAN
+
 #include "Engine/Renderer/Renderer.h"
 
-namespace gp1::renderer::apis::vulkan
+namespace gp1::renderer::vulkan
 {
 	class VulkanRenderer : public Renderer
 	{
 	public:
 		VulkanRenderer(window::Window* window);
 
-		virtual RendererType GetRendererType() const override;
+		virtual StaticMesh* CreateStaticMesh() override;
 
-		virtual renderer::debug::DebugRenderer* CreateDebugRenderer() override;
+		virtual bool IsCompatible() const override;
 
-		virtual RendererData* CreateRendererData(Data* data) override;
-
-	protected:
-		virtual void InitRenderer() override;
-		virtual void DeInitRenderer() override;
-		virtual void RenderScene(scene::Scene* scene, uint32_t width, uint32_t height) override;
+		virtual void SetWindowHints() override;
+		virtual void Init() override;
+		virtual void DeInit() override;
+		virtual void Render(scene::Camera* camera) override;
 	};
+} // namespace gp1::renderer::vulkan
 
-} // namespace gp1::renderer::apis::vulkan
+#endif

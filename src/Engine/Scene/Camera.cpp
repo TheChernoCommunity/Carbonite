@@ -64,12 +64,6 @@ namespace gp1::scene
 		}
 	}
 
-	void Camera::SetAsMainCamera()
-	{
-		if (this->m_Scene)
-			this->m_Scene->SetMainCamera(this);
-	}
-
 	const glm::fmat4& Camera::GetProjectionMatrix()
 	{
 		if (this->m_Fov != this->m_PFov || this->m_Aspect != this->m_PAspect || this->m_Near != this->m_PNear || this->m_Far != this->m_PFar)
