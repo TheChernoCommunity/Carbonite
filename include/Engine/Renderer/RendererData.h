@@ -1,8 +1,8 @@
 #pragma once
 
-namespace gp1
+namespace gp1::renderer
 {
-	struct Data
+	struct RendererData
 	{
 	public:
 		void MarkDirty();
@@ -29,4 +29,4 @@ namespace gp1
 		bool m_Editable = true;
 		bool m_Dynamic  = false;
 	};
-} // namespace gp1
+} // namespace gp1::renderer

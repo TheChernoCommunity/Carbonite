@@ -2,8 +2,10 @@
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticMesh.h"
 #include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
+#include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 #include "Engine/Scene/Camera.h"
 #include "Engine/Window/Window.h"
 
@@ -20,6 +22,16 @@ namespace gp1::renderer::opengl
 	StaticMesh* OpenGLRenderer::CreateStaticMesh()
 	{
 		return new OpenGLStaticMesh();
+	}
+
+	Material* OpenGLRenderer::CreateMaterial()
+	{
+		return new OpenGLMaterial();
+	}
+
+	ShaderProgram* OpenGLRenderer::CreateShader()
+	{
+		return new OpenGLShaderProgram();
 	}
 
 	bool OpenGLRenderer::IsCompatible() const

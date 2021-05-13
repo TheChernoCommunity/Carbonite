@@ -13,7 +13,9 @@ namespace gp1::renderer::vulkan
 	public:
 		VulkanRenderer(window::Window* window);
 
-		virtual StaticMesh* CreateStaticMesh() override;
+		virtual StaticMesh*    CreateStaticMesh() override;
+		virtual Material*      CreateMaterial() override;
+		virtual ShaderProgram* CreateShader() override;
 
 		virtual bool IsCompatible() const override;
 

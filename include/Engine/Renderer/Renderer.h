@@ -13,6 +13,8 @@ namespace gp1
 	}
 
 	struct StaticMesh;
+	struct Material;
+	struct ShaderProgram;
 
 	namespace renderer
 	{
@@ -22,7 +24,9 @@ namespace gp1
 			Renderer(window::Window* window);
 			virtual ~Renderer() = default;
 
-			virtual StaticMesh* CreateStaticMesh() = 0;
+			virtual StaticMesh*    CreateStaticMesh() = 0;
+			virtual Material*      CreateMaterial()   = 0;
+			virtual ShaderProgram* CreateShader()     = 0;
 
 			virtual void SetWindowHints() = 0;
 

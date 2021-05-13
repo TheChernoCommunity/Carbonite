@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Engine/Renderer/Data.h"
+#include "Engine/Renderer/RendererData.h"
 
 #include <cstdint>
 
-namespace gp1
+namespace gp1::renderer
 {
 	enum class RenderMode : uint32_t
 	{
@@ -22,7 +22,7 @@ namespace gp1
 		PATCHES
 	};
 
-	struct Mesh : public Data
+	struct Mesh : public RendererData
 	{
 	public:
 		virtual ~Mesh() = default;
@@ -31,4 +31,4 @@ namespace gp1
 		RenderMode m_RenderMode = RenderMode::TRIANGLES;
 		float      m_LineWidth  = 1.0f;
 	};
-} // namespace gp1
+} // namespace gp1::renderer

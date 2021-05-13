@@ -5,7 +5,7 @@
 #include <glm.hpp>
 #include <vector>
 
-namespace gp1
+namespace gp1::renderer
 {
 	struct StaticMeshVertex
 	{
@@ -21,4 +21,4 @@ namespace gp1
 		std::vector<StaticMeshVertex> m_Vertices;
 		std::vector<uint32_t>         m_Indices;
 	};
-} // namespace gp1
+} // namespace gp1::renderer
