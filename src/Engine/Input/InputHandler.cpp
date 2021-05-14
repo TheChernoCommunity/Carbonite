@@ -2,8 +2,6 @@
 //	Created by MarcasRealAccount on 8. Oct. 2020
 //
 
-#pragma once
-
 #include "Engine/Input/InputHandler.h"
 #include "Engine/Events/Event.h"
 #include "Engine/Input/AxisInputBinding.h"
@@ -72,6 +70,8 @@ namespace gp1::input
 			AxisInputBinding::SetPreviousAxisValue(InputLocation::JOYSTICK, axisEvent.GetAxis(), axisEvent.GetValue());
 			break;
 		}
+		default:
+			break;
 		}
 
 		return event.Handled;
@@ -307,5 +307,4 @@ namespace gp1::input
 		{ { InputType::AXIS, { InputLocation::GAMEPAD, axises::gamepadLeftTrigger } }, "Gamepad.LeftTrigger" },
 		{ { InputType::AXIS, { InputLocation::GAMEPAD, axises::gamepadRightTrigger } }, "Gamepad.RightTrigger" }
 	};
-
 } // namespace gp1::input

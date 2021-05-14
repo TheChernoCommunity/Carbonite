@@ -23,15 +23,13 @@ namespace gp1::scene
 	    : m_Fov(fov), m_Near(near), m_Far(far)
 	{
 		input::InputGroup* mainMenu = input::InputHandler::GetOrCreateInputGroup("mainMenu");
-		mainMenu->CreateButtonInputBinding("mousePress", input::buttons::mouseLeft, input::ButtonInputType::PRESS, input::InputLocation::MOUSE)->BindCallback([&](input::ButtonCallbackData data) {
-			_CRT_UNUSED(data);
+		mainMenu->CreateButtonInputBinding("mousePress", input::buttons::mouseLeft, input::ButtonInputType::PRESS, input::InputLocation::MOUSE)->BindCallback([&]([[maybe_unused]] input::ButtonCallbackData data) {
 			input::InputHandler::SetCurrentActiveInputGroup("freecam");
 		});
 
 		input::InputGroup* freecamInputs = input::InputHandler::GetOrCreateInputGroup("freecam");
 		freecamInputs->SetCaptureMouse(true);
-		freecamInputs->CreateButtonInputBinding("openMainMenu", input::buttons::keyEscape)->BindCallback([&](input::ButtonCallbackData data) {
-			_CRT_UNUSED(data);
+		freecamInputs->CreateButtonInputBinding("openMainMenu", input::buttons::keyEscape)->BindCallback([&]([[maybe_unused]] input::ButtonCallbackData data) {
 			input::InputHandler::SetCurrentActiveInputGroup("mainMenu");
 		});
 

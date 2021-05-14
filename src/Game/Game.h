@@ -22,15 +22,19 @@ private:
 	void OpenMenuCallback(input::ButtonCallbackData data);
 	void CloseMenuCallback(input::ButtonCallbackData data);
 
+#if false // TODO: Remove when audio library is cross platform
 	void PlayMP3Callback(input::ButtonCallbackData data);
 	void PlayWAVCallback(input::ButtonCallbackData data);
 	void PlayFLACCallback(input::ButtonCallbackData data);
+#endif
 
 private:
 	Logger m_Logger;
 
 	// Audio Data
+#if false // TODO: Remove when audio library is cross platform
 	audio::AudioSource TestMP3;
 	audio::AudioSource TestWAV;
 	audio::AudioSource TestFLAC;
+#endif
 };

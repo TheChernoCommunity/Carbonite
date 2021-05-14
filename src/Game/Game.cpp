@@ -21,9 +21,10 @@ Application* Application::CreateApplication()
 }
 
 Game::Game()
-    : m_Logger("Game"), Application()
+    : Application(), m_Logger("Game")
 {
 	// Load the sources
+#if false // TODO: Remove when audio library is cross platform
 	TestWAV  = audio::AudioSource::LoadFromFile("Sounds/TestWAV.wav");
 	TestMP3  = audio::AudioSource::LoadFromFile("Sounds/TestMP3.mp3");
 	TestFLAC = audio::AudioSource::LoadFromFile("Sounds/TestFLAC.flac");
@@ -32,11 +33,12 @@ Game::Game()
 	input::ButtonInputBinding* playWav    = audioInput->CreateButtonInputBinding("playWav", input::buttons::key1);
 	input::ButtonInputBinding* playMp3    = audioInput->CreateButtonInputBinding("playMp3", input::buttons::key2);
 	input::ButtonInputBinding* playFlac   = audioInput->CreateButtonInputBinding("playFlac", input::buttons::key3);
-
-	input::InputGroup* inMenu = input::InputHandler::GetOrCreateInputGroup("inMenu");
 	playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
 	playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
 	playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
+#endif
+
+	input::InputGroup*         inMenu    = input::InputHandler::GetOrCreateInputGroup("inMenu");
 	input::ButtonInputBinding* closeMenu = inMenu->CreateButtonInputBinding("closeMenu", input::buttons::gamepadTriangle, input::ButtonInputType::PRESS, input::InputLocation::GAMEPAD);
 	closeMenu->BindCallback(std::bind(&Game::CloseMenuCallback, this, std::placeholders::_1));
 	m_Logger.LogDebug("CloseMenu keybind is: %u, on device: %u", closeMenu->GetIndex(), static_cast<uint32_t>(closeMenu->GetLocation()));
@@ -93,23 +95,24 @@ void Game::CloseMenuCallback(input::ButtonCallbackData data)
 	input::InputHandler::SetCurrentActiveInputGroup("onFoot");
 }
 
-void Game::PlayMP3Callback(input::ButtonCallbackData data)
+#if false // TODO: Remove when audio library is cross platform
+
+void Game::PlayMP3Callback([[maybe_unused]] input::ButtonCallbackData data)
 {
-	_CRT_UNUSED(data);
 	// Play the source
 	audio::Audio::Play(TestMP3);
 }
 
-void Game::PlayWAVCallback(input::ButtonCallbackData data)
+void Game::PlayWAVCallback([[maybe_unused]] input::ButtonCallbackData data)
 {
-	_CRT_UNUSED(data);
 	// Play the source
 	audio::Audio::Play(TestWAV);
 }
 
-void Game::PlayFLACCallback(input::ButtonCallbackData data)
+void Game::PlayFLACCallback([[maybe_unused]] input::ButtonCallbackData data)
 {
-	_CRT_UNUSED(data);
 	// Play the source
 	audio::Audio::Play(TestFLAC);
 }
+
+#endif

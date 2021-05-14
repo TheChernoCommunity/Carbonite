@@ -21,9 +21,9 @@ function app( name )
 		'third_party/glad/include',
 		'third_party/glm/glm',
 		'third_party/stb',
-		'third_party/openal-soft/include',
-		'third_party/openal-soft/src',
-		'third_party/openal-soft/src/common'
+		--'third_party/openal-soft/include',
+		--'third_party/openal-soft/src',
+		--'third_party/openal-soft/src/common'
 	}
 
 	files {

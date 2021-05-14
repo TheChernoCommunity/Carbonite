@@ -34,7 +34,7 @@ namespace gp1::renderer::apis::vulkan
 	{
 		if (!data) return nullptr;
 
-		const type_info& type = data->GetType();
+		const std::type_info& type = data->GetType();
 		if (type == typeid(renderer::mesh::SkeletalMesh))
 		{
 			return new mesh::VulkanSkeletalMeshData(reinterpret_cast<renderer::mesh::SkeletalMesh*>(data));
@@ -83,11 +83,8 @@ namespace gp1::renderer::apis::vulkan
 	{
 	}
 
-	void VulkanRenderer::RenderScene(scene::Scene* scene, uint32_t width, uint32_t height)
+	void VulkanRenderer::RenderScene([[maybe_unused]] scene::Scene* scene, [[maybe_unused]] uint32_t width, [[maybe_unused]] uint32_t height)
 	{
-		_CRT_UNUSED(scene);
-		_CRT_UNUSED(width);
-		_CRT_UNUSED(height);
 	}
 
 } // namespace gp1::renderer::apis::vulkan

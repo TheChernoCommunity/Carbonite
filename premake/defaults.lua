@@ -3,11 +3,11 @@ require 'customizations'
 
 cppdialect 'C++17'
 debugdir '../assets'
-exceptionhandling 'Off'
+exceptionhandling 'On'
 flags { 'MultiProcessorCompile' }
 includedirs { '../include/' }
 objdir '../obj'
-rtti 'Off'
+rtti 'On'
 targetdir '../%{iif(prj.kind == "StaticLib" or prj.kind == "SharedLib","lib","bin")}/%{cfg.platform}/%{cfg.buildcfg}'
 warnings 'Extra'
 

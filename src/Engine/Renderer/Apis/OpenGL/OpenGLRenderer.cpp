@@ -45,7 +45,7 @@ namespace gp1::renderer::apis::opengl
 	{
 		if (!data) return nullptr;
 
-		const type_info& type = data->GetType();
+		const std::type_info& type = data->GetType();
 		if (type == typeid(renderer::mesh::SkeletalMesh))
 		{
 			return new mesh::OpenGLSkeletalMeshData(reinterpret_cast<renderer::mesh::SkeletalMesh*>(data));
@@ -253,11 +253,8 @@ namespace gp1::renderer::apis::opengl
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	void OpenGLRenderer::ErrorMessageCallback(uint32_t source, uint32_t type, uint32_t id, uint32_t severity, int32_t length, const char* message, const void* userParam)
+	void OpenGLRenderer::ErrorMessageCallback(uint32_t source, uint32_t type, uint32_t id, uint32_t severity, [[maybe_unused]] int32_t length, const char* message, [[maybe_unused]] const void* userParam)
 	{
-		_CRT_UNUSED(length);
-		_CRT_UNUSED(userParam);
-
 		switch (severity)
 		{
 		case GL_DEBUG_SEVERITY_NOTIFICATION:

@@ -11,7 +11,7 @@ namespace gp1::renderer
 		}
 	}
 
-	const type_info& Data::GetType() const
+	const std::type_info& Data::GetType() const
 	{
 		return this->m_Type;
 	}

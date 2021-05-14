@@ -25,7 +25,7 @@ namespace gp1
 		class Entity
 		{
 		public:
-			~Entity();
+			virtual ~Entity();
 
 			// Update this entity.
 			virtual void Update(float deltaTime);

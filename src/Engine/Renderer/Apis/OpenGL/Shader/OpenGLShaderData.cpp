@@ -126,19 +126,19 @@ namespace gp1::renderer::apis::opengl::shader
 
 		uint32_t shaderID = glCreateShader(static_cast<GLenum>(GetShaderTypeId(type)));
 
-		FILE* file = fopen(("Shaders/" + shader->GetId() + GetShaderTypeExtensionName(type)).c_str(), "r");
+        std::string filename = "Shaders/" + shader->GetId() + GetShaderTypeExtensionName(type);
+		FILE* file = fopen(filename.c_str(), "r");
 		if (!file)
 			return 0;
 
 		fseek(file, 0, SEEK_END);
-		uint32_t len = ftell(file);
+		uint32_t len = static_cast<uint32_t>(ftell(file));
 		fseek(file, 0, SEEK_SET);
-		char* buf = new char[len];
-		len       = static_cast<uint32_t>(fread(buf, sizeof(char), len, file));
-		buf[len]  = '\0';
+        std::string filecontent(len, '\0');
+		len       = static_cast<uint32_t>(fread(filecontent.data(), sizeof(char), len, file));
 		fclose(file);
 
-		GLchar* const pShaderSource[1] { buf };
+		GLchar* const pShaderSource[1] { filecontent.data() };
 		GLint         pLengths[1] { static_cast<GLint>(len) };
 
 		glShaderSource(shaderID, 1, pShaderSource, pLengths);
@@ -152,10 +152,8 @@ namespace gp1::renderer::apis::opengl::shader
 			glGetShaderInfoLog(shaderID, 1024, &length, infoLog);
 			OpenGLShaderData::s_Logger.LogError("%s at %s compile failed:\n%s", GetShaderTypeName(type), ("Shaders/" + shader->GetId() + GetShaderTypeExtensionName(type)).c_str(), infoLog);
 			glDeleteShader(shaderID);
-			delete[] buf;
 			return 0;
 		}
-		delete[] buf;
 		return shaderID;
 	}
 

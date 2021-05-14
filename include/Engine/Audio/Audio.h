@@ -12,6 +12,8 @@
 
 #pragma once
 
+#if false // TODO: Remove when audio library is cross platform
+
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -81,3 +83,5 @@ namespace gp1::audio
 	};
 
 } // namespace gp1::audio
+
+#endif

@@ -21,7 +21,9 @@ namespace gp1::renderer::apis::opengl::debug
 		this->m_SpawnTime = (float) glfwGetTime();
 
 		this->m_Material->SetShader(renderer::shader::Shader::GetShader("debugShader"));
-		this->m_Material->GetUniform<glm::fvec4>("color")->m_Value = color;
+        shader::Uniform<glm::fvec4>* colorUniform = this->m_Material->GetUniform<glm::fvec4>("color");
+        if (colorUniform)
+            colorUniform->m_Value = color;
 
 		this->m_Material->m_PolygonMode.m_Enabled = true;
 		this->m_Material->m_CullMode.m_Enabled    = false;
