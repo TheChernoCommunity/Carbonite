@@ -1,16 +1,18 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Mesh/SkeletalMesh.h"
+
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanMeshData.h"
+#include "Engine/Renderer/Mesh/SkeletalMesh.h"
 
-namespace gp1 {
-
-	struct VulkanSkeletalMeshData : public VulkanMeshData {
+namespace gp1::renderer::apis::vulkan::mesh
+{
+	struct VulkanSkeletalMeshData : public VulkanMeshData
+	{
 	public:
-		VulkanSkeletalMeshData(Mesh* mesh);
+		VulkanSkeletalMeshData(renderer::mesh::SkeletalMesh* mesh);
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::mesh

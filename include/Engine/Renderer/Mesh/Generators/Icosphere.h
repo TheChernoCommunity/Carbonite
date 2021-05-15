@@ -6,12 +6,9 @@
 
 #include "Engine/Renderer/Mesh/StaticMesh.h"
 
-namespace gp1 {
+namespace gp1::renderer::meshGenerators
+{
+	// Generate an icosphere with the given subdivisions and put it inside the given mesh.
+	void GenerateIcosphere(mesh::StaticMesh& mesh, uint32_t subdivisions);
 
-	namespace meshGenerators {
-
-		void GenerateIcosphere(StaticMesh& mesh, uint32_t subdivisions);
-
-	} // namespace meshGenerators
-
-} // namespace gp1
+} // namespace gp1::renderer::meshGenerators

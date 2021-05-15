@@ -11,16 +11,13 @@
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Events/WindowEvent.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
-namespace gp1
+namespace gp1::window
 {
 	Window::Window(const WindowData& p_WindowData)
-		: m_WindowData{ p_WindowData }, m_Logger{ "Window" }
-	{
-
-	}
+	    : m_WindowData { p_WindowData }, m_Logger { "Window" } {}
 
 	void Window::Init()
 	{
@@ -36,8 +33,8 @@ namespace gp1
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
 
-		GLFWmonitor* monitor{ glfwGetPrimaryMonitor() };
-		const GLFWvidmode* mode{ glfwGetVideoMode(monitor) };
+		GLFWmonitor*       monitor { glfwGetPrimaryMonitor() };
+		const GLFWvidmode* mode { glfwGetVideoMode(monitor) };
 
 		switch (m_WindowData.Mode)
 		{
@@ -59,92 +56,93 @@ namespace gp1
 
 		glfwSetWindowUserPointer(m_NativeHandle, &m_WindowData);
 
-		glfwSetWindowSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height)
-			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				data.Width = width;
-				data.Height = height;
-				WindowResizeEvent event{ width, height };
-				EventHandler::PushEvent(event);
-			});
+		glfwSetWindowSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height) {
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			data.Width       = width;
+			data.Height      = height;
+			events::window::WindowResizeEvent event { width, height };
+			events::EventHandler::PushEvent(event);
+		});
 
-		glfwSetFramebufferSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height)
-			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				data.FramebufferWidth = width;
-				data.FramebufferHeight = height;
-			});
+		glfwSetFramebufferSizeCallback(m_NativeHandle, [](GLFWwindow* window, int width, int height) {
+			WindowData& data       = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			data.FramebufferWidth  = width;
+			data.FramebufferHeight = height;
+		});
 
-		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+			_CRT_UNUSED(mods);
+			_CRT_UNUSED(scancode);
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			_CRT_UNUSED(data);
+			switch (action)
 			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				switch (action)
-				{
-				case GLFW_PRESS:
-				{
-					KeyPressedEvent event{ key, false };
-					EventHandler::PushEvent(event);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					KeyReleasedEvent event{ key };
-					EventHandler::PushEvent(event);
-					break;
-				}
-				case GLFW_REPEAT:
-				{
-					KeyPressedEvent event{ key, true };
-					EventHandler::PushEvent(event);
-					break;
-				}
-				default:
-				{
-					break;
-				}
-				}
-			});
+			case GLFW_PRESS:
+			{
+				events::keyboard::KeyPressedEvent event { key, false };
+				events::EventHandler::PushEvent(event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				events::keyboard::KeyReleasedEvent event { key };
+				events::EventHandler::PushEvent(event);
+				break;
+			}
+			case GLFW_REPEAT:
+			{
+				events::keyboard::KeyPressedEvent event { key, true };
+				events::EventHandler::PushEvent(event);
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+		});
 
-		glfwSetMouseButtonCallback(m_NativeHandle, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_NativeHandle, [](GLFWwindow* window, int button, int action, int mods) {
+			_CRT_UNUSED(mods);
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			_CRT_UNUSED(data);
+			switch (action)
 			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				switch (action)
-				{
-				case GLFW_PRESS:
-				{
-					MouseButtonPressedEvent event{ button };
-					EventHandler::PushEvent(event);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEvent event{ button };
-					EventHandler::PushEvent(event);
-					break;
-				}
-				default:
-				{
-					break;
-				}
-				}
-			});
+			case GLFW_PRESS:
+			{
+				events::mouse::MouseButtonPressedEvent event { button };
+				events::EventHandler::PushEvent(event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				events::mouse::MouseButtonReleasedEvent event { button };
+				events::EventHandler::PushEvent(event);
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+		});
 
-		glfwSetCursorPosCallback(m_NativeHandle, [](GLFWwindow* window, double xPos, double yPos)
-			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				MouseMovedEvent event{ static_cast<int>(xPos), static_cast<int>(yPos) };
-				EventHandler::PushEvent(event);
-			});
+		glfwSetCursorPosCallback(m_NativeHandle, [](GLFWwindow* window, double xPos, double yPos) {
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			_CRT_UNUSED(data);
+			events::mouse::MouseMovedEvent event { xPos, yPos };
+			events::EventHandler::PushEvent(event);
+		});
 
-		glfwSetScrollCallback(m_NativeHandle, [](GLFWwindow* window, double x, double y)
-			{
-				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				MouseScrollEvent event{ x, y };
-				EventHandler::PushEvent(event);
-			});
+		glfwSetScrollCallback(m_NativeHandle, [](GLFWwindow* window, double x, double y) {
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			_CRT_UNUSED(data);
+			events::mouse::MouseScrollEvent event { x, y };
+			events::EventHandler::PushEvent(event);
+		});
 
 		glfwMakeContextCurrent(m_NativeHandle);
-		if (!gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress) )
+		if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 		{
 			m_Logger.Log(Severity::Error, "Failed to initialize GLAD!");
 		}
@@ -191,7 +189,7 @@ namespace gp1
 
 	void Window::SetSize(const int p_Width, const int p_Height)
 	{
-		m_WindowData.Width = p_Width;
+		m_WindowData.Width  = p_Width;
 		m_WindowData.Height = p_Height;
 		glfwSetWindowSize(m_NativeHandle, m_WindowData.Width, m_WindowData.Height);
 	}
@@ -202,11 +200,13 @@ namespace gp1
 		glfwSetWindowTitle(m_NativeHandle, m_WindowData.Title.c_str());
 	}
 
-	int Window::GetInputMode(int mode) {
+	int Window::GetInputMode(int mode)
+	{
 		return glfwGetInputMode(m_NativeHandle, mode);
 	}
 
-	void Window::SetInputMode(int mode, int value) {
+	void Window::SetInputMode(int mode, int value)
+	{
 		glfwSetInputMode(m_NativeHandle, mode, value);
 	}
 
@@ -220,4 +220,4 @@ namespace gp1
 		return glfwWindowShouldClose(m_NativeHandle);
 	}
 
-} // namespace gp1
+} // namespace gp1::window

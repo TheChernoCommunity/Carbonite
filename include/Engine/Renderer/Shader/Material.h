@@ -1,27 +1,30 @@
-//	
+//
 //	Created by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Renderer.h"
 
-#include <unordered_map>
+#include "Engine/Renderer/RendererData.h"
+
 #include <any>
+#include <unordered_map>
 
-namespace gp1 {
-
-	class Shader;
+namespace gp1::renderer::shader
+{
+	struct Shader;
 
 	template <typename T>
 	struct Uniform;
 
-	enum class TriangleFace : uint32_t {
+	enum class TriangleFace : uint32_t
+	{
 		BACK,
 		FRONT,
 		FRONT_AND_BACK
 	};
 
-	enum class BlendFunc : uint32_t {
+	enum class BlendFunc : uint32_t
+	{
 		ZERO,
 		ONE,
 		SRC_COLOR,
@@ -43,17 +46,17 @@ namespace gp1 {
 		ONE_MINUS_SRC1_ALPHA
 	};
 
-	enum class PolygonMode : uint32_t {
+	enum class PolygonMode : uint32_t
+	{
 		POINT,
 		LINE,
 		FILL
 	};
 
-	class MaterialData;
-
-	class Material {
+	struct Material : public Data
+	{
 	public:
-		~Material();
+		Material();
 
 		// Set the shader this material uses.
 		void SetShader(Shader* shader);
@@ -62,73 +65,49 @@ namespace gp1 {
 
 		// Get a pointer to a uniform.
 		template <typename T>
-		Uniform<T>* GetUniform(const std::string& id) {
+		Uniform<T>* GetUniform(const std::string& id)
+		{
 			if (!this->m_Shader)
 				return nullptr;
 
 			auto itr = this->m_Uniforms.find(id);
-			if (itr != this->m_Uniforms.end())
+			if (itr != this->m_Uniforms.end()) {
 				return std::any_cast<Uniform<T>>(&itr->second);
+			}
 			return nullptr;
 		}
 
-		// Get the graphics specific material data.
-		MaterialData* GetMaterialData(Renderer* renderer);
-
-		friend MaterialData;
-
-	private:
-		virtual MaterialData* CreateCustomMaterialData(Renderer* renderer);
-
-	public:
-		struct {
-			bool m_Enabled = true;						// Is face culling enabled.
-			TriangleFace m_Face = TriangleFace::BACK;	// The face to cull.
-		} m_CullMode;					// This mesh's cullmode.
-
-		bool m_DepthTest = true;		// Is depth testing enabled.
-
-		struct {
-			bool m_Enabled = true;									// Is blending enabled.
-			BlendFunc m_SrcFunc = BlendFunc::SRC_ALPHA;				// The blend function's source function.
-			BlendFunc m_DstFunc = BlendFunc::ONE_MINUS_SRC_ALPHA;	// The blend function's destination function.
-		} m_BlendFunc;					// The mesh's blend function.
-
-		struct {
-			bool m_Enabled = true;									// Is polygon mode enabled.
-			TriangleFace m_Face = TriangleFace::FRONT_AND_BACK;		// The face to render with this mode.
-			PolygonMode m_Mode = PolygonMode::FILL;					// The polygon mode.
-		} m_PolygonMode;				// The mesh's polygon mode.
-
-	protected:
-		std::unordered_map<std::string, std::any> m_Uniforms;	// The uniforms this material has.
-
-	private:
-		Shader* m_Shader = nullptr;								// The shader this material uses.
-		MaterialData* m_MaterialData = nullptr;					// The graphics specific data.
-	};
-
-	class MaterialData {
-	public:
-		MaterialData(Material* material);
-		virtual ~MaterialData();
-
-		virtual void CleanUp() = 0;
-
-		virtual RendererType GetRendererType() const = 0;
-
-		friend Renderer;
-
-	protected:
-		template <typename T>
-		T* GetMaterial() const {
-			return reinterpret_cast<T*>(this->m_Material);
-		}
-
+		// Gets all the uniforms this material has.
 		const std::unordered_map<std::string, std::any>& GetUniforms() const;
 
+	public:
+		struct
+		{
+			bool         m_Enabled = true;               // Is face culling enabled.
+			TriangleFace m_Face    = TriangleFace::BACK; // The face to cull.
+		} m_CullMode;                                    // This mesh's cullmode.
+
+		bool m_DepthTest = true; // Is depth testing enabled.
+
+		struct
+		{
+			bool      m_Enabled = true;                           // Is blending enabled.
+			BlendFunc m_SrcFunc = BlendFunc::SRC_ALPHA;           // The blend function's source function.
+			BlendFunc m_DstFunc = BlendFunc::ONE_MINUS_SRC_ALPHA; // The blend function's destination function.
+		} m_BlendFunc;                                            // The mesh's blend function.
+
+		struct
+		{
+			bool         m_Enabled = true;                         // Is polygon mode enabled.
+			TriangleFace m_Face    = TriangleFace::FRONT_AND_BACK; // The face to render with this mode.
+			PolygonMode  m_Mode    = PolygonMode::FILL;            // The polygon mode.
+		} m_PolygonMode;                                           // The mesh's polygon mode.
+
+	protected:
+		std::unordered_map<std::string, std::any> m_Uniforms; // The uniforms this material has.
+
 	private:
-		Material* m_Material;
+		Shader* m_Shader = nullptr; // The shader this material uses.
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::shader

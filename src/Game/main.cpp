@@ -1,17 +1,22 @@
-#include "Game/Game.h"
+#include "Game.h"
 
-int main(int /*argc*/, char* /*argv*/[]) {
-	gp1::Application* game = gp1::Application::CreateApplication();
+int main(int /*argc*/, char* /*argv*/[])
+{
+	gp1::Application* game = gp1::Application::GetInstance();
 	game->Run();
 	delete game;
 	return 0;
 }
 
-#if defined( _WIN32 )
+#if defined(_WIN32)
 
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
 #include <Windows.h>
 
-int WINAPI WinMain(_In_ HINSTANCE /*instance*/, _In_opt_ HINSTANCE /*prev_instance*/, _In_ LPSTR /*cmd_line*/, _In_ int /*cmd_show*/) {
+int WINAPI WinMain(_In_ HINSTANCE /*instance*/, _In_opt_ HINSTANCE /*prev_instance*/, _In_ LPSTR /*cmd_line*/, _In_ int /*cmd_show*/)
+{
 	return main(__argc, __argv);
 }
 

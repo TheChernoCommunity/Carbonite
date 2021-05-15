@@ -1,23 +1,27 @@
-//	
+//
 //	Created by MarcasRealAccount on 8. Oct. 2020
-//	
+//
 
 #pragma once
 
-#include "Engine/Input/ButtonInputBinding.h"
 #include "Engine/Input/AxisInputBinding.h"
+#include "Engine/Input/ButtonInputBinding.h"
 
 #include <unordered_map>
 
-namespace gp1 {
+namespace gp1
+{
+	namespace events
+	{
+		class Event;
+	}
 
-	class Event;
-
-	namespace input {
-
+	namespace input
+	{
 		class InputHandler;
 
-		class InputGroup {
+		class InputGroup
+		{
 		public:
 			InputGroup(const std::string& id);
 			~InputGroup();
@@ -34,7 +38,7 @@ namespace gp1 {
 			bool DoesCaptureMouse() const;
 
 			// Handles an event for this InputGroup.
-			void HandleEvent(Event& event);
+			void HandleEvent(events::Event& event);
 
 			// Gets an input binding from its id.
 			// You can cast the return value to the correct binding type.
@@ -54,9 +58,9 @@ namespace gp1 {
 			const std::string& GetId() const;
 
 		private:
-			std::string m_id;													// The id of this InputGroup.
-			std::unordered_map<std::string, IInputBinding*> m_inputBindings;	// The bindings this InputGroup handles.
-			bool m_CaptureMouse = false;										// Does this InputGroup capture the mouse.
+			std::string                                     m_id;                   // The id of this InputGroup.
+			std::unordered_map<std::string, IInputBinding*> m_inputBindings;        // The bindings this InputGroup handles.
+			bool                                            m_CaptureMouse = false; // Does this InputGroup capture the mouse.
 		};
 
 	} // namespace input

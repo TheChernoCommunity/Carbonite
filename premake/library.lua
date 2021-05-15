@@ -13,6 +13,7 @@ function library( name )
 		'third_party/glfw/include',
 		'third_party/glad/include',
 		'third_party/glm/glm',
+		'third_party/stb',
 		'third_party/openal-soft/include',
 		'third_party/openal-soft/src',
 		'third_party/openal-soft/src/common',
@@ -26,9 +27,14 @@ function library( name )
 		'src/%{prj.name}/**.h',
 	}
 
-	defines
-	{
-		"AL_LIBTYPE_STATIC"
+	vpaths {
+		-- For some reason, the token '%{prj.name}' doesn't work with vpaths
+		[ 'Header Files/*' ] = 'include/' .. name .. '/*',
+		[ 'Source Files/*' ] = 'src/' .. name .. '/*',
+	}
+
+	defines {
+		"AL_LIBTYPE_STATIC",
 	}
 
 	filter 'system:macosx or ios'

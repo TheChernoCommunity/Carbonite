@@ -1,22 +1,23 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #pragma once
-#include "Engine/Renderer/Mesh/SkeletalMesh.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLMeshData.h"
+#include "Engine/Renderer/Mesh/SkeletalMesh.h"
 
-namespace gp1 {
-
-	struct OpenGLSkeletalMeshData : public OpenGLMeshData {
+namespace gp1::renderer::apis::opengl::mesh
+{
+	struct OpenGLSkeletalMeshData : public OpenGLMeshData
+	{
 	public:
-		OpenGLSkeletalMeshData(Mesh* mesh);
+		OpenGLSkeletalMeshData(renderer::mesh::SkeletalMesh* skeletalMesh);
 
 	private:
-		bool HasVertices() override;
+		bool     HasVertices() override;
 		uint32_t GetCustomDataSize() override;
-		void InitCustomGLData() override;
-		void ClearCustomData() override;
+		void     InitCustomGLData() override;
+		void     ClearCustomData() override;
 	};
 
-} // namespace gp1
+} // namespace gp1::renderer::apis::opengl::mesh

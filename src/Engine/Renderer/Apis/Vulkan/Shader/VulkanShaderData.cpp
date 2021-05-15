@@ -1,21 +1,14 @@
-//	
+//
 //	Created by MarcasRealAccount on 31. Oct. 2020
-//	
+//
 
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderData.h"
 
-namespace gp1 {
+namespace gp1::renderer::apis::vulkan::shader
+{
+	VulkanShaderData::VulkanShaderData(renderer::shader::Shader* shader)
+	    : VulkanRendererData(shader) {}
 
-	Logger VulkanShaderData::m_Logger("Vulkan Shader");
+	void VulkanShaderData::CleanUp() {}
 
-	VulkanShaderData::VulkanShaderData(Shader* shader)
-		: ShaderData(shader) {}
-
-	RendererType VulkanShaderData::GetRendererType() const {
-		return RendererType::OPENGL;
-	}
-
-	void VulkanShaderData::CleanUp() {
-	}
-
-} // namespace gp1
+} // namespace gp1::renderer::apis::vulkan::shader

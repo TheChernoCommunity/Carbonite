@@ -1,108 +1,84 @@
-//	
+//
 //	Created by MarcasRealAccount on 29. Oct. 2020
-//	
+//
 
 #pragma once
 
+#include "Engine/Renderer/RendererType.h"
 #include "Engine/Scene/Camera.h"
 
 struct GLFWwindow;
 
-namespace gp1 {
+namespace gp1
+{
+	namespace window
+	{
+		class Window;
+	}
 
-	class Window;
-	class DebugRenderer;
-	struct Mesh;
-	struct MeshData;
-	class Material;
-	class MaterialData;
-	class Shader;
-	class ShaderData;
-	class Scene;
+	namespace scene
+	{
+		class Scene;
+	}
 
-	enum class RendererType {
-		OPENGL,
-		VULKAN
-	};
-
-	class Renderer {
-	public:
-		Renderer(Window* window);
-		virtual ~Renderer() = default;
-
-		virtual RendererType GetRendererType() const = 0;
-
-		// Initialize the renderer.
-		void Init();
-		// De-initialize the renderer.
-		void DeInit();
-		// Render a scene.
-		void Render(Scene* scene);
-
-		// Is the DebugRenderer made for this renderer.
-		virtual bool IsDebugRendererUsable(DebugRenderer* debugRenderer);
-
-		// Is the MeshData made for this renderer.
-		virtual bool IsMeshDataUsable(MeshData* meshData);
-		// Is the ShaderData made for this renderer.
-		virtual bool IsShaderDataUsable(ShaderData* shaderData);
-		// Is the MaterialData made for this renderer.
-		virtual bool IsMaterialDataUsable(MaterialData* materialData);
-
-		// Create a DebugRenderer for this renderer.
-		virtual DebugRenderer* CreateDebugRenderer() = 0;
-
-		// Create a SkeletalMeshData for this renderer.
-		virtual MeshData* CreateSkeletalMeshData(Mesh* mesh) = 0;
-		// Create a StaticMeshData for this renderer.
-		virtual MeshData* CreateStaticMeshData(Mesh* mesh) = 0;
-		// Create a StaticVoxelMeshData for this renderer.
-		virtual MeshData* CreateStaticVoxelMeshData(Mesh* mesh) = 0;
-
-		// Create a ShaderData for this renderer.
-		virtual ShaderData* CreateShaderData(Shader* shader) = 0;
-
-		// Create a MaterialData for this renderer.
-		virtual MaterialData* CreateMaterialData(Material* material) = 0;
-
-	protected:
-		// Initialize the renderer.
-		virtual void InitRenderer() = 0;
-		// De-initialize the renderer.
-		virtual void DeInitRenderer() = 0;
-		// Render a scene.
-		virtual void RenderScene(Scene* scene, uint32_t width, uint32_t height) = 0;
-
-		GLFWwindow* GetNativeWindowHandle() const;
-
-		DebugRenderer* GetDebugRenderer();
-
-		template <typename T>
-		T* GetMeshData(Mesh* mesh) {
-			return reinterpret_cast<T*>(mesh->GetMeshData(this));
+	namespace renderer
+	{
+		namespace debug
+		{
+			class DebugRenderer;
 		}
 
-		template <typename T>
-		T* GetMaterialData(Material* material) {
-			return reinterpret_cast<T*>(material->GetMaterialData(this));
-		}
+		struct RendererData;
+		struct Data;
 
-		template <typename T>
-		T* GetShaderData(MaterialData* materialData) {
-			return GetShaderData<T>(materialData->GetMaterial<Material>()->GetShader());
-		}
+		class Renderer
+		{
+		public:
+			Renderer(window::Window* window);
+			virtual ~Renderer() = default;
 
-		template <typename T>
-		T* GetShaderData(Shader* shader) {
-			return reinterpret_cast<T*>(shader->GetShaderData(this));
-		}
+			// Get the type of renderer.
+			virtual RendererType GetRendererType() const = 0;
 
-	public:
-		// Get the appropriate renderer for the type.
-		static Renderer* GetRenderer(RendererType rendererType, Window* window);
+			// Initialize the renderer.
+			void Init();
+			// De-initialize the renderer.
+			void DeInit();
+			// Render a scene.
+			void Render(scene::Scene* scene);
 
-	protected:
-		Window* m_Window;	// The window instance.
-	};
+			// Is the DebugRenderer made for this renderer.
+			virtual bool IsDebugRendererUsable(debug::DebugRenderer* debugRenderer);
+			// Create a DebugRenderer for this renderer.
+			virtual debug::DebugRenderer* CreateDebugRenderer() = 0;
+
+			// Is the renderer data usable for this renderer.
+			virtual bool IsRendererDataUsable(RendererData* rendererData);
+			// Create renderer data that is associated with the given data.
+			virtual RendererData* CreateRendererData(Data* data) = 0;
+
+		protected:
+			// Initialize the renderer.
+			virtual void InitRenderer() = 0;
+			// De-initialize the renderer.
+			virtual void DeInitRenderer() = 0;
+			// Render a scene.
+			virtual void RenderScene(scene::Scene* scene, uint32_t width, uint32_t height) = 0;
+
+			// Get the native window handle, this renderer renders to.
+			GLFWwindow* GetNativeWindowHandle() const;
+
+			// Get the debug renderer this renderer uses.
+			debug::DebugRenderer* GetDebugRenderer();
+
+		public:
+			// Get the appropriate renderer for the given type.
+			static Renderer* GetRenderer(RendererType rendererType, window::Window* window);
+
+		protected:
+			window::Window* m_Window; // The window instance.
+		};
+
+	} // namespace renderer
 
 } // namespace gp1
