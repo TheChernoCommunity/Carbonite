@@ -38,6 +38,9 @@ namespace gp1::renderer
 	public:
 		static std::shared_ptr<Uniform> CreateUniform(EUniformType type);
 
+	public:
+		virtual ~Uniform() = default;
+
 		bool IsOfSameType(const std::shared_ptr<Uniform>& other) const;
 
 		virtual EUniformType GetType() const                                          = 0;
