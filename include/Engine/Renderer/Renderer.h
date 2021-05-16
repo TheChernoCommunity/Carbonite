@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Engine/Renderer/DebugRenderer.h"
 #include "Engine/Renderer/Material/Material.h"
 #include "Engine/Renderer/Material/ReservedUniformBuffers.h"
 #include "Engine/Renderer/Mesh/StaticMesh.h"
@@ -39,20 +40,21 @@ namespace gp1
 			virtual void Init()               = 0;
 			virtual void DeInit()             = 0;
 
-			virtual void Render(scene::Camera* camera) = 0;
+			virtual void Render(std::shared_ptr<scene::Camera> camera) = 0;
 
-			inline ReservedUniformBuffers* GetReservedUniformBuffers()
+			inline std::shared_ptr<ReservedUniformBuffers> GetReservedUniformBuffers() const
 			{
 				return m_ReservedUniformBuffers;
 			}
 
-			inline const ReservedUniformBuffers* GetReservedUniformBuffers() const
+			inline std::shared_ptr<DebugRenderer> GetDebugRenderer() const
 			{
-				return m_ReservedUniformBuffers;
+				return m_DebugRenderer;
 			}
 
 		protected:
-			ReservedUniformBuffers* m_ReservedUniformBuffers;
+			std::shared_ptr<ReservedUniformBuffers> m_ReservedUniformBuffers;
+			std::shared_ptr<DebugRenderer>          m_DebugRenderer;
 		};
 	} // namespace renderer
 } // namespace gp1

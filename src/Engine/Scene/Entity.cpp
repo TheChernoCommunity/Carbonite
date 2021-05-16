@@ -9,14 +9,6 @@
 
 namespace gp1::scene
 {
-	Entity::~Entity()
-	{
-		if (m_Scene)
-		{
-			m_Scene->DetachEntity(this);
-		}
-	}
-
 	void Entity::Update([[maybe_unused]] float deltaTime)
 	{
 	}

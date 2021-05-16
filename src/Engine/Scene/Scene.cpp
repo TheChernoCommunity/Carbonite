@@ -3,11 +3,10 @@
 //
 
 #include "Engine/Scene/Scene.h"
-#include "Engine/Scene/Entity.h"
 
 namespace gp1::scene
 {
-	void Scene::AttachEntity(Entity* entity)
+	void Scene::AttachEntity(std::shared_ptr<Entity> entity)
 	{
 		if (entity->m_Scene)
 			entity->m_Scene->DetachEntity(entity);
@@ -15,32 +14,44 @@ namespace gp1::scene
 		entity->m_Scene = this;
 	}
 
-	void Scene::DetachEntity(Entity* entity)
+	void Scene::DetachEntity(std::shared_ptr<Entity> entity)
 	{
 		if (entity->m_Scene != this)
 			return;
 
-		auto itr = this->m_Entities.begin();
-		while (itr != this->m_Entities.end())
+		for (auto itr = m_Entities.begin(); itr != m_Entities.end();)
 		{
-			if (*itr == entity)
+			if (itr->expired())
 			{
-				this->m_Entities.erase(itr);
-				entity->m_Scene = nullptr;
-				break;
+				itr = m_Entities.erase(itr);
 			}
-			itr++;
+			else
+			{
+				if (itr->lock() == entity)
+				{
+					m_Entities.erase(itr);
+					entity->m_Scene = nullptr;
+					break;
+				}
+				itr++;
+			}
 		}
 	}
 
 	void Scene::Update(float deltaTime)
 	{
-		for (auto& entity : m_Entities)
-			entity->Update(deltaTime);
-	}
-
-	const std::vector<Entity*>& Scene::GetEntities()
-	{
-		return this->m_Entities;
+		for (auto itr = m_Entities.begin(); itr != m_Entities.end();)
+		{
+			if (itr->expired())
+			{
+				itr = m_Entities.erase(itr);
+			}
+			else
+			{
+				std::shared_ptr<Entity> entity = itr->lock();
+				entity->Update(deltaTime);
+				itr++;
+			}
+		}
 	}
 } // namespace gp1::scene

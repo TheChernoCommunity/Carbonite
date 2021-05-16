@@ -91,6 +91,12 @@ namespace gp1::renderer
 		const UniformBuffer*     GetUniformBuffer(const std::string& name) const;
 		std::shared_ptr<Uniform> GetUniform(const std::string& bufferName, const std::string& uniformName) const;
 
+		template <typename T, std::enable_if_t<std::is_base_of_v<Uniform, T>, bool> = true>
+		std::shared_ptr<T> GetUniform(const std::string& bufferName, const std::string& uniformName) const
+		{
+			return std::static_pointer_cast<T>(GetUniform(bufferName, uniformName));
+		}
+
 	public:
 		CullMode    m_CullMode;
 		bool        m_DepthTest = false;

@@ -110,12 +110,13 @@ void main(void) {
 		input::JoystickHandler::Init();
 		m_Renderer->Init();
 
-		m_Scene.AttachEntity(&m_Camera);
+		m_Camera = std::make_shared<scene::Camera>();
+		m_Scene.AttachEntity(m_Camera);
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
 		m_TestEntity = std::make_shared<TestEntity>();
-		m_Scene.AttachEntity(m_TestEntity.get());
+		m_Scene.AttachEntity(m_TestEntity);
 		//----
 	}
 
@@ -131,7 +132,7 @@ void main(void) {
 
 			m_Scene.Update(deltaTime);
 
-			m_Renderer->Render(&m_Camera);
+			m_Renderer->Render(m_Camera);
 
 			m_Window.OnUpdate();
 			input::JoystickHandler::OnUpdate();

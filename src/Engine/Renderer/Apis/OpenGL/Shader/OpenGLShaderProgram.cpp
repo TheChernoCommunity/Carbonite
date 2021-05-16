@@ -41,10 +41,10 @@ namespace gp1::renderer::opengl
 				CleanUp();
 
 			GenGLData();
-			m_Dirty = false;
-			return true;
+			m_Dirty      = false;
+			m_HasChanged = true;
 		}
-		return false;
+		return m_HasChanged;
 	}
 
 	bool OpenGLShaderProgram::IsUniformBufferValid(const std::string& name) const

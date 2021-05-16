@@ -13,7 +13,7 @@ namespace gp1::scene
 	class Entity
 	{
 	public:
-		virtual ~Entity();
+		virtual ~Entity() = default;
 
 		// Update this entity.
 		virtual void Update(float deltaTime);

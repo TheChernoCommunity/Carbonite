@@ -31,7 +31,7 @@ namespace gp1::renderer::vulkan
 		virtual void Init() override;
 		virtual void DeInit() override;
 
-		virtual void Render(scene::Camera* camera) override;
+		virtual void Render(std::shared_ptr<scene::Camera> camera) override;
 	};
 } // namespace gp1::renderer::vulkan
 

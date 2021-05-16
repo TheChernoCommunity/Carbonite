@@ -10,6 +10,7 @@
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticMesh.h"
+#include "Engine/Renderer/Apis/OpenGL/OpenGLDebugRenderer.h"
 #include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 #include "Engine/Scene/Camera.h"
@@ -34,7 +35,9 @@ namespace gp1::renderer::opengl
 
 	std::shared_ptr<ShaderProgram> OpenGLRenderer::CreateShaderProgram()
 	{
-		return std::make_shared<OpenGLShaderProgram>();
+		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::make_shared<OpenGLShaderProgram>();
+		m_ShaderPrograms.push_back(shaderProgram);
+		return shaderProgram;
 	}
 
 	bool OpenGLRenderer::IsCompatible() const
@@ -74,17 +77,22 @@ namespace gp1::renderer::opengl
 		if (GLVersion.major == 0 && GLVersion.minor == 0 && !gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 			throw std::runtime_error("Could not load OpenGL!");
 
+		m_DebugRenderer = std::make_shared<OpenGLDebugRenderer>();
+		DebugRenderer::SetDebugRenderer(m_DebugRenderer);
+
 		// TODO(MarcasRealAccount): Maybe move this somewhere else
-		m_ReservedUniformBuffers = new OpenGLReservedUniformBuffers();
+		m_ReservedUniformBuffers = std::make_shared<OpenGLReservedUniformBuffers>();
 	}
 
 	void OpenGLRenderer::DeInit()
 	{
-		OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(m_ReservedUniformBuffers);
+		std::shared_ptr<OpenGLReservedUniformBuffers> reservedUniformBuffers = std::reinterpret_pointer_cast<OpenGLReservedUniformBuffers>(m_ReservedUniformBuffers);
 		reservedUniformBuffers->CleanUp();
+
+		DebugRenderer::SetDebugRenderer(nullptr);
 	}
 
-	void OpenGLRenderer::Render(scene::Camera* camera)
+	void OpenGLRenderer::Render(std::shared_ptr<scene::Camera> camera)
 	{
 		if (!camera)
 			return;
@@ -96,36 +104,60 @@ namespace gp1::renderer::opengl
 		glViewport(0, 0, windowData.FramebufferWidth, windowData.FramebufferHeight);
 		glClearColor(camera->m_ClearColor.r, camera->m_ClearColor.g, camera->m_ClearColor.b, camera->m_ClearColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		for (auto itr = m_ShaderPrograms.begin(); itr != m_ShaderPrograms.end();)
+		{
+			if (itr->expired())
+			{
+				itr = m_ShaderPrograms.erase(itr);
+			}
+			else
+			{
+				std::shared_ptr<OpenGLShaderProgram> shaderProgram = itr->lock();
+				shaderProgram->ResetHasChanged();
+				itr++;
+			}
+		}
 		//----
 
 		scene::Scene* scene = camera->GetScene();
 
-		OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(m_ReservedUniformBuffers);
+		std::shared_ptr<OpenGLReservedUniformBuffers> reservedUniformBuffers = std::reinterpret_pointer_cast<OpenGLReservedUniformBuffers>(m_ReservedUniformBuffers);
 
-		std::shared_ptr<UniformFMat4> projectionViewMatrixUniform = std::reinterpret_pointer_cast<UniformFMat4>(reservedUniformBuffers->GetUniform("Camera", "projectionViewMatrix"));
-		if (projectionViewMatrixUniform)
+		std::shared_ptr<UniformFMat4> projectionViewMatrixUniform = reservedUniformBuffers->GetUniform<UniformFMat4>("Camera", "projectionViewMatrix");
+		if (projectionViewMatrixUniform && projectionViewMatrixUniform->GetType() == UniformFMat4::GetTypeS())
 			projectionViewMatrixUniform->SetValue(camera->GetProjectionViewMatrix());
 
 		reservedUniformBuffers->Bind();
-		for (scene::Entity* entity : scene->GetEntities())
+
+		for (auto& weakEntity : scene->GetEntities())
 		{
-			if (entity->IsRenderable())
+			if (!weakEntity.expired())
 			{
-				scene::RenderableEntity* renderableEntity = reinterpret_cast<scene::RenderableEntity*>(entity);
-
-				std::shared_ptr<OpenGLMaterial> material = std::reinterpret_pointer_cast<OpenGLMaterial>(renderableEntity->GetMaterial());
-				OpenGLMesh*                     mesh     = reinterpret_cast<OpenGLMesh*>(renderableEntity->GetMesh()->GetNext());
-
-				std::shared_ptr<UniformFMat4> transformationMatrixUniform = std::reinterpret_pointer_cast<UniformFMat4>(material->GetUniform("Object", "transformationMatrix"));
-				transformationMatrixUniform->SetValue(renderableEntity->GetTransformationMatrix());
-
-				material->Bind();
-				mesh->Render();
-				material->Unbind();
+				std::shared_ptr<scene::Entity> entity = weakEntity.lock();
+				if (entity->IsRenderable())
+					RenderEntity(std::reinterpret_pointer_cast<scene::RenderableEntity>(entity));
 			}
 		}
 
+		std::shared_ptr<OpenGLDebugRenderer> debugRenderer = std::reinterpret_pointer_cast<OpenGLDebugRenderer>(m_DebugRenderer);
+		debugRenderer->Render();
+
 		glfwSwapBuffers(Application::GetInstance()->GetWindow().GetNativeHandle());
+	}
+
+	void OpenGLRenderer::RenderEntity(std::shared_ptr<scene::RenderableEntity> entity)
+	{
+		std::shared_ptr<OpenGLMaterial> material = std::reinterpret_pointer_cast<OpenGLMaterial>(entity->GetMaterial());
+		OpenGLMesh*                     mesh     = reinterpret_cast<OpenGLMesh*>(entity->GetMesh()->GetNext());
+
+		std::shared_ptr<UniformFMat4> transformationMatrixUniform = material->GetUniform<UniformFMat4>("Object", "transformationMatrix");
+		if (transformationMatrixUniform && transformationMatrixUniform->GetType() == UniformFMat4::GetTypeS())
+			transformationMatrixUniform->SetValue(entity->GetTransformationMatrix());
+
+		material->Bind();
+		mesh->Render();
+		material->Unbind();
 	}
 } // namespace gp1::renderer::opengl
 

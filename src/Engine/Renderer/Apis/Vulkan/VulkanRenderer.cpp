@@ -11,6 +11,7 @@
 #include "Engine/Renderer/Apis/Vulkan/Material/VulkanReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMesh.h"
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderProgram.h"
+#include "Engine/Renderer/Apis/Vulkan/VulkanDebugRenderer.h"
 #include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
 #include "Engine/Scene/Camera.h"
 #include "Engine/Window/Window.h"
@@ -45,15 +46,18 @@ namespace gp1::renderer::vulkan
 
 	void VulkanRenderer::Init()
 	{
-		m_ReservedUniformBuffers = new VulkanReservedUniformBuffers();
+		m_DebugRenderer = std::make_shared<VulkanDebugRenderer>();
+		DebugRenderer::SetDebugRenderer(m_DebugRenderer);
+
+		m_ReservedUniformBuffers = std::make_shared<VulkanReservedUniformBuffers>();
 	}
 
 	void VulkanRenderer::DeInit()
 	{
-		delete m_ReservedUniformBuffers;
+		DebugRenderer::SetDebugRenderer(nullptr);
 	}
 
-	void VulkanRenderer::Render(scene::Camera* camera)
+	void VulkanRenderer::Render(std::shared_ptr<scene::Camera> camera)
 	{
 		[[maybe_unused]] scene::Scene* scene = camera->GetScene();
 	}

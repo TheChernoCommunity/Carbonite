@@ -8,12 +8,15 @@
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 #include "Engine/Renderer/Material/Material.h"
 #include "Engine/Renderer/Mesh/StaticMesh.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Shader/ShaderProgram.h"
+#include "Engine/Scene/RenderableEntity.h"
 
 #include <memory>
+#include <vector>
 
 namespace gp1::renderer::opengl
 {
@@ -31,7 +34,11 @@ namespace gp1::renderer::opengl
 		virtual void Init() override;
 		virtual void DeInit() override;
 
-		virtual void Render(scene::Camera* camera) override;
+		virtual void Render(std::shared_ptr<scene::Camera> camera) override;
+		void         RenderEntity(std::shared_ptr<scene::RenderableEntity> entity);
+
+	private:
+		std::vector<std::weak_ptr<OpenGLShaderProgram>> m_ShaderPrograms;
 	};
 } // namespace gp1::renderer::opengl
 

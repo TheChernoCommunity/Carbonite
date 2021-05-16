@@ -77,8 +77,8 @@ namespace gp1
 		// TODO: create init function for application using WindowData
 		window::Window m_Window { { 1280, 720, 1280, 720, "Cherno Community Game Project 1", window::WindowMode::WINDOWED, false } }; // The window of this application.
 
-		scene::Scene  m_Scene; // The scene to use for this application.
-		scene::Camera m_Camera;
+		scene::Scene                   m_Scene; // The scene to use for this application.
+		std::shared_ptr<scene::Camera> m_Camera;
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
