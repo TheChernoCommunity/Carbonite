@@ -10,7 +10,7 @@
 
 namespace gp1::renderer
 {
-	enum class RenderMode : uint32_t
+	enum class ERenderMode : uint32_t
 	{
 		Points,
 		LineStrip,
@@ -32,7 +32,7 @@ namespace gp1::renderer
 		virtual ~Mesh() = default;
 
 	public:
-		RenderMode m_RenderMode = RenderMode::Triangles;
+		ERenderMode m_RenderMode = ERenderMode::Triangles;
 		float      m_LineWidth  = 1.0f;
 	};
 } // namespace gp1::renderer

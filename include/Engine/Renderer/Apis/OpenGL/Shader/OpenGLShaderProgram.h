@@ -40,7 +40,7 @@ namespace gp1::renderer::opengl
 		uint32_t GetGLShaderType(EShaderType shaderType) const;
 
 	protected:
-		uint32_t m_ProgramId;
+		uint32_t m_ProgramId = 0;
 
 		std::vector<OpenGLUniformBufferBindingPoint> m_UniformBufferBindingPoints;
 	};

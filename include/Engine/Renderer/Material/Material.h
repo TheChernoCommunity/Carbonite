@@ -5,8 +5,10 @@
 #pragma once
 
 #include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Renderer/Shader/ShaderProgram.h"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -72,17 +74,15 @@ namespace gp1::renderer
 		EPolygonMode  m_Mode    = EPolygonMode::Fill;
 	};
 
-	struct ShaderProgram;
-
 	struct Material
 	{
 	public:
 		virtual ~Material() = default;
 
-		void SetShaderProgram(ShaderProgram* shaderProgram);
+		void SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProgram);
 		void UpdateShaderProgram();
 
-		inline ShaderProgram* GetShaderProgram() const
+		inline std::shared_ptr<ShaderProgram> GetShaderProgram() const
 		{
 			return m_ShaderProgram;
 		}
@@ -101,6 +101,6 @@ namespace gp1::renderer
 		std::vector<UniformBuffer> m_UniformBuffers;
 
 	private:
-		ShaderProgram* m_ShaderProgram = nullptr;
+		std::shared_ptr<ShaderProgram> m_ShaderProgram;
 	};
 } // namespace gp1::renderer

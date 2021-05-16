@@ -32,7 +32,7 @@ namespace gp1::renderer::opengl
 		return std::make_shared<OpenGLMaterial>();
 	}
 
-	std::shared_ptr<ShaderProgram> OpenGLRenderer::CreateShader()
+	std::shared_ptr<ShaderProgram> OpenGLRenderer::CreateShaderProgram()
 	{
 		return std::make_shared<OpenGLShaderProgram>();
 	}
@@ -86,10 +86,46 @@ namespace gp1::renderer::opengl
 
 	void OpenGLRenderer::Render(scene::Camera* camera)
 	{
-		[[maybe_unused]] scene::Scene* scene = camera->GetScene();
+		if (!camera)
+			return;
+
+		//----
+		// TODO(MarcasRealAccount): This should only be called for the main camera that's rendering to the window.
+		const window::WindowData& windowData = Application::GetInstance()->GetWindow().GetWindowData();
+		camera->m_Aspect                     = static_cast<float>(windowData.FramebufferWidth) / static_cast<float>(windowData.FramebufferHeight);
+		glViewport(0, 0, windowData.FramebufferWidth, windowData.FramebufferHeight);
+		glClearColor(camera->m_ClearColor.r, camera->m_ClearColor.g, camera->m_ClearColor.b, camera->m_ClearColor.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//----
+
+		scene::Scene* scene = camera->GetScene();
 
 		OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(m_ReservedUniformBuffers);
+
+		std::shared_ptr<UniformFMat4> projectionViewMatrixUniform = std::reinterpret_pointer_cast<UniformFMat4>(reservedUniformBuffers->GetUniform("Camera", "projectionViewMatrix"));
+		if (projectionViewMatrixUniform)
+			projectionViewMatrixUniform->SetValue(camera->GetProjectionViewMatrix());
+
 		reservedUniformBuffers->Bind();
+		for (scene::Entity* entity : scene->GetEntities())
+		{
+			if (entity->IsRenderable())
+			{
+				scene::RenderableEntity* renderableEntity = reinterpret_cast<scene::RenderableEntity*>(entity);
+
+				std::shared_ptr<OpenGLMaterial> material = std::reinterpret_pointer_cast<OpenGLMaterial>(renderableEntity->GetMaterial());
+				OpenGLMesh*                     mesh     = reinterpret_cast<OpenGLMesh*>(renderableEntity->GetMesh()->GetNext());
+
+				std::shared_ptr<UniformFMat4> transformationMatrixUniform = std::reinterpret_pointer_cast<UniformFMat4>(material->GetUniform("Object", "transformationMatrix"));
+				transformationMatrixUniform->SetValue(renderableEntity->GetTransformationMatrix());
+
+				material->Bind();
+				mesh->Render();
+				material->Unbind();
+			}
+		}
+
+		glfwSwapBuffers(Application::GetInstance()->GetWindow().GetNativeHandle());
 	}
 } // namespace gp1::renderer::opengl
 

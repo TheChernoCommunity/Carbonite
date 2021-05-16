@@ -11,9 +11,9 @@ namespace gp1::scene
 {
 	Entity::~Entity()
 	{
-		if (this->m_Scene)
+		if (m_Scene)
 		{
-			this->m_Scene->DetachEntity(this);
+			m_Scene->DetachEntity(this);
 		}
 	}
 
@@ -21,35 +21,30 @@ namespace gp1::scene
 	{
 	}
 
-	const glm::fmat4& Entity::GetTransformationMatrix(bool isViewMatrix)
+	const glm::fmat4& Entity::GetTransformationMatrix(bool negativeTranslation)
 	{
-		if (this->m_Position != this->m_PPosition || this->m_Rotation != this->m_PRotation || this->m_Scale != this->m_PScale)
+		if (m_Position != m_PPosition || m_Rotation != m_PRotation || m_Scale != m_PScale)
 		{
-			this->m_PPosition = this->m_Position;
-			this->m_PRotation = this->m_Rotation;
-			this->m_PScale    = this->m_Scale;
-			if (isViewMatrix)
+			m_PPosition = m_Position;
+			m_PRotation = m_Rotation;
+			m_PScale    = m_Scale;
+			if (negativeTranslation)
 			{
-				this->m_CachedTransformationMatrix = glm::rotate(glm::radians(this->m_Rotation.x), glm::fvec3 { 1.0f, 0.0f, 0.0f });
-				this->m_CachedTransformationMatrix = glm::rotate(this->m_CachedTransformationMatrix, glm::radians(this->m_Rotation.y), { 0.0f, 1.0f, 0.0f });
-				this->m_CachedTransformationMatrix = glm::rotate(this->m_CachedTransformationMatrix, glm::radians(this->m_Rotation.z), { 0.0f, 0.0f, 1.0f });
-				this->m_CachedTransformationMatrix = glm::scale(this->m_CachedTransformationMatrix, this->m_Scale);
-				this->m_CachedTransformationMatrix = glm::translate(this->m_CachedTransformationMatrix, -this->m_Position);
+				m_CachedTransformationMatrix = glm::rotate(glm::radians(m_Rotation.x), glm::fvec3 { 1.0f, 0.0f, 0.0f });
+				m_CachedTransformationMatrix = glm::rotate(m_CachedTransformationMatrix, glm::radians(m_Rotation.y), { 0.0f, 1.0f, 0.0f });
+				m_CachedTransformationMatrix = glm::rotate(m_CachedTransformationMatrix, glm::radians(m_Rotation.z), { 0.0f, 0.0f, 1.0f });
+				m_CachedTransformationMatrix = glm::scale(m_CachedTransformationMatrix, m_Scale);
+				m_CachedTransformationMatrix = glm::translate(m_CachedTransformationMatrix, -m_Position);
 			}
 			else
 			{
-				this->m_CachedTransformationMatrix = glm::translate(this->m_Position);
-				this->m_CachedTransformationMatrix = glm::rotate(this->m_CachedTransformationMatrix, glm::radians(this->m_Rotation.x), { 1.0f, 0.0f, 0.0f });
-				this->m_CachedTransformationMatrix = glm::rotate(this->m_CachedTransformationMatrix, glm::radians(this->m_Rotation.y), { 0.0f, 1.0f, 0.0f });
-				this->m_CachedTransformationMatrix = glm::rotate(this->m_CachedTransformationMatrix, glm::radians(this->m_Rotation.z), { 0.0f, 0.0f, 1.0f });
-				this->m_CachedTransformationMatrix = glm::scale(this->m_CachedTransformationMatrix, this->m_Scale);
+				m_CachedTransformationMatrix = glm::translate(m_Position);
+				m_CachedTransformationMatrix = glm::rotate(m_CachedTransformationMatrix, glm::radians(m_Rotation.x), { 1.0f, 0.0f, 0.0f });
+				m_CachedTransformationMatrix = glm::rotate(m_CachedTransformationMatrix, glm::radians(m_Rotation.y), { 0.0f, 1.0f, 0.0f });
+				m_CachedTransformationMatrix = glm::rotate(m_CachedTransformationMatrix, glm::radians(m_Rotation.z), { 0.0f, 0.0f, 1.0f });
+				m_CachedTransformationMatrix = glm::scale(m_CachedTransformationMatrix, m_Scale);
 			}
 		}
 		return m_CachedTransformationMatrix;
-	}
-
-	Scene* Entity::GetScene() const
-	{
-		return this->m_Scene;
 	}
 } // namespace gp1::scene

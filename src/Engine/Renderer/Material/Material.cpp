@@ -7,7 +7,7 @@
 
 namespace gp1::renderer
 {
-	void Material::SetShaderProgram(ShaderProgram* shaderProgram)
+	void Material::SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProgram)
 	{
 		m_ShaderProgram = shaderProgram;
 		m_UniformBuffers.clear();
@@ -65,4 +65,4 @@ namespace gp1::renderer
 			return uniformBuffer->GetUniform(uniformName);
 		return nullptr;
 	}
-} // namespace gp1
+} // namespace gp1::renderer

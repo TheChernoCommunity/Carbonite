@@ -16,6 +16,7 @@ namespace gp1::renderer::opengl
 	struct OpenGLStaticMesh : public StaticMesh, public OpenGLMesh
 	{
 	public:
+		OpenGLStaticMesh();
 		virtual ~OpenGLStaticMesh();
 
 		virtual void Render() override;

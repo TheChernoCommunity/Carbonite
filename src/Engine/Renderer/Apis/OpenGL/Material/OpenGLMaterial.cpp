@@ -33,6 +33,7 @@ namespace gp1::renderer::opengl
 				glBindBuffer(GL_UNIFORM_BUFFER, m_Ubo);
 				glBufferData(GL_UNIFORM_BUFFER, uniformData.size(), uniformData.data(), GL_DYNAMIC_DRAW);
 				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+				m_UboSize = static_cast<uint32_t>(uniformData.size());
 			}
 			else
 			{
@@ -40,6 +41,8 @@ namespace gp1::renderer::opengl
 				glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformData.size(), uniformData.data());
 				glBindBuffer(GL_UNIFORM_BUFFER, 0);
 			}
+
+			m_UniformBuffer->ClearDirty();
 		}
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, m_Binding, m_Ubo);
@@ -59,7 +62,7 @@ namespace gp1::renderer::opengl
 
 	void OpenGLMaterial::Bind()
 	{
-		OpenGLShaderProgram* shaderProgram = reinterpret_cast<OpenGLShaderProgram*>(GetShaderProgram());
+		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
 
@@ -127,7 +130,7 @@ namespace gp1::renderer::opengl
 
 	void OpenGLMaterial::Unbind()
 	{
-		OpenGLShaderProgram* shaderProgram = reinterpret_cast<OpenGLShaderProgram*>(GetShaderProgram());
+		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
 

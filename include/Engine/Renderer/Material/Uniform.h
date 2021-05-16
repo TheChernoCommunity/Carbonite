@@ -53,6 +53,11 @@ namespace gp1::renderer
 			return m_Dirty;
 		}
 
+		inline void ClearDirty()
+		{
+			m_Dirty = false;
+		}
+
 	public:
 		bool m_Dirty = true;
 	};
@@ -81,6 +86,7 @@ namespace gp1::renderer
 		UniformBuffer(const std::string& name, const std::vector<std::pair<std::string, UniformInfo>>& uniforms);
 
 		bool IsDirty() const;
+		void ClearDirty();
 
 		inline const std::string& GetName() const
 		{

@@ -22,7 +22,7 @@ namespace gp1::renderer::opengl
 	public:
 		virtual std::shared_ptr<StaticMesh>    CreateStaticMesh() override;
 		virtual std::shared_ptr<Material>      CreateMaterial() override;
-		virtual std::shared_ptr<ShaderProgram> CreateShader() override;
+		virtual std::shared_ptr<ShaderProgram> CreateShaderProgram() override;
 
 		virtual bool IsCompatible() const override;
 

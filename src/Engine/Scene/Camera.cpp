@@ -47,18 +47,18 @@ namespace gp1::scene
 
 	void Camera::Update(float deltaTime)
 	{
-		switch (this->m_Mode)
+		switch (m_Mode)
 		{
-		case CameraMode::NORMAL:
+		case ECameraMode::Normal:
 			break;
-		case CameraMode::FREECAM:
+		case ECameraMode::Freecam:
 			if (this->m_Aspect != 0.0f)
 			{
 				GetProjectionViewMatrix();
-				glm::fmat4 view     = glm::scale(glm::inverse(GetTransformationMatrix(true)), glm::fvec3(this->m_LocalFreecamVelocity));
-				glm::fvec3 velocity = glm::fvec3(view[0] + view[1] + view[2]) * this->m_FreecamSpeed;
-				if (this->m_LocalFreecamVelocity.w) velocity *= 3.0f;
-				this->m_Position += velocity * deltaTime;
+				glm::fmat4 view     = glm::scale(glm::inverse(GetTransformationMatrix(true)), glm::fvec3(m_LocalFreecamVelocity));
+				glm::fvec3 velocity = glm::fvec3(view[0] + view[1] + view[2]) * m_FreecamSpeed;
+				if (m_LocalFreecamVelocity.w) velocity *= 3.0f;
+				m_Position += velocity * deltaTime;
 			}
 			break;
 		}
@@ -66,91 +66,81 @@ namespace gp1::scene
 
 	const glm::fmat4& Camera::GetProjectionMatrix()
 	{
-		if (this->m_Fov != this->m_PFov || this->m_Aspect != this->m_PAspect || this->m_Near != this->m_PNear || this->m_Far != this->m_PFar)
+		if (m_Fov != m_PFov || m_Aspect != m_PAspect || m_Near != m_PNear || m_Far != m_PFar)
 		{
-			this->m_PFov                   = this->m_Fov;
-			this->m_PAspect                = this->m_Aspect;
-			this->m_PNear                  = this->m_Near;
-			this->m_PFar                   = this->m_Far;
-			this->m_CachedProjectionMatrix = glm::perspective(this->m_Fov, this->m_Aspect, this->m_Near, this->m_Far);
+			m_PFov                   = m_Fov;
+			m_PAspect                = m_Aspect;
+			m_PNear                  = m_Near;
+			m_PFar                   = m_Far;
+			m_CachedProjectionMatrix = glm::perspective(m_Fov, m_Aspect, m_Near, m_Far);
 		}
-		return this->m_CachedProjectionMatrix;
+		return m_CachedProjectionMatrix;
 	}
 
 	const glm::fmat4& Camera::GetProjectionViewMatrix()
 	{
-		if (this->m_Fov != this->m_PFov || this->m_Aspect != this->m_PAspect || this->m_Position != this->m_PPosition || this->m_Rotation != this->m_PRotation || this->m_Scale != this->m_PScale)
+		if (m_Fov != m_PFov || m_Aspect != m_PAspect || m_Position != m_PPosition || m_Rotation != m_PRotation || m_Scale != m_PScale)
 		{
-			this->m_CachedProjectionViewMatrix = GetProjectionMatrix() * GetTransformationMatrix(true);
+			m_CachedProjectionViewMatrix = GetProjectionMatrix() * GetTransformationMatrix(true);
 		}
-		return this->m_CachedProjectionViewMatrix;
-	}
-
-	void Camera::SetCameraMode(CameraMode mode)
-	{
-		this->m_Mode = mode;
-	}
-
-	CameraMode Camera::GetCameraMode() const
-	{
-		return this->m_Mode;
+		return m_CachedProjectionViewMatrix;
 	}
 
 	void Camera::Move(input::ButtonCallbackData data)
 	{
-		switch (this->m_Mode)
+		switch (m_Mode)
 		{
-		case CameraMode::NORMAL:
+		case ECameraMode::Normal:
 			break;
-		case CameraMode::FREECAM:
+		case ECameraMode::Freecam:
 			if (data.m_Id == "moveForward")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.z--;
+					m_LocalFreecamVelocity.z--;
 				else
-					this->m_LocalFreecamVelocity.z++;
+					m_LocalFreecamVelocity.z++;
 			}
 			else if (data.m_Id == "moveBackward")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.z++;
+					m_LocalFreecamVelocity.z++;
 				else
-					this->m_LocalFreecamVelocity.z--;
+					m_LocalFreecamVelocity.z--;
 			}
 			else if (data.m_Id == "moveRight")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.x++;
+					m_LocalFreecamVelocity.x++;
 				else
-					this->m_LocalFreecamVelocity.x--;
+					m_LocalFreecamVelocity.x--;
 			}
 			else if (data.m_Id == "moveLeft")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.x--;
+					m_LocalFreecamVelocity.x--;
 				else
-					this->m_LocalFreecamVelocity.x++;
+					m_LocalFreecamVelocity.x++;
 			}
 			else if (data.m_Id == "moveUp")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.y++;
+					m_LocalFreecamVelocity.y++;
 				else
-					this->m_LocalFreecamVelocity.y--;
+					m_LocalFreecamVelocity.y--;
 			}
 			else if (data.m_Id == "moveDown")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.y--;
+					m_LocalFreecamVelocity.y--;
 				else
-					this->m_LocalFreecamVelocity.y++;
+					m_LocalFreecamVelocity.y++;
 			}
 			else if (data.m_Id == "sprint")
 			{
 				if (data.m_InputType == input::ButtonInputType::PRESS)
-					this->m_LocalFreecamVelocity.w++;
+					m_LocalFreecamVelocity.w++;
 				else
-					this->m_LocalFreecamVelocity.w--;
+					m_LocalFreecamVelocity.w--;
 			}
 			break;
 		}

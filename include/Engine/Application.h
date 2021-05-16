@@ -6,6 +6,7 @@
 
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Scene/Camera.h"
+#include "Engine/Scene/RenderableEntity.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Utility/Core.h"
 #include "Engine/Window/Window.h"
@@ -14,6 +15,31 @@
 
 namespace gp1
 {
+	//----
+	// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
+	class TestEntity : public scene::RenderableEntity
+	{
+	public:
+		TestEntity();
+
+		virtual void Update(float deltaTime) override;
+
+		inline virtual std::shared_ptr<renderer::Mesh> GetMesh() const override
+		{
+			return m_Mesh;
+		}
+
+		inline virtual std::shared_ptr<renderer::Material> GetMaterial() const override
+		{
+			return m_Material;
+		}
+
+	private:
+		std::shared_ptr<renderer::StaticMesh> m_Mesh;
+		std::shared_ptr<renderer::Material>   m_Material;
+	};
+	//----
+
 	class Application
 	{
 	public:
@@ -53,6 +79,11 @@ namespace gp1
 
 		scene::Scene  m_Scene; // The scene to use for this application.
 		scene::Camera m_Camera;
+
+		//----
+		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
+		std::shared_ptr<TestEntity> m_TestEntity;
+		//----
 
 		std::shared_ptr<renderer::Renderer> m_Renderer;
 

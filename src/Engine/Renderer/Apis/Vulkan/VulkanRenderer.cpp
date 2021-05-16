@@ -27,7 +27,7 @@ namespace gp1::renderer::vulkan
 		return std::make_shared<VulkanMaterial>();
 	}
 
-	std::shared_ptr<ShaderProgram> VulkanRenderer::CreateShader()
+	std::shared_ptr<ShaderProgram> VulkanRenderer::CreateShaderProgram()
 	{
 		return std::make_shared<VulkanShaderProgram>();
 	}

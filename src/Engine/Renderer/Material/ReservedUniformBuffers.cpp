@@ -10,14 +10,14 @@ namespace gp1::renderer
 	{
 		// TODO(MarcasRealAccount): Maybe move this code somewhere else.
 		m_UniformBuffers.reserve(MaxUniformBufferCount);
-		m_UniformBuffers.push_back(UniformBuffer("camera", { { "projectionViewMatrix", UniformBuffer::UniformInfo(EUniformType::FMat4) } }));
-		m_UniformBuffers.push_back(UniformBuffer("reserved2", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved3", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved4", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved5", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved6", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved7", {}));
-		m_UniformBuffers.push_back(UniformBuffer("reserved8", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Camera", { { "projectionViewMatrix", UniformBuffer::UniformInfo(EUniformType::FMat4) } }));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved2", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved3", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved4", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved5", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved6", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved7", {}));
+		m_UniformBuffers.push_back(UniformBuffer("Reserved8", {}));
 	}
 
 	UniformBuffer* ReservedUniformBuffers::GetUniformBuffer(const std::string& name)

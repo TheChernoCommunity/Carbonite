@@ -12,22 +12,22 @@
 
 namespace gp1::renderer::opengl
 {
-	uint32_t OpenGLMesh::GetGLRenderMode(RenderMode mode) const
+	uint32_t OpenGLMesh::GetGLRenderMode(ERenderMode mode) const
 	{
 		switch (mode)
 		{
-		case RenderMode::Points: return GL_POINTS;
-		case RenderMode::LineStrip: return GL_LINE_STRIP;
-		case RenderMode::LineLoop: return GL_LINE_LOOP;
-		case RenderMode::Lines: return GL_LINES;
-		case RenderMode::LineStripAdjacency: return GL_LINE_STRIP_ADJACENCY;
-		case RenderMode::LinesAdjacency: return GL_LINES_ADJACENCY;
-		case RenderMode::TriangleStrip: return GL_TRIANGLE_STRIP;
-		case RenderMode::TriangleFan: return GL_TRIANGLE_FAN;
-		case RenderMode::Triangles: return GL_TRIANGLES;
-		case RenderMode::TriangleStripAdjacency: return GL_TRIANGLE_STRIP_ADJACENCY;
-		case RenderMode::TrianglesAdjacency: return GL_TRIANGLES_ADJACENCY;
-		case RenderMode::Patches: return GL_PATCHES;
+		case ERenderMode::Points: return GL_POINTS;
+		case ERenderMode::LineStrip: return GL_LINE_STRIP;
+		case ERenderMode::LineLoop: return GL_LINE_LOOP;
+		case ERenderMode::Lines: return GL_LINES;
+		case ERenderMode::LineStripAdjacency: return GL_LINE_STRIP_ADJACENCY;
+		case ERenderMode::LinesAdjacency: return GL_LINES_ADJACENCY;
+		case ERenderMode::TriangleStrip: return GL_TRIANGLE_STRIP;
+		case ERenderMode::TriangleFan: return GL_TRIANGLE_FAN;
+		case ERenderMode::Triangles: return GL_TRIANGLES;
+		case ERenderMode::TriangleStripAdjacency: return GL_TRIANGLE_STRIP_ADJACENCY;
+		case ERenderMode::TrianglesAdjacency: return GL_TRIANGLES_ADJACENCY;
+		case ERenderMode::Patches: return GL_PATCHES;
 		default: return 0;
 		}
 	}

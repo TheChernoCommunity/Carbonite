@@ -29,9 +29,9 @@ namespace gp1
 		public:
 			virtual ~Renderer() = default;
 
-			virtual std::shared_ptr<StaticMesh>    CreateStaticMesh() = 0;
-			virtual std::shared_ptr<Material>      CreateMaterial()   = 0;
-			virtual std::shared_ptr<ShaderProgram> CreateShader()     = 0;
+			virtual std::shared_ptr<StaticMesh>    CreateStaticMesh()    = 0;
+			virtual std::shared_ptr<Material>      CreateMaterial()      = 0;
+			virtual std::shared_ptr<ShaderProgram> CreateShaderProgram() = 0;
 
 			virtual void SetWindowHints() = 0;
 

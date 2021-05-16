@@ -13,18 +13,18 @@ namespace gp1::renderer
 		case EUniformType::Float: return std::make_shared<UniformFloat>();
 		case EUniformType::FVec2: return std::make_shared<UniformFVec2>();
 		case EUniformType::FVec3: return std::make_shared<UniformFVec3>();
-		case EUniformType::FVec4: return std::make_shared<UniformFVec3>();
+		case EUniformType::FVec4: return std::make_shared<UniformFVec4>();
 		case EUniformType::Int: return std::make_shared<UniformInt>();
 		case EUniformType::IVec2: return std::make_shared<UniformIVec2>();
 		case EUniformType::IVec3: return std::make_shared<UniformIVec3>();
-		case EUniformType::IVec4: return std::make_shared<UniformIVec3>();
+		case EUniformType::IVec4: return std::make_shared<UniformIVec4>();
 		case EUniformType::UInt: return std::make_shared<UniformUInt>();
 		case EUniformType::UVec2: return std::make_shared<UniformUVec2>();
 		case EUniformType::UVec3: return std::make_shared<UniformUVec3>();
-		case EUniformType::UVec4: return std::make_shared<UniformUVec3>();
+		case EUniformType::UVec4: return std::make_shared<UniformUVec4>();
 		case EUniformType::FMat2: return std::make_shared<UniformFMat2>();
 		case EUniformType::FMat3: return std::make_shared<UniformFMat3>();
-		case EUniformType::FMat4: return std::make_shared<UniformFMat3>();
+		case EUniformType::FMat4: return std::make_shared<UniformFMat4>();
 		default: return nullptr;
 		}
 	}
@@ -50,6 +50,12 @@ namespace gp1::renderer
 			if (uniform.second.m_Uniform->IsDirty())
 				return true;
 		return false;
+	}
+
+	void UniformBuffer::ClearDirty()
+	{
+		for (auto& uniform : m_Uniforms)
+			uniform.second.m_Uniform->ClearDirty();
 	}
 
 	std::shared_ptr<Uniform> UniformBuffer::GetUniform(const std::string& name) const

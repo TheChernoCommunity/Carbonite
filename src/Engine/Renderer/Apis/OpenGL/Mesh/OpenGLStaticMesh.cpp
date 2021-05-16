@@ -12,6 +12,11 @@
 
 namespace gp1::renderer::opengl
 {
+	OpenGLStaticMesh::OpenGLStaticMesh()
+	{
+		m_Next = static_cast<OpenGLMesh*>(this);
+	}
+
 	OpenGLStaticMesh::~OpenGLStaticMesh()
 	{
 		if (m_Vao)
@@ -29,7 +34,7 @@ namespace gp1::renderer::opengl
 			m_Dirty = false;
 		}
 
-		if (m_RenderMode == RenderMode::Points)
+		if (m_RenderMode == ERenderMode::Points)
 			glPointSize(m_LineWidth);
 		else
 			glLineWidth(m_LineWidth);

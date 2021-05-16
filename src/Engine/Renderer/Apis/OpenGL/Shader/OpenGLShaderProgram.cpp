@@ -118,6 +118,7 @@ namespace gp1::renderer::opengl
 							glDetachShader(m_ProgramId, id);
 							glDeleteShader(id);
 						}
+						glDeleteShader(shaderId);
 						CleanUp();
 						// sLogger.LogError(infoLog);
 						return;
@@ -193,7 +194,7 @@ namespace gp1::renderer::opengl
 						uniformOffsets.resize(uniformBuffer.m_Elements.size());
 						for (auto& element : uniformBuffer.m_Elements)
 						{
-							uniformNames.push_back(uniformBuffer.m_Name + "." + element.m_Name);
+							uniformNames.push_back(uniformBuffer.m_Name + "_" + element.m_Name);
 							const std::string& uniformName = uniformNames[uniformNames.size() - 1];
 							pUniformNames.push_back(uniformName.c_str());
 						}
