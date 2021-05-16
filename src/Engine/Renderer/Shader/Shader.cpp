@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #include "Engine/Renderer/Shader/Shader.h"
 
 namespace gp1::renderer

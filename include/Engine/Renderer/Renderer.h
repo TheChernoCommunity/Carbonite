@@ -1,12 +1,18 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #pragma once
+
+#include "Engine/Renderer/Material/Material.h"
+#include "Engine/Renderer/Material/ReservedUniformBuffers.h"
+#include "Engine/Renderer/Mesh/StaticMesh.h"
+#include "Engine/Renderer/Shader/ShaderProgram.h"
+
+#include <memory>
 
 namespace gp1
 {
-	namespace window
-	{
-		class Window;
-	}
-
 	namespace scene
 	{
 		class Camera;
@@ -21,12 +27,11 @@ namespace gp1
 		class Renderer
 		{
 		public:
-			Renderer(window::Window* window);
 			virtual ~Renderer() = default;
 
-			virtual StaticMesh*    CreateStaticMesh() = 0;
-			virtual Material*      CreateMaterial()   = 0;
-			virtual ShaderProgram* CreateShader()     = 0;
+			virtual std::shared_ptr<StaticMesh>    CreateStaticMesh() = 0;
+			virtual std::shared_ptr<Material>      CreateMaterial()   = 0;
+			virtual std::shared_ptr<ShaderProgram> CreateShader()     = 0;
 
 			virtual void SetWindowHints() = 0;
 
@@ -36,8 +41,18 @@ namespace gp1
 
 			virtual void Render(scene::Camera* camera) = 0;
 
+			inline ReservedUniformBuffers* GetReservedUniformBuffers()
+			{
+				return m_ReservedUniformBuffers;
+			}
+
+			inline const ReservedUniformBuffers* GetReservedUniformBuffers() const
+			{
+				return m_ReservedUniformBuffers;
+			}
+
 		protected:
-			window::Window* m_Window;
+			ReservedUniformBuffers* m_ReservedUniformBuffers;
 		};
 	} // namespace renderer
 } // namespace gp1

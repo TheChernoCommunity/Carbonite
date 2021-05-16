@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #pragma once
 
 #include <cstdint>
@@ -7,12 +11,12 @@ namespace gp1::renderer
 {
 	enum class EShaderType
 	{
-		VERTEX_SHADER,
-		TESS_CONTROL_SHADER,
-		TESS_EVALUATION_SHADER,
-		GEOMETRY_SHADER,
-		FRAGMENT_SHADER,
-		COMPUTE_SHADER
+		VertexShader,
+		TessControlShader,
+		TessEvaluationShader,
+		GeometryShader,
+		FragmentShader,
+		ComputeShader
 	};
 
 	struct Shader

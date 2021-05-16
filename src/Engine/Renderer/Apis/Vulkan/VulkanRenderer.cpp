@@ -1,8 +1,14 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_VULKAN
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Apis/Vulkan/Material/VulkanMaterial.h"
+#include "Engine/Renderer/Apis/Vulkan/Material/VulkanReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMesh.h"
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderProgram.h"
 #include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
@@ -11,22 +17,19 @@
 
 namespace gp1::renderer::vulkan
 {
-	VulkanRenderer::VulkanRenderer(window::Window* window)
-	    : Renderer(window) {}
-
-	StaticMesh* VulkanRenderer::CreateStaticMesh()
+	std::shared_ptr<StaticMesh> VulkanRenderer::CreateStaticMesh()
 	{
-		return new VulkanStaticMesh();
+		return std::make_shared<VulkanStaticMesh>();
 	}
 
-	Material* VulkanRenderer::CreateMaterial()
+	std::shared_ptr<Material> VulkanRenderer::CreateMaterial()
 	{
-		return new VulkanMaterial();
+		return std::make_shared<VulkanMaterial>();
 	}
 
-	ShaderProgram* VulkanRenderer::CreateShader()
+	std::shared_ptr<ShaderProgram> VulkanRenderer::CreateShader()
 	{
-		return new VulkanShaderProgram();
+		return std::make_shared<VulkanShaderProgram>();
 	}
 
 	bool VulkanRenderer::IsCompatible() const
@@ -36,15 +39,18 @@ namespace gp1::renderer::vulkan
 
 	void VulkanRenderer::SetWindowHints()
 	{
-		m_Window->SetWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		window::Window& window = Application::GetInstance()->GetWindow();
+		window.SetWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	}
 
 	void VulkanRenderer::Init()
 	{
+		m_ReservedUniformBuffers = new VulkanReservedUniformBuffers();
 	}
 
 	void VulkanRenderer::DeInit()
 	{
+		delete m_ReservedUniformBuffers;
 	}
 
 	void VulkanRenderer::Render(scene::Camera* camera)

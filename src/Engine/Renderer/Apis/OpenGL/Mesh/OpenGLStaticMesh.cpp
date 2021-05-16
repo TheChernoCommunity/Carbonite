@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
@@ -25,7 +29,7 @@ namespace gp1::renderer::opengl
 			m_Dirty = false;
 		}
 
-		if (m_RenderMode == RenderMode::POINTS)
+		if (m_RenderMode == RenderMode::Points)
 			glPointSize(m_LineWidth);
 		else
 			glLineWidth(m_LineWidth);

@@ -1,21 +1,28 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #pragma once
 
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Renderer/Material/Material.h"
+#include "Engine/Renderer/Mesh/StaticMesh.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Shader/ShaderProgram.h"
+
+#include <memory>
 
 namespace gp1::renderer::opengl
 {
 	class OpenGLRenderer : public Renderer
 	{
 	public:
-		OpenGLRenderer(window::Window* window);
-
-		virtual StaticMesh*    CreateStaticMesh() override;
-		virtual Material*      CreateMaterial() override;
-		virtual ShaderProgram* CreateShader() override;
+		virtual std::shared_ptr<StaticMesh>    CreateStaticMesh() override;
+		virtual std::shared_ptr<Material>      CreateMaterial() override;
+		virtual std::shared_ptr<ShaderProgram> CreateShader() override;
 
 		virtual bool IsCompatible() const override;
 

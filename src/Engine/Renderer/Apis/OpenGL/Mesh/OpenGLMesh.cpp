@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
@@ -12,18 +16,18 @@ namespace gp1::renderer::opengl
 	{
 		switch (mode)
 		{
-		case RenderMode::POINTS: return GL_POINTS;
-		case RenderMode::LINE_STRIP: return GL_LINE_STRIP;
-		case RenderMode::LINE_LOOP: return GL_LINE_LOOP;
-		case RenderMode::LINES: return GL_LINES;
-		case RenderMode::LINE_STRIP_ADJACENCY: return GL_LINE_STRIP_ADJACENCY;
-		case RenderMode::LINES_ADJACENCY: return GL_LINES_ADJACENCY;
-		case RenderMode::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
-		case RenderMode::TRIANGLE_FAN: return GL_TRIANGLE_FAN;
-		case RenderMode::TRIANGLES: return GL_TRIANGLES;
-		case RenderMode::TRIANGLE_STRIP_ADJACENCY: return GL_TRIANGLE_STRIP_ADJACENCY;
-		case RenderMode::TRIANGLES_ADJACENCY: return GL_TRIANGLES_ADJACENCY;
-		case RenderMode::PATCHES: return GL_PATCHES;
+		case RenderMode::Points: return GL_POINTS;
+		case RenderMode::LineStrip: return GL_LINE_STRIP;
+		case RenderMode::LineLoop: return GL_LINE_LOOP;
+		case RenderMode::Lines: return GL_LINES;
+		case RenderMode::LineStripAdjacency: return GL_LINE_STRIP_ADJACENCY;
+		case RenderMode::LinesAdjacency: return GL_LINES_ADJACENCY;
+		case RenderMode::TriangleStrip: return GL_TRIANGLE_STRIP;
+		case RenderMode::TriangleFan: return GL_TRIANGLE_FAN;
+		case RenderMode::Triangles: return GL_TRIANGLES;
+		case RenderMode::TriangleStripAdjacency: return GL_TRIANGLE_STRIP_ADJACENCY;
+		case RenderMode::TrianglesAdjacency: return GL_TRIANGLES_ADJACENCY;
+		case RenderMode::Patches: return GL_PATCHES;
 		default: return 0;
 		}
 	}

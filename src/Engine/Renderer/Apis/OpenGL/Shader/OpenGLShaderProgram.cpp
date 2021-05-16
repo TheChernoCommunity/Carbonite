@@ -1,8 +1,13 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
 
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
+#include "Engine/Renderer/Material/ReservedUniformBuffers.h"
 
 #include <cstdint>
 #include <set>
@@ -39,6 +44,14 @@ namespace gp1::renderer::opengl
 			m_Dirty = false;
 			return true;
 		}
+		return false;
+	}
+
+	bool OpenGLShaderProgram::IsUniformBufferValid(const std::string& name) const
+	{
+		for (auto& uniformBuffer : m_UniformBufferBindingPoints)
+			if (uniformBuffer.m_Name == name)
+				return uniformBuffer.m_Binding != UINT32_MAX;
 		return false;
 	}
 
@@ -85,7 +98,7 @@ namespace gp1::renderer::opengl
 					uint8_t*            shaderData     = shader.m_Data.data();
 					size_t              shaderDataSize = shader.m_Data.size();
 					constexpr GLsizei   dataCount      = 1;
-					const GLchar* const dataArr[dataCount] { reinterpret_cast<const GLchar* const>(shaderData) };
+					const GLchar* const dataArr[dataCount] { reinterpret_cast<const GLchar*>(shaderData) };
 					const GLint         dataSizes[dataCount] { static_cast<GLint>(shaderDataSize) };
 
 					glShaderSource(shaderId, dataCount, dataArr, dataSizes);
@@ -150,9 +163,9 @@ namespace gp1::renderer::opengl
 					GLint bindingVal;
 					glGetActiveUniformBlockiv(m_ProgramId, index, GL_UNIFORM_BLOCK_BINDING, &bindingVal);
 					GLuint binding = static_cast<GLuint>(bindingVal);
-					if (binding < static_cast<uint32_t>(EReservedUniformBuffers::NUM))
+					if (binding < static_cast<uint32_t>(ReservedUniformBuffers::MaxUniformBufferCount))
 					{
-						for (binding = static_cast<uint32_t>(EReservedUniformBuffers::NUM) + usedBindingsSafeOffset; binding < maxBindings; binding++)
+						for (binding = static_cast<uint32_t>(ReservedUniformBuffers::MaxUniformBufferCount) + usedBindingsSafeOffset; binding < maxBindings; binding++)
 							if (usedBindings.find(binding) == usedBindings.end())
 								break;
 
@@ -164,27 +177,27 @@ namespace gp1::renderer::opengl
 							return;
 						}
 
-						usedBindingsSafeOffset = binding - static_cast<uint32_t>(EReservedUniformBuffers::NUM);
+						usedBindingsSafeOffset = binding - static_cast<uint32_t>(ReservedUniformBuffers::MaxUniformBufferCount);
 						glUniformBlockBinding(m_ProgramId, index, binding);
 					}
 
 					std::vector<std::pair<std::string, uint32_t>> offsets;
 					offsets.reserve(uniformBuffer.m_Elements.size());
 					{
-						std::vector<const GLchar*> uniformNames;
+						std::vector<std::string>   uniformNames;
+						std::vector<const GLchar*> pUniformNames;
 						std::vector<GLuint>        uniformIndices;
 						std::vector<GLint>         uniformOffsets;
-						uniformNames.reserve(uniformBuffer.m_Elements.size());
+						pUniformNames.reserve(uniformBuffer.m_Elements.size());
 						uniformIndices.resize(uniformBuffer.m_Elements.size());
 						uniformOffsets.resize(uniformBuffer.m_Elements.size());
 						for (auto& element : uniformBuffer.m_Elements)
 						{
-							std::string uniformName  = uniformBuffer.m_Name + "." + element.m_Name;
-							char*       pUniformName = new char[uniformName.size()];
-							memcpy(pUniformName, uniformName.data(), uniformName.size());
-							uniformNames.push_back(pUniformName);
+							uniformNames.push_back(uniformBuffer.m_Name + "." + element.m_Name);
+							const std::string& uniformName = uniformNames[uniformNames.size() - 1];
+							pUniformNames.push_back(uniformName.c_str());
 						}
-						glGetUniformIndices(m_ProgramId, static_cast<GLsizei>(uniformNames.size()), uniformNames.data(), uniformIndices.data());
+						glGetUniformIndices(m_ProgramId, static_cast<GLsizei>(pUniformNames.size()), pUniformNames.data(), uniformIndices.data());
 						glGetActiveUniformsiv(m_ProgramId, static_cast<GLsizei>(uniformIndices.size()), uniformIndices.data(), GL_UNIFORM_OFFSET, uniformOffsets.data());
 
 						for (size_t i = 0; i < uniformOffsets.size(); i++)
@@ -196,7 +209,7 @@ namespace gp1::renderer::opengl
 				}
 				else
 				{
-					m_UniformBufferBindingPoints.push_back({ uniformBuffer.m_Name, UINT32_MAX });
+					m_UniformBufferBindingPoints.push_back({ uniformBuffer.m_Name, UINT32_MAX, {} });
 				}
 			}
 		}
@@ -216,12 +229,12 @@ namespace gp1::renderer::opengl
 	{
 		switch (shaderType)
 		{
-		case EShaderType::VERTEX_SHADER: return GL_VERTEX_SHADER;
-		case EShaderType::TESS_CONTROL_SHADER: return GL_TESS_CONTROL_SHADER;
-		case EShaderType::TESS_EVALUATION_SHADER: return GL_TESS_EVALUATION_SHADER;
-		case EShaderType::GEOMETRY_SHADER: return GL_GEOMETRY_SHADER;
-		case EShaderType::FRAGMENT_SHADER: return GL_FRAGMENT_SHADER;
-		case EShaderType::COMPUTE_SHADER: return GL_COMPUTE_SHADER;
+		case EShaderType::VertexShader: return GL_VERTEX_SHADER;
+		case EShaderType::TessControlShader: return GL_TESS_CONTROL_SHADER;
+		case EShaderType::TessEvaluationShader: return GL_TESS_EVALUATION_SHADER;
+		case EShaderType::GeometryShader: return GL_GEOMETRY_SHADER;
+		case EShaderType::FragmentShader: return GL_FRAGMENT_SHADER;
+		case EShaderType::ComputeShader: return GL_COMPUTE_SHADER;
 		default: return 0;
 		}
 	}

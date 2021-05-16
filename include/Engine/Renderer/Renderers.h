@@ -1,3 +1,9 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+//	Implements a system for storing all compiled renderers.
+//
+
 #pragma once
 
 #include <cstdint>
@@ -19,7 +25,7 @@ namespace gp1
 		struct RendererEntry
 		{
 		public:
-			using Function = std::function<std::shared_ptr<Renderer>(window::Window*)>;
+			using Function = std::function<std::shared_ptr<Renderer>()>;
 
 			RendererEntry(const std::string& name, uint32_t priority, Function createRenderer);
 
@@ -40,8 +46,8 @@ namespace gp1
 				return m_Renderers;
 			}
 
-			std::shared_ptr<Renderer> GetRenderer(const std::string& name, window::Window* window);
-			std::shared_ptr<Renderer> GetBestRenderer(window::Window* window);
+			std::shared_ptr<Renderer> GetRenderer(const std::string& name);
+			std::shared_ptr<Renderer> GetBestRenderer();
 
 		private:
 			Renderers(const std::initializer_list<RendererEntry>& entries);

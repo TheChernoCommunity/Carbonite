@@ -1,7 +1,9 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Renderer/Renderer.h"
 
 namespace gp1::renderer
 {
-	Renderer::Renderer(window::Window* window)
-	    : m_Window(window) {}
 } // namespace gp1::renderer

@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #pragma once
 
 #include <cstdint>
@@ -12,21 +16,21 @@ namespace gp1::renderer
 {
 	enum class EUniformType : uint32_t
 	{
-		FLOAT,
-		FLOAT_VEC2,
-		FLOAT_VEC3,
-		FLOAT_VEC4,
-		INT,
-		INT_VEC2,
-		INT_VEC3,
-		INT_VEC4,
-		UINT,
-		UINT_VEC2,
-		UINT_VEC3,
-		UINT_VEC4,
-		FLOAT_MAT2,
-		FLOAT_MAT3,
-		FLOAT_MAT4
+		Float,
+		FVec2,
+		FVec3,
+		FVec4,
+		Int,
+		IVec2,
+		IVec3,
+		IVec4,
+		UInt,
+		UVec2,
+		UVec3,
+		UVec4,
+		FMat2,
+		FMat3,
+		FMat4
 	};
 
 	struct Uniform
@@ -159,7 +163,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT;
+			return EUniformType::Float;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -186,7 +190,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_VEC2;
+			return EUniformType::FVec2;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -213,7 +217,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_VEC3;
+			return EUniformType::FVec3;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -240,7 +244,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_VEC4;
+			return EUniformType::FVec4;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -267,7 +271,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::INT;
+			return EUniformType::Int;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -294,7 +298,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::INT_VEC2;
+			return EUniformType::IVec2;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -321,7 +325,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::INT_VEC3;
+			return EUniformType::IVec3;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -348,7 +352,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::INT_VEC4;
+			return EUniformType::IVec4;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -375,7 +379,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::UINT;
+			return EUniformType::UInt;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -402,7 +406,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::UINT_VEC2;
+			return EUniformType::UVec2;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -429,7 +433,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::UINT_VEC3;
+			return EUniformType::UVec3;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -456,7 +460,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::UINT_VEC4;
+			return EUniformType::UVec4;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -483,7 +487,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_MAT2;
+			return EUniformType::FMat2;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -510,7 +514,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_MAT3;
+			return EUniformType::FMat3;
 		}
 
 		inline virtual EUniformType GetType() const override
@@ -537,7 +541,7 @@ namespace gp1::renderer
 	public:
 		static constexpr EUniformType GetTypeS()
 		{
-			return EUniformType::FLOAT_MAT4;
+			return EUniformType::FMat4;
 		}
 
 		inline virtual EUniformType GetType() const override

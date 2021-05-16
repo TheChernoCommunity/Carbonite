@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #include "Engine/Renderer/Material/Uniform.h"
 
 namespace gp1::renderer
@@ -6,21 +10,21 @@ namespace gp1::renderer
 	{
 		switch (type)
 		{
-		case EUniformType::FLOAT: return std::make_shared<UniformFloat>();
-		case EUniformType::FLOAT_VEC2: return std::make_shared<UniformFVec2>();
-		case EUniformType::FLOAT_VEC3: return std::make_shared<UniformFVec3>();
-		case EUniformType::FLOAT_VEC4: return std::make_shared<UniformFVec3>();
-		case EUniformType::INT: return std::make_shared<UniformInt>();
-		case EUniformType::INT_VEC2: return std::make_shared<UniformIVec2>();
-		case EUniformType::INT_VEC3: return std::make_shared<UniformIVec3>();
-		case EUniformType::INT_VEC4: return std::make_shared<UniformIVec3>();
-		case EUniformType::UINT: return std::make_shared<UniformUInt>();
-		case EUniformType::UINT_VEC2: return std::make_shared<UniformUVec2>();
-		case EUniformType::UINT_VEC3: return std::make_shared<UniformUVec3>();
-		case EUniformType::UINT_VEC4: return std::make_shared<UniformUVec3>();
-		case EUniformType::FLOAT_MAT2: return std::make_shared<UniformFMat2>();
-		case EUniformType::FLOAT_MAT3: return std::make_shared<UniformFMat3>();
-		case EUniformType::FLOAT_MAT4: return std::make_shared<UniformFMat3>();
+		case EUniformType::Float: return std::make_shared<UniformFloat>();
+		case EUniformType::FVec2: return std::make_shared<UniformFVec2>();
+		case EUniformType::FVec3: return std::make_shared<UniformFVec3>();
+		case EUniformType::FVec4: return std::make_shared<UniformFVec3>();
+		case EUniformType::Int: return std::make_shared<UniformInt>();
+		case EUniformType::IVec2: return std::make_shared<UniformIVec2>();
+		case EUniformType::IVec3: return std::make_shared<UniformIVec3>();
+		case EUniformType::IVec4: return std::make_shared<UniformIVec3>();
+		case EUniformType::UInt: return std::make_shared<UniformUInt>();
+		case EUniformType::UVec2: return std::make_shared<UniformUVec2>();
+		case EUniformType::UVec3: return std::make_shared<UniformUVec3>();
+		case EUniformType::UVec4: return std::make_shared<UniformUVec3>();
+		case EUniformType::FMat2: return std::make_shared<UniformFMat2>();
+		case EUniformType::FMat3: return std::make_shared<UniformFMat3>();
+		case EUniformType::FMat4: return std::make_shared<UniformFMat3>();
 		default: return nullptr;
 		}
 	}
@@ -475,4 +479,4 @@ namespace gp1::renderer
 		m_Value = value;
 		m_Dirty = true;
 	}
-} // namespace gp1
+} // namespace gp1::renderer

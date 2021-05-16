@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #pragma once
 
 #include "Engine/Renderer/Material/Uniform.h"
@@ -38,20 +42,6 @@ namespace gp1::renderer
 
 	struct ShaderProgram : public RendererData
 	{
-	public:
-		enum class EReservedUniformBuffers : uint32_t
-		{
-			CAMERA,
-			RESERVED_1,
-			RESERVED_2,
-			RESERVED_3,
-			RESERVED_4,
-			RESERVED_5,
-			RESERVED_6,
-			RESERVED_7,
-			NUM
-		};
-
 	public:
 		virtual ~ShaderProgram() = default;
 

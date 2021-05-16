@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #pragma once
 
 #include "Engine/Renderer/RendererData.h"
@@ -8,18 +12,18 @@ namespace gp1::renderer
 {
 	enum class RenderMode : uint32_t
 	{
-		POINTS,
-		LINE_STRIP,
-		LINE_LOOP,
-		LINES,
-		LINE_STRIP_ADJACENCY,
-		LINES_ADJACENCY,
-		TRIANGLE_STRIP,
-		TRIANGLE_FAN,
-		TRIANGLES,
-		TRIANGLE_STRIP_ADJACENCY,
-		TRIANGLES_ADJACENCY,
-		PATCHES
+		Points,
+		LineStrip,
+		LineLoop,
+		Lines,
+		LineStripAdjacency,
+		LinesAdjacency,
+		TriangleStrip,
+		TriangleFan,
+		Triangles,
+		TriangleStripAdjacency,
+		TrianglesAdjacency,
+		Patches
 	};
 
 	struct Mesh : public RendererData
@@ -28,7 +32,7 @@ namespace gp1::renderer
 		virtual ~Mesh() = default;
 
 	public:
-		RenderMode m_RenderMode = RenderMode::TRIANGLES;
+		RenderMode m_RenderMode = RenderMode::Triangles;
 		float      m_LineWidth  = 1.0f;
 	};
 } // namespace gp1::renderer

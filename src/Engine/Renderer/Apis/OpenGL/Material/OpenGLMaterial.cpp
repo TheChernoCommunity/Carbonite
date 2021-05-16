@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
@@ -80,11 +84,19 @@ namespace gp1::renderer::opengl
 						break;
 					}
 				}
-
-				info.m_Binding = shaderProgram->GetUniformBufferBindingPoint(bufferName);
-				for (auto& uniform : uniformBuffer)
-					uniform.second.m_Offset = shaderProgram->GetUniformBufferElementOffset(bufferName, uniform.first);
+				if (shaderProgram->IsUniformBufferValid(bufferName))
+				{
+					info.m_Binding = shaderProgram->GetUniformBufferBindingPoint(bufferName);
+					for (auto& uniform : uniformBuffer)
+						uniform.second.m_Offset = shaderProgram->GetUniformBufferElementOffset(bufferName, uniform.first);
+					m_UniformBufferInfos.push_back(info);
+				}
+				else
+				{
+					info.CleanUp();
+				}
 			}
+			m_UniformBufferInfos.shrink_to_fit();
 
 			for (auto& oldInfo : oldInfos)
 				oldInfo.CleanUp();
@@ -138,9 +150,9 @@ namespace gp1::renderer::opengl
 	{
 		switch (face)
 		{
-		case ETriangleFace::FRONT: return GL_FRONT;
-		case ETriangleFace::BACK: return GL_BACK;
-		case ETriangleFace::FRONT_AND_BACK: return GL_FRONT_AND_BACK;
+		case ETriangleFace::Front: return GL_FRONT;
+		case ETriangleFace::Back: return GL_BACK;
+		case ETriangleFace::FrontAndBack: return GL_FRONT_AND_BACK;
 		default: return 0;
 		}
 	}
@@ -149,25 +161,25 @@ namespace gp1::renderer::opengl
 	{
 		switch (blendFunc)
 		{
-		case EBlendFunc::ZERO: return GL_ZERO;
-		case EBlendFunc::ONE: return GL_ONE;
-		case EBlendFunc::SRC_COLOR: return GL_SRC_COLOR;
-		case EBlendFunc::ONE_MINUS_SRC_COLOR: return GL_ONE_MINUS_SRC_COLOR;
-		case EBlendFunc::DST_COLOR: return GL_DST_COLOR;
-		case EBlendFunc::ONE_MINUS_DST_COLOR: return GL_ONE_MINUS_DST_COLOR;
-		case EBlendFunc::SRC_ALPHA: return GL_SRC_ALPHA;
-		case EBlendFunc::ONE_MINUS_SRC_ALPHA: return GL_ONE_MINUS_SRC_ALPHA;
-		case EBlendFunc::DST_ALPHA: return GL_DST_ALPHA;
-		case EBlendFunc::ONE_MINUS_DST_ALPHA: return GL_ONE_MINUS_DST_ALPHA;
-		case EBlendFunc::CONSTANT_COLOR: return GL_CONSTANT_COLOR;
-		case EBlendFunc::ONE_MINUS_CONSTANT_COLOR: return GL_ONE_MINUS_CONSTANT_COLOR;
-		case EBlendFunc::CONSTANT_ALPHA: return GL_CONSTANT_ALPHA;
-		case EBlendFunc::ONE_MINUS_CONSTANT_ALPHA: return GL_ONE_MINUS_CONSTANT_ALPHA;
-		case EBlendFunc::SRC_ALPHA_SATURATE: return GL_SRC_ALPHA_SATURATE;
-		case EBlendFunc::SRC1_COLOR: return GL_SRC1_COLOR;
-		case EBlendFunc::ONE_MINUS_SRC1_COLOR: return GL_ONE_MINUS_SRC1_COLOR;
-		case EBlendFunc::SRC1_ALPHA: return GL_SRC1_ALPHA;
-		case EBlendFunc::ONE_MINUS_SRC1_ALPHA: return GL_ONE_MINUS_SRC1_ALPHA;
+		case EBlendFunc::Zero: return GL_ZERO;
+		case EBlendFunc::One: return GL_ONE;
+		case EBlendFunc::SrcColor: return GL_SRC_COLOR;
+		case EBlendFunc::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+		case EBlendFunc::DstColor: return GL_DST_COLOR;
+		case EBlendFunc::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+		case EBlendFunc::SrcAlpha: return GL_SRC_ALPHA;
+		case EBlendFunc::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+		case EBlendFunc::DstAlpha: return GL_DST_ALPHA;
+		case EBlendFunc::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+		case EBlendFunc::ConstantColor: return GL_CONSTANT_COLOR;
+		case EBlendFunc::OneMinusConstantColor: return GL_ONE_MINUS_CONSTANT_COLOR;
+		case EBlendFunc::ConstantAlpha: return GL_CONSTANT_ALPHA;
+		case EBlendFunc::OneMinusConstantAlpha: return GL_ONE_MINUS_CONSTANT_ALPHA;
+		case EBlendFunc::SrcAlphaSaturate: return GL_SRC_ALPHA_SATURATE;
+		case EBlendFunc::Src1Color: return GL_SRC1_COLOR;
+		case EBlendFunc::OneMinusSrc1Color: return GL_ONE_MINUS_SRC1_COLOR;
+		case EBlendFunc::Src1Alpha: return GL_SRC1_ALPHA;
+		case EBlendFunc::OneMinusSrc1Alpha: return GL_ONE_MINUS_SRC1_ALPHA;
 		default: return 0;
 		}
 	}
@@ -176,9 +188,9 @@ namespace gp1::renderer::opengl
 	{
 		switch (polygonMode)
 		{
-		case EPolygonMode::POINT: return GL_POINT;
-		case EPolygonMode::LINE: return GL_LINE;
-		case EPolygonMode::FILL: return GL_FILL;
+		case EPolygonMode::Point: return GL_POINT;
+		case EPolygonMode::Line: return GL_LINE;
+		case EPolygonMode::Fill: return GL_FILL;
 		default: return 0;
 		}
 	}

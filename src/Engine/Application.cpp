@@ -23,7 +23,7 @@ namespace gp1
 	{
 		locale::LocaleManager::SetLocalization("en-us");
 		Logger::Init();
-		m_Renderer = renderer::Renderers::s_Renderers->GetBestRenderer(&m_Window);
+		m_Renderer = renderer::Renderers::s_Renderers->GetBestRenderer();
 		if (!m_Renderer)
 			throw std::runtime_error("No valid renderer found!");
 #if false // TODO: Remove when audio library is cross platform

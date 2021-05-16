@@ -7,13 +7,13 @@ namespace gp1::renderer
 {
 	Renderers* const Renderers::s_Renderers = new Renderers({
 #ifdef RENDERER_OPENGL
-	    RendererEntry("opengl", 0, [](window::Window* window) -> std::shared_ptr<Renderer> {
-		    return std::make_shared<opengl::OpenGLRenderer>(window);
+	    RendererEntry("opengl", 0, []() -> std::shared_ptr<Renderer> {
+		    return std::make_shared<opengl::OpenGLRenderer>();
 	    }),
 #endif
 #ifdef RENDERER_VULKAN
-	    RendererEntry("vulkan", 1, [](window::Window* window) -> std::shared_ptr<Renderer> {
-		    return std::make_shared<vulkan::VulkanRenderer>(window);
+	    RendererEntry("vulkan", 1, []() -> std::shared_ptr<Renderer> {
+		    return std::make_shared<vulkan::VulkanRenderer>();
 	    })
 #endif
 	});
@@ -24,7 +24,7 @@ namespace gp1::renderer
 	Renderers::Renderers(const std::initializer_list<RendererEntry>& entries)
 	    : m_Renderers(entries) {}
 
-	std::shared_ptr<Renderer> Renderers::GetRenderer(const std::string& name, window::Window* window)
+	std::shared_ptr<Renderer> Renderers::GetRenderer(const std::string& name)
 	{
 		for (auto& entry : m_Renderers)
 		{
@@ -33,7 +33,7 @@ namespace gp1::renderer
 				if (!entry.m_Renderer.expired())
 					return entry.m_Renderer.lock();
 
-				std::shared_ptr<Renderer> renderer = entry.m_CreateRenderer(window);
+				std::shared_ptr<Renderer> renderer = entry.m_CreateRenderer();
 				if (renderer->IsCompatible())
 				{
 					entry.m_Renderer = renderer;
@@ -44,7 +44,7 @@ namespace gp1::renderer
 		return nullptr;
 	}
 
-	std::shared_ptr<Renderer> Renderers::GetBestRenderer(window::Window* window)
+	std::shared_ptr<Renderer> Renderers::GetBestRenderer()
 	{
 		std::vector<RendererEntry*> bestOrder;
 		bestOrder.reserve(m_Renderers.size());
@@ -72,7 +72,7 @@ namespace gp1::renderer
 			if (!entry->m_Renderer.expired())
 				return entry->m_Renderer.lock();
 
-			std::shared_ptr<Renderer> renderer = entry->m_CreateRenderer(window);
+			std::shared_ptr<Renderer> renderer = entry->m_CreateRenderer();
 			if (renderer->IsCompatible())
 			{
 				entry->m_Renderer = renderer;

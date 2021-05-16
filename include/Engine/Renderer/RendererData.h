@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #pragma once
 
 namespace gp1::renderer

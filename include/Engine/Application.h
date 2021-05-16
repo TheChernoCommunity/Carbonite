@@ -19,6 +19,21 @@ namespace gp1
 	public:
 		~Application();
 
+		inline window::Window& GetWindow()
+		{
+			return m_Window;
+		}
+
+		inline const window::Window& GetWindow() const
+		{
+			return m_Window;
+		}
+
+		inline std::shared_ptr<renderer::Renderer> GetRenderer() const
+		{
+			return m_Renderer;
+		}
+
 		// Run the application.
 		void Run();
 

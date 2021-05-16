@@ -29,6 +29,7 @@ namespace gp1::renderer::opengl
 		void Unbind();
 		bool Update();
 
+		bool     IsUniformBufferValid(const std::string& name) const;
 		uint32_t GetUniformBufferBindingPoint(const std::string& name) const;
 		uint32_t GetUniformBufferElementOffset(const std::string& bufferName, const std::string& elementName) const;
 

@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #include "Engine/Renderer/Shader/ShaderProgram.h"
 
 namespace gp1::renderer
@@ -77,7 +81,7 @@ namespace gp1::renderer
 			if (uniformBuffer.m_Name == name)
 				return;
 
-		m_UniformBuffers.push_back({ name });
+		m_UniformBuffers.push_back({ name, {} });
 	}
 
 	void ShaderProgram::AddUniformBufferElement(const std::string& bufferName, const std::string& elementName, EUniformType elementType)
@@ -129,4 +133,4 @@ namespace gp1::renderer
 			return uniformBuffer->GetElement(elementName);
 		return nullptr;
 	}
-} // namespace gp1
+} // namespace gp1::renderer

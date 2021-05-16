@@ -1,3 +1,7 @@
+//
+//	Created by MarcasRealAccount on 14. May. 2021
+//
+
 #pragma once
 
 #include "Engine/Renderer/Material/Uniform.h"
@@ -10,62 +14,62 @@ namespace gp1::renderer
 {
 	enum class ETriangleFace : uint32_t
 	{
-		FRONT,
-		BACK,
-		FRONT_AND_BACK
+		Front,
+		Back,
+		FrontAndBack
 	};
 
 	enum class EBlendFunc : uint32_t
 	{
-		ZERO,
-		ONE,
-		SRC_COLOR,
-		ONE_MINUS_SRC_COLOR,
-		DST_COLOR,
-		ONE_MINUS_DST_COLOR,
-		SRC_ALPHA,
-		ONE_MINUS_SRC_ALPHA,
-		DST_ALPHA,
-		ONE_MINUS_DST_ALPHA,
-		CONSTANT_COLOR,
-		ONE_MINUS_CONSTANT_COLOR,
-		CONSTANT_ALPHA,
-		ONE_MINUS_CONSTANT_ALPHA,
-		SRC_ALPHA_SATURATE,
-		SRC1_COLOR,
-		ONE_MINUS_SRC1_COLOR,
-		SRC1_ALPHA,
-		ONE_MINUS_SRC1_ALPHA
+		Zero,
+		One,
+		SrcColor,
+		OneMinusSrcColor,
+		DstColor,
+		OneMinusDstColor,
+		SrcAlpha,
+		OneMinusSrcAlpha,
+		DstAlpha,
+		OneMinusDstAlpha,
+		ConstantColor,
+		OneMinusConstantColor,
+		ConstantAlpha,
+		OneMinusConstantAlpha,
+		SrcAlphaSaturate,
+		Src1Color,
+		OneMinusSrc1Color,
+		Src1Alpha,
+		OneMinusSrc1Alpha
 	};
 
 	enum class EPolygonMode : uint32_t
 	{
-		POINT,
-		LINE,
-		FILL
+		Point,
+		Line,
+		Fill
 	};
 
 	struct CullMode
 	{
 	public:
 		bool          m_Enabled = true;
-		ETriangleFace m_Face    = ETriangleFace::BACK;
+		ETriangleFace m_Face    = ETriangleFace::Back;
 	};
 
 	struct BlendFunc
 	{
 	public:
 		bool       m_Enabled = true;
-		EBlendFunc m_SrcFunc = EBlendFunc::SRC_ALPHA;
-		EBlendFunc m_DstFunc = EBlendFunc::ONE_MINUS_SRC_ALPHA;
+		EBlendFunc m_SrcFunc = EBlendFunc::SrcAlpha;
+		EBlendFunc m_DstFunc = EBlendFunc::OneMinusSrcAlpha;
 	};
 
 	struct PolygonMode
 	{
 	public:
 		bool          m_Enabled = true;
-		ETriangleFace m_Face    = ETriangleFace::FRONT_AND_BACK;
-		EPolygonMode  m_Mode    = EPolygonMode::FILL;
+		ETriangleFace m_Face    = ETriangleFace::FrontAndBack;
+		EPolygonMode  m_Mode    = EPolygonMode::Fill;
 	};
 
 	struct ShaderProgram;

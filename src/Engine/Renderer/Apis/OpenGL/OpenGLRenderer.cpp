@@ -1,8 +1,14 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Utility/Core.h"
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticMesh.h"
 #include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
@@ -16,22 +22,19 @@
 
 namespace gp1::renderer::opengl
 {
-	OpenGLRenderer::OpenGLRenderer(window::Window* window)
-	    : Renderer(window) {}
-
-	StaticMesh* OpenGLRenderer::CreateStaticMesh()
+	std::shared_ptr<StaticMesh> OpenGLRenderer::CreateStaticMesh()
 	{
-		return new OpenGLStaticMesh();
+		return std::make_shared<OpenGLStaticMesh>();
 	}
 
-	Material* OpenGLRenderer::CreateMaterial()
+	std::shared_ptr<Material> OpenGLRenderer::CreateMaterial()
 	{
-		return new OpenGLMaterial();
+		return std::make_shared<OpenGLMaterial>();
 	}
 
-	ShaderProgram* OpenGLRenderer::CreateShader()
+	std::shared_ptr<ShaderProgram> OpenGLRenderer::CreateShader()
 	{
-		return new OpenGLShaderProgram();
+		return std::make_shared<OpenGLShaderProgram>();
 	}
 
 	bool OpenGLRenderer::IsCompatible() const
@@ -55,28 +58,38 @@ namespace gp1::renderer::opengl
 
 	void OpenGLRenderer::SetWindowHints()
 	{
-		m_Window->SetWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		m_Window->SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		m_Window->SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		m_Window->SetWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		m_Window->SetWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
+		window::Window& window = Application::GetInstance()->GetWindow();
+		window.SetWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+		window.SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		window.SetWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		window.SetWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
 	}
 
 	void OpenGLRenderer::Init()
 	{
-		glfwMakeContextCurrent(m_Window->GetNativeHandle());
+		window::Window& window = Application::GetInstance()->GetWindow();
+		glfwMakeContextCurrent(window.GetNativeHandle());
 
 		if (GLVersion.major == 0 && GLVersion.minor == 0 && !gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 			throw std::runtime_error("Could not load OpenGL!");
+
+		// TODO(MarcasRealAccount): Maybe move this somewhere else
+		m_ReservedUniformBuffers = new OpenGLReservedUniformBuffers();
 	}
 
 	void OpenGLRenderer::DeInit()
 	{
+		OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(m_ReservedUniformBuffers);
+		reservedUniformBuffers->CleanUp();
 	}
 
 	void OpenGLRenderer::Render(scene::Camera* camera)
 	{
 		[[maybe_unused]] scene::Scene* scene = camera->GetScene();
+
+		OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(m_ReservedUniformBuffers);
+		reservedUniformBuffers->Bind();
 	}
 } // namespace gp1::renderer::opengl
 
