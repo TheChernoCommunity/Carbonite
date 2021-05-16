@@ -14,36 +14,20 @@ namespace gp1::renderer::apis::vulkan::debug
 		return RendererType::VULKAN;
 	}
 
-	void VulkanDebugRenderer::DebugPoint(const glm::fvec3& point, float duration, const glm::fvec4& color)
+	void VulkanDebugRenderer::DebugPoint([[maybe_unused]] const glm::fvec3& point, [[maybe_unused]] float duration, [[maybe_unused]] const glm::fvec4& color)
 	{
-		_CRT_UNUSED(point);
-		_CRT_UNUSED(duration);
-		_CRT_UNUSED(color);
 	}
 
-	void VulkanDebugRenderer::DebugSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color)
+	void VulkanDebugRenderer::DebugSphere([[maybe_unused]] const glm::fvec3& origin, [[maybe_unused]] float radius, [[maybe_unused]] float duration, [[maybe_unused]] const glm::fvec4& color)
 	{
-		_CRT_UNUSED(origin);
-		_CRT_UNUSED(radius);
-		_CRT_UNUSED(duration);
-		_CRT_UNUSED(color);
 	}
 
-	void VulkanDebugRenderer::DebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color)
+	void VulkanDebugRenderer::DebugBox([[maybe_unused]] const glm::fvec3& origin, [[maybe_unused]] const glm::fvec3& extents, [[maybe_unused]] const glm::fvec3& rotation, [[maybe_unused]] float duration, [[maybe_unused]] const glm::fvec4& color)
 	{
-		_CRT_UNUSED(origin);
-		_CRT_UNUSED(extents);
-		_CRT_UNUSED(rotation);
-		_CRT_UNUSED(duration);
-		_CRT_UNUSED(color);
 	}
 
-	void VulkanDebugRenderer::DebugLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color)
+	void VulkanDebugRenderer::DebugLine([[maybe_unused]] const glm::fvec3& start, [[maybe_unused]] const glm::fvec3& end, [[maybe_unused]] float duration, [[maybe_unused]] const glm::fvec4& color)
 	{
-		_CRT_UNUSED(start);
-		_CRT_UNUSED(end);
-		_CRT_UNUSED(duration);
-		_CRT_UNUSED(color);
 	}
 
 	void VulkanDebugRenderer::Init()

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#if false // TODO: Remove when audio library is cross platform
+
 #include "Engine/Utility/Logger.h"
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -20,3 +22,5 @@ namespace gp1::audio
 	bool ShutdownAL(Logger logger);
 
 } // namespace gp1::audio
+
+#endif

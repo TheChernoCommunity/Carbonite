@@ -157,6 +157,8 @@ namespace gp1::input
 			releasedEvent.Handled = true;
 			break;
 		}
+		default:
+			break;
 		}
 	}
 
@@ -164,5 +166,4 @@ namespace gp1::input
 	{
 		this->m_callback = callback;
 	}
-
 } // namespace gp1::input

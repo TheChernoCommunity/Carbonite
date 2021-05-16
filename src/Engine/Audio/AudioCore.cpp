@@ -6,6 +6,8 @@
 //		Implementation of AudioCore.h
 //
 
+#if false // TODO: Remove when audio library is cross platform
+
 #include "Engine/Audio/AudioCore.h"
 #include "Engine/Audio/Audio.h"
 
@@ -25,3 +27,5 @@ namespace gp1::audio
 	}
 
 } // namespace gp1::audio
+
+#endif

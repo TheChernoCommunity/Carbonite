@@ -17,9 +17,8 @@ namespace gp1::scene
 		}
 	}
 
-	void Entity::Update(float deltaTime)
+	void Entity::Update([[maybe_unused]] float deltaTime)
 	{
-		_CRT_UNUSED(deltaTime);
 	}
 
 	const glm::fmat4& Entity::GetTransformationMatrix(bool isViewMatrix)

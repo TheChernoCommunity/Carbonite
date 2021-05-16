@@ -6,6 +6,8 @@
 //		Functions used to initialise OpenAL device and context, must be initialized before using any audio sources
 //
 
+#if false // TODO: Remove when audio library is cross platform
+
 #include "Engine/Audio/ALHelpers.h"
 
 namespace gp1::audio
@@ -122,3 +124,5 @@ namespace gp1::audio
 	}
 
 } // namespace gp1::audio
+
+#endif

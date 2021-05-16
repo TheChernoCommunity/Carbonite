@@ -70,11 +70,8 @@ namespace gp1::window
 			data.FramebufferHeight = height;
 		});
 
-		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-			_CRT_UNUSED(mods);
-			_CRT_UNUSED(scancode);
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			_CRT_UNUSED(data);
+		glfwSetKeyCallback(m_NativeHandle, [](GLFWwindow* window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods) {
+			[[maybe_unused]] WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			switch (action)
 			{
 			case GLFW_PRESS:
@@ -102,10 +99,8 @@ namespace gp1::window
 			}
 		});
 
-		glfwSetMouseButtonCallback(m_NativeHandle, [](GLFWwindow* window, int button, int action, int mods) {
-			_CRT_UNUSED(mods);
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			_CRT_UNUSED(data);
+		glfwSetMouseButtonCallback(m_NativeHandle, [](GLFWwindow* window, int button, int action, [[maybe_unused]] int mods) {
+			[[maybe_unused]] WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			switch (action)
 			{
 			case GLFW_PRESS:
@@ -128,15 +123,13 @@ namespace gp1::window
 		});
 
 		glfwSetCursorPosCallback(m_NativeHandle, [](GLFWwindow* window, double xPos, double yPos) {
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			_CRT_UNUSED(data);
+			[[maybe_unused]] WindowData&   data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			events::mouse::MouseMovedEvent event { xPos, yPos };
 			events::EventHandler::PushEvent(event);
 		});
 
 		glfwSetScrollCallback(m_NativeHandle, [](GLFWwindow* window, double x, double y) {
-			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			_CRT_UNUSED(data);
+			[[maybe_unused]] WindowData&    data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			events::mouse::MouseScrollEvent event { x, y };
 			events::EventHandler::PushEvent(event);
 		});
@@ -215,9 +208,8 @@ namespace gp1::window
 		return m_WindowData;
 	}
 
-	const bool Window::IsCloseRequested() const
+	bool Window::IsCloseRequested() const
 	{
 		return glfwWindowShouldClose(m_NativeHandle);
 	}
-
 } // namespace gp1::window

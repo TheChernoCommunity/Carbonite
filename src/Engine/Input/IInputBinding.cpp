@@ -6,16 +6,14 @@
 #include "Engine/Input/InputGroup.h"
 #include "Engine/Input/InputHandler.h"
 
-#include <exception>
+#include <stdexcept>
 
 namespace gp1::input
 {
 	IInputBinding::IInputBinding(InputGroup* inputGroup, const std::string& id, InputType type, uint32_t index, InputLocation location)
 	{
 		if (inputGroup == nullptr)
-		{
-			throw std::exception("IInputBinding can't take a nullptr to an InputGroup!");
-		}
+			throw std::runtime_error("IInputBinding can't take a nullptr to an InputGroup!");
 
 		this->m_inputGroup = inputGroup;
 		this->m_id         = id;
@@ -72,5 +70,4 @@ namespace gp1::input
 	{
 		return this->m_index;
 	}
-
 } // namespace gp1::input

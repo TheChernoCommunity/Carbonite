@@ -4,6 +4,8 @@
 
 #include "Engine/Renderer/Apis/OpenGL/Texture/OpenGLTextureCommon.h"
 
+#include <cstring>
+
 namespace gp1::renderer::apis::opengl::textureCommon
 {
 	GLenum GetTextureWrapping(renderer::texture::TextureWrapping wrapping)

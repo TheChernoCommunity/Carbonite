@@ -14,11 +14,11 @@ function library( name )
 		'third_party/glad/include',
 		'third_party/glm/glm',
 		'third_party/stb',
-		'third_party/openal-soft/include',
-		'third_party/openal-soft/src',
-		'third_party/openal-soft/src/common',
-		'third_party/dr_libs',
-		'third_party/minimp3_s',
+		--'third_party/openal-soft/include',
+		--'third_party/openal-soft/src',
+		--'third_party/openal-soft/src/common',
+		--'third_party/dr_libs',
+		--'third_party/minimp3_s',
 	}
 
 	files {
@@ -34,7 +34,7 @@ function library( name )
 	}
 
 	defines {
-		"AL_LIBTYPE_STATIC",
+		--"AL_LIBTYPE_STATIC",
 	}
 
 	filter 'system:macosx or ios'

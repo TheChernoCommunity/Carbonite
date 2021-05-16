@@ -6,6 +6,8 @@
 // 		Implementation of the AudioSource, Audio and AudioLibrary class.
 //
 
+#if false // TODO: Remove when audio library is cross platform
+
 #include "Engine/Audio/Audio.h"
 
 #include <dr_flac.h>
@@ -141,9 +143,8 @@ namespace gp1::audio
 	AudioSource Audio::LoadAudioSourceMP3(const std::string& filename)
 	{
 		mp3dec_file_info_t info;
-		int                loadResult = mp3dec_load(&s_Mp3d, filename.c_str(), &info, NULL, NULL);
-		_CRT_UNUSED(loadResult);
-		uint32_t size = static_cast<uint32_t>(info.samples * sizeof(mp3d_sample_t));
+		[[maybe_unused]] int loadResult = mp3dec_load(&s_Mp3d, filename.c_str(), &info, NULL, NULL);
+		uint32_t size                   = static_cast<uint32_t>(info.samples * sizeof(mp3d_sample_t));
 
 		auto sampleRate = info.hz;
 		auto channels   = info.channels;
@@ -286,3 +287,5 @@ namespace gp1::audio
 	// END AUDIO LIBRARY //
 
 } // namespace gp1::audio
+
+#endif

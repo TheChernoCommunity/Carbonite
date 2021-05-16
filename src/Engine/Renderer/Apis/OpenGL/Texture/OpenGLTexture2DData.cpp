@@ -5,6 +5,8 @@
 #include "Engine/Renderer/Apis/OpenGL/Texture/OpenGLTexture2DData.h"
 #include "Engine/Renderer/Apis/OpenGL/Texture/OpenGLTextureCommon.h"
 
+#include <cstring>
+
 namespace gp1::renderer::apis::opengl::texture
 {
 	OpenGLTexture2DData::OpenGLTexture2DData(renderer::texture::Texture2D* texture)
@@ -98,6 +100,8 @@ namespace gp1::renderer::apis::opengl::texture
 		case renderer::texture::TextureFilter::LINEAR_MIPMAP_NEAREST:
 		case renderer::texture::TextureFilter::LINEAR_MIPMAP_LINEAR:
 			glGenerateMipmap(GL_TEXTURE_2D);
+			break;
+		default:
 			break;
 		}
 

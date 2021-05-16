@@ -16,37 +16,23 @@ namespace gp1::renderer
 	{
 	public:
 		template <typename T>
-		Data(T* ptr)
+		Data([[maybe_unused]] T* ptr)
 		    : m_Type(typeid(T))
 		{
-			_CRT_UNUSED(ptr);
 		}
 		virtual ~Data();
 
 		// Get's the actual renderer data type.
-		const type_info& GetType() const;
+		const std::type_info& GetType() const;
 
 		// Get's the renderer data of the specified type.
-		template <typename T>
-		T* GetRendererData(Renderer* renderer)
-		{
-			if (!this->m_RendererData || !renderer->IsRendererDataUsable(this->m_RendererData))
-			{
-				if (this->m_RendererData)
-				{
-					this->m_RendererData->CleanUp();
-					delete this->m_RendererData;
-				}
-				this->m_RendererData = renderer->CreateRendererData(this);
-			}
-			return reinterpret_cast<T*>(this->m_RendererData);
-		}
+		template <typename T> T* GetRendererData(Renderer* renderer);
 
 		friend RendererData;
 
 	private:
-		const type_info& m_Type;                   // The actual type of Data.
-		RendererData*    m_RendererData = nullptr; // The renderer data associated to this data.
+		const std::type_info& m_Type;                   // The actual type of Data.
+		RendererData*         m_RendererData = nullptr; // The renderer data associated to this data.
 	};
 
 	struct RendererData
@@ -84,8 +70,22 @@ namespace gp1::renderer
 		}
 
 	private:
-		const type_info& m_Type; // The type of the original data.
-		Data*            m_Data; // The original data.
+		const std::type_info& m_Type; // The type of the original data.
+		Data*                 m_Data; // The original data.
 	};
 
+	template <typename T>
+	T* Data::GetRendererData(Renderer* renderer)
+	{
+		if (!this->m_RendererData || !renderer->IsRendererDataUsable(this->m_RendererData))
+		{
+			if (this->m_RendererData)
+			{
+				this->m_RendererData->CleanUp();
+				delete this->m_RendererData;
+			}
+			this->m_RendererData = renderer->CreateRendererData(this);
+		}
+		return reinterpret_cast<T*>(this->m_RendererData);
+	}
 } // namespace gp1::renderer

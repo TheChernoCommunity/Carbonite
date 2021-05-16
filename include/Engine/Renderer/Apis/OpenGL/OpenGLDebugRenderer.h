@@ -28,6 +28,7 @@ namespace gp1::renderer
 			{
 			public:
 				OpenGLDebugObject(const glm::fvec4& color, float lifetime, renderer::mesh::StaticMesh* mesh);
+				virtual ~OpenGLDebugObject() = default;
 
 				virtual renderer::mesh::Mesh*       GetMesh() const override;
 				virtual renderer::shader::Material* GetMaterial() const override;

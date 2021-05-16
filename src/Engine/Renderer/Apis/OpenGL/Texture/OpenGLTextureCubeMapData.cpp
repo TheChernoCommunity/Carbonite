@@ -5,6 +5,8 @@
 #include "Engine/Renderer/Apis/OpenGL/Texture/OpenGLTextureCubeMapData.h"
 #include "Engine/Renderer/Apis/OpenGL/Texture/OpenGLTextureCommon.h"
 
+#include <cstring>
+
 namespace gp1::renderer::apis::opengl::texture
 {
 	OpenGLTextureCubeMapData::OpenGLTextureCubeMapData(renderer::texture::TextureCubeMap* texture)
@@ -198,6 +200,8 @@ namespace gp1::renderer::apis::opengl::texture
 		case renderer::texture::TextureFilter::LINEAR_MIPMAP_NEAREST:
 		case renderer::texture::TextureFilter::LINEAR_MIPMAP_LINEAR:
 			glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+			break;
+		default:
 			break;
 		}
 

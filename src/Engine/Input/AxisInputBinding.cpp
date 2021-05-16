@@ -90,6 +90,8 @@ namespace gp1::input
 			axisEvent.Handled = true;
 			break;
 		}
+		default:
+			break;
 		}
 	}
 
@@ -114,5 +116,4 @@ namespace gp1::input
 	{
 		AxisInputBinding::s_PreviousAxisValues.insert_or_assign(static_cast<uint64_t>(location) << 32 | axis, value);
 	}
-
 } // namespace gp1::input

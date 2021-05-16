@@ -128,7 +128,9 @@ namespace gp1
 	{
 		locale::LocaleManager::SetLocalization("en-us");
 		Logger::Init();
+#if false // TODO: Remove when audio library is cross platform
 		audio::AudioCore::Init();
+#endif
 		m_Window.Init();
 		input::InputHandler::s_Window = &m_Window;
 		input::JoystickHandler::Init();
@@ -171,7 +173,9 @@ namespace gp1
 		input::JoystickHandler::DeInit();
 		input::InputHandler::CleanUp();
 		config::ConfigManager::SaveConfigs();
+#if false // TODO: Remove when audio library is cross platform
 		audio::AudioCore::Shutdown();
+#endif
 		Logger::DeInit();
 	}
 
