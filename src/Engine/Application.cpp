@@ -96,16 +96,32 @@ void main(void) {
 	Application::Application()
 	{
 		s_Instance = this;
-		locale::LocaleManager::SetLocalization("en-us");
 		Logger::Init();
-		m_Renderer = renderer::Renderers::s_Renderers->GetBestRenderer();
-		if (!m_Renderer)
-			throw std::runtime_error("No valid renderer found!");
+		locale::LocaleManager::SetLocalization("en-us");
+
+		config::ConfigFile*    applicationConfigs = config::ConfigManager::GetConfigFile("Application");
+		config::ConfigSection* rendererSection    = applicationConfigs->GetOrCreateSection("Renderer");
+
+		const std::string& selectedRenderer = rendererSection->GetConfig("Selected", "best");
+
+		if (selectedRenderer.empty() || selectedRenderer == "best")
+		{
+			m_Renderer = renderer::Renderers::s_Renderers->GetBestRenderer();
+			if (!m_Renderer)
+				throw std::runtime_error("No valid renderer found!");
+		}
+		else
+		{
+			m_Renderer = renderer::Renderers::s_Renderers->GetRenderer(selectedRenderer);
+			if (!m_Renderer)
+				throw std::runtime_error(selectedRenderer + " is not compatible with this system!");
+		}
 #if false // TODO: Remove when audio library is cross platform
 		audio::AudioCore::Init();
 #endif
 		m_Renderer->SetWindowHints();
 		m_Window.Init();
+		m_Window.SetTitle(m_Window.GetTitle() + " (" + renderer::Renderers::s_Renderers->GetName(m_Renderer) + ")");
 		input::InputHandler::s_Window = &m_Window;
 		input::JoystickHandler::Init();
 		m_Renderer->Init();
@@ -146,10 +162,10 @@ void main(void) {
 		m_Window.DeInit();
 		input::JoystickHandler::DeInit();
 		input::InputHandler::CleanUp();
-		config::ConfigManager::SaveConfigs();
 #if false // TODO: Remove when audio library is cross platform
 		audio::AudioCore::Shutdown();
 #endif
+		config::ConfigManager::SaveConfigs();
 		Logger::DeInit();
 	}
 

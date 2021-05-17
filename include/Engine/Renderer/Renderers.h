@@ -49,6 +49,8 @@ namespace gp1
 			std::shared_ptr<Renderer> GetRenderer(const std::string& name);
 			std::shared_ptr<Renderer> GetBestRenderer();
 
+			std::string GetName(std::shared_ptr<Renderer> renderer) const;
+
 		private:
 			Renderers(const std::initializer_list<RendererEntry>& entries);
 

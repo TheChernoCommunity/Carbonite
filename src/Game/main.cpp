@@ -1,11 +1,22 @@
 #include "Game.h"
 
+#include <cstring>
+#include <stdexcept>
+
 int main(int /*argc*/, char* /*argv*/[])
 {
-	gp1::Application* game = gp1::Application::GetInstance();
-	game->Run();
-	delete game;
-	return 0;
+	try
+	{
+		gp1::Application* game = gp1::Application::GetInstance();
+		game->Run();
+		delete game;
+		return EXIT_SUCCESS;
+	}
+	catch (const std::exception& e)
+	{
+		Logger("ExceptionHandler").LogError("Exception was thrown: %s", e.what());
+		return EXIT_FAILURE;
+	}
 }
 
 #if defined(_WIN32)

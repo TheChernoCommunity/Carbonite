@@ -81,4 +81,12 @@ namespace gp1::renderer
 		}
 		return nullptr;
 	}
+
+	std::string Renderers::GetName(std::shared_ptr<Renderer> renderer) const
+	{
+		for (auto& entry : m_Renderers)
+			if (!entry.m_Renderer.expired() && entry.m_Renderer.lock() == renderer)
+				return entry.m_Name;
+		return "";
+	}
 } // namespace gp1::renderer
