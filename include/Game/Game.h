@@ -6,6 +6,7 @@
 
 #include <Engine/Application.h>
 #include <Engine/Utility/Logger.h>
+#include <Engine/Utility/CVarSystem.h>
 #include <Engine/Input/InputHandler.h>
 #include <Engine/Audio/Audio.h>
 
@@ -27,6 +28,7 @@ namespace gp1 {
 		void PlayFLACCallback(input::ButtonCallbackData data);
 	private:
 		Logger m_Logger;
+		CVarSystem m_CVarSystem;
 
 		// Audio Data
 		AudioSource TestMP3;

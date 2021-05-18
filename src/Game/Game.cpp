@@ -7,6 +7,7 @@
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Renderer/DebugRenderer.h"
+#include "Engine/Utility/CVarSystem.h"
 
 namespace gp1 {
 
@@ -15,7 +16,7 @@ namespace gp1 {
 	}
 
 	Game::Game()
-		: m_Logger("Game"), Application() {
+		: m_Logger("Game"), Application(), m_CVarSystem("Configs/cvars.ini") {
 
 		// Load the sources
 		TestWAV = AudioSource::LoadFromFile("Sounds/TestWAV.wav");
@@ -61,6 +62,14 @@ namespace gp1 {
 		DebugRenderer::DebugDrawABox({ 0, -2, -7 }, 10.0f);
 		DebugRenderer::DebugDrawABox({ -1, -2, -7 }, 10.0f);
 		DebugRenderer::DebugDrawABox({ -2, -2, -7 }, 10.0f);
+
+		CVar_Int width = m_CVarSystem.GetCVarInt("width", 1280);
+		CVar_Int height = m_CVarSystem.GetCVarInt("height", 720);
+		CVar_String level = m_CVarSystem.GetCVarString("render_level", "medium");
+
+		std::cout << width << std::endl;
+		std::cout << height << std::endl;
+		std::cout << level.Get() << std::endl;
 	}
 
 	void Game::LookCallback(input::AxisCallbackData data) {
