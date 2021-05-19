@@ -15,7 +15,7 @@
 
 namespace gp1::renderer::opengl
 {
-	struct OpenGLTexture2D : public Texture2D, OpenGLTexture
+	struct OpenGLTexture2D : public Texture2D, public OpenGLTexture
 	{
 	public:
 		friend struct OpenGLUniformTexture2D;

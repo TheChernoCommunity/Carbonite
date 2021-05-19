@@ -58,6 +58,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		Renderer() = default;
+
+	protected:
 		virtual std::shared_ptr<StaticMesh>             OnCreateStaticMesh()               = 0;
 		virtual std::shared_ptr<Material>               OnCreateMaterial()                 = 0;
 		virtual std::shared_ptr<ReservedUniformBuffers> OnCreateReversedUniformBuffers()   = 0;

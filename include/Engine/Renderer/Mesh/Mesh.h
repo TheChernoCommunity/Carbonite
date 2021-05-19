@@ -31,6 +31,9 @@ namespace gp1::renderer
 	public:
 		virtual ~Mesh() = default;
 
+	protected:
+		Mesh() = default;
+
 	public:
 		ERenderMode m_RenderMode = ERenderMode::Triangles;
 		float       m_LineWidth  = 1.0f;

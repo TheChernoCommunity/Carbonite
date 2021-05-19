@@ -33,6 +33,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		DynamicRendererData() = default;
+
+	protected:
 		bool m_Dirty    = true;
 		bool m_Editable = true;
 		bool m_Dynamic  = false;

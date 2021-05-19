@@ -82,7 +82,7 @@ namespace gp1
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
-		std::shared_ptr<TestEntity> m_TestEntities[10000];
+		std::shared_ptr<TestEntity> m_TestEntities[1];
 		//----
 
 		std::shared_ptr<renderer::Renderer> m_Renderer;

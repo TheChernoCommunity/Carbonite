@@ -22,6 +22,9 @@ namespace gp1::renderer
 	struct Shader
 	{
 	public:
+		friend struct ShaderProgram;
+
+	protected:
 		Shader(EShaderType type);
 
 	public:

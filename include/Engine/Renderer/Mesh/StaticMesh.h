@@ -25,6 +25,9 @@ namespace gp1::renderer
 	public:
 		static std::shared_ptr<StaticMesh> Create();
 
+	protected:
+		StaticMesh() = default;
+
 	public:
 		std::vector<StaticMeshVertex> m_Vertices;
 		std::vector<uint32_t>         m_Indices;

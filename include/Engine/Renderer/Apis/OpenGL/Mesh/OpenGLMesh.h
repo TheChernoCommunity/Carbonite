@@ -22,6 +22,9 @@ namespace gp1::renderer::opengl
 		virtual void Render() = 0;
 
 		uint32_t GetGLRenderMode(ERenderMode mode) const;
+
+	protected:
+		OpenGLMesh() = default;
 	};
 } // namespace gp1::renderer::opengl
 

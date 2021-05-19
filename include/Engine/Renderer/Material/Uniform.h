@@ -57,6 +57,9 @@ namespace gp1::renderer
 
 		virtual EUniformType GetType() const                                 = 0;
 		virtual void         CopyFrom(const std::shared_ptr<Uniform>& other) = 0;
+
+	protected:
+		Uniform() = default;
 	};
 
 	struct UniformBuffer : RendererData
@@ -85,6 +88,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformBuffer() = default;
+
+	protected:
 		std::vector<UniformInfo> m_Uniforms;
 	};
 
@@ -108,6 +114,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformFloat() = default;
 
 	protected:
 		float m_Value = 0.0f;
@@ -135,6 +144,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformFVec2() = default;
+
+	protected:
 		glm::fvec2 m_Value = { 0.0f, 0.0f };
 	};
 
@@ -158,6 +170,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformFVec3() = default;
 
 	protected:
 		glm::fvec3 m_Value = { 0.0f, 0.0f, 0.0f };
@@ -185,6 +200,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformFVec4() = default;
+
+	protected:
 		glm::fvec4 m_Value = { 0.0f, 0.0f, 0.0f, 0.0f };
 	};
 
@@ -208,6 +226,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformInt() = default;
 
 	protected:
 		int32_t m_Value = 0;
@@ -235,6 +256,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformIVec2() = default;
+
+	protected:
 		glm::ivec2 m_Value = { 0, 0 };
 	};
 
@@ -258,6 +282,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformIVec3() = default;
 
 	protected:
 		glm::ivec3 m_Value = { 0, 0, 0 };
@@ -285,6 +312,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformIVec4() = default;
+
+	protected:
 		glm::ivec4 m_Value = { 0, 0, 0, 0 };
 	};
 
@@ -308,6 +338,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformUInt() = default;
 
 	protected:
 		uint32_t m_Value = 0;
@@ -335,6 +368,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformUVec2() = default;
+
+	protected:
 		glm::uvec2 m_Value = { 0, 0 };
 	};
 
@@ -358,6 +394,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformUVec3() = default;
 
 	protected:
 		glm::uvec3 m_Value = { 0, 0, 0 };
@@ -385,6 +424,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformUVec4() = default;
+
+	protected:
 		glm::uvec4 m_Value = { 0, 0, 0, 0 };
 	};
 
@@ -408,6 +450,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformFMat2() = default;
 
 	protected:
 		glm::fmat2 m_Value = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -435,6 +480,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformFMat3() = default;
+
+	protected:
 		glm::fmat3 m_Value = { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
@@ -458,6 +506,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformFMat4() = default;
 
 	protected:
 		glm::fmat4 m_Value = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
@@ -485,6 +536,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformTexture2D() = default;
+
+	protected:
 		std::shared_ptr<Texture2D> m_Value = nullptr;
 	};
 
@@ -508,6 +562,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformTexture2DArray() = default;
 
 	protected:
 		std::shared_ptr<Texture2DArray> m_Value = nullptr;
@@ -535,6 +592,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		UniformTexture3D() = default;
+
+	protected:
 		std::shared_ptr<Texture3D> m_Value = nullptr;
 	};
 
@@ -558,6 +618,9 @@ namespace gp1::renderer
 		{
 			return m_Value;
 		}
+
+	protected:
+		UniformTextureCubeMap() = default;
 
 	protected:
 		std::shared_ptr<TextureCubeMap> m_Value = nullptr;

@@ -28,6 +28,9 @@ namespace gp1::renderer
 	public:
 		virtual ~Texture3D() = default;
 
+	protected:
+		Texture3D() = default;
+
 	public:
 		std::vector<uint8_t> m_Data;
 		uint32_t             m_Width = 0, m_Height = 0, m_Depth = 0;

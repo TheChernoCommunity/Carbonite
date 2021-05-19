@@ -94,6 +94,9 @@ namespace gp1::renderer
 	public:
 		virtual ~Texture() = default;
 
+	protected:
+		Texture() = default;
+
 	public:
 		ETextureFormat   m_Format = ETextureFormat::RGBA;
 		ETextureDataType m_Type   = ETextureDataType::UByte;

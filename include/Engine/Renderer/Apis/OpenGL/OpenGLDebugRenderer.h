@@ -29,8 +29,6 @@ namespace gp1::renderer::opengl
 		static std::shared_ptr<ShaderProgram> s_DebugShaderProgram;
 
 	public:
-		OpenGLDebugObject(float duration, const glm::fvec4& color, std::shared_ptr<Mesh> mesh);
-
 		inline virtual std::shared_ptr<Mesh> GetMesh() const override
 		{
 			return m_Mesh;
@@ -40,6 +38,9 @@ namespace gp1::renderer::opengl
 		{
 			return m_Material;
 		}
+
+	protected:
+		OpenGLDebugObject(float duration, const glm::fvec4& color, std::shared_ptr<Mesh> mesh);
 
 	protected:
 		float m_SpawnTime;

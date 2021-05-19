@@ -61,6 +61,9 @@ namespace gp1::renderer::opengl
 		}
 
 	protected:
+		OpenGLUniform() = default;
+
+	protected:
 		uint32_t m_Offset = 0;
 		void*    m_Next   = nullptr;
 	};
@@ -94,7 +97,6 @@ namespace gp1::renderer::opengl
 
 	struct OpenGLUniformFVec4 : public UniformFVec4, public OpenGLUniform
 	{
-	public:
 		OpenGLUniformFVec4();
 
 		virtual size_t GetDataSize() const override;
@@ -121,7 +123,6 @@ namespace gp1::renderer::opengl
 
 	struct OpenGLUniformIVec3 : public UniformIVec3, public OpenGLUniform
 	{
-	public:
 		OpenGLUniformIVec3();
 
 		virtual size_t GetDataSize() const override;
@@ -206,6 +207,9 @@ namespace gp1::renderer::opengl
 		virtual ~OpenGLUniformTexture() = default;
 
 		virtual void Bind() = 0;
+
+	protected:
+		OpenGLUniformTexture() = default;
 	};
 
 	struct OpenGLUniformTexture2D : public UniformTexture2D, public OpenGLUniform, public OpenGLUniformTexture

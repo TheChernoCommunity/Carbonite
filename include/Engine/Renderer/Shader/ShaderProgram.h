@@ -48,6 +48,8 @@ namespace gp1::renderer
 	struct ShaderProgram : public DynamicRendererData
 	{
 	public:
+		friend Material;
+
 		static std::shared_ptr<ShaderProgram> Create();
 
 	public:
@@ -72,7 +74,7 @@ namespace gp1::renderer
 		void AddUniformBuffers(std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>>& uniformBuffer) const;
 
 	protected:
-		friend Material;
+		ShaderProgram() = default;
 
 		void AddMaterial(std::shared_ptr<Material> material);
 		void RemoveMaterial(std::shared_ptr<Material> material);

@@ -31,6 +31,9 @@ namespace gp1::renderer
 	public:
 		virtual ~TextureCubeMap() = default;
 
+	protected:
+		TextureCubeMap() = default;
+
 	public:
 		std::vector<uint8_t> m_Textures[6];
 

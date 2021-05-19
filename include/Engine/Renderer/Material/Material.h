@@ -79,6 +79,8 @@ namespace gp1::renderer
 	struct Material : public RendererData
 	{
 	public:
+		friend ShaderProgram;
+
 		struct UniformBufferEntry
 		{
 		public:
@@ -109,7 +111,7 @@ namespace gp1::renderer
 		}
 
 	protected:
-		friend ShaderProgram;
+		Material() = default;
 
 		void UpdateUniformBuffers(std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>> uniformBuffers);
 

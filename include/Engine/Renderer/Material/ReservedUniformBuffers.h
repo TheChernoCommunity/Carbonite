@@ -11,6 +11,8 @@ namespace gp1::renderer
 	struct ReservedUniformBuffers : public RendererData
 	{
 	public:
+		static constexpr const uint32_t MaxUniformBufferCount = 8;
+
 		struct UniformBufferEntry
 		{
 		public:
@@ -19,7 +21,6 @@ namespace gp1::renderer
 		};
 
 	public:
-		ReservedUniformBuffers();
 		virtual ~ReservedUniformBuffers() = default;
 
 		std::shared_ptr<UniformBuffer> GetUniformBuffer(const std::string& name) const;
@@ -31,8 +32,8 @@ namespace gp1::renderer
 			return std::reinterpret_pointer_cast<T>(GetUniform(bufferName, uniformName));
 		}
 
-	public:
-		static constexpr const uint32_t MaxUniformBufferCount = 8;
+	protected:
+		ReservedUniformBuffers();
 
 	protected:
 		UniformBufferEntry m_UniformBuffers[MaxUniformBufferCount];

@@ -52,6 +52,9 @@ namespace gp1::renderer
 		}
 
 	protected:
+		RendererData() = default;
+
+	protected:
 		void* m_Next = nullptr;
 
 		std::weak_ptr<RendererData> m_This;

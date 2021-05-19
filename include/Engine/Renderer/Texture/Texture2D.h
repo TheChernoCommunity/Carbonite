@@ -27,6 +27,9 @@ namespace gp1::renderer
 	public:
 		virtual ~Texture2D() = default;
 
+	protected:
+		Texture2D() = default;
+
 	public:
 		std::vector<uint8_t> m_Data;
 		uint32_t             m_Width = 0, m_Height = 0;

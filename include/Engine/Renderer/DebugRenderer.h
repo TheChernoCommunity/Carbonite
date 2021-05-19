@@ -39,5 +39,8 @@ namespace gp1::renderer
 
 		virtual void Init()   = 0;
 		virtual void DeInit() = 0;
+
+	protected:
+		DebugRenderer() = default;
 	};
 } // namespace gp1::renderer

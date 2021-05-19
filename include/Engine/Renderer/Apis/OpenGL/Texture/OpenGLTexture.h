@@ -21,6 +21,9 @@ namespace gp1::renderer::opengl
 		uint32_t GetGLFilter(ETextureFilter filter) const;
 		uint32_t GetGLFormat(ETextureFormat format) const;
 		uint32_t GetGLDataType(ETextureDataType dataType) const;
+
+	protected:
+		OpenGLTexture() = default;
 	};
 } // namespace gp1::renderer::opengl
 #endif

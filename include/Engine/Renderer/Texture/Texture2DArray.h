@@ -20,6 +20,9 @@ namespace gp1::renderer
 	public:
 		virtual ~Texture2DArray() = default;
 
+	protected:
+		Texture2DArray() = default;
+
 	public:
 		std::vector<std::vector<uint8_t>> m_Textures;
 
