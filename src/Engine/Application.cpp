@@ -20,68 +20,14 @@ namespace gp1
 {
 	//----
 	// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
+	static std::shared_ptr<renderer::StaticMesh>     s_TestEntityMesh;
+	static std::shared_ptr<renderer::Material>       s_TestEntityMaterial;
+	static std::shared_ptr<renderer::TextureCubeMap> s_TestEntityTexture;
+	static std::shared_ptr<renderer::ShaderProgram>  s_TestEntityShaderProgram;
+
 	TestEntity::TestEntity()
-	    : m_Mesh(Application::GetInstance()->GetRenderer()->CreateStaticMesh()), m_Material(Application::GetInstance()->GetRenderer()->CreateMaterial())
+	    : m_Mesh(s_TestEntityMesh), m_Material(s_TestEntityMaterial)
 	{
-		m_Mesh->m_Vertices.push_back({ { -0.5f, 0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } });
-		m_Mesh->m_Vertices.push_back({ { 0.5f, 0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } });
-		m_Mesh->m_Vertices.push_back({ { 0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f } });
-		m_Mesh->m_Vertices.push_back({ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f } });
-
-		m_Mesh->m_Indices.push_back(3);
-		m_Mesh->m_Indices.push_back(1);
-		m_Mesh->m_Indices.push_back(0);
-		m_Mesh->m_Indices.push_back(3);
-		m_Mesh->m_Indices.push_back(2);
-		m_Mesh->m_Indices.push_back(1);
-
-		std::shared_ptr<renderer::ShaderProgram> shaderProgram = Application::GetInstance()->GetRenderer()->CreateShaderProgram();
-
-		const char* pVertexShaderCode   = R"(
-#version 430 core
-
-layout(location = 0) in vec4 inPosition;
-layout(location = 1) in vec4 inNormal;
-layout(location = 2) in vec2 inUV;
-
-layout(location = 0) out vec2 passUV;
-
-layout(std140, binding = 0) uniform Camera {
-	mat4 Camera_projectionViewMatrix;
-};
-
-uniform Object {
-	mat4 Object_transformationMatrix;
-};
-
-void main(void) {
-	gl_Position = Camera_projectionViewMatrix * Object_transformationMatrix * inPosition;
-	passUV = inUV;
-}
-)";
-		const char* pFragmentShaderCode = R"(
-#version 430 core
-
-layout(location = 0) in vec2 inUV;
-
-layout(location = 0) out vec4 outColor;
-
-void main(void) {
-	outColor = vec4(inUV, 0.0, 1.0);
-}
-)";
-
-		renderer::Shader* vertexShader = shaderProgram->GetShader(renderer::EShaderType::VertexShader);
-		vertexShader->m_Data           = std::vector<uint8_t>(pVertexShaderCode, pVertexShaderCode + strlen(pVertexShaderCode));
-
-		renderer::Shader* fragmentShader = shaderProgram->GetShader(renderer::EShaderType::FragmentShader);
-		fragmentShader->m_Data           = std::vector<uint8_t>(pFragmentShaderCode, pFragmentShaderCode + strlen(pFragmentShaderCode));
-
-		shaderProgram->AddUniformBuffer("Object");
-		shaderProgram->AddUniformBufferElement("Object", "transformationMatrix", renderer::EUniformType::FMat4);
-
-		m_Material->SetShaderProgram(shaderProgram);
-
 		m_Position.z = -5.0f;
 	}
 
@@ -131,8 +77,107 @@ void main(void) {
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
-		m_TestEntity = std::make_shared<TestEntity>();
-		m_Scene.AttachEntity(m_TestEntity);
+		s_TestEntityMesh          = renderer::StaticMesh::Create();
+		s_TestEntityMaterial      = renderer::Material::Create();
+		s_TestEntityTexture       = renderer::TextureCubeMap::Create();
+		s_TestEntityShaderProgram = renderer::ShaderProgram::Create();
+
+		s_TestEntityMesh->m_Vertices.push_back({ { -0.5f, 0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } });
+		s_TestEntityMesh->m_Vertices.push_back({ { 0.5f, 0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } });
+		s_TestEntityMesh->m_Vertices.push_back({ { 0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f } });
+		s_TestEntityMesh->m_Vertices.push_back({ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f } });
+
+		s_TestEntityMesh->m_Indices.push_back(3);
+		s_TestEntityMesh->m_Indices.push_back(1);
+		s_TestEntityMesh->m_Indices.push_back(0);
+		s_TestEntityMesh->m_Indices.push_back(3);
+		s_TestEntityMesh->m_Indices.push_back(2);
+		s_TestEntityMesh->m_Indices.push_back(1);
+
+		s_TestEntityTexture->m_Width  = 2;
+		s_TestEntityTexture->m_Height = 2;
+
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::PositiveX] = { 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255 };
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::PositiveY] = { 0, 255, 0, 255, 0, 0, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255 };
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::PositiveZ] = { 0, 0, 255, 255, 255, 0, 0, 255, 0, 255, 0, 255, 255, 255, 255, 255 };
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::NegativeX] = { 127, 0, 0, 255, 0, 127, 0, 255, 0, 0, 127, 255, 127, 127, 127, 255 };
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::NegativeY] = { 0, 127, 0, 255, 0, 0, 127, 255, 127, 0, 0, 255, 127, 127, 127, 255 };
+		s_TestEntityTexture->m_Textures[renderer::TextureCubeMapFaceIndex::NegativeZ] = { 0, 0, 127, 255, 127, 0, 0, 255, 0, 127, 0, 255, 127, 127, 127, 255 };
+
+		s_TestEntityTexture->m_Filter.m_Magnify  = renderer::ETextureFilter::Nearest;
+		s_TestEntityTexture->m_Filter.m_Minimize = renderer::ETextureFilter::Nearest;
+
+		const char* pVertexShaderCode   = R"(
+#version 430 core
+
+layout(location = 0) in vec4 inPosition;
+layout(location = 1) in vec4 inNormal;
+layout(location = 2) in vec2 inUV;
+
+layout(location = 0) out vec4 outNormal;
+layout(location = 1) out vec2 outUV;
+layout(location = 2) out vec3 outToCamera;
+
+layout(std140, binding = 0) uniform Camera {
+	mat4 Camera_projectionViewMatrix;
+	mat4 Camera_projectionMatrix;
+	mat4 Camera_viewMatrix;
+};
+
+uniform Object {
+	mat4 Object_transformationMatrix;
+};
+
+void main(void) {
+	vec4 worldPosition = Object_transformationMatrix * inPosition;
+	gl_Position = Camera_projectionViewMatrix * worldPosition;
+
+	outNormal = Object_transformationMatrix * vec4(inNormal.xyz, 0.0);
+	outUV = inUV;
+	outToCamera = (inverse(Camera_viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+}
+)";
+		const char* pFragmentShaderCode = R"(
+#version 430 core
+
+layout(location = 0) in vec4 inNormal;
+layout(location = 1) in vec2 inUV;
+layout(location = 2) in vec3 inToCamera;
+
+layout(location = 0) out vec4 outColor;
+
+uniform Object {
+	mat4 Object_transformationMatrix;
+};
+
+uniform samplerCube Object_tex;
+
+void main(void) {
+	outColor = texture(Object_tex, normalize(inToCamera));
+}
+)";
+
+		renderer::Shader* vertexShader = s_TestEntityShaderProgram->AddShader(renderer::EShaderType::VertexShader);
+		vertexShader->m_Data           = std::vector<uint8_t>(pVertexShaderCode, pVertexShaderCode + strlen(pVertexShaderCode));
+
+		renderer::Shader* fragmentShader = s_TestEntityShaderProgram->AddShader(renderer::EShaderType::FragmentShader);
+		fragmentShader->m_Data           = std::vector<uint8_t>(pFragmentShaderCode, pFragmentShaderCode + strlen(pFragmentShaderCode));
+
+		s_TestEntityShaderProgram->AddUniformBuffer("Object");
+		s_TestEntityShaderProgram->AddUniformBufferElement("Object", "transformationMatrix", renderer::EUniformType::FMat4);
+		s_TestEntityShaderProgram->AddUniformBufferElement("Object", "tex", renderer::EUniformType::TextureCubeMap);
+
+		s_TestEntityMaterial->SetShaderProgram(s_TestEntityShaderProgram);
+
+		std::shared_ptr<renderer::UniformTextureCubeMap> textureUniform = s_TestEntityMaterial->GetUniform<renderer::UniformTextureCubeMap>("Object", "tex");
+		if (textureUniform)
+			textureUniform->SetValue(s_TestEntityTexture);
+
+		for (size_t i = 0; i < sizeof(m_TestEntities) / sizeof(*m_TestEntities); i++)
+		{
+			m_TestEntities[i] = std::make_shared<TestEntity>();
+			m_Scene.AttachEntity(m_TestEntities[i]);
+		}
 		//----
 	}
 
@@ -148,7 +193,9 @@ void main(void) {
 
 			m_Scene.Update(deltaTime);
 
+			m_Renderer->BeginFrame();
 			m_Renderer->Render(m_Camera);
+			m_Renderer->EndFrame();
 
 			m_Window.OnUpdate();
 			input::JoystickHandler::OnUpdate();

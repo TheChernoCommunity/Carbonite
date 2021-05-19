@@ -7,54 +7,13 @@
 #ifdef RENDERER_OPENGL
 
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 
 #include <glad/glad.h>
 
 namespace gp1::renderer::opengl
 {
-	OpenGLUniformBufferInfo::OpenGLUniformBufferInfo(const std::string& name, UniformBuffer* uniformBuffer)
-	    : m_Name(name), m_UniformBuffer(uniformBuffer) {}
-
-	void OpenGLUniformBufferInfo::Bind()
-	{
-		if (m_UniformBuffer->IsDirty())
-		{
-			if (!m_Ubo)
-			{
-				glGenBuffers(1, &m_Ubo);
-				m_UboSize = 0;
-			}
-
-			std::vector<uint8_t> uniformData;
-			m_UniformBuffer->GetUniformData(uniformData);
-			if (uniformData.size() != m_UboSize)
-			{
-				glBindBuffer(GL_UNIFORM_BUFFER, m_Ubo);
-				glBufferData(GL_UNIFORM_BUFFER, uniformData.size(), uniformData.data(), GL_DYNAMIC_DRAW);
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
-				m_UboSize = static_cast<uint32_t>(uniformData.size());
-			}
-			else
-			{
-				glBindBuffer(GL_UNIFORM_BUFFER, m_Ubo);
-				glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformData.size(), uniformData.data());
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
-			}
-
-			m_UniformBuffer->ClearDirty();
-		}
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, m_Binding, m_Ubo);
-	}
-
-	void OpenGLUniformBufferInfo::CleanUp()
-	{
-		glDeleteBuffers(1, &m_Ubo);
-		m_Ubo     = 0;
-		m_UboSize = 0;
-	}
-
 	OpenGLMaterial::~OpenGLMaterial()
 	{
 		CleanUp();
@@ -65,45 +24,6 @@ namespace gp1::renderer::opengl
 		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
-
-		bool wasShaderProgramDirty = shaderProgram->Update();
-		if (wasShaderProgramDirty)
-		{
-			UpdateShaderProgram();
-			std::vector<OpenGLUniformBufferInfo> oldInfos = m_UniformBufferInfos;
-			m_UniformBufferInfos.clear();
-			m_UniformBufferInfos.reserve(m_UniformBuffers.size());
-			for (auto& uniformBuffer : m_UniformBuffers)
-			{
-				const std::string&      bufferName = uniformBuffer.GetName();
-				OpenGLUniformBufferInfo info       = OpenGLUniformBufferInfo(bufferName, &uniformBuffer);
-				for (auto itr = oldInfos.begin(), end = oldInfos.end(); itr != end; itr++)
-				{
-					if (itr->m_Name == bufferName)
-					{
-						info.m_Ubo     = itr->m_Ubo;
-						info.m_UboSize = itr->m_UboSize;
-						oldInfos.erase(itr);
-						break;
-					}
-				}
-				if (shaderProgram->IsUniformBufferValid(bufferName))
-				{
-					info.m_Binding = shaderProgram->GetUniformBufferBindingPoint(bufferName);
-					for (auto& uniform : uniformBuffer)
-						uniform.second.m_Offset = shaderProgram->GetUniformBufferElementOffset(bufferName, uniform.first);
-					m_UniformBufferInfos.push_back(info);
-				}
-				else
-				{
-					info.CleanUp();
-				}
-			}
-			m_UniformBufferInfos.shrink_to_fit();
-
-			for (auto& oldInfo : oldInfos)
-				oldInfo.CleanUp();
-		}
 
 		if (m_CullMode.m_Enabled)
 		{
@@ -124,8 +44,11 @@ namespace gp1::renderer::opengl
 			glPolygonMode(GetGLFace(m_PolygonMode.m_Face), GetGLPolygonMode(m_PolygonMode.m_Mode));
 
 		shaderProgram->Bind();
-		for (auto& uniformBufferInfo : m_UniformBufferInfos)
-			uniformBufferInfo.Bind();
+		for (auto& uniformBuffer : m_UniformBuffers)
+		{
+			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+			buffer->Bind();
+		}
 	}
 
 	void OpenGLMaterial::Unbind()
@@ -142,11 +65,32 @@ namespace gp1::renderer::opengl
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	void OpenGLMaterial::UpdateGLData()
+	{
+		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
+		if (!shaderProgram)
+			return;
+
+		for (auto& uniformBuffer : m_UniformBuffers)
+		{
+			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+
+			OpenGLUniformBufferInfo* info = shaderProgram->GetUniformBufferInfo(uniformBuffer.m_Name);
+			if (info)
+			{
+				buffer->SetBinding(info->m_Binding);
+				buffer->SetOffsets(info->m_Offsets);
+			}
+		}
+	}
+
 	void OpenGLMaterial::CleanUp()
 	{
-		for (auto& uniformBufferInfo : m_UniformBufferInfos)
-			uniformBufferInfo.CleanUp();
-		m_UniformBufferInfos.clear();
+		for (auto& uniformBuffer : m_UniformBuffers)
+		{
+			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+			buffer->CleanUp();
+		}
 	}
 
 	uint32_t OpenGLMaterial::GetGLFace(ETriangleFace face)

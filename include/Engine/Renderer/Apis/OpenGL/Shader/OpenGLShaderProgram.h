@@ -11,7 +11,7 @@
 
 namespace gp1::renderer::opengl
 {
-	struct OpenGLUniformBufferBindingPoint
+	struct OpenGLUniformBufferInfo
 	{
 	public:
 		std::string m_Name;
@@ -25,18 +25,11 @@ namespace gp1::renderer::opengl
 	public:
 		virtual ~OpenGLShaderProgram();
 
-		void Bind();
-		void Unbind();
-		bool Update();
+		void         Bind();
+		void         Unbind();
+		virtual void Update() override;
 
-		inline void ResetHasChanged()
-		{
-			m_HasChanged = false;
-		}
-
-		bool     IsUniformBufferValid(const std::string& name) const;
-		uint32_t GetUniformBufferBindingPoint(const std::string& name) const;
-		uint32_t GetUniformBufferElementOffset(const std::string& bufferName, const std::string& elementName) const;
+		OpenGLUniformBufferInfo* GetUniformBufferInfo(const std::string& name) const;
 
 	private:
 		void GenGLData();
@@ -45,10 +38,9 @@ namespace gp1::renderer::opengl
 		uint32_t GetGLShaderType(EShaderType shaderType) const;
 
 	protected:
-		uint32_t m_ProgramId  = 0;
-		bool     m_HasChanged = false;
+		uint32_t m_ProgramId = 0;
 
-		std::vector<OpenGLUniformBufferBindingPoint> m_UniformBufferBindingPoints;
+		std::vector<OpenGLUniformBufferInfo> m_UniformBufferInfos;
 	};
 } // namespace gp1::renderer::opengl
 

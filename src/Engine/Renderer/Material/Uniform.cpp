@@ -3,30 +3,21 @@
 //
 
 #include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Application.h"
+
+#include <cstring>
 
 namespace gp1::renderer
 {
-	std::shared_ptr<Uniform> Uniform::CreateUniform(EUniformType type)
+	template <int C, int R, typename T, glm::qualifier Q>
+	inline static bool FastMatNEQ(const glm::mat<C, R, T, Q>& a, const glm::mat<C, R, T, Q>& b)
 	{
-		switch (type)
-		{
-		case EUniformType::Float: return std::make_shared<UniformFloat>();
-		case EUniformType::FVec2: return std::make_shared<UniformFVec2>();
-		case EUniformType::FVec3: return std::make_shared<UniformFVec3>();
-		case EUniformType::FVec4: return std::make_shared<UniformFVec4>();
-		case EUniformType::Int: return std::make_shared<UniformInt>();
-		case EUniformType::IVec2: return std::make_shared<UniformIVec2>();
-		case EUniformType::IVec3: return std::make_shared<UniformIVec3>();
-		case EUniformType::IVec4: return std::make_shared<UniformIVec4>();
-		case EUniformType::UInt: return std::make_shared<UniformUInt>();
-		case EUniformType::UVec2: return std::make_shared<UniformUVec2>();
-		case EUniformType::UVec3: return std::make_shared<UniformUVec3>();
-		case EUniformType::UVec4: return std::make_shared<UniformUVec4>();
-		case EUniformType::FMat2: return std::make_shared<UniformFMat2>();
-		case EUniformType::FMat3: return std::make_shared<UniformFMat3>();
-		case EUniformType::FMat4: return std::make_shared<UniformFMat4>();
-		default: return nullptr;
-		}
+		return memcmp(&a, &b, sizeof(a));
+	}
+
+	std::shared_ptr<Uniform> Uniform::Create(EUniformType type)
+	{
+		return Application::GetInstance()->GetRenderer()->CreateUniform(type);
 	}
 
 	bool Uniform::IsOfSameType(const std::shared_ptr<Uniform>& other) const
@@ -34,20 +25,69 @@ namespace gp1::renderer
 		return other && GetType() == other->GetType();
 	}
 
-	UniformBuffer::UniformInfo::UniformInfo(EUniformType type)
-	    : m_Uniform(Uniform::CreateUniform(type)) {}
-
-	UniformBuffer::UniformBuffer(const std::string& name, const std::vector<std::pair<std::string, UniformInfo>>& uniforms)
-	    : m_Name(name)
+	std::shared_ptr<UniformBuffer> UniformBuffer::Create()
 	{
-		for (auto& uniform : uniforms)
-			m_Uniforms.insert(uniform);
+		return Application::GetInstance()->GetRenderer()->CreateUniformBuffer();
+	}
+
+	void UniformBuffer::UpdateUniforms(std::vector<std::pair<std::string, EUniformType>> uniformTypes)
+	{
+		{
+			std::vector<std::string> seenUniformNames;
+			for (auto itr = uniformTypes.begin(); itr != uniformTypes.end();)
+			{
+				bool found = false;
+				for (auto seenItr = seenUniformNames.begin(), end = seenUniformNames.end(); seenItr != end; seenItr++)
+				{
+					if (*seenItr == itr->first)
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (found)
+				{
+					itr = uniformTypes.erase(itr);
+				}
+				else
+				{
+					seenUniformNames.push_back(itr->first);
+					itr++;
+				}
+			}
+		}
+
+		for (auto itr = m_Uniforms.begin(); itr != m_Uniforms.end();)
+		{
+			bool found = false;
+			for (auto typeItr = uniformTypes.begin(), end = uniformTypes.end(); typeItr != end; typeItr++)
+			{
+				if (typeItr->first == itr->m_Name)
+				{
+					std::shared_ptr<Uniform> uniform = itr->m_Uniform;
+					if (uniform->GetType() != typeItr->second)
+						itr->m_Uniform = Uniform::Create(typeItr->second);
+					uniformTypes.erase(typeItr);
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+				itr++;
+			else
+				itr = m_Uniforms.erase(itr);
+		}
+
+		for (auto& uniformType : uniformTypes)
+			m_Uniforms.push_back({ uniformType.first, Uniform::Create(uniformType.second) });
 	}
 
 	bool UniformBuffer::IsDirty() const
 	{
 		for (auto& uniform : m_Uniforms)
-			if (uniform.second.m_Uniform->IsDirty())
+			if (uniform.m_Uniform->m_Dirty)
 				return true;
 		return false;
 	}
@@ -55,42 +95,15 @@ namespace gp1::renderer
 	void UniformBuffer::ClearDirty()
 	{
 		for (auto& uniform : m_Uniforms)
-			uniform.second.m_Uniform->ClearDirty();
+			uniform.m_Uniform->m_Dirty = false;
 	}
 
-	std::shared_ptr<Uniform> UniformBuffer::GetUniform(const std::string& name) const
+	std::shared_ptr<Uniform> UniformBuffer::GetUniform(std::string_view name) const
 	{
-		auto itr = m_Uniforms.find(name);
-		if (itr != m_Uniforms.end())
-			return itr->second.m_Uniform;
+		for (auto& uniform : m_Uniforms)
+			if (uniform.m_Name == name)
+				return uniform.m_Uniform;
 		return nullptr;
-	}
-
-	void UniformBuffer::GetUniformData(std::vector<uint8_t>& data) const
-	{
-		size_t size = 0;
-		for (auto& uniform : m_Uniforms)
-		{
-			const UniformInfo& info = uniform.second;
-			size_t             end  = info.m_Offset + info.m_Uniform->GetDataSize();
-			if (end > size)
-				size = end;
-		}
-		data.resize(size);
-		for (auto& uniform : m_Uniforms)
-			uniform.second.m_Uniform->PutData(data, uniform.second.m_Offset);
-	}
-
-	size_t UniformFloat::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFloat::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFloat::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -104,20 +117,8 @@ namespace gp1::renderer
 
 	void UniformFloat::SetValue(float value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFVec2::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFVec2::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFVec2::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -131,20 +132,8 @@ namespace gp1::renderer
 
 	void UniformFVec2::SetValue(const glm::fvec2& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFVec3::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFVec3::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFVec3::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -158,20 +147,8 @@ namespace gp1::renderer
 
 	void UniformFVec3::SetValue(const glm::fvec3& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFVec4::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFVec4::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFVec4::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -185,20 +162,8 @@ namespace gp1::renderer
 
 	void UniformFVec4::SetValue(const glm::fvec4& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformInt::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformInt::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformInt::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -212,20 +177,8 @@ namespace gp1::renderer
 
 	void UniformInt::SetValue(int32_t value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformIVec2::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformIVec2::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformIVec2::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -239,20 +192,8 @@ namespace gp1::renderer
 
 	void UniformIVec2::SetValue(const glm::ivec2& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformIVec3::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformIVec3::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformIVec3::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -266,20 +207,8 @@ namespace gp1::renderer
 
 	void UniformIVec3::SetValue(const glm::ivec3& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformIVec4::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformIVec4::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformIVec4::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -293,20 +222,8 @@ namespace gp1::renderer
 
 	void UniformIVec4::SetValue(const glm::ivec4& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformUInt::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformUInt::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformUInt::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -320,20 +237,8 @@ namespace gp1::renderer
 
 	void UniformUInt::SetValue(uint32_t value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformUVec2::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformUVec2::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformUVec2::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -347,20 +252,8 @@ namespace gp1::renderer
 
 	void UniformUVec2::SetValue(const glm::uvec2& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformUVec3::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformUVec3::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformUVec3::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -374,20 +267,8 @@ namespace gp1::renderer
 
 	void UniformUVec3::SetValue(const glm::uvec3& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformUVec4::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformUVec4::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformUVec4::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -401,20 +282,8 @@ namespace gp1::renderer
 
 	void UniformUVec4::SetValue(const glm::uvec4& value)
 	{
+		m_Dirty = m_Value != value;
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFMat2::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFMat2::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFMat2::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -428,20 +297,8 @@ namespace gp1::renderer
 
 	void UniformFMat2::SetValue(const glm::fmat2& value)
 	{
+		m_Dirty = FastMatNEQ(m_Value, value);
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFMat3::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFMat3::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFMat3::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -455,20 +312,8 @@ namespace gp1::renderer
 
 	void UniformFMat3::SetValue(const glm::fmat3& value)
 	{
+		m_Dirty = FastMatNEQ(m_Value, value);
 		m_Value = value;
-		m_Dirty = true;
-	}
-
-	size_t UniformFMat4::GetDataSize() const
-	{
-		return sizeof(m_Value);
-	}
-
-	void UniformFMat4::PutData(std::vector<uint8_t>& data, size_t offset) const
-	{
-		const uint8_t* pValue = reinterpret_cast<const uint8_t*>(&m_Value);
-		for (size_t i = 0; i < sizeof(m_Value); i++)
-			data[offset + i] = pValue[i];
 	}
 
 	void UniformFMat4::CopyFrom(const std::shared_ptr<Uniform>& other)
@@ -482,7 +327,67 @@ namespace gp1::renderer
 
 	void UniformFMat4::SetValue(const glm::fmat4& value)
 	{
+		m_Dirty = FastMatNEQ(m_Value, value);
 		m_Value = value;
-		m_Dirty = true;
+	}
+
+	void UniformTexture2D::CopyFrom(const std::shared_ptr<Uniform>& other)
+	{
+		if (!IsOfSameType(other))
+			return;
+
+		std::shared_ptr<UniformTexture2D> otherV = std::static_pointer_cast<UniformTexture2D>(other);
+		SetValue(otherV->GetValue());
+	}
+
+	void UniformTexture2D::SetValue(std::shared_ptr<Texture2D> value)
+	{
+		m_Dirty = m_Value != value;
+		m_Value = value;
+	}
+
+	void UniformTexture2DArray::CopyFrom(const std::shared_ptr<Uniform>& other)
+	{
+		if (!IsOfSameType(other))
+			return;
+
+		std::shared_ptr<UniformTexture2DArray> otherV = std::static_pointer_cast<UniformTexture2DArray>(other);
+		SetValue(otherV->GetValue());
+	}
+
+	void UniformTexture2DArray::SetValue(std::shared_ptr<Texture2DArray> value)
+	{
+		m_Dirty = m_Value != value;
+		m_Value = value;
+	}
+
+	void UniformTexture3D::CopyFrom(const std::shared_ptr<Uniform>& other)
+	{
+		if (!IsOfSameType(other))
+			return;
+
+		std::shared_ptr<UniformTexture3D> otherV = std::static_pointer_cast<UniformTexture3D>(other);
+		SetValue(otherV->GetValue());
+	}
+
+	void UniformTexture3D::SetValue(std::shared_ptr<Texture3D> value)
+	{
+		m_Dirty = m_Value != value;
+		m_Value = value;
+	}
+
+	void UniformTextureCubeMap::CopyFrom(const std::shared_ptr<Uniform>& other)
+	{
+		if (!IsOfSameType(other))
+			return;
+
+		std::shared_ptr<UniformTextureCubeMap> otherV = std::static_pointer_cast<UniformTextureCubeMap>(other);
+		SetValue(otherV->GetValue());
+	}
+
+	void UniformTextureCubeMap::SetValue(std::shared_ptr<TextureCubeMap> value)
+	{
+		m_Dirty = m_Value != value;
+		m_Value = value;
 	}
 } // namespace gp1::renderer

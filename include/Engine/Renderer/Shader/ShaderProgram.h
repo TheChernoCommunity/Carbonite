@@ -4,10 +4,11 @@
 
 #pragma once
 
+#include "Engine/Renderer/DynamicRendererData.h"
 #include "Engine/Renderer/Material/Uniform.h"
-#include "Engine/Renderer/RendererData.h"
 #include "Engine/Renderer/Shader/Shader.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,22 +34,31 @@ namespace gp1::renderer
 
 		const UniformBufferElementTemplate* GetElement(const std::string& name) const;
 
-		UniformBuffer CreateBuffer() const;
+		void AddUniforms(std::vector<std::pair<std::string, EUniformType>>& uniforms) const;
 
 	public:
 		std::string                               m_Name;
 		std::vector<UniformBufferElementTemplate> m_Elements;
+
+		bool m_Dirty = true;
 	};
 
-	struct ShaderProgram : public RendererData
+	struct Material;
+
+	struct ShaderProgram : public DynamicRendererData
 	{
+	public:
+		static std::shared_ptr<ShaderProgram> Create();
+
 	public:
 		virtual ~ShaderProgram() = default;
 
 		void    RemoveShader(EShaderType shaderType);
-		Shader* GetShader(EShaderType shaderType);
+		Shader* AddShader(EShaderType shaderType);
 
-		void CreateUniformBuffers(std::vector<UniformBuffer>& uniformBuffers) const;
+		bool IsUniformBufferTemplateDirty() const;
+
+		virtual void Update() override;
 
 		void AddUniformBuffer(const std::string& name);
 		void AddUniformBufferElement(const std::string& bufferName, const std::string& elementName, EUniformType elementType);
@@ -59,8 +69,21 @@ namespace gp1::renderer
 		const UniformBufferTemplate*        GetUniformBuffer(const std::string& bufferName) const;
 		const UniformBufferElementTemplate* GetUniformBufferElement(const std::string& bufferName, const std::string& elementName) const;
 
+		void AddUniformBuffers(std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>>& uniformBuffer) const;
+
 	protected:
-		std::vector<Shader>                m_Shaders;
-		std::vector<UniformBufferTemplate> m_UniformBuffers;
+		friend Material;
+
+		void AddMaterial(std::shared_ptr<Material> material);
+		void RemoveMaterial(std::shared_ptr<Material> material);
+
+	protected:
+		std::vector<Shader>                  m_Shaders;
+		std::vector<UniformBufferTemplate>   m_UniformBuffers;
+		std::vector<std::weak_ptr<Material>> m_Materials;
+
+		bool m_UniformBuffersDirty = true;
 	};
 } // namespace gp1::renderer
+
+#include "Engine/Renderer/Material/Material.h"

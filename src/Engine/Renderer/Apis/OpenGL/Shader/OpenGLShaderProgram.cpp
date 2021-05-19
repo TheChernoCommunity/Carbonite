@@ -6,8 +6,11 @@
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 #include "Engine/Renderer/Material/ReservedUniformBuffers.h"
+#include "Engine/Utility/Logger.h"
 
 #include <cstdint>
 #include <set>
@@ -18,6 +21,8 @@
 
 namespace gp1::renderer::opengl
 {
+	Logger s_Logger("OpenGLShaderProgram");
+
 	OpenGLShaderProgram::~OpenGLShaderProgram()
 	{
 		CleanUp();
@@ -33,7 +38,7 @@ namespace gp1::renderer::opengl
 		glUseProgram(0);
 	}
 
-	bool OpenGLShaderProgram::Update()
+	void OpenGLShaderProgram::Update()
 	{
 		if (m_Dirty)
 		{
@@ -41,49 +46,38 @@ namespace gp1::renderer::opengl
 				CleanUp();
 
 			GenGLData();
-			m_Dirty      = false;
-			m_HasChanged = true;
 		}
-		return m_HasChanged;
-	}
 
-	bool OpenGLShaderProgram::IsUniformBufferValid(const std::string& name) const
-	{
-		for (auto& uniformBuffer : m_UniformBufferBindingPoints)
-			if (uniformBuffer.m_Name == name)
-				return uniformBuffer.m_Binding != UINT32_MAX;
-		return false;
-	}
+		ShaderProgram::Update();
 
-	uint32_t OpenGLShaderProgram::GetUniformBufferBindingPoint(const std::string& name) const
-	{
-		for (auto& uniformBuffer : m_UniformBufferBindingPoints)
-			if (uniformBuffer.m_Name == name)
-				return uniformBuffer.m_Binding;
-		return 0;
-	}
-
-	uint32_t OpenGLShaderProgram::GetUniformBufferElementOffset(const std::string& bufferName, const std::string& elementName) const
-	{
-		for (auto& uniformBuffer : m_UniformBufferBindingPoints)
+		if (m_Dirty)
 		{
-			if (uniformBuffer.m_Name == bufferName)
+			for (auto& material : m_Materials)
 			{
-				for (auto& offset : uniformBuffer.m_Offsets)
-					if (offset.first == elementName)
-						return offset.second;
-				return 0;
+				std::shared_ptr<OpenGLMaterial> mat = std::reinterpret_pointer_cast<OpenGLMaterial>(material.lock());
+				mat->UpdateGLData();
 			}
+			m_Dirty = false;
 		}
-		return 0;
+	}
+
+	OpenGLUniformBufferInfo* OpenGLShaderProgram::GetUniformBufferInfo(const std::string& name) const
+	{
+		for (auto& uniformBuffer : m_UniformBufferInfos)
+			if (uniformBuffer.m_Name == name)
+				return const_cast<OpenGLUniformBufferInfo*>(&uniformBuffer);
+		return nullptr;
 	}
 
 	void OpenGLShaderProgram::GenGLData()
 	{
 		GLint maxBindingsVal;
+		GLint maxTextureBindingsVal;
 		glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &maxBindingsVal);
-		GLuint maxBindings = static_cast<GLuint>(maxBindingsVal);
-		m_ProgramId        = glCreateProgram();
+		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureBindingsVal);
+		GLuint maxBindings        = static_cast<GLuint>(maxBindingsVal);
+		GLuint maxTextureBindings = static_cast<GLuint>(maxTextureBindingsVal);
+		m_ProgramId               = glCreateProgram();
 		if (m_ProgramId)
 		{
 			size_t                shaderCount = m_Shaders.size();
@@ -120,7 +114,7 @@ namespace gp1::renderer::opengl
 						}
 						glDeleteShader(shaderId);
 						CleanUp();
-						// sLogger.LogError(infoLog);
+						s_Logger.LogError(infoLog.c_str());
 						return;
 					}
 					else
@@ -153,7 +147,7 @@ namespace gp1::renderer::opengl
 				return;
 			}
 
-			m_UniformBufferBindingPoints.reserve(m_UniformBuffers.size());
+			m_UniformBufferInfos.reserve(m_UniformBuffers.size());
 			std::set<GLuint> usedBindings;
 			GLuint           usedBindingsSafeOffset = 0;
 			for (auto& uniformBuffer : m_UniformBuffers)
@@ -174,7 +168,7 @@ namespace gp1::renderer::opengl
 						{
 							std::string infoLog = "Shader program requires more Uniform Buffers than are available! The max is (" + std::to_string(maxBindings) + ")";
 							CleanUp();
-							// sLogger.LogError(infoLog);
+							s_Logger.LogError(infoLog.c_str());
 							return;
 						}
 
@@ -201,16 +195,37 @@ namespace gp1::renderer::opengl
 						glGetUniformIndices(m_ProgramId, static_cast<GLsizei>(pUniformNames.size()), pUniformNames.data(), uniformIndices.data());
 						glGetActiveUniformsiv(m_ProgramId, static_cast<GLsizei>(uniformIndices.size()), uniformIndices.data(), GL_UNIFORM_OFFSET, uniformOffsets.data());
 
+						std::set<GLuint> usedTextureBindings;
+						for (size_t i = 0; i < uniformIndices.size(); i++)
+						{
+							std::string& name = uniformNames[i];
+							for (auto& element : uniformBuffer.m_Elements)
+							{
+								if (element.m_Name == name && OpenGLUniform::IsTextureType(element.m_Type))
+								{
+									GLuint textureBinding;
+									glGetUniformuiv(m_ProgramId, uniformIndices[i], &textureBinding);
+
+									for (; textureBinding < maxTextureBindings; textureBinding++)
+										if (usedTextureBindings.find(textureBinding) == usedTextureBindings.end())
+											break;
+
+									uniformOffsets[i] = textureBinding;
+									glUniform1i(uniformIndices[i], textureBinding);
+								}
+							}
+						}
+
 						for (size_t i = 0; i < uniformOffsets.size(); i++)
 							offsets.push_back({ uniformBuffer.m_Elements[i].m_Name, uniformOffsets[i] });
 					}
 
 					usedBindings.insert(binding);
-					m_UniformBufferBindingPoints.push_back({ uniformBuffer.m_Name, binding, offsets });
+					m_UniformBufferInfos.push_back({ uniformBuffer.m_Name, binding, offsets });
 				}
 				else
 				{
-					m_UniformBufferBindingPoints.push_back({ uniformBuffer.m_Name, UINT32_MAX, {} });
+					m_UniformBufferInfos.push_back({ uniformBuffer.m_Name, UINT32_MAX, {} });
 				}
 			}
 		}
@@ -223,7 +238,7 @@ namespace gp1::renderer::opengl
 	{
 		glDeleteProgram(m_ProgramId);
 		m_ProgramId = 0;
-		m_UniformBufferBindingPoints.clear();
+		m_UniformBufferInfos.clear();
 	}
 
 	uint32_t OpenGLShaderProgram::GetGLShaderType(EShaderType shaderType) const

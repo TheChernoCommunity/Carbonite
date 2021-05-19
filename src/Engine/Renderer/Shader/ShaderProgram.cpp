@@ -3,6 +3,7 @@
 //
 
 #include "Engine/Renderer/Shader/ShaderProgram.h"
+#include "Engine/Application.h"
 
 namespace gp1::renderer
 {
@@ -13,6 +14,7 @@ namespace gp1::renderer
 				return;
 
 		m_Elements.push_back({ name, type });
+		m_Dirty = true;
 	}
 
 	void UniformBufferTemplate::RemoveElement(const std::string& name)
@@ -22,6 +24,7 @@ namespace gp1::renderer
 			if (itr->m_Name == name)
 			{
 				m_Elements.erase(itr);
+				m_Dirty = true;
 				break;
 			}
 		}
@@ -35,13 +38,16 @@ namespace gp1::renderer
 		return nullptr;
 	}
 
-	UniformBuffer UniformBufferTemplate::CreateBuffer() const
+	void UniformBufferTemplate::AddUniforms(std::vector<std::pair<std::string, EUniformType>>& uniforms) const
 	{
-		std::vector<std::pair<std::string, UniformBuffer::UniformInfo>> uniforms;
 		uniforms.reserve(m_Elements.size());
 		for (auto& element : m_Elements)
-			uniforms.push_back({ element.m_Name, UniformBuffer::UniformInfo(element.m_Type) });
-		return UniformBuffer(m_Name, uniforms);
+			uniforms.push_back({ element.m_Name, element.m_Type });
+	}
+
+	std::shared_ptr<ShaderProgram> ShaderProgram::Create()
+	{
+		return Application::GetInstance()->GetRenderer()->CreateShaderProgram();
 	}
 
 	void ShaderProgram::RemoveShader(EShaderType shaderType)
@@ -57,7 +63,7 @@ namespace gp1::renderer
 		}
 	}
 
-	Shader* ShaderProgram::GetShader(EShaderType shaderType)
+	Shader* ShaderProgram::AddShader(EShaderType shaderType)
 	{
 		auto itr = m_Shaders.begin();
 		for (; itr != m_Shaders.end(); itr++)
@@ -68,11 +74,40 @@ namespace gp1::renderer
 		return &m_Shaders[m_Shaders.size() - 1];
 	}
 
-	void ShaderProgram::CreateUniformBuffers(std::vector<UniformBuffer>& uniformBuffers) const
+	bool ShaderProgram::IsUniformBufferTemplateDirty() const
 	{
-		uniformBuffers.reserve(m_UniformBuffers.size());
+		if (m_UniformBuffersDirty)
+			return true;
+
 		for (auto& uniformBuffer : m_UniformBuffers)
-			uniformBuffers.push_back(uniformBuffer.CreateBuffer());
+			if (uniformBuffer.m_Dirty)
+				return true;
+		return false;
+	}
+
+	void ShaderProgram::Update()
+	{
+		if (IsUniformBufferTemplateDirty())
+		{
+			std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>> uniformBuffers;
+			AddUniformBuffers(uniformBuffers);
+			for (auto itr = m_Materials.begin(); itr != m_Materials.end();)
+			{
+				if (itr->expired())
+				{
+					itr = m_Materials.erase(itr);
+					continue;
+				}
+
+				std::shared_ptr<Material> mat = itr->lock();
+				mat->UpdateUniformBuffers(uniformBuffers);
+				itr++;
+			}
+
+			m_UniformBuffersDirty = false;
+			for (auto& uniformBuffer : m_UniformBuffers)
+				uniformBuffer.m_Dirty = false;
+		}
 	}
 
 	void ShaderProgram::AddUniformBuffer(const std::string& name)
@@ -82,13 +117,17 @@ namespace gp1::renderer
 				return;
 
 		m_UniformBuffers.push_back({ name, {} });
+		m_UniformBuffersDirty = true;
 	}
 
 	void ShaderProgram::AddUniformBufferElement(const std::string& bufferName, const std::string& elementName, EUniformType elementType)
 	{
 		UniformBufferTemplate* buffer = GetUniformBuffer(bufferName);
 		if (buffer)
+		{
 			buffer->AddElement(elementName, elementType);
+			m_UniformBuffersDirty = true;
+		}
 	}
 
 	void ShaderProgram::RemoveUniformBuffer(const std::string& name)
@@ -98,6 +137,7 @@ namespace gp1::renderer
 			if (itr->m_Name == name)
 			{
 				m_UniformBuffers.erase(itr);
+				m_UniformBuffersDirty = true;
 				break;
 			}
 		}
@@ -107,7 +147,10 @@ namespace gp1::renderer
 	{
 		UniformBufferTemplate* buffer = GetUniformBuffer(bufferName);
 		if (buffer)
+		{
 			buffer->RemoveElement(elementName);
+			m_UniformBuffersDirty = true;
+		}
 	}
 
 	UniformBufferTemplate* ShaderProgram::GetUniformBuffer(const std::string& bufferName)
@@ -132,5 +175,44 @@ namespace gp1::renderer
 		if (uniformBuffer)
 			return uniformBuffer->GetElement(elementName);
 		return nullptr;
+	}
+
+	void ShaderProgram::AddUniformBuffers(std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>>& uniformBuffer) const
+	{
+		uniformBuffer.reserve(m_UniformBuffers.size());
+		for (auto& buf : m_UniformBuffers)
+		{
+			std::vector<std::pair<std::string, EUniformType>> uniforms;
+			buf.AddUniforms(uniforms);
+			uniformBuffer.push_back({ buf.m_Name, uniforms });
+		}
+	}
+
+	void ShaderProgram::AddMaterial(std::shared_ptr<Material> material)
+	{
+		m_Materials.push_back(material);
+		std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>> uniformBuffers;
+		AddUniformBuffers(uniformBuffers);
+		material->UpdateUniformBuffers(uniformBuffers);
+	}
+
+	void ShaderProgram::RemoveMaterial(std::shared_ptr<Material> material)
+	{
+		for (auto itr = m_Materials.begin(); itr != m_Materials.end();)
+		{
+			if (itr->expired())
+			{
+				itr = m_Materials.erase(itr);
+				continue;
+			}
+
+			std::shared_ptr<Material> mat = itr->lock();
+			if (mat == material)
+			{
+				m_Materials.erase(itr);
+				break;
+			}
+			itr++;
+		}
 	}
 } // namespace gp1::renderer

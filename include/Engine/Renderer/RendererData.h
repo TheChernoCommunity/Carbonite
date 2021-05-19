@@ -4,16 +4,18 @@
 
 #pragma once
 
+#include <memory>
+#include <type_traits>
+
 namespace gp1::renderer
 {
 	struct RendererData
 	{
 	public:
-		virtual ~RendererData() = default;
+		friend class Renderer;
 
-		void MarkDirty();
-		void SetNonEditable();
-		void SetDynamic(bool dynamic);
+	public:
+		virtual ~RendererData() = default;
 
 		inline void* GetNext() const
 		{
@@ -26,26 +28,32 @@ namespace gp1::renderer
 			return reinterpret_cast<T*>(m_Next);
 		}
 
-		inline bool IsDirty() const
+		inline std::shared_ptr<RendererData> GetThis() const
 		{
-			return m_Dirty;
+			if (m_This.expired())
+				return nullptr;
+			else
+				return m_This.lock();
 		}
 
-		inline bool IsEditable() const
+		template <typename T, std::enable_if_t<std::is_base_of_v<RendererData, T>, bool> = true>
+		inline std::shared_ptr<T> GetThis() const
 		{
-			return m_Editable;
+			if (m_This.expired())
+				return nullptr;
+			else
+				return std::reinterpret_pointer_cast<T>(m_This.lock());
 		}
 
-		inline bool IsDynamic() const
+		virtual void Update() {}
+		virtual bool IsUpdatable()
 		{
-			return m_Dynamic;
+			return false;
 		}
 
 	protected:
-		bool m_Dirty    = true;
-		bool m_Editable = true;
-		bool m_Dynamic  = false;
-
 		void* m_Next = nullptr;
+
+		std::weak_ptr<RendererData> m_This;
 	};
 } // namespace gp1::renderer

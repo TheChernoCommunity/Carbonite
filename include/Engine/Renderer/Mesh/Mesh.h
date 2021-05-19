@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Renderer/RendererData.h"
+#include "Engine/Renderer/DynamicRendererData.h"
 
 #include <cstdint>
 
@@ -26,13 +26,13 @@ namespace gp1::renderer
 		Patches
 	};
 
-	struct Mesh : public RendererData
+	struct Mesh : public DynamicRendererData
 	{
 	public:
 		virtual ~Mesh() = default;
 
 	public:
 		ERenderMode m_RenderMode = ERenderMode::Triangles;
-		float      m_LineWidth  = 1.0f;
+		float       m_LineWidth  = 1.0f;
 	};
 } // namespace gp1::renderer

@@ -96,8 +96,6 @@ namespace gp1::renderer::opengl
 
 	void OpenGLDebugRenderer::Init()
 	{
-		std::shared_ptr<Renderer> renderer = Application::GetInstance()->GetRenderer();
-
 		const char* pVertexShaderCode   = R"(
 #version 430 core
 
@@ -133,28 +131,28 @@ void main(void) {
 }
 )";
 
-		OpenGLDebugObject::s_DebugShaderProgram = renderer->CreateShaderProgram();
+		OpenGLDebugObject::s_DebugShaderProgram = ShaderProgram::Create();
 
-		renderer::Shader* vertexShader = OpenGLDebugObject::s_DebugShaderProgram->GetShader(renderer::EShaderType::VertexShader);
+		renderer::Shader* vertexShader = OpenGLDebugObject::s_DebugShaderProgram->AddShader(renderer::EShaderType::VertexShader);
 		vertexShader->m_Data           = std::vector<uint8_t>(pVertexShaderCode, pVertexShaderCode + strlen(pVertexShaderCode));
 
-		renderer::Shader* fragmentShader = OpenGLDebugObject::s_DebugShaderProgram->GetShader(renderer::EShaderType::FragmentShader);
+		renderer::Shader* fragmentShader = OpenGLDebugObject::s_DebugShaderProgram->AddShader(renderer::EShaderType::FragmentShader);
 		fragmentShader->m_Data           = std::vector<uint8_t>(pFragmentShaderCode, pFragmentShaderCode + strlen(pFragmentShaderCode));
 
 		OpenGLDebugObject::s_DebugShaderProgram->AddUniformBuffer("Object");
 		OpenGLDebugObject::s_DebugShaderProgram->AddUniformBufferElement("Object", "transformationMatrix", renderer::EUniformType::FMat4);
 		OpenGLDebugObject::s_DebugShaderProgram->AddUniformBufferElement("Object", "color", renderer::EUniformType::FVec4);
 
-		OpenGLDebugPoint::s_PointMesh               = renderer->CreateStaticMesh();
+		OpenGLDebugPoint::s_PointMesh               = StaticMesh::Create();
 		OpenGLDebugPoint::s_PointMesh->m_RenderMode = ERenderMode::Points;
 		OpenGLDebugPoint::s_PointMesh->m_Vertices.push_back({ { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } });
 		OpenGLDebugPoint::s_PointMesh->m_Indices.push_back(0);
 		OpenGLDebugPoint::s_PointMesh->m_LineWidth = 3.0f;
 
-		OpenGLDebugSphere::s_SphereMesh = renderer->CreateStaticMesh();
+		OpenGLDebugSphere::s_SphereMesh = StaticMesh::Create();
 		meshGenerators::GenerateIcosphere(OpenGLDebugSphere::s_SphereMesh, 3);
 
-		OpenGLDebugBox::s_BoxMesh               = renderer->CreateStaticMesh();
+		OpenGLDebugBox::s_BoxMesh               = StaticMesh::Create();
 		OpenGLDebugBox::s_BoxMesh->m_RenderMode = ERenderMode::Lines;
 		OpenGLDebugBox::s_BoxMesh->m_Vertices.push_back({ { -0.5f, -0.5f, -0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } });
 		OpenGLDebugBox::s_BoxMesh->m_Vertices.push_back({ { 0.5f, -0.5f, -0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } });
@@ -190,7 +188,7 @@ void main(void) {
 		OpenGLDebugBox::s_BoxMesh->m_Indices.push_back(7);
 		OpenGLDebugBox::s_BoxMesh->m_LineWidth = 3.0f;
 
-		OpenGLDebugLine::s_LineMesh               = renderer->CreateStaticMesh();
+		OpenGLDebugLine::s_LineMesh               = StaticMesh::Create();
 		OpenGLDebugLine::s_LineMesh->m_RenderMode = ERenderMode::Lines;
 		OpenGLDebugLine::s_LineMesh->m_Vertices.push_back({ { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } });
 		OpenGLDebugLine::s_LineMesh->m_Vertices.push_back({ { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } });

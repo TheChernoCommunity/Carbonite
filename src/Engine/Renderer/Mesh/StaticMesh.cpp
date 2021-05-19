@@ -3,7 +3,12 @@
 //
 
 #include "Engine/Renderer/Mesh/StaticMesh.h"
+#include "Engine/Application.h"
 
 namespace gp1::renderer
 {
-}
+	std::shared_ptr<StaticMesh> StaticMesh::Create()
+	{
+		return Application::GetInstance()->GetRenderer()->CreateStaticMesh();
+	}
+} // namespace gp1::renderer

@@ -4,10 +4,16 @@
 
 #pragma once
 
+#include "Engine/Renderer/DynamicRendererData.h"
+#include "Engine/Renderer/Texture/Texture2D.h"
+#include "Engine/Renderer/Texture/Texture2DArray.h"
+#include "Engine/Renderer/Texture/Texture3D.h"
+#include "Engine/Renderer/Texture/TextureCubeMap.h"
+
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <glm.hpp>
@@ -30,141 +36,56 @@ namespace gp1::renderer
 		UVec4,
 		FMat2,
 		FMat3,
-		FMat4
+		FMat4,
+		Texture2D,
+		Texture2DArray,
+		Texture3D,
+		TextureCubeMap
 	};
 
-	struct Uniform
+	struct Uniform : public DynamicRendererData
 	{
 	public:
-		static std::shared_ptr<Uniform> CreateUniform(EUniformType type);
+		friend struct UniformBuffer;
+
+		static std::shared_ptr<Uniform> Create(EUniformType type);
 
 	public:
 		virtual ~Uniform() = default;
 
 		bool IsOfSameType(const std::shared_ptr<Uniform>& other) const;
 
-		virtual EUniformType GetType() const                                          = 0;
-		virtual size_t       GetDataSize() const                                      = 0;
-		virtual void         PutData(std::vector<uint8_t>& data, size_t offset) const = 0;
-		virtual void         CopyFrom(const std::shared_ptr<Uniform>& other)          = 0;
-
-		inline bool IsDirty() const
-		{
-			return m_Dirty;
-		}
-
-		inline void ClearDirty()
-		{
-			m_Dirty = false;
-		}
-
-	public:
-		bool m_Dirty = true;
+		virtual EUniformType GetType() const                                 = 0;
+		virtual void         CopyFrom(const std::shared_ptr<Uniform>& other) = 0;
 	};
 
-	struct UniformBuffer
+	struct UniformBuffer : RendererData
 	{
 	public:
 		struct UniformInfo
 		{
 		public:
-			UniformInfo(EUniformType type);
-
-		public:
+			std::string              m_Name;
 			std::shared_ptr<Uniform> m_Uniform;
-			uint32_t                 m_Offset = 0;
 		};
 
-		using UniformMap = std::map<std::string, UniformInfo>;
-
-		using Iterator             = UniformMap::iterator;
-		using ConstIterator        = UniformMap::const_iterator;
-		using ReverseIterator      = UniformMap::reverse_iterator;
-		using ConstReverseIterator = UniformMap::const_reverse_iterator;
+		static std::shared_ptr<UniformBuffer> Create();
 
 	public:
-		UniformBuffer(const std::string& name, const std::vector<std::pair<std::string, UniformInfo>>& uniforms);
+		void UpdateUniforms(std::vector<std::pair<std::string, EUniformType>> uniformTypes);
 
 		bool IsDirty() const;
 		void ClearDirty();
 
-		inline const std::string& GetName() const
-		{
-			return m_Name;
-		}
-
+		std::shared_ptr<Uniform> GetUniform(std::string_view name) const;
 		template <typename T, std::enable_if_t<std::is_base_of_v<Uniform, T>, bool> = true>
-		std::shared_ptr<T> GetUniform(const std::string& name) const
+		std::shared_ptr<T> GetUniform(std::string_view name) const
 		{
-			return std::static_pointer_cast<T>(GetUniform(name));
+			return std::reinterpret_pointer_cast<T>(GetUniform(name));
 		}
 
-		std::shared_ptr<Uniform> GetUniform(const std::string& name) const;
-		void                     GetUniformData(std::vector<uint8_t>& data) const;
-
-		inline Iterator begin()
-		{
-			return m_Uniforms.begin();
-		}
-
-		inline Iterator end()
-		{
-			return m_Uniforms.end();
-		}
-
-		inline ConstIterator begin() const
-		{
-			return m_Uniforms.begin();
-		}
-
-		inline ConstIterator end() const
-		{
-			return m_Uniforms.end();
-		}
-
-		inline ConstIterator cbegin() const
-		{
-			return m_Uniforms.cbegin();
-		}
-
-		inline ConstIterator cend() const
-		{
-			return m_Uniforms.cend();
-		}
-
-		inline ReverseIterator rbegin()
-		{
-			return m_Uniforms.rbegin();
-		}
-
-		inline ReverseIterator rend()
-		{
-			return m_Uniforms.rend();
-		}
-
-		inline ConstReverseIterator rbegin() const
-		{
-			return m_Uniforms.rbegin();
-		}
-
-		inline ConstReverseIterator rend() const
-		{
-			return m_Uniforms.rend();
-		}
-
-		inline ConstReverseIterator crbegin() const
-		{
-			return m_Uniforms.crbegin();
-		}
-
-		inline ConstReverseIterator crend() const
-		{
-			return m_Uniforms.crend();
-		}
-
-	private:
-		std::string                        m_Name;
-		std::map<std::string, UniformInfo> m_Uniforms;
+	protected:
+		std::vector<UniformInfo> m_Uniforms;
 	};
 
 	struct UniformFloat : public Uniform
@@ -180,9 +101,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void         SetValue(float value);
 		inline float GetValue() const
@@ -190,7 +109,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		float m_Value = 0.0f;
 	};
 
@@ -207,9 +126,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fvec2& value);
 		inline const glm::fvec2& GetValue() const
@@ -217,7 +134,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fvec2 m_Value = { 0.0f, 0.0f };
 	};
 
@@ -234,9 +151,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fvec3& value);
 		inline const glm::fvec3& GetValue() const
@@ -244,7 +159,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fvec3 m_Value = { 0.0f, 0.0f, 0.0f };
 	};
 
@@ -261,9 +176,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fvec4& value);
 		inline const glm::fvec4& GetValue() const
@@ -271,7 +184,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fvec4 m_Value = { 0.0f, 0.0f, 0.0f, 0.0f };
 	};
 
@@ -288,9 +201,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void           SetValue(int32_t value);
 		inline int32_t GetValue() const
@@ -298,7 +209,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		int32_t m_Value = 0;
 	};
 
@@ -315,9 +226,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::ivec2& value);
 		inline const glm::ivec2& GetValue() const
@@ -325,7 +234,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::ivec2 m_Value = { 0, 0 };
 	};
 
@@ -342,9 +251,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::ivec3& value);
 		inline const glm::ivec3& GetValue() const
@@ -352,7 +259,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::ivec3 m_Value = { 0, 0, 0 };
 	};
 
@@ -369,9 +276,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::ivec4& value);
 		inline const glm::ivec4& GetValue() const
@@ -379,7 +284,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::ivec4 m_Value = { 0, 0, 0, 0 };
 	};
 
@@ -396,9 +301,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void            SetValue(uint32_t value);
 		inline uint32_t GetValue() const
@@ -406,7 +309,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		uint32_t m_Value = 0;
 	};
 
@@ -423,9 +326,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::uvec2& value);
 		inline const glm::uvec2& GetValue() const
@@ -433,7 +334,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::uvec2 m_Value = { 0, 0 };
 	};
 
@@ -450,9 +351,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::uvec3& value);
 		inline const glm::uvec3& GetValue() const
@@ -460,7 +359,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::uvec3 m_Value = { 0, 0, 0 };
 	};
 
@@ -477,9 +376,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::uvec4& value);
 		inline const glm::uvec4& GetValue() const
@@ -487,7 +384,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::uvec4 m_Value = { 0, 0, 0, 0 };
 	};
 
@@ -504,9 +401,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fmat2& value);
 		inline const glm::fmat2& GetValue() const
@@ -514,7 +409,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fmat2 m_Value = { 1.0f, 0.0f, 0.0f, 1.0f };
 	};
 
@@ -531,9 +426,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fmat3& value);
 		inline const glm::fmat3& GetValue() const
@@ -541,7 +434,7 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fmat3 m_Value = { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
@@ -558,9 +451,7 @@ namespace gp1::renderer
 			return GetTypeS();
 		}
 
-		virtual size_t GetDataSize() const override;
-		virtual void   PutData(std::vector<uint8_t>& data, size_t offset) const override;
-		virtual void   CopyFrom(const std::shared_ptr<Uniform>& other) override;
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
 
 		void                     SetValue(const glm::fmat4& value);
 		inline const glm::fmat4& GetValue() const
@@ -568,7 +459,107 @@ namespace gp1::renderer
 			return m_Value;
 		}
 
-	private:
+	protected:
 		glm::fmat4 m_Value = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+	};
+
+	struct UniformTexture2D : public Uniform
+	{
+	public:
+		static constexpr EUniformType GetTypeS()
+		{
+			return EUniformType::Texture2D;
+		}
+
+		inline virtual EUniformType GetType() const override
+		{
+			return GetTypeS();
+		}
+
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
+
+		void                              SetValue(std::shared_ptr<Texture2D> value);
+		inline std::shared_ptr<Texture2D> GetValue() const
+		{
+			return m_Value;
+		}
+
+	protected:
+		std::shared_ptr<Texture2D> m_Value = nullptr;
+	};
+
+	struct UniformTexture2DArray : public Uniform
+	{
+	public:
+		static constexpr EUniformType GetTypeS()
+		{
+			return EUniformType::Texture2DArray;
+		}
+
+		inline virtual EUniformType GetType() const override
+		{
+			return GetTypeS();
+		}
+
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
+
+		void                                   SetValue(std::shared_ptr<Texture2DArray> value);
+		inline std::shared_ptr<Texture2DArray> GetValue() const
+		{
+			return m_Value;
+		}
+
+	protected:
+		std::shared_ptr<Texture2DArray> m_Value = nullptr;
+	};
+
+	struct UniformTexture3D : public Uniform
+	{
+	public:
+		static constexpr EUniformType GetTypeS()
+		{
+			return EUniformType::Texture3D;
+		}
+
+		inline virtual EUniformType GetType() const override
+		{
+			return GetTypeS();
+		}
+
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
+
+		void                              SetValue(std::shared_ptr<Texture3D> value);
+		inline std::shared_ptr<Texture3D> GetValue() const
+		{
+			return m_Value;
+		}
+
+	protected:
+		std::shared_ptr<Texture3D> m_Value = nullptr;
+	};
+
+	struct UniformTextureCubeMap : public Uniform
+	{
+	public:
+		static constexpr EUniformType GetTypeS()
+		{
+			return EUniformType::TextureCubeMap;
+		}
+
+		inline virtual EUniformType GetType() const override
+		{
+			return GetTypeS();
+		}
+
+		virtual void CopyFrom(const std::shared_ptr<Uniform>& other) override;
+
+		void                                   SetValue(std::shared_ptr<TextureCubeMap> value);
+		inline std::shared_ptr<TextureCubeMap> GetValue() const
+		{
+			return m_Value;
+		}
+
+	protected:
+		std::shared_ptr<TextureCubeMap> m_Value = nullptr;
 	};
 } // namespace gp1::renderer

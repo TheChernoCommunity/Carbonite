@@ -5,11 +5,13 @@
 #pragma once
 
 #include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Renderer/RendererData.h"
 #include "Engine/Renderer/Shader/ShaderProgram.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace gp1::renderer
@@ -74,37 +76,51 @@ namespace gp1::renderer
 		EPolygonMode  m_Mode    = EPolygonMode::Fill;
 	};
 
-	struct Material
+	struct Material : public RendererData
 	{
+	public:
+		struct UniformBufferEntry
+		{
+		public:
+			std::string                    m_Name;
+			std::shared_ptr<UniformBuffer> m_UniformBuffer;
+		};
+
+	public:
+		static std::shared_ptr<Material> Create();
+
 	public:
 		virtual ~Material() = default;
 
 		void SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProgram);
-		void UpdateShaderProgram();
 
 		inline std::shared_ptr<ShaderProgram> GetShaderProgram() const
 		{
 			return m_ShaderProgram;
 		}
 
-		UniformBuffer*           GetUniformBuffer(const std::string& name);
-		const UniformBuffer*     GetUniformBuffer(const std::string& name) const;
-		std::shared_ptr<Uniform> GetUniform(const std::string& bufferName, const std::string& uniformName) const;
+		std::shared_ptr<UniformBuffer> GetUniformBuffer(std::string_view name) const;
+		std::shared_ptr<Uniform>       GetUniform(std::string_view bufferName, std::string_view uniformName) const;
 
 		template <typename T, std::enable_if_t<std::is_base_of_v<Uniform, T>, bool> = true>
-		std::shared_ptr<T> GetUniform(const std::string& bufferName, const std::string& uniformName) const
+		inline std::shared_ptr<T> GetUniform(std::string_view bufferName, const std::string_view uniformName) const
 		{
-			return std::static_pointer_cast<T>(GetUniform(bufferName, uniformName));
+			return std::reinterpret_pointer_cast<T>(GetUniform(bufferName, uniformName));
 		}
 
+	protected:
+		friend ShaderProgram;
+
+		void UpdateUniformBuffers(std::vector<std::pair<std::string, std::vector<std::pair<std::string, EUniformType>>>> uniformBuffers);
+
 	public:
-		CullMode    m_CullMode;
 		bool        m_DepthTest = false;
+		CullMode    m_CullMode;
 		BlendFunc   m_BlendFunc;
 		PolygonMode m_PolygonMode;
 
 	protected:
-		std::vector<UniformBuffer> m_UniformBuffers;
+		std::vector<UniformBufferEntry> m_UniformBuffers;
 
 	private:
 		std::shared_ptr<ShaderProgram> m_ShaderProgram;

@@ -7,6 +7,7 @@
 #include "Engine/Renderer/Mesh/Mesh.h"
 
 #include <glm.hpp>
+#include <memory>
 #include <vector>
 
 namespace gp1::renderer
@@ -21,6 +22,9 @@ namespace gp1::renderer
 
 	struct StaticMesh : public Mesh
 	{
+	public:
+		static std::shared_ptr<StaticMesh> Create();
+
 	public:
 		std::vector<StaticMeshVertex> m_Vertices;
 		std::vector<uint32_t>         m_Indices;

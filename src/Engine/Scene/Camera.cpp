@@ -10,6 +10,8 @@
 
 #include "Engine/Input/InputHandler.h"
 
+#include <cmath>
+
 #include <gtx/transform.hpp>
 
 namespace gp1::scene
@@ -150,16 +152,16 @@ namespace gp1::scene
 	{
 		if (data.m_Id == "turnRight")
 		{
-			this->m_Rotation.y += static_cast<float>(data.GetDeltaValue()) * 0.1f;
-			this->m_Rotation.y = fmodf(this->m_Rotation.y, 360.0f);
+			m_Rotation.y += static_cast<float>(data.GetDeltaValue()) * 0.1f;
+			m_Rotation.y = fmodf(m_Rotation.y, 360.0f);
 		}
 		else if (data.m_Id == "turnUp")
 		{
-			this->m_Rotation.x += static_cast<float>(data.GetDeltaValue()) * 0.1f;
-			if (this->m_Rotation.x < -90.0f)
-				this->m_Rotation.x = -90.0f;
-			else if (this->m_Rotation.x > 90.0f)
-				this->m_Rotation.x = 90.0f;
+			m_Rotation.x += static_cast<float>(data.GetDeltaValue()) * 0.1f;
+			if (m_Rotation.x < -90.0f)
+				m_Rotation.x = -90.0f;
+			else if (m_Rotation.x > 90.0f)
+				m_Rotation.x = 90.0f;
 		}
 	}
 

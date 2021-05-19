@@ -8,7 +8,6 @@
 
 #ifdef RENDERER_OPENGL
 
-#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
 #include "Engine/Renderer/Material/ReservedUniformBuffers.h"
 
 namespace gp1::renderer::opengl
@@ -17,13 +16,10 @@ namespace gp1::renderer::opengl
 	{
 	public:
 		OpenGLReservedUniformBuffers();
+		virtual ~OpenGLReservedUniformBuffers();
 
 		void Bind();
-
 		void CleanUp();
-
-	private:
-		std::vector<OpenGLUniformBufferInfo> m_UniformBufferInfos;
 	};
 } // namespace gp1::renderer::opengl
 

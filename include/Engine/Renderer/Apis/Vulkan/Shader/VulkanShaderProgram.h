@@ -1,7 +1,3 @@
-//
-//	Created by MarcasRealAccount on 14. May. 2021
-//
-
 #pragma once
 
 #include "Engine/Utility/Core.h"
