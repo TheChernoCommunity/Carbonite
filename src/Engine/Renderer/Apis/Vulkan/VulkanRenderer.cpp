@@ -6,6 +6,7 @@
 #include "Engine/Renderer/Apis/Vulkan/Material/VulkanMaterial.h"
 #include "Engine/Renderer/Apis/Vulkan/Material/VulkanReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/Vulkan/Material/VulkanUniform.h"
+#include "Engine/Renderer/Apis/Vulkan/Material/VulkanUniformBuffer.h"
 #include "Engine/Renderer/Apis/Vulkan/Mesh/VulkanStaticMesh.h"
 #include "Engine/Renderer/Apis/Vulkan/Shader/VulkanShaderProgram.h"
 #include "Engine/Renderer/Apis/Vulkan/Texture/VulkanTexture2D.h"

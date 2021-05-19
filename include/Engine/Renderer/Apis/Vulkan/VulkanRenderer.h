@@ -4,10 +4,7 @@
 
 #ifdef RENDERER_VULKAN
 
-#include "Engine/Renderer/Material/Material.h"
-#include "Engine/Renderer/Mesh/StaticMesh.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Shader/ShaderProgram.h"
 
 #include <memory>
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Renderer/Material/UniformBuffer.h"
 
 namespace gp1::renderer
 {

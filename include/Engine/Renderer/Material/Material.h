@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Renderer/Material/UniformBuffer.h"
 #include "Engine/Renderer/RendererData.h"
 #include "Engine/Renderer/Shader/ShaderProgram.h"
 

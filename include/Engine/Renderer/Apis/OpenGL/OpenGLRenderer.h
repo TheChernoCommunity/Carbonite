@@ -8,24 +8,15 @@
 
 #ifdef RENDERER_OPENGL
 
-#include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
-#include "Engine/Renderer/Material/Material.h"
-#include "Engine/Renderer/Mesh/StaticMesh.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Renderers.h"
-#include "Engine/Renderer/Shader/ShaderProgram.h"
 #include "Engine/Scene/RenderableEntity.h"
 
 #include <memory>
-#include <vector>
 
 namespace gp1::renderer::opengl
 {
 	class OpenGLRenderer : public Renderer
 	{
-	public:
-		friend Renderers;
-
 	public:
 		virtual bool IsCompatible() const override;
 

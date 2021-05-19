@@ -10,31 +10,12 @@
 
 #include "Engine/Renderer/Material/Uniform.h"
 
-#include <vector>
-
 namespace gp1::renderer::opengl
 {
-	struct OpenGLUniformBuffer : public UniformBuffer
-	{
-	public:
-		virtual ~OpenGLUniformBuffer();
-
-		void Bind();
-		void CleanUp();
-
-		void SetBinding(uint32_t newBinding);
-		void SetOffsets(std::vector<std::pair<std::string, uint32_t>> offsets);
-
-	private:
-		uint32_t m_Ubo     = 0;
-		uint32_t m_UboSize = 0;
-		uint32_t m_Binding = 0;
-	};
-
 	struct OpenGLUniform
 	{
 	public:
-		friend OpenGLUniformBuffer;
+		friend struct OpenGLUniformBuffer;
 
 		static bool IsTextureType(EUniformType type);
 

@@ -8,10 +8,6 @@
 
 namespace gp1::renderer::vulkan
 {
-	struct VulkanUniformBuffer : public UniformBuffer
-	{
-	};
-
 	struct VulkanUniformFloat : public UniformFloat
 	{
 	};

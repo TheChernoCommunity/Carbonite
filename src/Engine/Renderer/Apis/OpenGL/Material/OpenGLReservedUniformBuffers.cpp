@@ -7,7 +7,7 @@
 #ifdef RENDERER_OPENGL
 
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLReservedUniformBuffers.h"
-#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniformBuffer.h"
 
 namespace gp1::renderer::opengl
 {

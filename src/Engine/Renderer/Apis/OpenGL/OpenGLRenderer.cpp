@@ -10,6 +10,7 @@
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniformBuffer.h"
 #include "Engine/Renderer/Apis/OpenGL/Mesh/OpenGLStaticMesh.h"
 #include "Engine/Renderer/Apis/OpenGL/OpenGLDebugRenderer.h"
 #include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
@@ -21,7 +22,7 @@
 #include "Engine/Scene/Camera.h"
 #include "Engine/Window/Window.h"
 
-#include <sstream>
+#include <stdexcept>
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>

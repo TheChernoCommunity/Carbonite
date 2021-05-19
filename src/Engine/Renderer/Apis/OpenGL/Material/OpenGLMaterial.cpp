@@ -7,7 +7,7 @@
 #ifdef RENDERER_OPENGL
 
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
-#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniformBuffer.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 
 #include <glad/glad.h>
