@@ -17,17 +17,17 @@ namespace gp1::renderer
 		void SetNonEditable();
 		void SetDynamic(bool dynamic);
 
-		inline bool IsDirty() const
+		bool IsDirty() const
 		{
 			return m_Dirty;
 		}
 
-		inline bool IsEditable() const
+		bool IsEditable() const
 		{
 			return m_Editable;
 		}
 
-		inline bool IsDynamic() const
+		bool IsDynamic() const
 		{
 			return m_Dynamic;
 		}

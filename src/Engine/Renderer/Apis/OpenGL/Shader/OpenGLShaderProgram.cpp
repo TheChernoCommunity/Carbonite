@@ -52,9 +52,9 @@ namespace gp1::renderer::opengl
 
 		if (m_Dirty)
 		{
-			for (auto& material : m_Materials)
+			for (auto material : m_Materials)
 			{
-				std::shared_ptr<OpenGLMaterial> mat = std::reinterpret_pointer_cast<OpenGLMaterial>(material.lock());
+				OpenGLMaterial* mat = reinterpret_cast<OpenGLMaterial*>(material);
 				mat->UpdateGLData();
 			}
 			m_Dirty = false;
@@ -143,7 +143,7 @@ namespace gp1::renderer::opengl
 				glGetProgramInfoLog(m_ProgramId, logLength, nullptr, infoLog.data());
 				infoLog = "Shader program link failed: " + infoLog;
 				CleanUp();
-				// sLogger.LogError(infoLog);
+				s_Logger.LogError(infoLog.c_str());
 				return;
 			}
 

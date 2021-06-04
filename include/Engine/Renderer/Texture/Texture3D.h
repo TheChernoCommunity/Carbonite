@@ -23,7 +23,7 @@ namespace gp1::renderer
 	struct Texture3D : public Texture
 	{
 	public:
-		static std::shared_ptr<Texture3D> Create();
+		static std::unique_ptr<Texture3D> Create();
 
 	public:
 		virtual ~Texture3D() = default;

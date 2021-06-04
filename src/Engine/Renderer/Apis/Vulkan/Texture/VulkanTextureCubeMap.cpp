@@ -7,4 +7,5 @@
 namespace gp1::renderer::vulkan
 {
 }
+
 #endif

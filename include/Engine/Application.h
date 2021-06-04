@@ -23,20 +23,24 @@ namespace gp1
 		TestEntity();
 
 		virtual void Update(float deltaTime) override;
+		virtual bool IsUpdatable() const override
+		{
+			return true;
+		}
 
-		inline virtual std::shared_ptr<renderer::Mesh> GetMesh() const override
+		virtual renderer::Mesh* GetMesh() const override
 		{
 			return m_Mesh;
 		}
 
-		inline virtual std::shared_ptr<renderer::Material> GetMaterial() const override
+		virtual renderer::Material* GetMaterial() const override
 		{
 			return m_Material;
 		}
 
 	private:
-		std::shared_ptr<renderer::StaticMesh> m_Mesh;
-		std::shared_ptr<renderer::Material>   m_Material;
+		renderer::StaticMesh* m_Mesh;
+		renderer::Material*   m_Material;
 	};
 	//----
 
@@ -45,19 +49,19 @@ namespace gp1
 	public:
 		~Application();
 
-		inline window::Window& GetWindow()
+		window::Window& GetWindow()
 		{
 			return m_Window;
 		}
 
-		inline const window::Window& GetWindow() const
+		const window::Window& GetWindow() const
 		{
 			return m_Window;
 		}
 
-		inline std::shared_ptr<renderer::Renderer> GetRenderer() const
+		renderer::Renderer* GetRenderer() const
 		{
-			return m_Renderer;
+			return m_Renderer.get();
 		}
 
 		// Run the application.
@@ -78,14 +82,14 @@ namespace gp1
 		window::Window m_Window { { 1280, 720, 1280, 720, "Cherno Community Game Project 1", window::WindowMode::WINDOWED, false } }; // The window of this application.
 
 		scene::Scene                   m_Scene; // The scene to use for this application.
-		std::shared_ptr<scene::Camera> m_Camera;
+		std::unique_ptr<scene::Camera> m_Camera;
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
-		std::shared_ptr<TestEntity> m_TestEntities[1];
+		std::unique_ptr<TestEntity> m_TestEntities[1];
 		//----
 
-		std::shared_ptr<renderer::Renderer> m_Renderer;
+		std::unique_ptr<renderer::Renderer> m_Renderer;
 
 	private:
 		static Application* s_Instance; // The static application instance.

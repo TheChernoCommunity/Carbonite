@@ -13,13 +13,15 @@
 namespace gp1::scene
 {
 	template <int L, typename T, glm::qualifier Q>
-	inline static bool FastVecNEQ(const glm::vec<L, T, Q>& a, const glm::vec<L, T, Q>& b)
+	static bool FastVecNEQ(const glm::vec<L, T, Q>& a, const glm::vec<L, T, Q>& b)
 	{
 		return memcmp(&a, &b, sizeof(a));
 	}
 
-	void Entity::Update([[maybe_unused]] float deltaTime)
+	Entity::~Entity()
 	{
+		if (this->m_Scene)
+			this->m_Scene->DetachEntity(this);
 	}
 
 	const glm::fmat4& Entity::GetTransformationMatrix(bool negativeTranslation)

@@ -22,7 +22,7 @@ namespace gp1::renderer
 	struct Texture2D : public Texture
 	{
 	public:
-		static std::shared_ptr<Texture2D> Create();
+		static std::unique_ptr<Texture2D> Create();
 
 	public:
 		virtual ~Texture2D() = default;

@@ -24,7 +24,7 @@ namespace gp1::renderer
 	struct UniformBufferTemplate
 	{
 	public:
-		inline const std::vector<UniformBufferElementTemplate>& GetElements() const
+		const std::vector<UniformBufferElementTemplate>& GetElements() const
 		{
 			return m_Elements;
 		}
@@ -50,7 +50,7 @@ namespace gp1::renderer
 	public:
 		friend Material;
 
-		static std::shared_ptr<ShaderProgram> Create();
+		static std::unique_ptr<ShaderProgram> Create();
 
 	public:
 		virtual ~ShaderProgram() = default;
@@ -61,6 +61,10 @@ namespace gp1::renderer
 		bool IsUniformBufferTemplateDirty() const;
 
 		virtual void Update() override;
+		virtual bool IsUpdatable() const override
+		{
+			return true;
+		}
 
 		void AddUniformBuffer(const std::string& name);
 		void AddUniformBufferElement(const std::string& bufferName, const std::string& elementName, EUniformType elementType);
@@ -76,13 +80,14 @@ namespace gp1::renderer
 	protected:
 		ShaderProgram() = default;
 
-		void AddMaterial(std::shared_ptr<Material> material);
-		void RemoveMaterial(std::shared_ptr<Material> material);
+		void AddMaterial(Material* material);
+		void RemoveMaterial(Material* material);
 
 	protected:
-		std::vector<Shader>                  m_Shaders;
-		std::vector<UniformBufferTemplate>   m_UniformBuffers;
-		std::vector<std::weak_ptr<Material>> m_Materials;
+		std::vector<Shader>                m_Shaders;
+		std::vector<UniformBufferTemplate> m_UniformBuffers;
+
+		std::vector<Material*> m_Materials;
 
 		bool m_UniformBuffersDirty = true;
 	};

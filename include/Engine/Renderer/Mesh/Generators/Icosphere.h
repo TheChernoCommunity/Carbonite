@@ -10,5 +10,5 @@
 
 namespace gp1::renderer::meshGenerators
 {
-	void GenerateIcosphere(std::shared_ptr<StaticMesh> mesh, uint32_t subdivisions);
+	void GenerateIcosphere(StaticMesh* mesh, uint32_t subdivisions);
 } // namespace gp1::renderer::meshGenerators

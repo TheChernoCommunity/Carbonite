@@ -7,13 +7,13 @@ namespace gp1::renderer
 {
 	Renderers* const Renderers::s_Renderers = new Renderers({
 #ifdef RENDERER_OPENGL
-	    RendererEntry("opengl", 0, []() -> std::shared_ptr<Renderer> {
-		    return std::make_shared<opengl::OpenGLRenderer>();
+	    RendererEntry("opengl", 0, []() -> std::unique_ptr<Renderer> {
+		    return std::make_unique<opengl::OpenGLRenderer>();
 	    }),
 #endif
 #ifdef RENDERER_VULKAN
-	    RendererEntry("vulkan", 1, []() -> std::shared_ptr<Renderer> {
-		    return std::make_shared<vulkan::VulkanRenderer>();
+	    RendererEntry("vulkan", 1, []() -> std::unique_ptr<Renderer> {
+		    return std::make_unique<vulkan::VulkanRenderer>();
 	    })
 #endif
 	});
@@ -24,19 +24,16 @@ namespace gp1::renderer
 	Renderers::Renderers(const std::initializer_list<RendererEntry>& entries)
 	    : m_Renderers(entries) {}
 
-	std::shared_ptr<Renderer> Renderers::GetRenderer(const std::string& name)
+	std::unique_ptr<Renderer> Renderers::GetRenderer(const std::string& name)
 	{
 		for (auto& entry : m_Renderers)
 		{
 			if (entry.m_Name == name)
 			{
-				if (!entry.m_Renderer.expired())
-					return entry.m_Renderer.lock();
-
-				std::shared_ptr<Renderer> renderer = entry.m_CreateRenderer();
+				std::unique_ptr<Renderer> renderer = entry.m_CreateRenderer();
 				if (renderer->IsCompatible())
 				{
-					entry.m_Renderer = renderer;
+					entry.m_Renderer = renderer.get();
 					return renderer;
 				}
 			}
@@ -44,7 +41,7 @@ namespace gp1::renderer
 		return nullptr;
 	}
 
-	std::shared_ptr<Renderer> Renderers::GetBestRenderer()
+	std::unique_ptr<Renderer> Renderers::GetBestRenderer()
 	{
 		std::vector<RendererEntry*> bestOrder;
 		bestOrder.reserve(m_Renderers.size());
@@ -69,23 +66,20 @@ namespace gp1::renderer
 
 		for (auto& entry : bestOrder)
 		{
-			if (!entry->m_Renderer.expired())
-				return entry->m_Renderer.lock();
-
-			std::shared_ptr<Renderer> renderer = entry->m_CreateRenderer();
+			std::unique_ptr<Renderer> renderer = entry->m_CreateRenderer();
 			if (renderer->IsCompatible())
 			{
-				entry->m_Renderer = renderer;
+				entry->m_Renderer = renderer.get();
 				return renderer;
 			}
 		}
 		return nullptr;
 	}
 
-	std::string Renderers::GetName(std::shared_ptr<Renderer> renderer) const
+	std::string Renderers::GetName(Renderer* renderer) const
 	{
 		for (auto& entry : m_Renderers)
-			if (!entry.m_Renderer.expired() && entry.m_Renderer.lock() == renderer)
+			if (entry.m_Renderer == renderer)
 				return entry.m_Name;
 		return "";
 	}

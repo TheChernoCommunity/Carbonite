@@ -13,12 +13,16 @@ namespace gp1::scene
 	class Entity
 	{
 	public:
-		virtual ~Entity() = default;
+		virtual ~Entity();
 
 		// Update this entity.
-		virtual void Update(float deltaTime);
+		virtual void Update([[maybe_unused]] float deltaTime) {}
+		virtual bool IsUpdatable() const
+		{
+			return false;
+		}
 
-		inline virtual bool IsRenderable() const
+		virtual bool IsRenderable() const
 		{
 			return false;
 		}
@@ -27,7 +31,7 @@ namespace gp1::scene
 		const glm::fmat4& GetTransformationMatrix(bool negativeTranslation = false);
 
 		// Get the scene this entity is part of.
-		inline Scene* GetScene() const
+		Scene* GetScene() const
 		{
 			return m_Scene;
 		}

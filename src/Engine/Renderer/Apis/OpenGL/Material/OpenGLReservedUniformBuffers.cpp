@@ -13,14 +13,14 @@ namespace gp1::renderer::opengl
 {
 	OpenGLReservedUniformBuffers::OpenGLReservedUniformBuffers()
 	{
+		// INFO(MarcasRealAccount): Set the offsets based on the std140 layout.
 		uint32_t i = 0;
 		for (auto& uniformBuffer : m_UniformBuffers)
 		{
 			if (uniformBuffer.m_UniformBuffer)
 			{
-				std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+				OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 				buffer->SetBinding(i++);
-				// TODO(MarcasRealAccount): Set the offsets based on the std140 layout.
 				buffer->SetOffsets({ { "projectionViewMatrix", 0 }, { "projectionMatrix", 64 }, { "viewMatrix", 128 } });
 			}
 		}
@@ -37,7 +37,7 @@ namespace gp1::renderer::opengl
 		{
 			if (uniformBuffer.m_UniformBuffer)
 			{
-				std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+				OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 				buffer->Bind();
 			}
 		}
@@ -49,7 +49,7 @@ namespace gp1::renderer::opengl
 		{
 			if (uniformBuffer.m_UniformBuffer)
 			{
-				std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+				OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 				buffer->CleanUp();
 			}
 		}

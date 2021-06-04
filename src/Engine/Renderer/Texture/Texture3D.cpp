@@ -7,7 +7,7 @@
 
 namespace gp1::renderer
 {
-	std::shared_ptr<Texture3D> Texture3D::Create()
+	std::unique_ptr<Texture3D> Texture3D::Create()
 	{
 		return Application::GetInstance()->GetRenderer()->CreateTexture3D();
 	}

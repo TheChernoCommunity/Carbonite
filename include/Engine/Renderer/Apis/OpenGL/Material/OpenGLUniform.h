@@ -25,18 +25,18 @@ namespace gp1::renderer::opengl
 		virtual size_t GetDataSize() const                       = 0;
 		virtual void   PutData(std::vector<uint8_t>& data) const = 0;
 
-		inline virtual bool IsTexture()
+		virtual bool IsTexture()
 		{
 			return false;
 		}
 
-		inline void* GetNext() const
+		void* GetNext() const
 		{
 			return m_Next;
 		}
 
 		template <typename T>
-		inline T* GetNext() const
+		T* GetNext() const
 		{
 			return reinterpret_cast<T*>(m_Next);
 		}
@@ -198,18 +198,19 @@ namespace gp1::renderer::opengl
 	public:
 		OpenGLUniformTexture2D();
 
-		virtual bool IsUpdatable() override
+		virtual void   Update() override;
+		virtual bool IsUpdatable() const override
 		{
 			return true;
 		}
-		virtual void          Update() override;
-		inline virtual size_t GetDataSize() const override
+
+		virtual size_t GetDataSize() const override
 		{
 			return 0;
 		}
-		inline virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
+		virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
 
-		inline virtual bool IsTexture()
+		virtual bool IsTexture()
 		{
 			return true;
 		}
@@ -222,18 +223,19 @@ namespace gp1::renderer::opengl
 	public:
 		OpenGLUniformTexture2DArray();
 
-		virtual bool IsUpdatable() override
+		virtual void   Update() override;
+		virtual bool IsUpdatable() const override
 		{
 			return true;
 		}
-		virtual void          Update() override;
-		inline virtual size_t GetDataSize() const override
+
+		virtual size_t GetDataSize() const override
 		{
 			return 0;
 		}
-		inline virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
+		virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
 
-		inline virtual bool IsTexture()
+		virtual bool IsTexture()
 		{
 			return true;
 		}
@@ -246,18 +248,19 @@ namespace gp1::renderer::opengl
 	public:
 		OpenGLUniformTexture3D();
 
-		virtual bool IsUpdatable() override
+		virtual void   Update() override;
+		virtual bool IsUpdatable() const override
 		{
 			return true;
 		}
-		virtual void          Update() override;
-		inline virtual size_t GetDataSize() const override
+
+		virtual size_t GetDataSize() const override
 		{
 			return 0;
 		}
-		inline virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
+		virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
 
-		inline virtual bool IsTexture()
+		virtual bool IsTexture()
 		{
 			return true;
 		}
@@ -270,18 +273,19 @@ namespace gp1::renderer::opengl
 	public:
 		OpenGLUniformTextureCubeMap();
 
-		virtual bool IsUpdatable() override
+		virtual void   Update() override;
+		virtual bool IsUpdatable() const override
 		{
 			return true;
 		}
-		virtual void          Update() override;
-		inline virtual size_t GetDataSize() const override
+
+		virtual size_t GetDataSize() const override
 		{
 			return 0;
 		}
-		inline virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
+		virtual void PutData([[maybe_unused]] std::vector<uint8_t>& data) const override {}
 
-		inline virtual bool IsTexture()
+		virtual bool IsTexture()
 		{
 			return true;
 		}

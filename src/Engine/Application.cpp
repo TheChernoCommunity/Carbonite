@@ -20,13 +20,13 @@ namespace gp1
 {
 	//----
 	// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
-	static std::shared_ptr<renderer::StaticMesh>     s_TestEntityMesh;
-	static std::shared_ptr<renderer::Material>       s_TestEntityMaterial;
-	static std::shared_ptr<renderer::TextureCubeMap> s_TestEntityTexture;
-	static std::shared_ptr<renderer::ShaderProgram>  s_TestEntityShaderProgram;
+	static std::unique_ptr<renderer::StaticMesh>     s_TestEntityMesh;
+	static std::unique_ptr<renderer::Material>       s_TestEntityMaterial;
+	static std::unique_ptr<renderer::TextureCubeMap> s_TestEntityTexture;
+	static std::unique_ptr<renderer::ShaderProgram>  s_TestEntityShaderProgram;
 
 	TestEntity::TestEntity()
-	    : m_Mesh(s_TestEntityMesh), m_Material(s_TestEntityMaterial)
+	    : m_Mesh(s_TestEntityMesh.get()), m_Material(s_TestEntityMaterial.get())
 	{
 		m_Position.z = -5.0f;
 	}
@@ -67,13 +67,13 @@ namespace gp1
 #endif
 		m_Renderer->SetWindowHints();
 		m_Window.Init();
-		m_Window.SetTitle(m_Window.GetTitle() + " (" + renderer::Renderers::s_Renderers->GetName(m_Renderer) + ")");
+		m_Window.SetTitle(m_Window.GetTitle() + " (" + renderer::Renderers::s_Renderers->GetName(m_Renderer.get()) + ")");
 		input::InputHandler::s_Window = &m_Window;
 		input::JoystickHandler::Init();
 		m_Renderer->Init();
 
-		m_Camera = std::make_shared<scene::Camera>();
-		m_Scene.AttachEntity(m_Camera);
+		m_Camera = std::make_unique<scene::Camera>();
+		m_Scene.AttachEntity(m_Camera.get());
 
 		//----
 		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
@@ -167,16 +167,16 @@ void main(void) {
 		s_TestEntityShaderProgram->AddUniformBufferElement("Object", "transformationMatrix", renderer::EUniformType::FMat4);
 		s_TestEntityShaderProgram->AddUniformBufferElement("Object", "tex", renderer::EUniformType::TextureCubeMap);
 
-		s_TestEntityMaterial->SetShaderProgram(s_TestEntityShaderProgram);
+		s_TestEntityMaterial->SetShaderProgram(s_TestEntityShaderProgram.get());
 
-		std::shared_ptr<renderer::UniformTextureCubeMap> textureUniform = s_TestEntityMaterial->GetUniform<renderer::UniformTextureCubeMap>("Object", "tex");
+		renderer::UniformTextureCubeMap* textureUniform = s_TestEntityMaterial->GetUniform<renderer::UniformTextureCubeMap>("Object", "tex");
 		if (textureUniform)
-			textureUniform->SetValue(s_TestEntityTexture);
+			textureUniform->SetValue(s_TestEntityTexture.get());
 
 		for (size_t i = 0; i < sizeof(m_TestEntities) / sizeof(*m_TestEntities); i++)
 		{
-			m_TestEntities[i] = std::make_shared<TestEntity>();
-			m_Scene.AttachEntity(m_TestEntities[i]);
+			m_TestEntities[i] = std::make_unique<TestEntity>();
+			m_Scene.AttachEntity(m_TestEntities[i].get());
 		}
 		//----
 	}
@@ -194,7 +194,7 @@ void main(void) {
 			m_Scene.Update(deltaTime);
 
 			m_Renderer->BeginFrame();
-			m_Renderer->Render(m_Camera);
+			m_Renderer->Render(m_Camera.get());
 			m_Renderer->EndFrame();
 
 			m_Window.OnUpdate();
@@ -204,6 +204,14 @@ void main(void) {
 
 	Application::~Application()
 	{
+		//----
+		// TODO(MarcasRealAccount): Please remove this when some actual rendering will take place, as this is just a test entity.
+		s_TestEntityMesh.reset();
+		s_TestEntityMaterial.reset();
+		s_TestEntityTexture.reset();
+		s_TestEntityShaderProgram.reset();
+		//----
+
 		m_Renderer->DeInit();
 		m_Renderer.reset();
 		m_Window.DeInit();

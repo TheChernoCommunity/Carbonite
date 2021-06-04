@@ -22,4 +22,5 @@ namespace gp1::renderer::vulkan
 		virtual void DeInit() override;
 	};
 } // namespace gp1::renderer::vulkan
+
 #endif

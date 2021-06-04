@@ -21,7 +21,7 @@ namespace gp1::renderer::opengl
 
 	void OpenGLMaterial::Bind()
 	{
-		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
+		OpenGLShaderProgram* shaderProgram = reinterpret_cast<OpenGLShaderProgram*>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
 
@@ -46,14 +46,14 @@ namespace gp1::renderer::opengl
 		shaderProgram->Bind();
 		for (auto& uniformBuffer : m_UniformBuffers)
 		{
-			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+			OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 			buffer->Bind();
 		}
 	}
 
 	void OpenGLMaterial::Unbind()
 	{
-		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
+		OpenGLShaderProgram* shaderProgram = reinterpret_cast<OpenGLShaderProgram*>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
 
@@ -67,13 +67,13 @@ namespace gp1::renderer::opengl
 
 	void OpenGLMaterial::UpdateGLData()
 	{
-		std::shared_ptr<OpenGLShaderProgram> shaderProgram = std::reinterpret_pointer_cast<OpenGLShaderProgram>(GetShaderProgram());
+		OpenGLShaderProgram* shaderProgram = reinterpret_cast<OpenGLShaderProgram*>(GetShaderProgram());
 		if (!shaderProgram)
 			return;
 
 		for (auto& uniformBuffer : m_UniformBuffers)
 		{
-			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+			OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 
 			OpenGLUniformBufferInfo* info = shaderProgram->GetUniformBufferInfo(uniformBuffer.m_Name);
 			if (info)
@@ -88,7 +88,7 @@ namespace gp1::renderer::opengl
 	{
 		for (auto& uniformBuffer : m_UniformBuffers)
 		{
-			std::shared_ptr<OpenGLUniformBuffer> buffer = std::reinterpret_pointer_cast<OpenGLUniformBuffer>(uniformBuffer.m_UniformBuffer);
+			OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
 			buffer->CleanUp();
 		}
 	}

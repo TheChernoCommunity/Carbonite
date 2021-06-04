@@ -3,130 +3,71 @@
 //
 
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Renderers.h"
 
 namespace gp1::renderer
 {
-	std::shared_ptr<StaticMesh> Renderer::CreateStaticMesh()
+	std::unique_ptr<StaticMesh> Renderer::CreateStaticMesh()
 	{
-		std::shared_ptr<StaticMesh> mesh = OnCreateStaticMesh();
-		if (mesh)
-		{
-			m_StaticMeshes.push_back(mesh);
-			mesh->m_This = mesh;
-
-			if (mesh->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(mesh);
-		}
-		return mesh;
+		auto data = OnCreateStaticMesh();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<Material> Renderer::CreateMaterial()
+	std::unique_ptr<Material> Renderer::CreateMaterial()
 	{
-		std::shared_ptr<Material> material = OnCreateMaterial();
-		if (material)
-		{
-			m_Materials.push_back(material);
-			material->m_This = material;
-
-			if (material->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(material);
-		}
-		return material;
+		auto data = OnCreateMaterial();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<Uniform> Renderer::CreateUniform(EUniformType type)
+	std::unique_ptr<Uniform> Renderer::CreateUniform(EUniformType type)
 	{
-		std::shared_ptr<Uniform> uniform = OnCreateUniform(type);
-		if (uniform)
-		{
-			m_Uniforms.push_back(uniform);
-			uniform->m_This = uniform;
-
-			if (uniform->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(uniform);
-		}
-		return uniform;
+		auto data = OnCreateUniform(type);
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<UniformBuffer> Renderer::CreateUniformBuffer()
+	std::unique_ptr<UniformBuffer> Renderer::CreateUniformBuffer()
 	{
-		std::shared_ptr<UniformBuffer> uniformBuffer = OnCreateUniformBuffer();
-		if (uniformBuffer)
-		{
-			m_UniformBuffers.push_back(uniformBuffer);
-			uniformBuffer->m_This = uniformBuffer;
-
-			if (uniformBuffer->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(uniformBuffer);
-		}
-		return uniformBuffer;
+		auto data = OnCreateUniformBuffer();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<ShaderProgram> Renderer::CreateShaderProgram()
+	std::unique_ptr<ShaderProgram> Renderer::CreateShaderProgram()
 	{
-		std::shared_ptr<ShaderProgram> shaderProgram = OnCreateShaderProgram();
-		if (shaderProgram)
-		{
-			m_ShaderPrograms.push_back(shaderProgram);
-			shaderProgram->m_This = shaderProgram;
-		}
-		return shaderProgram;
+		auto data = OnCreateShaderProgram();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<Texture2D> Renderer::CreateTexture2D()
+	std::unique_ptr<Texture2D> Renderer::CreateTexture2D()
 	{
-		std::shared_ptr<Texture2D> texture2D = OnCreateTexture2D();
-		if (texture2D)
-		{
-			m_Texture2Ds.push_back(texture2D);
-			texture2D->m_This = texture2D;
-
-			if (texture2D->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(texture2D);
-		}
-		return texture2D;
+		auto data = OnCreateTexture2D();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<Texture2DArray> Renderer::CreateTexture2DArray()
+	std::unique_ptr<Texture2DArray> Renderer::CreateTexture2DArray()
 	{
-		std::shared_ptr<Texture2DArray> texture2DArray = OnCreateTexture2DArray();
-		if (texture2DArray)
-		{
-			m_Texture2DArrays.push_back(texture2DArray);
-			texture2DArray->m_This = texture2DArray;
-
-			if (texture2DArray->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(texture2DArray);
-		}
-		return texture2DArray;
+		auto data = OnCreateTexture2DArray();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<Texture3D> Renderer::CreateTexture3D()
+	std::unique_ptr<Texture3D> Renderer::CreateTexture3D()
 	{
-		std::shared_ptr<Texture3D> texture3D = OnCreateTexture3D();
-		if (texture3D)
-		{
-			m_Texture3Ds.push_back(texture3D);
-			texture3D->m_This = texture3D;
-
-			if (texture3D->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(texture3D);
-		}
-		return texture3D;
+		auto data = OnCreateTexture3D();
+		AddRendererData(data.get());
+		return data;
 	}
 
-	std::shared_ptr<TextureCubeMap> Renderer::CreateTextureCubeMap()
+	std::unique_ptr<TextureCubeMap> Renderer::CreateTextureCubeMap()
 	{
-		std::shared_ptr<TextureCubeMap> textureCubeMap = OnCreateTextureCubeMap();
-		if (textureCubeMap)
-		{
-			m_TextureCubeMaps.push_back(textureCubeMap);
-			textureCubeMap->m_This = textureCubeMap;
-
-			if (textureCubeMap->IsUpdatable())
-				m_UpdatableRendererDatas.push_back(textureCubeMap);
-		}
-		return textureCubeMap;
+		auto data = OnCreateTextureCubeMap();
+		AddRendererData(data.get());
+		return data;
 	}
 
 	void Renderer::Init()
@@ -134,114 +75,25 @@ namespace gp1::renderer
 		OnInit();
 
 		m_DebugRenderer = OnCreateDebugRenderer();
-		DebugRenderer::SetDebugRenderer(m_DebugRenderer);
+		DebugRenderer::SetDebugRenderer(m_DebugRenderer.get());
 
-		m_ReservedUniformBuffers = OnCreateReversedUniformBuffers();
+		m_ReservedUniformBuffers = CreateReservedUniformBuffers();
 	}
 
 	void Renderer::DeInit()
 	{
-		m_DebugRenderer = nullptr;
 		DebugRenderer::SetDebugRenderer(nullptr);
 
-		m_ReservedUniformBuffers = nullptr;
+		m_DebugRenderer.reset();
+		m_ReservedUniformBuffers.reset();
 
 		OnDeInit();
 	}
 
 	void Renderer::BeginFrame()
 	{
-		for (auto itr = m_StaticMeshes.begin(); itr != m_StaticMeshes.end();)
-		{
-			if (itr->expired())
-				itr = m_StaticMeshes.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_Materials.begin(); itr != m_Materials.end();)
-		{
-			if (itr->expired())
-				itr = m_Materials.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_Uniforms.begin(); itr != m_Uniforms.end();)
-		{
-			if (itr->expired())
-				itr = m_Uniforms.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_UniformBuffers.begin(); itr != m_UniformBuffers.end();)
-		{
-			if (itr->expired())
-				itr = m_UniformBuffers.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_ShaderPrograms.begin(); itr != m_ShaderPrograms.end();)
-		{
-			if (itr->expired())
-			{
-				itr = m_ShaderPrograms.erase(itr);
-			}
-			else
-			{
-				std::shared_ptr<ShaderProgram> shaderProgram = itr->lock();
-				shaderProgram->Update();
-				itr++;
-			}
-		}
-
-		for (auto itr = m_Texture2Ds.begin(); itr != m_Texture2Ds.end();)
-		{
-			if (itr->expired())
-				itr = m_Texture2Ds.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_Texture2DArrays.begin(); itr != m_Texture2DArrays.end();)
-		{
-			if (itr->expired())
-				itr = m_Texture2DArrays.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_Texture3Ds.begin(); itr != m_Texture3Ds.end();)
-		{
-			if (itr->expired())
-				itr = m_Texture3Ds.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_TextureCubeMaps.begin(); itr != m_TextureCubeMaps.end();)
-		{
-			if (itr->expired())
-				itr = m_TextureCubeMaps.erase(itr);
-			else
-				itr++;
-		}
-
-		for (auto itr = m_UpdatableRendererDatas.begin(); itr != m_UpdatableRendererDatas.end();)
-		{
-			if (itr->expired())
-			{
-				itr = m_UpdatableRendererDatas.erase(itr);
-			}
-			else
-			{
-				std::shared_ptr<RendererData> data = itr->lock();
-				data->Update();
-				itr++;
-			}
-		}
+		for (auto updatableRendererData : m_UpdatableRendererDatas)
+			updatableRendererData->Update();
 
 		OnBeginFrame();
 	}
@@ -251,8 +103,39 @@ namespace gp1::renderer
 		OnEndFrame();
 	}
 
-	void Renderer::Render(std::shared_ptr<scene::Camera> camera)
+	void Renderer::Render(scene::Camera* camera)
 	{
 		OnRender(camera);
+	}
+
+	std::unique_ptr<ReservedUniformBuffers> Renderer::CreateReservedUniformBuffers()
+	{
+		auto data = OnCreateReservedUniformBuffers();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	void Renderer::AddRendererData(RendererData* data)
+	{
+		if (data)
+		{
+			m_RendererDatas.push_back(data);
+			if (data->IsUpdatable())
+				m_UpdatableRendererDatas.push_back(data);
+		}
+	}
+
+	void Renderer::RemoveRendererData(RendererData* data)
+	{
+		if (data)
+		{
+			auto itr0 = std::find(m_RendererDatas.begin(), m_RendererDatas.end(), data);
+			if (itr0 != m_RendererDatas.end())
+				m_RendererDatas.erase(itr0);
+
+			auto itr1 = std::find(m_UpdatableRendererDatas.begin(), m_UpdatableRendererDatas.end(), data);
+			if (itr1 != m_UpdatableRendererDatas.end())
+				m_UpdatableRendererDatas.erase(itr1);
+		}
 	}
 } // namespace gp1::renderer

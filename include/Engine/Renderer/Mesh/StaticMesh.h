@@ -23,7 +23,7 @@ namespace gp1::renderer
 	struct StaticMesh : public Mesh
 	{
 	public:
-		static std::shared_ptr<StaticMesh> Create();
+		static std::unique_ptr<StaticMesh> Create();
 
 	protected:
 		StaticMesh() = default;

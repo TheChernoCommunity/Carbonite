@@ -19,15 +19,15 @@
 
 namespace gp1::renderer::opengl
 {
-	std::shared_ptr<ShaderProgram> OpenGLDebugObject::s_DebugShaderProgram = nullptr;
+	std::unique_ptr<ShaderProgram> OpenGLDebugObject::s_DebugShaderProgram = nullptr;
 
-	OpenGLDebugObject::OpenGLDebugObject(float duration, const glm::fvec4& color, std::shared_ptr<Mesh> mesh)
+	OpenGLDebugObject::OpenGLDebugObject(float duration, const glm::fvec4& color, Mesh* mesh)
 	    : m_Duration(duration), m_Mesh(mesh), m_Material(Application::GetInstance()->GetRenderer()->CreateMaterial())
 	{
 		m_SpawnTime = static_cast<float>(glfwGetTime());
 
-		m_Material->SetShaderProgram(s_DebugShaderProgram);
-		std::shared_ptr<UniformFVec4> colorUniform = m_Material->GetUniform<UniformFVec4>("Object", "color");
+		m_Material->SetShaderProgram(s_DebugShaderProgram.get());
+		UniformFVec4* colorUniform = m_Material->GetUniform<UniformFVec4>("Object", "color");
 		if (colorUniform && colorUniform->GetType() == UniformFVec4::GetTypeS())
 			colorUniform->SetValue(color);
 
@@ -37,38 +37,38 @@ namespace gp1::renderer::opengl
 		m_Material->m_PolygonMode.m_Mode    = EPolygonMode::Line;
 	}
 
-	std::shared_ptr<StaticMesh> OpenGLDebugPoint::s_PointMesh = nullptr;
+	std::unique_ptr<StaticMesh> OpenGLDebugPoint::s_PointMesh = nullptr;
 
 	OpenGLDebugPoint::OpenGLDebugPoint(const glm::fvec3& position, float duration, const glm::fvec4& color)
-	    : OpenGLDebugObject(duration, color, s_PointMesh)
+	    : OpenGLDebugObject(duration, color, s_PointMesh.get())
 	{
 		m_Position = position;
 	}
 
-	std::shared_ptr<StaticMesh> OpenGLDebugSphere::s_SphereMesh = nullptr;
+	std::unique_ptr<StaticMesh> OpenGLDebugSphere::s_SphereMesh = nullptr;
 
 	OpenGLDebugSphere::OpenGLDebugSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color)
-	    : OpenGLDebugObject(duration, color, s_SphereMesh)
+	    : OpenGLDebugObject(duration, color, s_SphereMesh.get())
 	{
 		m_Position                    = origin;
 		m_Scale                       = { radius, radius, radius };
 		m_Material->m_CullMode.m_Face = ETriangleFace::Front; // HACK(MarcasRealAccount): The Icosahedron generator is generating the mesh with the wrong face orientation so flip the cull face.
 	}
 
-	std::shared_ptr<StaticMesh> OpenGLDebugBox::s_BoxMesh = nullptr;
+	std::unique_ptr<StaticMesh> OpenGLDebugBox::s_BoxMesh = nullptr;
 
 	OpenGLDebugBox::OpenGLDebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color)
-	    : OpenGLDebugObject(duration, color, s_BoxMesh)
+	    : OpenGLDebugObject(duration, color, s_BoxMesh.get())
 	{
 		m_Position = origin;
 		m_Rotation = rotation;
 		m_Scale    = extents;
 	}
 
-	std::shared_ptr<StaticMesh> OpenGLDebugLine::s_LineMesh = nullptr;
+	std::unique_ptr<StaticMesh> OpenGLDebugLine::s_LineMesh = nullptr;
 
 	OpenGLDebugLine::OpenGLDebugLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color)
-	    : OpenGLDebugObject(duration, color, s_LineMesh)
+	    : OpenGLDebugObject(duration, color, s_LineMesh.get())
 	{
 		m_Position = start;
 		m_Scale    = end - start;
@@ -76,22 +76,22 @@ namespace gp1::renderer::opengl
 
 	void OpenGLDebugRenderer::DrawPoint(const glm::fvec3& position, float duration, const glm::fvec4& color)
 	{
-		m_Entities.push_back(std::make_shared<OpenGLDebugPoint>(position, duration, color));
+		m_Entities.push_back(std::make_unique<OpenGLDebugPoint>(position, duration, color));
 	}
 
 	void OpenGLDebugRenderer::DrawSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color)
 	{
-		m_Entities.push_back(std::make_shared<OpenGLDebugSphere>(origin, radius, duration, color));
+		m_Entities.push_back(std::make_unique<OpenGLDebugSphere>(origin, radius, duration, color));
 	}
 
 	void OpenGLDebugRenderer::DrawBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color)
 	{
-		m_Entities.push_back(std::make_shared<OpenGLDebugBox>(origin, extents, rotation, duration, color));
+		m_Entities.push_back(std::make_unique<OpenGLDebugBox>(origin, extents, rotation, duration, color));
 	}
 
 	void OpenGLDebugRenderer::DrawLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color)
 	{
-		m_Entities.push_back(std::make_shared<OpenGLDebugLine>(start, end, duration, color));
+		m_Entities.push_back(std::make_unique<OpenGLDebugLine>(start, end, duration, color));
 	}
 
 	void OpenGLDebugRenderer::Init()
@@ -150,7 +150,7 @@ void main(void) {
 		OpenGLDebugPoint::s_PointMesh->m_LineWidth = 3.0f;
 
 		OpenGLDebugSphere::s_SphereMesh = StaticMesh::Create();
-		meshGenerators::GenerateIcosphere(OpenGLDebugSphere::s_SphereMesh, 3);
+		meshGenerators::GenerateIcosphere(OpenGLDebugSphere::s_SphereMesh.get(), 3);
 
 		OpenGLDebugBox::s_BoxMesh               = StaticMesh::Create();
 		OpenGLDebugBox::s_BoxMesh->m_RenderMode = ERenderMode::Lines;
@@ -200,20 +200,21 @@ void main(void) {
 	void OpenGLDebugRenderer::DeInit()
 	{
 		m_Entities.clear();
-		OpenGLDebugPoint::s_PointMesh   = nullptr;
-		OpenGLDebugSphere::s_SphereMesh = nullptr;
-		OpenGLDebugBox::s_BoxMesh       = nullptr;
-		OpenGLDebugLine::s_LineMesh     = nullptr;
+		OpenGLDebugObject::s_DebugShaderProgram.reset();
+		OpenGLDebugPoint::s_PointMesh.reset();
+		OpenGLDebugSphere::s_SphereMesh.reset();
+		OpenGLDebugBox::s_BoxMesh.reset();
+		OpenGLDebugLine::s_LineMesh.reset();
 	}
 
 	void OpenGLDebugRenderer::Render()
 	{
-		std::shared_ptr<OpenGLRenderer> renderer = std::reinterpret_pointer_cast<OpenGLRenderer>(Application::GetInstance()->GetRenderer());
+		OpenGLRenderer* renderer = reinterpret_cast<OpenGLRenderer*>(Application::GetInstance()->GetRenderer());
 
 		for (auto itr = m_Entities.begin(); itr != m_Entities.end();)
 		{
 			auto& entity = *itr;
-			renderer->RenderEntity(entity);
+			renderer->RenderEntity(entity.get());
 
 			if (entity->m_Duration <= 0.0f || glfwGetTime() - entity->m_SpawnTime > entity->m_Duration)
 				itr = m_Entities.erase(itr);

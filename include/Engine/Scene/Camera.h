@@ -26,6 +26,10 @@ namespace gp1::scene
 		Camera(float fov = 70.0f, float near = 0.01f, float far = 100000.0f);
 
 		virtual void Update(float deltaTime) override;
+		virtual bool IsUpdatable() const override
+		{
+			return true;
+		}
 
 		// Get the projection matrix of this camera.
 		const glm::fmat4& GetProjectionMatrix();
@@ -33,13 +37,13 @@ namespace gp1::scene
 		const glm::fmat4& GetProjectionViewMatrix();
 
 		// Set the mode of this camera.
-		inline void SetCameraMode(ECameraMode mode)
+		void SetCameraMode(ECameraMode mode)
 		{
 			m_Mode = mode;
 		}
 
 		// Get the mode of this camera.
-		inline ECameraMode GetCameraMode() const
+		ECameraMode GetCameraMode() const
 		{
 			return m_Mode;
 		}

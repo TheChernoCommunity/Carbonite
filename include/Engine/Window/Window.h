@@ -64,7 +64,7 @@ namespace gp1
 			// Sets the window's title.
 			void SetTitle(const std::string& p_Title);
 
-			inline const std::string& GetTitle() const
+			const std::string& GetTitle() const
 			{
 				return m_WindowData.Title;
 			}

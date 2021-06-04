@@ -85,29 +85,29 @@ namespace gp1::renderer
 		{
 		public:
 			std::string                    m_Name;
-			std::shared_ptr<UniformBuffer> m_UniformBuffer;
+			std::unique_ptr<UniformBuffer> m_UniformBuffer;
 		};
 
 	public:
-		static std::shared_ptr<Material> Create();
+		static std::unique_ptr<Material> Create();
 
 	public:
-		virtual ~Material() = default;
+		virtual ~Material();
 
-		void SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProgram);
+		void SetShaderProgram(ShaderProgram* shaderProgram);
 
-		inline std::shared_ptr<ShaderProgram> GetShaderProgram() const
+		ShaderProgram* GetShaderProgram() const
 		{
 			return m_ShaderProgram;
 		}
 
-		std::shared_ptr<UniformBuffer> GetUniformBuffer(std::string_view name) const;
-		std::shared_ptr<Uniform>       GetUniform(std::string_view bufferName, std::string_view uniformName) const;
+		UniformBuffer* GetUniformBuffer(std::string_view name) const;
+		Uniform*       GetUniform(std::string_view bufferName, std::string_view uniformName) const;
 
 		template <typename T, std::enable_if_t<std::is_base_of_v<Uniform, T>, bool> = true>
-		inline std::shared_ptr<T> GetUniform(std::string_view bufferName, const std::string_view uniformName) const
+		T* GetUniform(std::string_view bufferName, const std::string_view uniformName) const
 		{
-			return std::reinterpret_pointer_cast<T>(GetUniform(bufferName, uniformName));
+			return reinterpret_cast<T*>(GetUniform(bufferName, uniformName));
 		}
 
 	protected:
@@ -125,6 +125,6 @@ namespace gp1::renderer
 		std::vector<UniformBufferEntry> m_UniformBuffers;
 
 	private:
-		std::shared_ptr<ShaderProgram> m_ShaderProgram;
+		ShaderProgram* m_ShaderProgram;
 	};
 } // namespace gp1::renderer

@@ -294,7 +294,7 @@ namespace gp1::renderer::opengl
 	{
 		UniformTexture2D::Update();
 
-		std::reinterpret_pointer_cast<OpenGLTexture2D>(m_Value)->Update();
+		reinterpret_cast<OpenGLTexture2D*>(m_Value)->Update();
 	}
 
 	void OpenGLUniformTexture2D::Bind()
@@ -302,7 +302,7 @@ namespace gp1::renderer::opengl
 		if (m_Value)
 		{
 			glActiveTexture(GL_TEXTURE0 + m_Offset);
-			glBindTexture(GL_TEXTURE_2D, std::reinterpret_pointer_cast<OpenGLTexture2D>(m_Value)->m_TextureId);
+			glBindTexture(GL_TEXTURE_2D, reinterpret_cast<OpenGLTexture2D*>(m_Value)->m_TextureId);
 		}
 		else
 		{
@@ -321,7 +321,7 @@ namespace gp1::renderer::opengl
 	{
 		UniformTexture2DArray::Update();
 
-		std::reinterpret_pointer_cast<OpenGLTexture2DArray>(m_Value)->Update();
+		reinterpret_cast<OpenGLTexture2DArray*>(m_Value)->Update();
 	}
 
 	void OpenGLUniformTexture2DArray::Bind()
@@ -329,7 +329,7 @@ namespace gp1::renderer::opengl
 		if (m_Value)
 		{
 			glActiveTexture(GL_TEXTURE0 + m_Offset);
-			glBindTexture(GL_TEXTURE_2D_ARRAY, std::reinterpret_pointer_cast<OpenGLTexture2DArray>(m_Value)->m_TextureId);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, reinterpret_cast<OpenGLTexture2DArray*>(m_Value)->m_TextureId);
 		}
 		else
 		{
@@ -348,7 +348,7 @@ namespace gp1::renderer::opengl
 	{
 		UniformTexture3D::Update();
 
-		std::reinterpret_pointer_cast<OpenGLTexture3D>(m_Value)->Update();
+		reinterpret_cast<OpenGLTexture3D*>(m_Value)->Update();
 	}
 
 	void OpenGLUniformTexture3D::Bind()
@@ -356,7 +356,7 @@ namespace gp1::renderer::opengl
 		if (m_Value)
 		{
 			glActiveTexture(GL_TEXTURE0 + m_Offset);
-			glBindTexture(GL_TEXTURE_3D, std::reinterpret_pointer_cast<OpenGLTexture3D>(m_Value)->m_TextureId);
+			glBindTexture(GL_TEXTURE_3D, reinterpret_cast<OpenGLTexture3D*>(m_Value)->m_TextureId);
 		}
 		else
 		{
@@ -375,7 +375,7 @@ namespace gp1::renderer::opengl
 	{
 		UniformTextureCubeMap::Update();
 
-		std::reinterpret_pointer_cast<OpenGLTextureCubeMap>(m_Value)->Update();
+		reinterpret_cast<OpenGLTextureCubeMap*>(m_Value)->Update();
 	}
 
 	void OpenGLUniformTextureCubeMap::Bind()
@@ -383,7 +383,7 @@ namespace gp1::renderer::opengl
 		if (m_Value)
 		{
 			glActiveTexture(GL_TEXTURE0 + m_Offset);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, std::reinterpret_pointer_cast<OpenGLTextureCubeMap>(m_Value)->m_TextureId);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, reinterpret_cast<OpenGLTextureCubeMap*>(m_Value)->m_TextureId);
 		}
 		else
 		{

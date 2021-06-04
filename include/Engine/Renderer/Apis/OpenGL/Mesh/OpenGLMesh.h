@@ -10,8 +10,6 @@
 
 #include "Engine/Renderer/Mesh/Mesh.h"
 
-#include <memory>
-
 namespace gp1::renderer::opengl
 {
 	struct OpenGLMesh

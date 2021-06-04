@@ -31,81 +31,81 @@ namespace gp1::renderer::vulkan
 		window.SetWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	}
 
-	std::shared_ptr<StaticMesh> VulkanRenderer::OnCreateStaticMesh()
+	std::unique_ptr<StaticMesh> VulkanRenderer::OnCreateStaticMesh()
 	{
-		return std::make_shared<VulkanStaticMesh>();
+		return std::make_unique<VulkanStaticMesh>();
 	}
 
-	std::shared_ptr<Material> VulkanRenderer::OnCreateMaterial()
+	std::unique_ptr<Material> VulkanRenderer::OnCreateMaterial()
 	{
-		return std::make_shared<VulkanMaterial>();
+		return std::make_unique<VulkanMaterial>();
 	}
 
-	std::shared_ptr<ReservedUniformBuffers> VulkanRenderer::OnCreateReversedUniformBuffers()
+	std::unique_ptr<ReservedUniformBuffers> VulkanRenderer::OnCreateReservedUniformBuffers()
 	{
-		return std::make_shared<VulkanReservedUniformBuffers>();
+		return std::make_unique<VulkanReservedUniformBuffers>();
 	}
 
-	std::shared_ptr<Uniform> VulkanRenderer::OnCreateUniform(EUniformType type)
+	std::unique_ptr<Uniform> VulkanRenderer::OnCreateUniform(EUniformType type)
 	{
 		switch (type)
 		{
-		case EUniformType::Float: return std::make_shared<VulkanUniformFloat>();
-		case EUniformType::FVec2: return std::make_shared<VulkanUniformFVec2>();
-		case EUniformType::FVec3: return std::make_shared<VulkanUniformFVec3>();
-		case EUniformType::FVec4: return std::make_shared<VulkanUniformFVec4>();
-		case EUniformType::Int: return std::make_shared<VulkanUniformInt>();
-		case EUniformType::IVec2: return std::make_shared<VulkanUniformIVec2>();
-		case EUniformType::IVec3: return std::make_shared<VulkanUniformIVec3>();
-		case EUniformType::IVec4: return std::make_shared<VulkanUniformIVec4>();
-		case EUniformType::UInt: return std::make_shared<VulkanUniformUInt>();
-		case EUniformType::UVec2: return std::make_shared<VulkanUniformUVec2>();
-		case EUniformType::UVec3: return std::make_shared<VulkanUniformUVec3>();
-		case EUniformType::UVec4: return std::make_shared<VulkanUniformUVec4>();
-		case EUniformType::FMat2: return std::make_shared<VulkanUniformFMat2>();
-		case EUniformType::FMat3: return std::make_shared<VulkanUniformFMat3>();
-		case EUniformType::FMat4: return std::make_shared<VulkanUniformFMat4>();
-		case EUniformType::Texture2D: return std::make_shared<VulkanUniformTexture2D>();
-		case EUniformType::Texture2DArray: return std::make_shared<VulkanUniformTexture2DArray>();
-		case EUniformType::Texture3D: return std::make_shared<VulkanUniformTexture3D>();
-		case EUniformType::TextureCubeMap: return std::make_shared<VulkanUniformTextureCubeMap>();
+		case EUniformType::Float: return std::make_unique<VulkanUniformFloat>();
+		case EUniformType::FVec2: return std::make_unique<VulkanUniformFVec2>();
+		case EUniformType::FVec3: return std::make_unique<VulkanUniformFVec3>();
+		case EUniformType::FVec4: return std::make_unique<VulkanUniformFVec4>();
+		case EUniformType::Int: return std::make_unique<VulkanUniformInt>();
+		case EUniformType::IVec2: return std::make_unique<VulkanUniformIVec2>();
+		case EUniformType::IVec3: return std::make_unique<VulkanUniformIVec3>();
+		case EUniformType::IVec4: return std::make_unique<VulkanUniformIVec4>();
+		case EUniformType::UInt: return std::make_unique<VulkanUniformUInt>();
+		case EUniformType::UVec2: return std::make_unique<VulkanUniformUVec2>();
+		case EUniformType::UVec3: return std::make_unique<VulkanUniformUVec3>();
+		case EUniformType::UVec4: return std::make_unique<VulkanUniformUVec4>();
+		case EUniformType::FMat2: return std::make_unique<VulkanUniformFMat2>();
+		case EUniformType::FMat3: return std::make_unique<VulkanUniformFMat3>();
+		case EUniformType::FMat4: return std::make_unique<VulkanUniformFMat4>();
+		case EUniformType::Texture2D: return std::make_unique<VulkanUniformTexture2D>();
+		case EUniformType::Texture2DArray: return std::make_unique<VulkanUniformTexture2DArray>();
+		case EUniformType::Texture3D: return std::make_unique<VulkanUniformTexture3D>();
+		case EUniformType::TextureCubeMap: return std::make_unique<VulkanUniformTextureCubeMap>();
 		default: return nullptr;
 		}
 	}
 
-	std::shared_ptr<UniformBuffer> VulkanRenderer::OnCreateUniformBuffer()
+	std::unique_ptr<UniformBuffer> VulkanRenderer::OnCreateUniformBuffer()
 	{
-		return std::make_shared<VulkanUniformBuffer>();
+		return std::make_unique<VulkanUniformBuffer>();
 	}
 
-	std::shared_ptr<ShaderProgram> VulkanRenderer::OnCreateShaderProgram()
+	std::unique_ptr<ShaderProgram> VulkanRenderer::OnCreateShaderProgram()
 	{
-		return std::make_shared<VulkanShaderProgram>();
+		return std::make_unique<VulkanShaderProgram>();
 	}
 
-	std::shared_ptr<DebugRenderer> VulkanRenderer::OnCreateDebugRenderer()
+	std::unique_ptr<DebugRenderer> VulkanRenderer::OnCreateDebugRenderer()
 	{
-		return std::make_shared<VulkanDebugRenderer>();
+		return std::make_unique<VulkanDebugRenderer>();
 	}
 
-	std::shared_ptr<Texture2D> VulkanRenderer::OnCreateTexture2D()
+	std::unique_ptr<Texture2D> VulkanRenderer::OnCreateTexture2D()
 	{
-		return std::make_shared<VulkanTexture2D>();
+		return std::make_unique<VulkanTexture2D>();
 	}
 
-	std::shared_ptr<Texture2DArray> VulkanRenderer::OnCreateTexture2DArray()
+	std::unique_ptr<Texture2DArray> VulkanRenderer::OnCreateTexture2DArray()
 	{
-		return std::make_shared<VulkanTexture2DArray>();
+		return std::make_unique<VulkanTexture2DArray>();
 	}
 
-	std::shared_ptr<Texture3D> VulkanRenderer::OnCreateTexture3D()
+	std::unique_ptr<Texture3D> VulkanRenderer::OnCreateTexture3D()
 	{
-		return std::make_shared<VulkanTexture3D>();
+		return std::make_unique<VulkanTexture3D>();
 	}
 
-	std::shared_ptr<TextureCubeMap> VulkanRenderer::OnCreateTextureCubeMap()
+	std::unique_ptr<TextureCubeMap> VulkanRenderer::OnCreateTextureCubeMap()
 	{
-		return std::make_shared<VulkanTextureCubeMap>();
+		return std::make_unique<VulkanTextureCubeMap>();
 	}
 
 	void VulkanRenderer::OnInit()
@@ -124,7 +124,7 @@ namespace gp1::renderer::vulkan
 	{
 	}
 
-	void VulkanRenderer::OnRender(std::shared_ptr<scene::Camera> camera)
+	void VulkanRenderer::OnRender(scene::Camera* camera)
 	{
 		[[maybe_unused]] scene::Scene* scene = camera->GetScene();
 	}

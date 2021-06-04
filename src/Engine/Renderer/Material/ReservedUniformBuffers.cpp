@@ -20,17 +20,17 @@ namespace gp1::renderer
 		m_UniformBuffers[7] = { "Reserved8", nullptr };
 	}
 
-	std::shared_ptr<UniformBuffer> ReservedUniformBuffers::GetUniformBuffer(const std::string& name) const
+	UniformBuffer* ReservedUniformBuffers::GetUniformBuffer(const std::string& name) const
 	{
 		for (auto& uniformBuffer : m_UniformBuffers)
 			if (uniformBuffer.m_Name == name)
-				return uniformBuffer.m_UniformBuffer;
+				return uniformBuffer.m_UniformBuffer.get();
 		return nullptr;
 	}
 
-	std::shared_ptr<Uniform> ReservedUniformBuffers::GetUniform(const std::string& bufferName, const std::string& uniformName) const
+	Uniform* ReservedUniformBuffers::GetUniform(const std::string& bufferName, const std::string& uniformName) const
 	{
-		std::shared_ptr<UniformBuffer> uniformBuffer = GetUniformBuffer(bufferName);
+		UniformBuffer* uniformBuffer = GetUniformBuffer(bufferName);
 		if (uniformBuffer)
 			return uniformBuffer->GetUniform(uniformName);
 		return nullptr;

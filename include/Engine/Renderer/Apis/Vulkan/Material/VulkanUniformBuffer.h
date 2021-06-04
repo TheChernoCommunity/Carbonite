@@ -12,4 +12,5 @@ namespace gp1::renderer::vulkan
 	{
 	};
 } // namespace gp1::renderer::vulkan
+
 #endif

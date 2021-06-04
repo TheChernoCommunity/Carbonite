@@ -15,7 +15,7 @@ namespace gp1::renderer
 	struct Texture2DArray : public Texture
 	{
 	public:
-		static std::shared_ptr<Texture2DArray> Create();
+		static std::unique_ptr<Texture2DArray> Create();
 
 	public:
 		virtual ~Texture2DArray() = default;

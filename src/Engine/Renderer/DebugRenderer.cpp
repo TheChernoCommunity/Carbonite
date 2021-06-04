@@ -7,7 +7,7 @@
 
 namespace gp1::renderer
 {
-	std::shared_ptr<DebugRenderer> DebugRenderer::s_DebugRenderer = nullptr;
+	DebugRenderer* DebugRenderer::s_DebugRenderer = nullptr;
 
 	void DebugRenderer::DebugDrawPoint(const glm::fvec3& position, float duration, const glm::fvec4& color)
 	{
@@ -33,7 +33,7 @@ namespace gp1::renderer
 			s_DebugRenderer->DrawLine(start, end, duration, color);
 	}
 
-	void DebugRenderer::SetDebugRenderer(std::shared_ptr<DebugRenderer> debugRenderer)
+	void DebugRenderer::SetDebugRenderer(DebugRenderer* debugRenderer)
 	{
 		CleanUp();
 
