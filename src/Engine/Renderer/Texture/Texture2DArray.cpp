@@ -1,37 +1,14 @@
 //
-//	Created by MarcasRealAccount on 6. Dec. 2020.
+//	Created by MarcasRealAccount on 18. May. 2021.
 //
 
 #include "Engine/Renderer/Texture/Texture2DArray.h"
+#include "Engine/Application.h"
 
-namespace gp1::renderer::texture
+namespace gp1::renderer
 {
-	Texture2DArray::Texture2DArray()
-	    : Data(this) {}
-
-	void Texture2DArray::MarkDirty()
+	std::unique_ptr<Texture2DArray> Texture2DArray::Create()
 	{
-		this->m_Dirty = this->m_Editable;
+		return Application::GetInstance()->GetRenderer()->CreateTexture2DArray();
 	}
-
-	void Texture2DArray::ClearDirty()
-	{
-		this->m_Dirty = false;
-	}
-
-	bool Texture2DArray::IsDirty()
-	{
-		return this->m_Dirty;
-	}
-
-	bool Texture2DArray::IsEditable()
-	{
-		return this->m_Editable;
-	}
-
-	bool Texture2DArray::IsDynamic()
-	{
-		return this->m_IsDynamic;
-	}
-
-} // namespace gp1::renderer::texture
+} // namespace gp1::renderer

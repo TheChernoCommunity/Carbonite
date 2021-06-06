@@ -1,24 +1,15 @@
+//
+//	Created by MarcasRealAccount on 13. May. 2021
+//
+
 #include "Engine/Renderer/RendererData.h"
+
+#include "Engine/Application.h"
 
 namespace gp1::renderer
 {
-	Data::~Data()
-	{
-		if (this->m_RendererData)
-		{
-			this->m_RendererData->CleanUp();
-			delete this->m_RendererData;
-		}
-	}
-
-	const std::type_info& Data::GetType() const
-	{
-		return this->m_Type;
-	}
-
 	RendererData::~RendererData()
 	{
-		if (this->m_Data) this->m_Data->m_RendererData = nullptr;
+		Application::GetInstance()->GetRenderer()->RemoveRendererData(this);
 	}
-
 } // namespace gp1::renderer

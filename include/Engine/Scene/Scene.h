@@ -4,32 +4,40 @@
 
 #pragma once
 
+#include "Engine/Scene/Entity.h"
+#include "Engine/Scene/RenderableEntity.h"
+
+#include <memory>
 #include <vector>
 
 namespace gp1::scene
 {
-	class Entity;
-	class Camera;
-
 	class Scene
 	{
 	public:
-		// Attach an entity to this scene.
 		void AttachEntity(Entity* entity);
-		// Detach an entity from this scene.
 		void DetachEntity(Entity* entity);
 
-		// Set the main camera of this scene.
-		void SetMainCamera(Camera* camera);
-		// Get the main camera of this scene.
-		Camera* GetMainCamera();
+		void Update(float deltaTime);
 
-		// Get all entities this scene holds.
-		const std::vector<Entity*>& GetEntities();
+		const std::vector<Entity*>& GetEntities()
+		{
+			return m_Entities;
+		}
+
+		const std::vector<Entity*>& GetUpdatableEntities()
+		{
+			return m_UpdatableEntities;
+		}
+
+		const std::vector<RenderableEntity*>& GetRenderableEntities()
+		{
+			return m_RenderableEntities;
+		}
 
 	private:
-		std::vector<Entity*> m_Entities;             // The entities this scene holds.
-		Camera*              m_MainCamera = nullptr; // The main camera of this scene.
+		std::vector<Entity*>           m_Entities;           // The entities this scene holds.
+		std::vector<Entity*>           m_UpdatableEntities;  // The entities that can update.
+		std::vector<RenderableEntity*> m_RenderableEntities; // The entities that can be rendered.
 	};
-
 } // namespace gp1::scene

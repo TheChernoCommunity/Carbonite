@@ -1,27 +1,42 @@
-//
-//	Created by MarcasRealAccount on 31. Oct. 2020
-//
-
 #pragma once
+
+#include "Engine/Utility/Core.h"
+
+#ifdef RENDERER_VULKAN
+
 #include "Engine/Renderer/Renderer.h"
 
-namespace gp1::renderer::apis::vulkan
+#include <memory>
+
+namespace gp1::renderer::vulkan
 {
 	class VulkanRenderer : public Renderer
 	{
 	public:
-		VulkanRenderer(window::Window* window);
+		virtual bool IsCompatible() const override;
 
-		virtual RendererType GetRendererType() const override;
-
-		virtual renderer::debug::DebugRenderer* CreateDebugRenderer() override;
-
-		virtual RendererData* CreateRendererData(Data* data) override;
+		virtual void SetWindowHints() override;
 
 	protected:
-		virtual void InitRenderer() override;
-		virtual void DeInitRenderer() override;
-		virtual void RenderScene(scene::Scene* scene, uint32_t width, uint32_t height) override;
-	};
+		virtual std::unique_ptr<StaticMesh>             OnCreateStaticMesh() override;
+		virtual std::unique_ptr<Material>               OnCreateMaterial() override;
+		virtual std::unique_ptr<ReservedUniformBuffers> OnCreateReservedUniformBuffers() override;
+		virtual std::unique_ptr<Uniform>                OnCreateUniform(EUniformType type) override;
+		virtual std::unique_ptr<UniformBuffer>          OnCreateUniformBuffer() override;
+		virtual std::unique_ptr<ShaderProgram>          OnCreateShaderProgram() override;
+		virtual std::unique_ptr<DebugRenderer>          OnCreateDebugRenderer() override;
+		virtual std::unique_ptr<Texture2D>              OnCreateTexture2D() override;
+		virtual std::unique_ptr<Texture2DArray>         OnCreateTexture2DArray() override;
+		virtual std::unique_ptr<Texture3D>              OnCreateTexture3D() override;
+		virtual std::unique_ptr<TextureCubeMap>         OnCreateTextureCubeMap() override;
 
-} // namespace gp1::renderer::apis::vulkan
+		virtual void OnInit() override;
+		virtual void OnDeInit() override;
+
+		virtual void OnBeginFrame() override;
+		virtual void OnEndFrame() override;
+		virtual void OnRender(scene::Camera* camera) override;
+	};
+} // namespace gp1::renderer::vulkan
+
+#endif

@@ -1,84 +1,109 @@
 //
-//	Created by MarcasRealAccount on 29. Oct. 2020
+//	Created by MarcasRealAccount on 13. May. 2021
 //
 
 #pragma once
 
-#include "Engine/Renderer/RendererType.h"
+#include "Engine/Renderer/DebugRenderer.h"
+#include "Engine/Renderer/Material/Material.h"
+#include "Engine/Renderer/Material/ReservedUniformBuffers.h"
+#include "Engine/Renderer/Material/Uniform.h"
+#include "Engine/Renderer/Material/UniformBuffer.h"
+#include "Engine/Renderer/Mesh/StaticMesh.h"
+#include "Engine/Renderer/Shader/ShaderProgram.h"
+#include "Engine/Renderer/Texture/Texture2D.h"
+#include "Engine/Renderer/Texture/Texture2DArray.h"
+#include "Engine/Renderer/Texture/Texture3D.h"
+#include "Engine/Renderer/Texture/TextureCubeMap.h"
 #include "Engine/Scene/Camera.h"
 
-struct GLFWwindow;
+#include <memory>
+#include <vector>
 
-namespace gp1
+namespace gp1::renderer
 {
-	namespace window
+	class Renderer
 	{
-		class Window;
-	}
+	public:
+		friend RendererData;
 
-	namespace scene
-	{
-		class Scene;
-	}
+	public:
+		virtual ~Renderer() = default;
 
-	namespace renderer
-	{
-		namespace debug
+		std::unique_ptr<StaticMesh>     CreateStaticMesh();
+		std::unique_ptr<Material>       CreateMaterial();
+		std::unique_ptr<Uniform>        CreateUniform(EUniformType type);
+		std::unique_ptr<UniformBuffer>  CreateUniformBuffer();
+		std::unique_ptr<ShaderProgram>  CreateShaderProgram();
+		std::unique_ptr<Texture2D>      CreateTexture2D();
+		std::unique_ptr<Texture2DArray> CreateTexture2DArray();
+		std::unique_ptr<Texture3D>      CreateTexture3D();
+		std::unique_ptr<TextureCubeMap> CreateTextureCubeMap();
+
+		virtual void SetWindowHints() = 0;
+
+		virtual bool IsCompatible() const = 0;
+
+		void Init();
+		void DeInit();
+
+		void BeginFrame();
+		void EndFrame();
+		void Render(scene::Camera* camera);
+
+		ReservedUniformBuffers* GetReservedUniformBuffers() const
 		{
-			class DebugRenderer;
+			return m_ReservedUniformBuffers.get();
 		}
 
-		struct RendererData;
-		struct Data;
-
-		class Renderer
+		DebugRenderer* GetDebugRenderer() const
 		{
-		public:
-			Renderer(window::Window* window);
-			virtual ~Renderer() = default;
+			return m_DebugRenderer.get();
+		}
 
-			// Get the type of renderer.
-			virtual RendererType GetRendererType() const = 0;
+	protected:
+		Renderer() = default;
 
-			// Initialize the renderer.
-			void Init();
-			// De-initialize the renderer.
-			void DeInit();
-			// Render a scene.
-			void Render(scene::Scene* scene);
+		virtual std::unique_ptr<StaticMesh>             OnCreateStaticMesh()               = 0;
+		virtual std::unique_ptr<Material>               OnCreateMaterial()                 = 0;
+		virtual std::unique_ptr<Uniform>                OnCreateUniform(EUniformType type) = 0;
+		virtual std::unique_ptr<UniformBuffer>          OnCreateUniformBuffer()            = 0;
+		virtual std::unique_ptr<ShaderProgram>          OnCreateShaderProgram()            = 0;
+		virtual std::unique_ptr<Texture2D>              OnCreateTexture2D()                = 0;
+		virtual std::unique_ptr<Texture2DArray>         OnCreateTexture2DArray()           = 0;
+		virtual std::unique_ptr<Texture3D>              OnCreateTexture3D()                = 0;
+		virtual std::unique_ptr<TextureCubeMap>         OnCreateTextureCubeMap()           = 0;
+		std::unique_ptr<ReservedUniformBuffers>         CreateReservedUniformBuffers();
+		virtual std::unique_ptr<ReservedUniformBuffers> OnCreateReservedUniformBuffers() = 0;
+		virtual std::unique_ptr<DebugRenderer>          OnCreateDebugRenderer()          = 0;
 
-			// Is the DebugRenderer made for this renderer.
-			virtual bool IsDebugRendererUsable(debug::DebugRenderer* debugRenderer);
-			// Create a DebugRenderer for this renderer.
-			virtual debug::DebugRenderer* CreateDebugRenderer() = 0;
+		virtual void OnInit() {}
+		virtual void OnDeInit() {}
 
-			// Is the renderer data usable for this renderer.
-			virtual bool IsRendererDataUsable(RendererData* rendererData);
-			// Create renderer data that is associated with the given data.
-			virtual RendererData* CreateRendererData(Data* data) = 0;
+		virtual void OnBeginFrame() {}
+		virtual void OnEndFrame() {}
+		virtual void OnRender(scene::Camera* camera) = 0;
 
-		protected:
-			// Initialize the renderer.
-			virtual void InitRenderer() = 0;
-			// De-initialize the renderer.
-			virtual void DeInitRenderer() = 0;
-			// Render a scene.
-			virtual void RenderScene(scene::Scene* scene, uint32_t width, uint32_t height) = 0;
+	private:
+		void AddRendererData(RendererData* data);
+		void RemoveRendererData(RendererData* data);
 
-			// Get the native window handle, this renderer renders to.
-			GLFWwindow* GetNativeWindowHandle() const;
+	protected:
+		std::unique_ptr<ReservedUniformBuffers> m_ReservedUniformBuffers;
+		std::unique_ptr<DebugRenderer>          m_DebugRenderer;
 
-			// Get the debug renderer this renderer uses.
-			debug::DebugRenderer* GetDebugRenderer();
+		std::vector<RendererData*> m_RendererDatas;
+		std::vector<RendererData*> m_UpdatableRendererDatas;
 
-		public:
-			// Get the appropriate renderer for the given type.
-			static Renderer* GetRenderer(RendererType rendererType, window::Window* window);
-
-		protected:
-			window::Window* m_Window; // The window instance.
-		};
-
-	} // namespace renderer
-
-} // namespace gp1
+		// TODO(MarcasRealAccount): This stuff might not be needed for anything
+		// std::vector<StaticMesh*>     m_StaticMeshes;
+		// std::vector<Material*>       m_Materials;
+		// std::vector<Uniform*>        m_Uniforms;
+		// std::vector<UniformBuffer*>  m_UniformBuffers;
+		// std::vector<ShaderProgram*>  m_ShaderPrograms;
+		// std::vector<Texture2D*>      m_Texture2Ds;
+		// std::vector<Texture2DArray*> m_Texture2DArrays;
+		// std::vector<Texture3D*>      m_Texture3Ds;
+		// std::vector<TextureCubeMap*> m_TextureCubeMaps;
+	};
+} // namespace gp1::renderer

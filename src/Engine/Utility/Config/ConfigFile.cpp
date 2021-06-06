@@ -139,6 +139,8 @@ namespace gp1::config
 					while (i < str.length() && str[i] != '\n')
 						i++;
 					break;
+				case '\r':
+					break;
 				case '\n':
 					break;
 				default:
@@ -162,7 +164,7 @@ namespace gp1::config
 						if (str[i] == '\\')
 							backslash = true;
 						i++;
-						if (str[i] == '\n' && !backslash)
+						if ((str[i] == '\r' || str[i] == '\n') && !backslash)
 							break;
 						backslash = false;
 					}

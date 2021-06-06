@@ -7,7 +7,7 @@ exceptionhandling 'On'
 flags { 'MultiProcessorCompile' }
 includedirs { '../include/' }
 objdir '../obj'
-rtti 'On'
+rtti 'Off'
 targetdir '../%{iif(prj.kind == "StaticLib" or prj.kind == "SharedLib","lib","bin")}/%{cfg.platform}/%{cfg.buildcfg}'
 warnings 'Extra'
 

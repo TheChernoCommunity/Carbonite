@@ -27,11 +27,8 @@ namespace gp1::window
 		}
 
 		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
+		for (auto& windowHint : m_WindowHints)
+			glfwWindowHint(windowHint.first, windowHint.second);
 
 		GLFWmonitor*       monitor { glfwGetPrimaryMonitor() };
 		const GLFWvidmode* mode { glfwGetVideoMode(monitor) };
@@ -134,12 +131,6 @@ namespace gp1::window
 			events::EventHandler::PushEvent(event);
 		});
 
-		glfwMakeContextCurrent(m_NativeHandle);
-		if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-		{
-			m_Logger.Log(Severity::Error, "Failed to initialize GLAD!");
-		}
-
 		m_Logger.Log(Severity::Trace, "Window was created successfully.");
 	}
 
@@ -211,5 +202,20 @@ namespace gp1::window
 	bool Window::IsCloseRequested() const
 	{
 		return glfwWindowShouldClose(m_NativeHandle);
+	}
+
+	void Window::DefaultWindowHints()
+	{
+		m_WindowHints.clear();
+	}
+
+	void Window::SetWindowHint(int hint, int value)
+	{
+		m_WindowHints.insert_or_assign(hint, value);
+	}
+
+	GLFWwindow* Window::GetNativeHandle() const
+	{
+		return m_NativeHandle;
 	}
 } // namespace gp1::window

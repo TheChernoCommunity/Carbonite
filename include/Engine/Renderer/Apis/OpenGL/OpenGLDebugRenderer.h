@@ -1,116 +1,118 @@
 //
-//	Created by MarcasRealAccount on 7. Nov. 2020.
+//	Created by MarcasRealAccount on 16. May. 2021
 //
 
 #pragma once
 
+#include "Engine/Utility/Core.h"
+
+#ifdef RENDERER_OPENGL
+
 #include "Engine/Renderer/DebugRenderer.h"
-#include "Engine/Scene/Entity.h"
+#include "Engine/Renderer/Material/Material.h"
+#include "Engine/Renderer/Mesh/Mesh.h"
+#include "Engine/Renderer/Mesh/StaticMesh.h"
+#include "Engine/Scene/RenderableEntity.h"
 
-#include <vector>
+#include <memory>
 
-namespace gp1::renderer
+#include <glm.hpp>
+
+namespace gp1::renderer::opengl
 {
-	namespace mesh
+	struct OpenGLDebugObject : public scene::RenderableEntity
 	{
-		struct StaticMesh;
-	}
+	public:
+		friend class OpenGLDebugRenderer;
 
-	namespace apis::opengl
-	{
-		class OpenGLRenderer;
+	private:
+		static std::unique_ptr<ShaderProgram> s_DebugShaderProgram;
 
-		namespace debug
+	public:
+		virtual Mesh* GetMesh() const override
 		{
-			class OpenGLDebugRenderer;
+			return m_Mesh;
+		}
 
-			struct OpenGLDebugObject : public scene::Entity
-			{
-			public:
-				OpenGLDebugObject(const glm::fvec4& color, float lifetime, renderer::mesh::StaticMesh* mesh);
-				virtual ~OpenGLDebugObject() = default;
+		virtual Material* GetMaterial() const override
+		{
+			return m_Material.get();
+		}
 
-				virtual renderer::mesh::Mesh*       GetMesh() const override;
-				virtual renderer::shader::Material* GetMaterial() const override;
+	protected:
+		OpenGLDebugObject(float duration, const glm::fvec4& color, Mesh* mesh);
 
-				friend OpenGLRenderer;
+	protected:
+		float m_SpawnTime;
+		float m_Duration;
 
-			public:
-				float m_SpawnTime;
-				float m_Lifetime;
+		Mesh*                     m_Mesh;
+		std::unique_ptr<Material> m_Material;
+	};
 
-				renderer::mesh::StaticMesh* m_Mesh;
-				renderer::shader::Material* m_Material;
-			};
+	struct OpenGLDebugPoint : public OpenGLDebugObject
+	{
+	public:
+		friend class OpenGLDebugRenderer;
 
-			struct OpenGLDebugPoint : public OpenGLDebugObject
-			{
-			public:
-				OpenGLDebugPoint(const glm::fvec3& point, const glm::fvec4& color, float lifetime);
+	private:
+		static std::unique_ptr<StaticMesh> s_PointMesh;
 
-				friend OpenGLDebugRenderer;
+	public:
+		OpenGLDebugPoint(const glm::fvec3& position, float duration, const glm::fvec4& color);
+	};
 
-			private:
-				static renderer::mesh::StaticMesh* s_PointMesh;
-			};
+	struct OpenGLDebugSphere : public OpenGLDebugObject
+	{
+	public:
+		friend class OpenGLDebugRenderer;
 
-			struct OpenGLDebugSphere : public OpenGLDebugObject
-			{
-			public:
-				OpenGLDebugSphere(const glm::fvec3& origin, float radius, const glm::fvec4& color, float lifetime);
+	private:
+		static std::unique_ptr<StaticMesh> s_SphereMesh;
 
-				friend OpenGLDebugRenderer;
+	public:
+		OpenGLDebugSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color);
+	};
 
-			private:
-				static renderer::mesh::StaticMesh* s_SphereMesh;
-			};
+	struct OpenGLDebugBox : public OpenGLDebugObject
+	{
+	public:
+		friend class OpenGLDebugRenderer;
 
-			struct OpenGLDebugBox : public OpenGLDebugObject
-			{
-			public:
-				OpenGLDebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, const glm::fvec4& color, float lifetime);
+	private:
+		static std::unique_ptr<StaticMesh> s_BoxMesh;
 
-				friend OpenGLDebugRenderer;
+	public:
+		OpenGLDebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color);
+	};
 
-			private:
-				static renderer::mesh::StaticMesh* s_BoxMesh;
-			};
+	struct OpenGLDebugLine : public OpenGLDebugObject
+	{
+	public:
+		friend class OpenGLDebugRenderer;
 
-			struct OpenGLDebugLine : public OpenGLDebugObject
-			{
-			public:
-				OpenGLDebugLine(const glm::fvec3& start, const glm::fvec3& end, const glm::fvec4& color, float lifetime);
+	private:
+		static std::unique_ptr<StaticMesh> s_LineMesh;
 
-				friend OpenGLDebugRenderer;
+	public:
+		OpenGLDebugLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color);
+	};
 
-			private:
-				static renderer::mesh::StaticMesh* s_LineMesh;
-			};
+	class OpenGLDebugRenderer : public DebugRenderer
+	{
+	public:
+		virtual void DrawPoint(const glm::fvec3& position, float duration, const glm::fvec4& color) override;
+		virtual void DrawSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color) override;
+		virtual void DrawBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color) override;
+		virtual void DrawLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color) override;
 
-			class OpenGLDebugRenderer : public renderer::debug::DebugRenderer
-			{
-			public:
-				OpenGLDebugRenderer(Renderer* renderer);
+		virtual void Init() override;
+		virtual void DeInit() override;
 
-				virtual RendererType GetRendererType() override;
+		void Render();
 
-				friend OpenGLRenderer;
-
-			private:
-				virtual void DebugPoint(const glm::fvec3& point, float duration, const glm::fvec4& color) override;
-				virtual void DebugSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color) override;
-				virtual void DebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color) override;
-				virtual void DebugLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color) override;
-
-				virtual void Init() override;
-				virtual void DeInit() override;
-
-			private:
-				std::vector<OpenGLDebugObject*> m_Entities; // The entities this debug renderer has.
-			};
-
-		} // namespace debug
-
-	} // namespace apis::opengl
-
-} // namespace gp1::renderer
+	private:
+		std::vector<std::unique_ptr<OpenGLDebugObject>> m_Entities;
+	};
+} // namespace gp1::renderer::opengl
+#endif

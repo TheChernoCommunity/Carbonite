@@ -1,71 +1,51 @@
 //
-//	Created by MarcasRealAccount on 31. Oct. 2020
+//	Created by MarcasRealAccount on 13. May. 2021
 //
 
 #pragma once
 
+#include "Engine/Utility/Core.h"
+
+#ifdef RENDERER_OPENGL
+
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Utility/Logger.h"
+#include "Engine/Scene/RenderableEntity.h"
 
-namespace gp1::renderer
+#include <memory>
+
+namespace gp1::renderer::opengl
 {
-	namespace mesh
+	class OpenGLRenderer : public Renderer
 	{
-		struct StaticMesh;
-	}
+	public:
+		virtual bool IsCompatible() const override;
 
-	namespace apis::opengl
-	{
-		namespace mesh
-		{
-			struct OpenGLMeshData;
-		}
+		virtual void SetWindowHints() override;
 
-		namespace shader
-		{
-			class OpenGLMaterialData;
-		}
+	protected:
+		virtual std::unique_ptr<StaticMesh>             OnCreateStaticMesh() override;
+		virtual std::unique_ptr<Material>               OnCreateMaterial() override;
+		virtual std::unique_ptr<ReservedUniformBuffers> OnCreateReservedUniformBuffers() override;
+		virtual std::unique_ptr<Uniform>                OnCreateUniform(EUniformType type) override;
+		virtual std::unique_ptr<UniformBuffer>          OnCreateUniformBuffer() override;
+		virtual std::unique_ptr<ShaderProgram>          OnCreateShaderProgram() override;
+		virtual std::unique_ptr<DebugRenderer>          OnCreateDebugRenderer() override;
+		virtual std::unique_ptr<Texture2D>              OnCreateTexture2D() override;
+		virtual std::unique_ptr<Texture2DArray>         OnCreateTexture2DArray() override;
+		virtual std::unique_ptr<Texture3D>              OnCreateTexture3D() override;
+		virtual std::unique_ptr<TextureCubeMap>         OnCreateTextureCubeMap() override;
 
-		class OpenGLRenderer : public Renderer
-		{
-		public:
-			OpenGLRenderer(window::Window* window);
+		virtual void OnInit() override;
+		virtual void OnDeInit() override;
 
-			virtual RendererType GetRendererType() const override;
+		virtual void OnBeginFrame() override;
+		virtual void OnEndFrame() override;
 
-			virtual renderer::debug::DebugRenderer* CreateDebugRenderer() override;
+		virtual void OnRender(scene::Camera* camera) override;
 
-			virtual RendererData* CreateRendererData(Data* data) override;
+	public:
+		void RenderEntity(scene::RenderableEntity* entity);
+	};
+} // namespace gp1::renderer::opengl
 
-			uint32_t GetMaxTextureUnits() const;
-
-		protected:
-			virtual void InitRenderer() override;
-			virtual void DeInitRenderer() override;
-			virtual void RenderScene(scene::Scene* scene, uint32_t width, uint32_t height) override;
-
-		private:
-			// Render an entity.
-			void RenderEntity(scene::Entity* entity);
-			// Render a mesh with a material.
-			void RenderMeshWithMaterial(renderer::mesh::Mesh* mesh, renderer::shader::Material* material);
-			// Render a mesh.
-			void RenderMesh(renderer::mesh::Mesh* mesh);
-
-			// Set up data for the material.
-			void PreMaterial(renderer::shader::Material* material);
-			// Clean up data for the material.
-			void PostMaterial(renderer::shader::Material* material);
-
-			static void ErrorMessageCallback(uint32_t source, uint32_t type, uint32_t id, uint32_t severity, int32_t length, const char* message, const void* userParam);
-
-		private:
-			uint32_t m_MaxTextureUnits = 0; // The max texture units that can be used.
-
-		private:
-			static Logger s_Logger; // The logger this renderer uses.
-		};
-
-	} // namespace apis::opengl
-
-} // namespace gp1::renderer
+#endif

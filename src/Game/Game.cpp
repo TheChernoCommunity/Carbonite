@@ -62,13 +62,10 @@ Game::Game()
 	lookY->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
 	m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), static_cast<uint32_t>(lookY->GetLocation()));
 
-	renderer::debug::DebugRenderer::DebugDrawPoint({ 0, 0, -2 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawSphere({ 0, 0, -2 }, 1.0f, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawLine({ -2, 1, -4 }, { 2, -1, -2 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawBox({ 0, 0, -3 }, { 1, 1, 1 }, { 0, 0, 0 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ 0, -2, -7 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ -1, -2, -7 }, 10.0f);
-	renderer::debug::DebugRenderer::DebugDrawABox({ -2, -2, -7 }, 10.0f);
+	gp1::renderer::DebugRenderer::DebugDrawPoint({ 0.0f, 0.0f, -2.0f }, 9999999999.0f);
+	gp1::renderer::DebugRenderer::DebugDrawSphere({ 0.0f, 0.0f, 2.0f }, 1.0f, 9999999999.0f);
+	gp1::renderer::DebugRenderer::DebugDrawLine({ -2.0f, 1.0f, -4.0f }, { 2.0f, -1.0f, -2.0f }, 9999999999.0f);
+	gp1::renderer::DebugRenderer::DebugDrawBox({ 0.0f, 0.0f, -3.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 45.0f, 0.0f }, 9999999999.0f);
 }
 
 void Game::LookCallback(input::AxisCallbackData data)

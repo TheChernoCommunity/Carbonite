@@ -1,36 +1,26 @@
-//
-//	Created by MarcasRealAccount on 7. Nov. 2020.
-//
-
 #pragma once
+
+#include "Engine/Utility/Core.h"
+
+#ifdef RENDERER_VULKAN
 
 #include "Engine/Renderer/DebugRenderer.h"
 
-namespace gp1::renderer::apis::vulkan
+#include <glm.hpp>
+
+namespace gp1::renderer::vulkan
 {
-	class VulkanRenderer;
-
-	namespace debug
+	class VulkanDebugRenderer : public DebugRenderer
 	{
-		class VulkanDebugRenderer : public renderer::debug::DebugRenderer
-		{
-		public:
-			VulkanDebugRenderer(Renderer* renderer);
+	public:
+		virtual void DrawPoint(const glm::fvec3& position, float duration, const glm::fvec4& color) override;
+		virtual void DrawSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color) override;
+		virtual void DrawBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color) override;
+		virtual void DrawLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color) override;
+		
+		virtual void Init() override;
+		virtual void DeInit() override;
+	};
+} // namespace gp1::renderer::vulkan
 
-			virtual RendererType GetRendererType() override;
-
-			friend VulkanRenderer;
-
-		private:
-			virtual void DebugPoint(const glm::fvec3& point, float duration, const glm::fvec4& color);
-			virtual void DebugSphere(const glm::fvec3& origin, float radius, float duration, const glm::fvec4& color) override;
-			virtual void DebugBox(const glm::fvec3& origin, const glm::fvec3& extents, const glm::fvec3& rotation, float duration, const glm::fvec4& color) override;
-			virtual void DebugLine(const glm::fvec3& start, const glm::fvec3& end, float duration, const glm::fvec4& color) override;
-
-			virtual void Init() override;
-			virtual void DeInit() override;
-		};
-
-	} // namespace debug
-
-} // namespace gp1::renderer::apis::vulkan
+#endif

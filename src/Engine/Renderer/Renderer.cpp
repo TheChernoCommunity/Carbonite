@@ -1,73 +1,141 @@
 //
-//	Created by MarcasRealAccount on 29. Oct. 2020
+//	Created by MarcasRealAccount on 13. May. 2021
 //
 
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Apis/OpenGL/OpenGLRenderer.h"
-#include "Engine/Renderer/Apis/Vulkan/VulkanRenderer.h"
-#include "Engine/Renderer/DebugRenderer.h"
-#include "Engine/Renderer/RendererData.h"
-#include "Engine/Scene/Camera.h"
-#include "Engine/Scene/Scene.h"
-#include "Engine/Window/Window.h"
+#include "Engine/Renderer/Renderers.h"
 
 namespace gp1::renderer
 {
-	Renderer::Renderer(window::Window* window)
-	    : m_Window(window) {}
+	std::unique_ptr<StaticMesh> Renderer::CreateStaticMesh()
+	{
+		auto data = OnCreateStaticMesh();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<Material> Renderer::CreateMaterial()
+	{
+		auto data = OnCreateMaterial();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<Uniform> Renderer::CreateUniform(EUniformType type)
+	{
+		auto data = OnCreateUniform(type);
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<UniformBuffer> Renderer::CreateUniformBuffer()
+	{
+		auto data = OnCreateUniformBuffer();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<ShaderProgram> Renderer::CreateShaderProgram()
+	{
+		auto data = OnCreateShaderProgram();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<Texture2D> Renderer::CreateTexture2D()
+	{
+		auto data = OnCreateTexture2D();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<Texture2DArray> Renderer::CreateTexture2DArray()
+	{
+		auto data = OnCreateTexture2DArray();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<Texture3D> Renderer::CreateTexture3D()
+	{
+		auto data = OnCreateTexture3D();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	std::unique_ptr<TextureCubeMap> Renderer::CreateTextureCubeMap()
+	{
+		auto data = OnCreateTextureCubeMap();
+		AddRendererData(data.get());
+		return data;
+	}
 
 	void Renderer::Init()
 	{
-		InitRenderer();
-		debug::DebugRenderer::SetDebugRenderer(CreateDebugRenderer());
+		OnInit();
+
+		m_DebugRenderer = OnCreateDebugRenderer();
+		DebugRenderer::SetDebugRenderer(m_DebugRenderer.get());
+
+		m_ReservedUniformBuffers = CreateReservedUniformBuffers();
 	}
 
 	void Renderer::DeInit()
 	{
-		debug::DebugRenderer::CleanUp();
-		DeInitRenderer();
+		DebugRenderer::SetDebugRenderer(nullptr);
+
+		m_DebugRenderer.reset();
+		m_ReservedUniformBuffers.reset();
+
+		OnDeInit();
 	}
 
-	void Renderer::Render(scene::Scene* scene)
+	void Renderer::BeginFrame()
 	{
-		scene::Camera* mainCamera = scene->GetMainCamera();
-		if (mainCamera)
+		for (auto updatableRendererData : m_UpdatableRendererDatas)
+			updatableRendererData->Update();
+
+		OnBeginFrame();
+	}
+
+	void Renderer::EndFrame()
+	{
+		OnEndFrame();
+	}
+
+	void Renderer::Render(scene::Camera* camera)
+	{
+		OnRender(camera);
+	}
+
+	std::unique_ptr<ReservedUniformBuffers> Renderer::CreateReservedUniformBuffers()
+	{
+		auto data = OnCreateReservedUniformBuffers();
+		AddRendererData(data.get());
+		return data;
+	}
+
+	void Renderer::AddRendererData(RendererData* data)
+	{
+		if (data)
 		{
-			mainCamera->m_Aspect = (float) m_Window->m_WindowData.FramebufferWidth / m_Window->m_WindowData.FramebufferHeight;
-			RenderScene(scene, m_Window->m_WindowData.FramebufferWidth, m_Window->m_WindowData.FramebufferHeight);
+			m_RendererDatas.push_back(data);
+			if (data->IsUpdatable())
+				m_UpdatableRendererDatas.push_back(data);
 		}
 	}
 
-	bool Renderer::IsDebugRendererUsable(debug::DebugRenderer* debugRenderer)
+	void Renderer::RemoveRendererData(RendererData* data)
 	{
-		return debugRenderer->GetRendererType() == GetRendererType();
-	}
-
-	bool Renderer::IsRendererDataUsable(RendererData* rendererData)
-	{
-		return rendererData->GetRendererType() == GetRendererType();
-	}
-
-	GLFWwindow* Renderer::GetNativeWindowHandle() const
-	{
-		return this->m_Window->m_NativeHandle;
-	}
-
-	debug::DebugRenderer* Renderer::GetDebugRenderer()
-	{
-		return debug::DebugRenderer::s_DebugRenderer;
-	}
-
-	Renderer* Renderer::GetRenderer(RendererType rendererType, window::Window* window)
-	{
-		switch (rendererType)
+		if (data)
 		{
-		case RendererType::OPENGL:
-			return new apis::opengl::OpenGLRenderer(window);
-		case RendererType::VULKAN:
-			return new apis::vulkan::VulkanRenderer(window);
-		}
-		return nullptr;
-	}
+			auto itr0 = std::find(m_RendererDatas.begin(), m_RendererDatas.end(), data);
+			if (itr0 != m_RendererDatas.end())
+				m_RendererDatas.erase(itr0);
 
+			auto itr1 = std::find(m_UpdatableRendererDatas.begin(), m_UpdatableRendererDatas.end(), data);
+			if (itr1 != m_UpdatableRendererDatas.end())
+				m_UpdatableRendererDatas.erase(itr1);
+		}
+	}
 } // namespace gp1::renderer
