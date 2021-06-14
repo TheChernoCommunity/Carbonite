@@ -4,6 +4,8 @@
 
 #include "Engine/Scene/Scene.h"
 
+#include <algorithm>
+
 namespace gp1::scene
 {
 	void Scene::AttachEntity(Entity* entity)
