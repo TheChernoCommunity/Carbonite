@@ -78,7 +78,7 @@ return function()
 			'_GLFW_COCOA'	
 		}
 
-		links {'Cocoa.framework', 'IOKit.framework', 'CoreFoundation.framework'}
+		links {'Cocoa.framework', 'IOKit.framework', 'CoreFoundation.framework' }
 
 	filter { }
 end
