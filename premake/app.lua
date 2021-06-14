@@ -44,6 +44,9 @@ function app( name )
 	filter { 'system:macosx or ios', 'files:**.cpp' }
 		compileas 'Objective-C++'
 
+	filter 'system:macosx'
+		links {'Cocoa.framework', 'IOKit.framework', 'CoreFoundation.framework', 'OpenGL.framework'}
+
 	filter 'configurations:Debug'
 		kind 'ConsoleApp'
 
