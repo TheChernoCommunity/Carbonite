@@ -6,7 +6,9 @@
 
 #ifdef RENDERER_OPENGL
 
+#include "Engine/Application.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLMaterial.h"
+#include "Engine/Renderer/Apis/OpenGL/Material/OpenGLReservedUniformBuffers.h"
 #include "Engine/Renderer/Apis/OpenGL/Material/OpenGLUniform.h"
 #include "Engine/Renderer/Apis/OpenGL/Shader/OpenGLShaderProgram.h"
 #include "Engine/Renderer/Material/ReservedUniformBuffers.h"
@@ -147,13 +149,34 @@ namespace gp1::renderer::opengl
 				return;
 			}
 
+			OpenGLReservedUniformBuffers* reservedUniformBuffers = reinterpret_cast<OpenGLReservedUniformBuffers*>(Application::GetInstance()->GetRenderer()->GetReservedUniformBuffers());
+
+			GLint activeUniformBlockCount;
+			glGetProgramiv(m_ProgramId, GL_ACTIVE_UNIFORM_BLOCKS, &activeUniformBlockCount);
+			for (GLint i = 0; i < activeUniformBlockCount; i++)
+			{
+				GLint nameLength;
+				glGetActiveUniformBlockiv(m_ProgramId, i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLength);
+				GLchar* name = new GLchar[nameLength + 1ULL] { 0 };
+				glGetActiveUniformBlockName(m_ProgramId, i, nameLength, &nameLength, name);
+
+				if (nameLength > 0 && name[0] == 'g')
+				{
+					size_t binding;
+					if (reservedUniformBuffers->GetBinding(name + 1, binding))
+						glUniformBlockBinding(m_ProgramId, i, static_cast<GLuint>(binding));
+				}
+
+				delete[] name;
+			}
+
 			m_UniformBufferInfos.reserve(m_UniformBuffers.size());
 			std::set<GLuint> usedBindings;
 			GLuint           usedBindingsSafeOffset = 0;
 			for (auto& uniformBuffer : m_UniformBuffers)
 			{
 				GLuint index = glGetUniformBlockIndex(m_ProgramId, uniformBuffer.m_Name.data());
-				if (index)
+				if (index != GL_INVALID_INDEX)
 				{
 					GLint bindingVal;
 					glGetActiveUniformBlockiv(m_ProgramId, index, GL_UNIFORM_BLOCK_BINDING, &bindingVal);
