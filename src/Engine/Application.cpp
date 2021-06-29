@@ -114,9 +114,9 @@ layout(location = 0) in vec4 inPosition;
 layout(location = 1) in vec4 inNormal;
 layout(location = 2) in vec2 inUV;
 
-layout(location = 0) out vec4 outNormal;
-layout(location = 1) out vec2 outUV;
-layout(location = 2) out vec3 outToCamera;
+layout(location = 0) out vec4 passNormal;
+layout(location = 1) out vec2 passUV;
+layout(location = 2) out vec3 passToCamera;
 
 layout(std140) uniform gCamera {
 	mat4 Camera_projectionViewMatrix;
@@ -132,17 +132,17 @@ void main(void) {
 	vec4 worldPosition = Object_transformationMatrix * inPosition;
 	gl_Position = Camera_projectionViewMatrix * worldPosition;
 
-	outNormal = Object_transformationMatrix * vec4(inNormal.xyz, 0.0);
-	outUV = inUV;
-	outToCamera = (inverse(Camera_viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+	passNormal = Object_transformationMatrix * vec4(inNormal.xyz, 0.0);
+	passUV = inUV;
+	passToCamera = (inverse(Camera_viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
 }
 )";
 		const char* pFragmentShaderCode = R"(
 #version 410 core
 
-layout(location = 0) in vec4 inNormal;
-layout(location = 1) in vec2 inUV;
-layout(location = 2) in vec3 inToCamera;
+layout(location = 0) in vec4 passNormal;
+layout(location = 1) in vec2 passUV;
+layout(location = 2) in vec3 passToCamera;
 
 layout(location = 0) out vec4 outColor;
 
@@ -153,7 +153,7 @@ uniform Object {
 uniform samplerCube Object_tex;
 
 void main(void) {
-	outColor = texture(Object_tex, normalize(inToCamera));
+	outColor = texture(Object_tex, normalize(passToCamera));
 }
 )";
 
