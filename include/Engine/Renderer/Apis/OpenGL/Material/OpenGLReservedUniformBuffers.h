@@ -20,6 +20,8 @@ namespace gp1::renderer::opengl
 
 		void Bind();
 		void CleanUp();
+
+		bool GetBinding(std::string name, size_t& binding) const;
 	};
 } // namespace gp1::renderer::opengl
 

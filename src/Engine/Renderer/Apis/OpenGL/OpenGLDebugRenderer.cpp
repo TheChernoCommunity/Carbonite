@@ -97,14 +97,16 @@ namespace gp1::renderer::opengl
 	void OpenGLDebugRenderer::Init()
 	{
 		const char* pVertexShaderCode   = R"(
-#version 430 core
+#version 410 core
 
 layout(location = 0) in vec4 inPosition;
 layout(location = 1) in vec4 inNormal;
 layout(location = 2) in vec2 inUV;
 
-layout(std140, binding = 0) uniform Camera {
+layout(std140) uniform gCamera {
 	mat4 Camera_projectionViewMatrix;
+	mat4 Camera_projectionMatrix;
+	mat4 Camera_viewMatrix;
 };
 
 uniform Object {
@@ -117,7 +119,7 @@ void main(void) {
 }
 )";
 		const char* pFragmentShaderCode = R"(
-#version 430 core
+#version 410 core
 
 layout(location = 0) out vec4 outColor;
 
