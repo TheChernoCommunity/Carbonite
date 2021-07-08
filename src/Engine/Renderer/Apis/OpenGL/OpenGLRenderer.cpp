@@ -45,7 +45,7 @@ namespace gp1::renderer::opengl
 
 		glfwDestroyWindow(window);
 
-		return result && GLVersion.major >= 4 && GLVersion.minor >= 3;
+		return result && GLVersion.major >= 4 && GLVersion.minor >= 1;
 	}
 
 	void OpenGLRenderer::SetWindowHints()
@@ -53,7 +53,7 @@ namespace gp1::renderer::opengl
 		window::Window& window = Application::GetInstance()->GetWindow();
 		window.SetWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		window.SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		window.SetWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		window.SetWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
 	}

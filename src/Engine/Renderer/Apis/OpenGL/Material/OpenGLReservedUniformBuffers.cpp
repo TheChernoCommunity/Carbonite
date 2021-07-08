@@ -54,6 +54,21 @@ namespace gp1::renderer::opengl
 			}
 		}
 	}
+
+	bool OpenGLReservedUniformBuffers::GetBinding(std::string name, size_t& binding) const
+	{
+		for (size_t i = 0; i < ReservedUniformBuffers::MaxUniformBufferCount; i++)
+		{
+			auto& uniformBuffer = m_UniformBuffers[i];
+			if (uniformBuffer.m_Name == name)
+			{
+				binding = i;
+				return true;
+			}
+		}
+		binding = 0;
+		return false;
+	}
 } // namespace gp1::renderer::opengl
 
 #endif
