@@ -17,7 +17,7 @@
 #error "IOS is not supported"
 #elif TARGET_OS_MAC == 1
 #define PLATFORM_MACOS
-//#define RENDERER_OPENGL
+#define RENDERER_OPENGL
 #define RENDERER_VULKAN
 #else
 #error "Unknown Apple platform"
