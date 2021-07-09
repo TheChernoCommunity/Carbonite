@@ -55,5 +55,30 @@ return function()
 			'_GLFW_X11'
 		}
 
+	filter 'system:macosx'
+		files {
+			'third_party/glfw/src/cocoa_platform.h', 
+			'third_party/glfw/src/cocoa_joystick.h', 
+			'third_party/glfw/src/posix_thread.h',
+            'third_party/glfw/src/nsgl_context.h', 
+			'third_party/glfw/src/egl_context.h', 
+			'third_party/glfw/src/osmesa_context.h',
+            'third_party/glfw/src/cocoa_init.m', 
+			'third_party/glfw/src/cocoa_joystick.m', 
+			'third_party/glfw/src/cocoa_monitor.m',
+            'third_party/glfw/src/cocoa_window.m', 
+			'third_party/glfw/src/cocoa_time.c', 
+			'third_party/glfw/src/posix_thread.c',
+            'third_party/glfw/src/nsgl_context.m',
+			'third_party/glfw/src/egl_context.c', 
+			'third_party/glfw/src/osmesa_context.c'
+		}
+
+		defines {
+			'_GLFW_COCOA'	
+		}
+
+		links {'Cocoa.framework', 'IOKit.framework', 'CoreFoundation.framework', 'OpenGL.framework'}
+
 	filter { }
 end

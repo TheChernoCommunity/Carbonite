@@ -37,6 +37,15 @@ namespace gp1::renderer::opengl
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+
+#if defined(__APPLE__) // macOS defaults to OpenGL 2.1 although OpenGL 4.1 is available.
+
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+#endif // __APPLE__
+
+
 		GLFWwindow* window = glfwCreateWindow(100, 100, "I'm a cool opengl window", nullptr, nullptr);
 
 		glfwMakeContextCurrent(window);
