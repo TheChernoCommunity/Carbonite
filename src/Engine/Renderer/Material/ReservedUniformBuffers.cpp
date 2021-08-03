@@ -11,6 +11,8 @@ namespace gp1::renderer
 		// TODO(MarcasRealAccount): Maybe move this code somewhere else.
 		m_UniformBuffers[0] = { "Camera", UniformBuffer::Create() };
 		m_UniformBuffers[0].m_UniformBuffer->UpdateUniforms({ { "projectionViewMatrix", EUniformType::FMat4 }, { "projectionMatrix", EUniformType::FMat4 }, { "viewMatrix", EUniformType::FMat4 } });
+		/* m_UniformBuffers[1] = { "Camera2D", UniformBuffer::Create() };
+		m_UniformBuffers[1].m_UniformBuffer->UpdateUniforms({ { "projectionMatrix", EUniformType::FMat4 }, { "windowSize", EUniformType::UVec2 } });*/
 		m_UniformBuffers[1] = { "Reserved2", nullptr };
 		m_UniformBuffers[2] = { "Reserved3", nullptr };
 		m_UniformBuffers[3] = { "Reserved4", nullptr };

@@ -1,0 +1,6 @@
+[Window][01:03:34] Trace: Window was created successfully.
+[Game][01:03:34] Debug: CloseMenu keybind is: 3, on device: 2
+[Game][01:03:34] Debug: OpenMenu keybind is: 3, on device: 2
+[Game][01:03:34] Debug: LookX keybind is: 4, on device: 2
+[Game][01:03:34] Debug: LookY keybind is: 5, on device: 2
+[Window][01:05:45] Trace: Window terminated.

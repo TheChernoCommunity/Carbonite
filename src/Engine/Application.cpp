@@ -123,7 +123,10 @@ layout(std140) uniform gCamera {
 	mat4 Camera_projectionMatrix;
 	mat4 Camera_viewMatrix;
 };
-
+layout(std140) uniform gCamera2D {
+  mat4 Camera2D_projectionMatrix;
+  uvec2 Camera2D_windowSize;
+};
 uniform Object {
 	mat4 Object_transformationMatrix;
 };

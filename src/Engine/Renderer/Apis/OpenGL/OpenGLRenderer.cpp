@@ -197,6 +197,17 @@ namespace gp1::renderer::opengl
 		UniformFMat4* viewMatrixUniform = reservedUniformBuffers->GetUniform<UniformFMat4>("Camera", "viewMatrix");
 		if (viewMatrixUniform && viewMatrixUniform->GetType() == UniformFMat4::GetTypeS())
 			viewMatrixUniform->SetValue(camera->GetTransformationMatrix(true));
+		UniformFMat4* projectionViewMatrixUniform2 = reservedUniformBuffers->GetUniform<UniformFMat4>("Camera2D", "projectionViewMatrix");
+		if (projectionViewMatrixUniform2 && projectionViewMatrixUniform2->GetType() == UniformFMat4::GetTypeS())
+			projectionViewMatrixUniform2->SetValue(camera->GetProjectionViewMatrix());
+
+		UniformFMat4* projectionMatrixUniform2 = reservedUniformBuffers->GetUniform<UniformFMat4>("Camera2D", "projectionMatrix");
+		if (projectionMatrixUniform2 && projectionMatrixUniform2->GetType() == UniformFMat4::GetTypeS())
+			projectionMatrixUniform2->SetValue(camera->GetProjectionMatrix());
+
+		UniformFMat4* viewMatrixUniform2 = reservedUniformBuffers->GetUniform<UniformFMat4>("Camera2D", "viewMatrix");
+		if (viewMatrixUniform2 && viewMatrixUniform2->GetType() == UniformFMat4::GetTypeS())
+			viewMatrixUniform2->SetValue(camera->GetTransformationMatrix(true));
 
 		reservedUniformBuffers->Bind();
 

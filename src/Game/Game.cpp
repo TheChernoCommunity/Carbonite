@@ -8,18 +8,19 @@
 //	space moves up from the camera's perspective and right moves right from the camera's perspective.
 
 #include "Game.h"
-
+#include "World.h"
 #include "Engine/Application.h"
 #include "Engine/Events/KeyboardEvent.h"
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Renderer/DebugRenderer.h"
 #include "Engine/Utility/Locale/LocaleManager.h"
+#include "Engine/Assets/AssetManager.h"
 
 Application* Application::CreateApplication()
 {
 	return new Game();
 }
-
+World world;
 Game::Game()
     : Application(), m_Logger("Game")
 {
@@ -61,11 +62,20 @@ Game::Game()
 	input::AxisInputBinding* lookY = onFoot->CreateAxisInputBinding("lookY", input::axises::gamepadRightTrigger, input::InputLocation::GAMEPAD);
 	lookY->BindCallback(std::bind(&Game::LookCallback, this, std::placeholders::_1));
 	m_Logger.LogDebug("LookY keybind is: %u, on device: %u", lookY->GetIndex(), static_cast<uint32_t>(lookY->GetLocation()));
-
+	
 	gp1::renderer::DebugRenderer::DebugDrawPoint({ 0.0f, 0.0f, -2.0f }, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawSphere({ 0.0f, 0.0f, 2.0f }, 1.0f, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawLine({ -2.0f, 1.0f, -4.0f }, { 2.0f, -1.0f, -2.0f }, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawBox({ 0.0f, 0.0f, -3.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 45.0f, 0.0f }, 9999999999.0f);
+	gp1::renderer::DebugRenderer::DebugDrawBox({ 0.0f, 1.0f, -3.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 14.0f, 0.0f }, 9999999999.0f);
+	gp1::assets::Asset ast = gp1::assets::AssetManager::loadAsset(gp1::assets::AssetType::NormalFile, "<file path here>");
+	
+    for (auto i : gp1::assets::AssetManager::loadedAssets)
+	{
+	   std::cout << i.a_pathToAsset << '\n';
+	}
+	std::cout << ast.ReadAssetFile();
+	world.RenderWorld();
 }
 
 void Game::LookCallback(input::AxisCallbackData data)

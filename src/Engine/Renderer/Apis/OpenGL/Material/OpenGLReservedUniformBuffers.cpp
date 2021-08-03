@@ -13,17 +13,12 @@ namespace gp1::renderer::opengl
 {
 	OpenGLReservedUniformBuffers::OpenGLReservedUniformBuffers()
 	{
-		// INFO(MarcasRealAccount): Set the offsets based on the std140 layout.
-		uint32_t i = 0;
-		for (auto& uniformBuffer : m_UniformBuffers)
-		{
-			if (uniformBuffer.m_UniformBuffer)
-			{
-				OpenGLUniformBuffer* buffer = reinterpret_cast<OpenGLUniformBuffer*>(uniformBuffer.m_UniformBuffer.get());
-				buffer->SetBinding(i++);
-				buffer->SetOffsets({ { "projectionViewMatrix", 0 }, { "projectionMatrix", 64 }, { "viewMatrix", 128 } });
-			}
-		}
+		OpenGLUniformBuffer* cameraBuffer = reinterpret_cast<OpenGLUniformBuffer*>(m_UniformBuffers[0].m_UniformBuffer.get());
+		cameraBuffer->SetBinding(0);
+		cameraBuffer->SetOffsets({ { "projectionViewMatrix", 0 }, { "projectionMatrix", 64 }, { "viewMatrix", 128 } });
+		/*OpenGLUniformBuffer* camera2DBuffer = reinterpret_cast<OpenGLUniformBuffer*>(m_UniformBuffers[1].m_UniformBuffer.get());
+		cameraBuffer->SetBinding(1);
+		camera2DBuffer->SetOffsets({ { "projectionMatrix", 0 }, { "windowSize", 64 } });*/
 	}
 
 	OpenGLReservedUniformBuffers::~OpenGLReservedUniformBuffers()
