@@ -10,3 +10,6 @@
 [submodule "third_party/minimp3_s"]
 	path = third_party/minimp3_s
 	url = https://github.com/lieff/minimp3
+[submodule "third_party/FastNoiseLite"]
+	path = third_party/FastNoiseLite
+	url = https://github.com/Auburn/FastNoiseLite.git

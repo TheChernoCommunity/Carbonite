@@ -15,6 +15,13 @@
 #include "Engine/Renderer/DebugRenderer.h"
 #include "Engine/Utility/Locale/LocaleManager.h"
 
+#include <cmath>
+#include <ctime>
+
+#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+#include "Game/World/World.h"
+#endif
+
 Application* Application::CreateApplication()
 {
 	return new Game();
@@ -36,6 +43,20 @@ Game::Game()
 	playWav->BindCallback(std::bind(&Game::PlayWAVCallback, this, std::placeholders::_1));
 	playMp3->BindCallback(std::bind(&Game::PlayMP3Callback, this, std::placeholders::_1));
 	playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
+#endif
+
+#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+	// Custom world params
+	int          seed              = 0;
+	uint8_t      chunkLoadDiameter = 3;
+	uint8_t      chunkDiameter     = 16;
+	uint8_t      chunkHeight       = 16;
+	uint8_t      oceanLevel        = 7;
+	world::World world(seed, world::WorldType::SuperFlat, chunkLoadDiameter, chunkDiameter, chunkHeight, oceanLevel);
+
+	// Default world (more MC like, more demanding (read near-impossible w/ debug renderer))
+	//uint8_t      oceanLevel = world::World::DEFAULT_OCEAN_LEVEL;
+	//world::World world;
 #endif
 
 	input::InputGroup*         inMenu    = input::InputHandler::GetOrCreateInputGroup("inMenu");
@@ -66,6 +87,56 @@ Game::Game()
 	gp1::renderer::DebugRenderer::DebugDrawSphere({ 0.0f, 0.0f, 2.0f }, 1.0f, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawLine({ -2.0f, 1.0f, -4.0f }, { 2.0f, -1.0f, -2.0f }, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawBox({ 0.0f, 0.0f, -3.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 45.0f, 0.0f }, 9999999999.0f);
+
+#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+	std::vector<world::Chunk*> chunks = world.GetChunks();
+	for (world::Chunk* chunk : chunks)
+	{
+		std::vector<blocks::BlockType> blocks   = chunk->GetBlocks();
+		uint8_t                        diameter = chunk->GetDiameter();
+		uint8_t                        height   = chunk->GetHeight();
+		world::vec2                    chunkPos = chunk->GetPosition();
+
+		//todo(Izodn): Inefficient way of obtaining blocks & location. May fix later
+		for (int x = 0; x < diameter; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				for (int z = 0; z < diameter; z++)
+				{
+					int               rx           = x + chunkPos.x * diameter;
+					int               rz           = z + chunkPos.y * diameter;
+					blocks::BlockType blockType = world.GetBlockAt({ rx, y, rz });
+					glm::fvec4        outlineColor = { 1, 1, 1, 1 };
+
+					if (blockType == blocks::BlockType::Air || blockType == blocks::BlockType::Void)
+					{
+						outlineColor = { 1.0f, 0.0f, 1.0f, 0.025f };
+					}
+					else if (blockType == blocks::BlockType::MoonRock)
+					{
+						outlineColor = { 1, 1, 1, 1 };
+					}
+					else if (blockType == blocks::BlockType::Ocean) // Flat doesn't generate ocean, so this won't get hit
+					{
+						outlineColor = { 0, 0, 255, 0.5 };
+					}
+					else
+					{
+						m_Logger.LogDebug("Shouldn't have hit this. If so, then a block type was unaccounted for.");
+					}
+
+					gp1::renderer::DebugRenderer::DebugDrawBox(
+					    { rx, y - oceanLevel - 1, rz },
+					    { 1.0f, 1.0f, 1.0f },
+					    { 0.0f, 0.0f, 0.0f },
+					    9999999999.0f,
+					    outlineColor);
+				}
+			}
+		}
+	}
+#endif
 }
 
 void Game::LookCallback(input::AxisCallbackData data)
