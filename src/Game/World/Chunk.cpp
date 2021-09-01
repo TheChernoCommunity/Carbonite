@@ -40,7 +40,7 @@ void Chunk::SetBlock(vec3 position, blocks::BlockType block)
 	/*
 	* Example: diameter= 2 height = 3
 	* Formula (BLOCK_IDX_FORMULA) = height * diameter * X + diameter * Y + Z
-	* 
+	*
 	* 0,0,0 = 0 ( 0) [_,0,0,0,0,0,0,0,0,0,0,0] = 3*2*0 + 2*0 + 0 = 0
 	* 0,0,1 = 0 ( 1) [0,_,0,0,0,0,0,0,0,0,0,0] = 3*2*0 + 2*0 + 1 = 1
 	* 0,1,0 = 0 ( 2) [0,0,_,0,0,0,0,0,0,0,0,0] = 3*2*0 + 2*1 + 0 = 2

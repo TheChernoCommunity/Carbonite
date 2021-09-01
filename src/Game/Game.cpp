@@ -16,9 +16,9 @@
 #include "Engine/Utility/Locale/LocaleManager.h"
 
 #include <cmath>
-#include <ctime>
 
-#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+#define DEBUG_WORLD false
+#if DEBUG_WORLD //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
 #include "Game/World/World.h"
 #endif
 
@@ -45,14 +45,32 @@ Game::Game()
 	playFlac->BindCallback(std::bind(&Game::PlayFLACCallback, this, std::placeholders::_1));
 #endif
 
-#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+#if DEBUG_WORLD //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
 	// Custom world params
-	int          seed              = 0;
-	uint8_t      chunkLoadDiameter = 3;
-	uint8_t      chunkDiameter     = 16;
-	uint8_t      chunkHeight       = 16;
-	uint8_t      oceanLevel        = 7;
-	world::World world(seed, world::WorldType::SuperFlat, chunkLoadDiameter, chunkDiameter, chunkHeight, oceanLevel);
+	int              seed              = 0;
+	world::WorldType worldType         = world::WorldType::Standard;
+	uint8_t          chunkLoadDiameter = 12;
+	uint8_t          chunkDiameter     = 16;
+	uint8_t          chunkHeight       = 255;
+	uint8_t          oceanLevel        = 63;
+
+	// Rolling hills
+	uint8_t          minGenHeight      = 127;
+	uint8_t          maxGenHeight      = 23;
+
+	// Plins
+	//uint8_t minGenHeight = oceanLevel + 10;
+	//uint8_t maxGenHeight = oceanLevel - 10;
+
+	world::World world(
+	    seed,
+	    worldType,
+	    chunkLoadDiameter,
+	    chunkDiameter,
+	    chunkHeight,
+	    oceanLevel,
+	    minGenHeight,
+	    maxGenHeight);
 
 	// Default world (more MC like, more demanding (read near-impossible w/ debug renderer))
 	//uint8_t      oceanLevel = world::World::DEFAULT_OCEAN_LEVEL;
@@ -88,7 +106,7 @@ Game::Game()
 	gp1::renderer::DebugRenderer::DebugDrawLine({ -2.0f, 1.0f, -4.0f }, { 2.0f, -1.0f, -2.0f }, 9999999999.0f);
 	gp1::renderer::DebugRenderer::DebugDrawBox({ 0.0f, 0.0f, -3.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 45.0f, 0.0f }, 9999999999.0f);
 
-#if false //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
+#if DEBUG_WORLD //todo(Izodn): Remove this, a game doesn't always have a world (E.g. main menu)
 	std::vector<world::Chunk*> chunks = world.GetChunks();
 	for (world::Chunk* chunk : chunks)
 	{
@@ -100,18 +118,19 @@ Game::Game()
 		//todo(Izodn): Inefficient way of obtaining blocks & location. May fix later
 		for (int x = 0; x < diameter; x++)
 		{
-			for (int y = 0; y < height; y++)
+			for (int z = 0; z < diameter; z++)
 			{
-				for (int z = 0; z < diameter; z++)
+				int rx = x + chunkPos.x * diameter;
+				int rz = z + chunkPos.y * diameter;
+				for (int y = height - 1; y >= 0; y--)
 				{
-					int               rx           = x + chunkPos.x * diameter;
-					int               rz           = z + chunkPos.y * diameter;
-					blocks::BlockType blockType = world.GetBlockAt({ rx, y, rz });
+					blocks::BlockType blockType    = chunk->GetBlock({ x, y, z });
 					glm::fvec4        outlineColor = { 1, 1, 1, 1 };
 
 					if (blockType == blocks::BlockType::Air || blockType == blocks::BlockType::Void)
 					{
-						outlineColor = { 1.0f, 0.0f, 1.0f, 0.025f };
+						continue; // Comment out to render void/air
+						          // outlineColor = { 1.0f, 0.0f, 1.0f, 0.025f }; // Uncomment to render void/air
 					}
 					else if (blockType == blocks::BlockType::MoonRock)
 					{
@@ -132,6 +151,7 @@ Game::Game()
 					    { 0.0f, 0.0f, 0.0f },
 					    9999999999.0f,
 					    outlineColor);
+					break;
 				}
 			}
 		}

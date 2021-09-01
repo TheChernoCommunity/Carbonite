@@ -8,9 +8,7 @@
 #include "Chunk.h"
 #include "WorldType.h"
 #include <Engine/Utility/Logger.h>
-
-// Uncomment when ready for noisy terrain
-//#include <FastNoiseLite.h>
+#include <FastNoiseLite.h>
 
 /// FastNoiseLite
 /// https://github.com/Auburn/FastNoiseLite
@@ -46,7 +44,9 @@ namespace world
 	class Generator
 	{
 	public:
-		Generator(int seed = 0);
+		static const std::uint8_t DEFAULT_MIN_GEN_HEIGHT = 23;
+		static const std::uint8_t DEFAULT_MAX_GEN_HEIGHT = 127;
+		Generator(int seed = 0, uint8_t minGenHeight = DEFAULT_MIN_GEN_HEIGHT, uint8_t maxGenHeight = DEFAULT_MAX_GEN_HEIGHT);
 		ChunkHeightMap GenerateHeightMap(vec2 position, WorldType worldType, uint8_t diameter, uint8_t oceanLevel);
 		void           FillUnderHeightMap(Chunk* chunk, ChunkHeightMap heightMap);
 		Chunk*         GenerateChunkAt(vec2 position, WorldType worldType, uint8_t chunkDiameter, uint8_t chunkHeight, uint8_t oceanLevel);
@@ -55,15 +55,13 @@ namespace world
 
 	protected:
 		ChunkHeightMap GenerateFlatHeightMap(uint8_t diameter, uint8_t oceanLevel);
-
-		//todo(Izodn): Uncomment when ready for noisy terrain
-		//ChunkHeightMap GenerateHeightMapFromNoise(vec2 position, uint8_t diameter);
+		ChunkHeightMap GenerateHeightMapFromNoise(vec2 position, uint8_t diameter);
 
 	private:
-		Logger m_Logger;
-		int    m_Seed;
-
-		//todo(Izodn): Uncomment when ready for noisy terrain
-		//FastNoiseLite m_Noise;
+		Logger        m_Logger;
+		int           m_Seed;
+		uint8_t       m_MinGenHeight;
+		uint8_t       m_MaxGenHeight;
+		FastNoiseLite m_Noise;
 	};
 }; // namespace world

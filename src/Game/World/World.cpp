@@ -9,13 +9,13 @@
 
 using namespace world;
 
-World::World(int seed, WorldType worldType, uint8_t chunkLoadDiameter, uint8_t chunkDiameter, uint8_t chunkHeight, uint8_t oceanLevel)
+World::World(int seed, WorldType worldType, uint8_t chunkLoadDiameter, uint8_t chunkDiameter, uint8_t chunkHeight, uint8_t oceanLevel, uint8_t minGenHeight, uint8_t maxGenHeight)
     : m_Logger("World"), m_WorldType(worldType)
 {
 	m_Logger.LogDebug("World::World: Instantiating world");
 	SetSeed(seed);
 	SetChunkLoadDiameter(chunkLoadDiameter);
-	LoadChunks(chunkDiameter, chunkHeight, oceanLevel);
+	LoadChunks(chunkDiameter, chunkHeight, oceanLevel, minGenHeight, maxGenHeight);
 }
 
 World::~World()
@@ -32,28 +32,28 @@ World::~World()
 
 void World::SetSeed(int seed)
 {
-	//m_Logger.LogDebug("World::SetSeed: Updating old seed %i to %i", m_Seed, seed);
+	m_Logger.LogDebug("World::SetSeed: Updating old seed %i to %i", m_Seed, seed);
 	m_Seed = seed;
 	m_ChunkGenerator.SetSeed(seed);
 }
 
 void World::SetChunkLoadDiameter(uint8_t chunkLoadDiameter)
 {
-	//m_Logger.LogDebug("World::SetChunkLoadDiameter: Updating old seed %i to %i", m_ChunkLoadDiameter, chunkLoadDiameter);
+	m_Logger.LogDebug("World::SetChunkLoadDiameter: Updating old seed %i to %i", m_ChunkLoadDiameter, chunkLoadDiameter);
 	m_ChunkLoadDiameter = chunkLoadDiameter;
 }
 
-void World::LoadChunks(uint8_t chunkDiameter, uint8_t chunkHeight, uint8_t oceanLevel)
+void World::LoadChunks(uint8_t chunkDiameter, uint8_t chunkHeight, uint8_t oceanLevel, uint8_t minGenHeight, uint8_t maxGenHeight)
 {
-	//m_Logger.LogDebug("World::LoadChunks: Loading loading chunks using seed %i and chunk radius %i", m_Seed, m_ChunkLoadDiameter);
-	m_ChunkGenerator = Generator(m_Seed);
+	m_Logger.LogDebug("World::LoadChunks: Loading loading chunks using seed %i and chunk radius %i", m_Seed, m_ChunkLoadDiameter);
+	m_ChunkGenerator = Generator(m_Seed, minGenHeight, maxGenHeight);
 
 	// Create chunks in a diameter around world center.
 	for (auto x = -(m_ChunkLoadDiameter / 2); x <= m_ChunkLoadDiameter / 2; x++)
 	{
 		for (auto y = -(m_ChunkLoadDiameter / 2); y <= m_ChunkLoadDiameter / 2; y++)
 		{
-			//m_Logger.LogDebug("World::LoadChunks: Generating chunk at (%i, %i) with seed %i", x, y, m_Seed);
+			m_Logger.LogDebug("World::LoadChunks: Generating chunk at (%i, %i) with seed %i", x, y, m_Seed);
 			m_Chunks.push_back(m_ChunkGenerator.GenerateChunkAt(vec2(x, y), m_WorldType, chunkDiameter, chunkHeight, oceanLevel));
 		}
 	}
@@ -88,13 +88,13 @@ blocks::BlockType World::GetBlockAt(vec3 position)
 	{
 		return blocks::BlockType::Void;
 	}
-	//m_Logger.LogDebug("Chunk position: %i, %i", chunkPos.x, chunkPos.y);
+	m_Logger.LogDebug("Chunk position: %i, %i", chunkPos.x, chunkPos.y);
 
-	int ox = abs(position.x) % target->GetDiameter();
+	int ox = position.x % target->GetDiameter();
 	int oy = position.y;
-	int oz = abs(position.z) % target->GetDiameter();
+	int oz = position.z % target->GetDiameter();
 
-	//m_Logger.LogDebug("Block position: %i, %i, %i", ox, oy, oz);
+	m_Logger.LogDebug("Block position: %i, %i, %i", ox, oy, oz);
 
 	return target->GetBlock(vec3(ox, oy, oz));
 }

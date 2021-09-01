@@ -21,7 +21,7 @@ function app( name )
 		'third_party/glad/include',
 		'third_party/glm/glm',
 		'third_party/stb',
-		-- 'third_party/FastNoiseLite/Cpp',
+		'third_party/FastNoiseLite/include',
 		--'third_party/openal-soft/include',
 		--'third_party/openal-soft/src',
 		--'third_party/openal-soft/src/common'

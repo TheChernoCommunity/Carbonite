@@ -6,13 +6,15 @@
 
 using namespace world;
 
-Generator::Generator(int seed)
-    : m_Logger("Generator")
+Generator::Generator(int seed, uint8_t minGenHeight, uint8_t maxGenHeight)
+    : m_Logger("Generator"), m_MinGenHeight(minGenHeight), m_MaxGenHeight(maxGenHeight)
 {
 	SetSeed(seed);
 
-	// Uncomment when ready for noisy terrain
-	//m_Noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::Perlin); // Better for Rolling hills
+
+	//m_Noise.SetNoiseType(FastNoiseLite::NoiseType::OpenSimplex2S); // Better for mountains
+	//m_Noise.SetNoiseType(FastNoiseLite::NoiseType::ValueCubic); // Actually pretty good for plains and ocean floor
 };
 
 ChunkHeightMap Generator::GenerateHeightMap(vec2 position, WorldType worldType, uint8_t diameter, uint8_t oceanLevel)
@@ -22,9 +24,8 @@ ChunkHeightMap Generator::GenerateHeightMap(vec2 position, WorldType worldType, 
 	switch (worldType)
 	{
 	default:
-		//todo(Izodn): Uncomment when ready for noisy terrain
-		//case WorldType::Standard:
-		//	return GenerateHeightMapFromNoise(position, diameter); // Uncomment when ready for noisy terrain
+	case WorldType::Standard:
+		return GenerateHeightMapFromNoise(position, diameter);
 
 	case WorldType::SuperFlat:
 		return GenerateFlatHeightMap(diameter, oceanLevel);
@@ -37,6 +38,7 @@ void Generator::FillUnderHeightMap(Chunk* chunk, ChunkHeightMap heightMap)
 	m_Logger.LogDebug("Generator::FillUnderHeightMap: Filling in blocks under heightmap");
 	uint8_t diameter = chunk->GetDiameter();
 	uint8_t height   = chunk->GetHeight();
+	vec2    pos      = chunk->GetPosition();
 	for (size_t x = 0; x < diameter; x++)
 	{
 		for (size_t y = 0; y < height; y++)
@@ -71,9 +73,7 @@ Chunk* Generator::GenerateChunkAt(vec2 position, WorldType worldType, uint8_t ch
 void Generator::SetSeed(int seed)
 {
 	m_Seed = seed;
-
-	//todo(Izodn): Uncomment when ready for noisy terrain
-	//m_Noise.SetSeed(seed);
+	m_Noise.SetSeed(seed);
 }
 
 int Generator::GetSeed() const
@@ -93,33 +93,32 @@ ChunkHeightMap Generator::GenerateFlatHeightMap(uint8_t diameter, uint8_t oceanL
 	return heightMap;
 }
 
-//todo(Izodn): Uncomment when ready for noisy terrain
-//ChunkHeightMap Generator::GenerateHeightMapFromNoise(vec2 position, uint8_t diameter)
-//{
-//	// Gather noise data
-//	ChunkHeightMap noiseData = new float[(size_t) diameter * (size_t) diameter];
-//	int            index     = 0;
-//
-//	for (int x = 0; x < diameter; x++)
-//	{
-//		for (int y = 0; y < diameter; y++)
-//		{
-//			noiseData[index++] = m_Noise.GetNoise((float) position.x * diameter + x, (float) position.x * diameter + y);
-//		}
-//	}
-//
-//	std::string str = "[";
-//	for (int x = 0; x < diameter * diameter; x++)
-//	{
-//		if (x > 0)
-//		{
-//			str.append(",");
-//		}
-//		str.append(std::to_string((double) noiseData[x]));
-//		str.append(" ");
-//	}
-//	str.append("]");
-//	m_Logger.LogDebug(str.c_str());
-//
-//	return noiseData;
-//}
+ChunkHeightMap Generator::GenerateHeightMapFromNoise(vec2 position, uint8_t diameter)
+{
+	m_Logger.LogDebug("Generator::GenerateFlatHeightMap: Generating flat height map");
+	size_t         heightMapSize = static_cast<size_t>(diameter) * static_cast<size_t>(diameter);
+	ChunkHeightMap noiseData     = new uint8_t[heightMapSize];
+	size_t         index         = 0;
+
+	for (int x = 0; x < diameter; x++)
+	{
+		for (int y = 0; y < diameter; y++)
+		{
+			// (C6386) Compiler isn't smart enough to see that index won't get greater than diameter * diameter.
+			if (index >= heightMapSize)
+			{
+				m_Logger.LogError("Hit a situation where index was larger than the heightMapSize. Should never happen.");
+				break;
+			}
+			float   noise       = m_Noise.GetNoise((float) position.x * diameter + x, (float) position.y * diameter + y);
+			uint8_t scaledNoise = static_cast<uint8_t>((m_MaxGenHeight - m_MinGenHeight) / 2 * (noise + 1) + m_MinGenHeight);
+
+			// This likes to throw VS2019 C6386 warning. See reference to C6386 above
+			noiseData[index] = scaledNoise;
+
+			index++;
+		}
+	}
+
+	return noiseData;
+}
