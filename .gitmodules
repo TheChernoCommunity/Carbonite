@@ -10,3 +10,6 @@
 [submodule "ThirdParty/VMA"]
 	path = ThirdParty/VMA
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "ThirdParty/inipp"]
+	path = ThirdParty/inipp
+	url = https://github.com/mcmtroffaes/inipp.git
