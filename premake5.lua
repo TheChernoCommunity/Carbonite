@@ -224,7 +224,8 @@ end
 			"%{wks.location}/ThirdParty/GLFW/include/",
 			"%{wks.location}/ThirdParty/VMA/include/",
 			"%{wks.location}/ThirdParty/ImGUI/",
-			"%{wks.location}/ThirdParty/STB/"
+			"%{wks.location}/ThirdParty/STB/",
+			"%{wks.location}/ThirdParty/inipp/inipp/"
 		})
 
 		includedirs({
