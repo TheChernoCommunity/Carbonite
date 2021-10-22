@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 		// Set window hints
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // INFO (MarcasRealAccount): Disable resizing, enable once the Vulkan Swapchain can be recreated.
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // TODO(MarcasRealAccount): Disable resizing, enable once the Vulkan Swapchain can be recreated.
 
 		// Create window
 		GLFWwindow* windowPtr = glfwCreateWindow(1280, 720, "Carbonite", nullptr, nullptr);

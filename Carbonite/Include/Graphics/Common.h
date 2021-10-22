@@ -19,10 +19,6 @@ namespace Graphics
 		{
 			return m_Version;
 		}
-		//constexpr operator bool() const
-		//{
-		//	return m_Version;
-		//}
 
 	public:
 		union
