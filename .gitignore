@@ -19,3 +19,6 @@ Makefile
 
 # Macos
 *.DS_Store
+
+# Premake
+premake5.exe
