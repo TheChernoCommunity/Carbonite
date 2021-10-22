@@ -9,9 +9,6 @@ newoption({
 	default = "N"
 })
 
-local workspaceName = "VulkanTemplate"
-local programName = "VulkanProgram"
-
 local vulkanSDKPath = os.getenv("VULKAN_SDK")
 if not vulkanSDKPath then
 	local hostOS = os.host()
@@ -52,7 +49,7 @@ workspace("Carbonite")
 
 	filter({})
 	
-	startproject(programName)
+	startproject("Carbonite")
 	
 	group("Dependencies")
 	project("GLFW")
