@@ -175,7 +175,7 @@ end
 			"%{prj.location}/stb_image.h"
 		})
 
-	group("Program")
+	group("Game")
 	project("Carbonite")
 		location("Carbonite/")
 		targetdir("%{wks.location}/Bin/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/")

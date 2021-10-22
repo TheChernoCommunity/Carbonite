@@ -1,0 +1,21 @@
+# Output
+/Bin/
+/Int/
+
+# Visual Studio
+/.vs/
+*.sln
+*.vcxproj
+*.vcxproj.*
+
+# Makefile
+Makefile
+*.Make
+*.mak
+
+# XCode
+*.xcworkspace
+*.xcodeproj/
+
+# Macos
+*.DS_Store
