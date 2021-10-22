@@ -133,9 +133,16 @@ end
 		removedefines({ "NOMINMAX", "WIN32_LEAN_AND_MEAN" })
 
 		includedirs({ "%{prj.location}/include/" })
-		sysincludedirs({
-			"%{wks.location}/Deps/Vulkan/Vulkan-Headers/include/"
-		})
+		filter("system:windows")
+			sysincludedirs({ vulkanSDKPath .. "/Include/" })
+
+		filter("system:linux")
+			sysincludedirs({ vulkanSDKPath .. "/include/" })
+			
+		filter("system:macosx")
+			sysincludedirs({ vulkanSDKPath .. "/include/" })
+		
+		filter({})
 
 		files({
 			"%{prj.location}/include/**",
@@ -191,12 +198,12 @@ end
 		filter("system:windows")
 			libdirs({ vulkanSDKPath .. "/Lib/" })
 			links({ "vulkan-1.lib" })
-			sysincludedirs({ vulkanSDKPath .. "/Include/vulkan/" })
+			sysincludedirs({ vulkanSDKPath .. "/Include/" })
 
 		filter("system:linux")
 			libdirs({ vulkanSDKPath .. "/lib/" })
 			links({ "libvulkan.so.1" })
-			sysincludedirs({ vulkanSDKPath .. "/include/vulkan/" })
+			sysincludedirs({ vulkanSDKPath .. "/include/" })
 			
 		filter("system:macosx")
 			libdirs({ vulkanSDKPath .. "/lib/" })
@@ -207,7 +214,7 @@ end
 				"AppKit.framework"
 				--, "OpenGL.framework" -- Not sure if this is needed, so I'll keep it out for now
 			})
-			sysincludedirs({ vulkanSDKPath .. "/include/vulkan/" })
+			sysincludedirs({ vulkanSDKPath .. "/include/" })
 		
 		filter({})
 		
@@ -222,8 +229,8 @@ end
 		})
 
 		includedirs({
-			"%{prj.location}/inc",
-			"%{prj.location}/src"
+			"%{prj.location}/Include/",
+			"%{prj.location}/Source/"
 		})
 
 		files({ "%{prj.location}/**" })
