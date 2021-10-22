@@ -15,7 +15,7 @@ namespace Graphics
 	public:
 		std::string m_Name;
 		Version     m_Version;
-		bool        m_Required = true;
+		bool        m_Required;
 	};
 
 	using InstanceExtension = InstanceLayer;

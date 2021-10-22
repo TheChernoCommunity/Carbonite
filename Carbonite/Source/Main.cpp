@@ -1,3 +1,5 @@
+#include "Graphics/Debug.h"
+#include "Graphics/Device.h"
 #include "Graphics/Instance.h"
 
 #include <GLFW/glfw3.h>
@@ -36,19 +38,11 @@ int main(int argc, char** argv)
 		// Create Graphics Instance
 		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
 
-#ifdef _DEBUG
-		instance.requestLayer("VK_LAYER_KHRONOS_validation", { 0 }, false);
-#endif
-
 		std::uint32_t glfwExtensionCount;
 		const char**  glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
 		for (std::size_t i = 0; i < glfwExtensionCount; ++i)
 			instance.requestExtension(glfwExtensions[i]);
-
-#ifdef _DEBUG
-		instance.requestExtension("VK_EXT_debug_utils", { 0 }, false);
-#endif
 
 		if (!instance.create())
 		{
@@ -77,6 +71,22 @@ int main(int argc, char** argv)
 				throw std::runtime_error("Failed to create vulkan instance");
 			}
 		}
+
+		// Create debug if enabled
+		Graphics::Debug debug = { instance };
+		if (Graphics::Debug::IsEnabled())
+			debug.create();
+
+		// Create Graphics Device
+		Graphics::Device device = { instance };
+
+		device.requestExtension("VK_KHR_swapchain");
+
+		if (!device.create())
+			throw std::runtime_error("Found no suitable vulkan device");
+
+		// Because the system is very automatic we have no need to destroy anything other than the Graphics Instance, that is if we don't need to do temporary stuff :D
+		// But it will also auto destroy itself if we leave the scope. But since we have to manually destroy glfw, we have to manually call destroy before we destroy the window.
 
 		// Destroy Graphics Instance
 		instance.destroy();

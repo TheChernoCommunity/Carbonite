@@ -15,21 +15,14 @@ namespace Graphics
 		constexpr Version(std::uint32_t version);
 		constexpr Version(std::uint32_t variant, std::uint32_t major, std::uint32_t minor, std::uint32_t patch);
 
-		friend constexpr bool operator==(Version lhs, Version rhs);
-		friend constexpr bool operator!=(Version lhs, Version rhs);
-		friend constexpr bool operator<(Version lhs, Version rhs);
-		friend constexpr bool operator>(Version lhs, Version rhs);
-		friend constexpr bool operator<=(Version lhs, Version rhs);
-		friend constexpr bool operator>=(Version lhs, Version rhs);
-
 		constexpr operator std::uint32_t() const
 		{
 			return m_Version;
 		}
-		constexpr operator bool() const
-		{
-			return m_Version;
-		}
+		//constexpr operator bool() const
+		//{
+		//	return m_Version;
+		//}
 
 	public:
 		union
@@ -78,6 +71,8 @@ namespace Graphics
 		using HandleT = HandleType;
 
 	public:
+		Handle(const std::vector<HandleBase*>& parents = {});
+
 		virtual bool create() override;
 		virtual void destroy() override;
 
@@ -89,7 +84,11 @@ namespace Graphics
 		{
 			return Destroyable;
 		}
-		HandleT& getHandle() const
+		HandleT& getHandle()
+		{
+			return m_Handle;
+		}
+		const HandleT& getHandle() const
 		{
 			return m_Handle;
 		}
@@ -120,37 +119,13 @@ namespace Graphics
 	constexpr Version::Version(std::uint32_t variant, std::uint32_t major, std::uint32_t minor, std::uint32_t patch)
 	    : m_Variant(variant), m_Major(major), m_Minor(minor), m_Patch(patch) {}
 
-	constexpr bool operator==(Version lhs, Version rhs)
-	{
-		return lhs.m_Version == rhs.m_Version;
-	}
-
-	constexpr bool operator!=(Version lhs, Version rhs)
-	{
-		return lhs.m_Version != rhs.m_Version;
-	}
-
-	constexpr bool operator<(Version lhs, Version rhs)
-	{
-		return lhs.m_Version < rhs.m_Version;
-	}
-
-	constexpr bool operator>(Version lhs, Version rhs)
-	{
-		return lhs.m_Version > rhs.m_Version;
-	}
-
-	constexpr bool operator<=(Version lhs, Version rhs)
-	{
-		return lhs.m_Version <= rhs.m_Version;
-	}
-
-	constexpr bool operator>=(Version lhs, Version rhs)
-	{
-		return lhs.m_Version >= rhs.m_Version;
-	}
-
 	/* template <class HandleType, bool Destroyable> struct Handle */
+
+	template <class HandleType, bool Destroyable>
+	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents)
+	    : HandleBase(parents)
+	{
+	}
 
 	template <class HandleType, bool Destroyable>
 	bool Handle<HandleType, Destroyable>::create()

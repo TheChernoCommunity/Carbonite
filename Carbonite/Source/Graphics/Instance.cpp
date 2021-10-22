@@ -1,4 +1,5 @@
 #include "Graphics/Instance.h"
+#include "Graphics/Debug.h"
 
 #include <utility>
 
@@ -200,6 +201,39 @@ namespace Graphics
 				m_MissingExtensions.push_back(extension);
 		}
 
+		if (Debug::IsEnabled())
+		{
+			bool found = false;
+			for (auto& availLayer : s_CachedAvailableLayers)
+			{
+				if (availLayer.m_Name == "VK_LAYER_KHRONOS_validation")
+				{
+					m_EnabledLayers.push_back(availLayer);
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				Debug::Disable();
+			}
+			else
+			{
+				found = false;
+				for (auto& availExtension : s_CachedAvailableExtensions)
+				{
+					if (availExtension.m_Name == "VK_EXT_debug_utils")
+					{
+						m_EnabledExtensions.push_back(availExtension);
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					Debug::Disable();
+			}
+		}
+
 		if (!m_MissingLayers.empty() || !m_MissingExtensions.empty())
 			return;
 
@@ -225,6 +259,14 @@ namespace Graphics
 		vk::ApplicationInfo appInfo = { m_AppName.c_str(), m_AppVersion, m_EngineName.c_str(), m_EngineVersion, instanceVersion };
 
 		vk::InstanceCreateInfo createInfo = { {}, &appInfo, useLayers, useExtensions };
+
+		vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+
+		if (Debug::IsEnabled())
+		{
+			Debug::PopulateCreateInfo(debugCreateInfo);
+			createInfo.pNext = &debugCreateInfo;
+		}
 
 		m_Handle = vk::createInstance(createInfo);
 	}
