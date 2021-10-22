@@ -22,7 +22,7 @@ Excellent, you've got a local copy of this repository. Now you need to build the
 
 Changes committed and pushed? Great! Create a *Pull Request* by going to the "Pull Requests" tab in GitHub. This allows others to review your code, and maybe ask you to make changes if needed. If all goes well your changes will be *merged*, and you will see them appear in the main repository.
 
-## <img src="https://premake.github.io/premake-logo.png" width=32 /> Premake
+## <img src="https://premake.github.io/img/premake-logo.png" width=32 /> Premake
 This project uses Premake for project configuration. ([What is Premake?](https://github.com/premake/premake-core/wiki/What-Is-Premake))</br>
 You can get the latest version [here](https://premake.github.io/download)! Make sure you have it in your PATH or in the project root directory.
 
