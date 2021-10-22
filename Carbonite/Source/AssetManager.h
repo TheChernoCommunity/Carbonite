@@ -4,11 +4,18 @@
 
 enum class ShaderType
 {
-	Fragment,
 	Vertex,
-	Compute, // Currently unsupported.
-	Geometry, // Currently unsupported.
-	Pixel // Currently unsupported.
+  TessellationControl, // Currently unsupported.
+  TessellationEvaluation, // Currently unsupported.
+  Geometry, // Currently unsupported.
+  Fragment,
+  Compute, // Currently unsupported.
+  RTRayGen, // Currently unsupported.
+  RTAnyHit, // Currently unsupported.
+  RTClosestHit, // Currently unsupported.
+  RTMiss, // Currently unsupported.
+  RTIntersection, // Currently unsupported.
+  RTCallable // Currently unsupported.
 };
 
 enum class CarboniteAssetType
