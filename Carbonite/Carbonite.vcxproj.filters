@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\STB.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Includes">
+      <UniqueIdentifier>{26456fcc-ad2f-475d-ac48-e185b724518c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Includes\AssetManager">
+      <UniqueIdentifier>{14338453-c504-4a18-9b34-feecac6d9518}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AssetManager.h">
+      <Filter>Includes\AssetManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
