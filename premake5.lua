@@ -1,3 +1,5 @@
+require("Premake/cleanAction")
+
 newoption({
 	trigger = "glfw_use_wayland",
 	description = "Should glfw use wayland for linux build",
