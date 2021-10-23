@@ -1,5 +1,7 @@
-#include "Graphics/Device.h"
+#include <array>
+
 #include "Graphics/Debug/Debug.h"
+#include "Graphics/Device.h"
 
 namespace Graphics
 {
@@ -140,6 +142,22 @@ namespace Graphics
 			}
 			if (missingExtensions) continue;
 
+			// Check if the physical device supports a graphics queue, if not move on to the next physical device. If so
+			auto queueFamilyProperties = physicalDevice.getQueueFamilyProperties();
+
+			bool foundGraphicsFamily = false;
+
+			for (const auto& queueFamilyProperty : queueFamilyProperties)
+			{
+				if (queueFamilyProperty.queueFlags | vk::QueueFlagBits::eGraphics)
+				{
+					foundGraphicsFamily = true;
+					break;
+				}
+			}
+
+			if (!foundGraphicsFamily) continue;
+
 			auto                  properties = physicalDevice.getProperties();
 			[[maybe_unused]] auto features   = physicalDevice.getFeatures(); // TODO(MarcasRealAccount): Unused for now, implement feature check for required and wanted features.
 
@@ -234,7 +252,23 @@ namespace Graphics
 			}
 		}
 
-		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
+		auto queueFamilyProperties = m_PhysicalDevice.getQueueFamilyProperties();
+
+		for (unsigned i = 0; i < queueFamilyProperties.size(); i++)
+		{
+			if (queueFamilyProperties[0].queueFlags | vk::QueueFlagBits::eGraphics)
+			{
+				m_queues.graphicsFamilyIndex = i;
+				break;
+			}
+		}
+
+		std::array<float, 1> queuePriorities = { 1 };
+
+		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos = { vk::DeviceQueueCreateInfo()
+			                                                            .setQueueFamilyIndex(m_queues.graphicsFamilyIndex)
+			                                                            .setQueueCount(1)
+			                                                            .setQueuePriorities(queuePriorities) };
 		vk::PhysicalDeviceFeatures             enabledFeatures;
 
 		std::vector<const char*> useLayers(m_EnabledLayers.size());
@@ -258,7 +292,8 @@ namespace Graphics
 
 		vk::DeviceCreateInfo createInfo = { {}, queueCreateInfos, useLayers, useExtensions, &enabledFeatures };
 
-		m_Handle = m_PhysicalDevice.createDevice(createInfo);
+		m_Handle               = m_PhysicalDevice.createDevice(createInfo);
+		m_queues.graphicsQueue = m_Handle.getQueue(m_queues.graphicsFamilyIndex, 0);
 	}
 
 	bool Device::destroyImpl()

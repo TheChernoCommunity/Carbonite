@@ -102,7 +102,9 @@ namespace Graphics
 
 	void CommandPool::createImpl()
 	{
-		vk::CommandPoolCreateInfo createInfo = { {}, 0 /* queue.getQueueFamily() */ };
+		vk::CommandPoolCreateInfo createInfo;
+
+		createInfo.setQueueFamilyIndex(m_Device->getQueues().graphicsFamilyIndex);
 
 		m_Handle = m_Device->getHandle().createCommandPool(createInfo);
 	}
