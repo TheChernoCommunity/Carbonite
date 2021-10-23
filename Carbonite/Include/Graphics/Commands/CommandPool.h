@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Device.h"
+#include "Graphics/Device.h"
 
 namespace Graphics
 {

@@ -1,8 +1,9 @@
-#include "Graphics/CommandPool.h"
+#include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Surface.h"
+#include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
 #include "Log.h"
@@ -54,6 +55,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
+
+		Graphics::Swapchain swapchain = { device };
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -137,6 +140,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			if (!iff.create())
 				throw std::runtime_error("Failed to create vulkan fence");
 		}
+
+		// Create swapchain
+		if (!swapchain.create())
+			throw std::runtime_error("Failed to create vulkan swapchain");
 
 		while (!glfwWindowShouldClose(windowPtr))
 		{

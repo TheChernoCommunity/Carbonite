@@ -66,6 +66,7 @@ namespace Graphics
 
 	public:
 		Handle(const std::vector<HandleBase*>& parents = {});
+		Handle(const std::vector<HandleBase*>& parents, HandleT handle);
 
 		virtual bool create() override;
 		virtual void destroy() override;
@@ -80,7 +81,7 @@ namespace Graphics
 		}
 		virtual bool isDestroyable() const override
 		{
-			return Destroyable;
+			return Destroyable && m_Destroyable;
 		}
 		HandleT& getHandle()
 		{
@@ -96,13 +97,14 @@ namespace Graphics
 		virtual bool destroyImpl() = 0;
 
 	protected:
-		HandleT m_Handle = nullptr;
+		HandleT m_Handle   = nullptr;
+		bool    m_Recreate = false;
 
 	private:
 		std::vector<HandleBase*> m_DestroyedChildren;
 
-		bool m_Created  = false;
-		bool m_Recreate = false;
+		bool m_Created = false;
+		bool m_Destroyable;
 	};
 
 	/* Implementation */
@@ -122,7 +124,13 @@ namespace Graphics
 
 	template <class HandleType, bool Destroyable>
 	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents)
-	    : HandleBase(parents)
+	    : HandleBase(parents), m_Destroyable(true)
+	{
+	}
+
+	template <class HandleType, bool Destroyable>
+	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents, HandleT handle)
+	    : HandleBase(parents), m_Handle(handle), m_Destroyable(false)
 	{
 	}
 
@@ -172,7 +180,7 @@ namespace Graphics
 		}
 
 		if constexpr (Destroyable)
-			if (m_Handle && destroyImpl())
+			if (m_Destroyable && m_Handle && destroyImpl())
 				m_Handle = nullptr;
 		m_Created = false;
 	}
