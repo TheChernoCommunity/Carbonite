@@ -1,4 +1,4 @@
-#include "Graphics/Debug.h"
+#include "Graphics/Debug/Debug.h"
 
 #include <iostream>
 

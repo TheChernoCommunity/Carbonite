@@ -1,5 +1,5 @@
 #include "Graphics/Device.h"
-#include "Graphics/Debug.h"
+#include "Graphics/Debug/Debug.h"
 
 namespace Graphics
 {
