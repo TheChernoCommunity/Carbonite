@@ -37,7 +37,7 @@ namespace Graphics::Sync
 	}
 
 	Fence::Fence(Device& device)
-	    : m_Device(&device), Handle({ &device })
+	    : Handle({ &device }), m_Device(&device)
 	{
 	}
 

@@ -3,7 +3,7 @@
 namespace Graphics
 {
 	CommandBuffer::CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level)
-	    : m_Pool(&pool), m_Level(level), Handle({ &pool })
+	    : Handle({ &pool }), m_Pool(&pool), m_Level(level)
 	{
 		m_Handle = handle;
 	}
@@ -35,7 +35,7 @@ namespace Graphics
 	}
 
 	CommandPool::CommandPool(Device& device /*, Queue& queue */)
-	    : m_Device(&device), /* m_Queue(&queue), */ Handle({ &device /*, &queue */ })
+	    : Handle({ &device /*, &queue */ }), m_Device(&device) /*, m_Queue(&queue) */
 	{
 	}
 

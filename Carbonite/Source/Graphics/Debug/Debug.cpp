@@ -71,7 +71,7 @@ namespace Graphics
 	}
 
 	Debug::Debug(Instance& instance)
-	    : m_Instance(&instance), Handle({ &instance })
+	    : Handle({ &instance }), m_Instance(&instance)
 	{
 	}
 
