@@ -177,9 +177,7 @@ end
 
 	project("STB")
 		location("ThirdParty/STB/")
-		kind("StaticLib")
-		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
-		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
+		kind("Utility")
 		
 		warnings("Off")
 
