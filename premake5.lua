@@ -177,9 +177,7 @@ end
 
 	project("STB")
 		location("ThirdParty/STB/")
-		kind("StaticLib")
-		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
-		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
+		kind("Utility")
 		
 		warnings("Off")
 
@@ -206,18 +204,25 @@ end
 
 		filter("system:windows")
 			libdirs({ vulkanSDKPath .. "/Lib/" })
-			links({ "vulkan-1.lib" })
+			links({
+				"vulkan-1.lib",
+				"glslang.lib"
+			})
 			sysincludedirs({ vulkanSDKPath .. "/Include/" })
 
 		filter("system:linux")
 			libdirs({ vulkanSDKPath .. "/lib/" })
-			links({ "libvulkan.so.1" })
+			links({
+				"libvulkan.so.1",
+				"libglslang.a"
+			})
 			sysincludedirs({ vulkanSDKPath .. "/include/" })
 			
 		filter("system:macosx")
 			libdirs({ vulkanSDKPath .. "/lib/" })
 			links({
 				"libvulkan.1.dylib",
+				"libglslang.a",
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
