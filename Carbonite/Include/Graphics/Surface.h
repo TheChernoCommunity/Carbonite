@@ -27,7 +27,7 @@ namespace Graphics
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
-	protected:
+	private:
 		Instance*   m_Instance;
 		GLFWwindow* m_Window;
 	};
