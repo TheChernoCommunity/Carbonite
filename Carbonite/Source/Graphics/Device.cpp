@@ -263,10 +263,13 @@ namespace Graphics
 
 		for (unsigned i = 0; i < queueFamilyProperties.size(); i++)
 		{
-			if (queueFamilyProperties[0].queueFlags | vk::QueueFlagBits::eGraphics)
+			if (queueFamilyProperties[i].queueFlags | vk::QueueFlagBits::eGraphics)
 			{
 				m_queues.graphicsFamilyIndex = i;
-				break;
+			}
+			if (m_PhysicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle()))
+			{
+				m_queues.presentFamilyIndex = i;
 			}
 		}
 
@@ -276,7 +279,16 @@ namespace Graphics
 			                                                            .setQueueFamilyIndex(m_queues.graphicsFamilyIndex)
 			                                                            .setQueueCount(1)
 			                                                            .setQueuePriorities(queuePriorities) };
-		vk::PhysicalDeviceFeatures             enabledFeatures;
+
+		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
+		{
+			queueCreateInfos.push_back(vk::DeviceQueueCreateInfo()
+			                               .setQueueFamilyIndex(m_queues.presentFamilyIndex)
+			                               .setQueueCount(1)
+			                               .setQueuePriorities(queuePriorities));
+		}
+
+		vk::PhysicalDeviceFeatures enabledFeatures;
 
 		std::vector<const char*> useLayers(m_EnabledLayers.size());
 		std::vector<const char*> useExtensions(m_EnabledExtensions.size());
@@ -301,6 +313,12 @@ namespace Graphics
 
 		m_Handle               = m_PhysicalDevice.createDevice(createInfo);
 		m_queues.graphicsQueue = m_Handle.getQueue(m_queues.graphicsFamilyIndex, 0);
+		m_queues.presentQueue  = m_queues.graphicsQueue;
+
+		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
+		{
+			m_queues.presentQueue = m_Handle.getQueue(m_queues.presentFamilyIndex, 0);
+		}
 	}
 
 	bool Device::destroyImpl()
