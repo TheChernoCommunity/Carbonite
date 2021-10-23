@@ -140,8 +140,8 @@ namespace Graphics
 			}
 			if (missingExtensions) continue;
 
-			auto properties = physicalDevice.getProperties();
-			auto features   = physicalDevice.getFeatures(); // TODO(MarcasRealAccount): Unused for now, implement feature check for required and wanted features.
+			auto                  properties = physicalDevice.getProperties();
+			[[maybe_unused]] auto features   = physicalDevice.getFeatures(); // TODO(MarcasRealAccount): Unused for now, implement feature check for required and wanted features.
 
 			switch (properties.deviceType)
 			{
