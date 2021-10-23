@@ -59,6 +59,8 @@ workspace("Carbonite")
 		kind("StaticLib")
 		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
+		
+		warnings("Off")
 
 		includedirs({ "%{prj.location}/include/" })
 
@@ -130,6 +132,8 @@ end
 		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		removedefines({ "NOMINMAX", "WIN32_LEAN_AND_MEAN" })
+		
+		warnings("Off")
 
 		includedirs({ "%{prj.location}/include/" })
 		filter("system:windows")
@@ -154,6 +158,8 @@ end
 		kind("StaticLib")
 		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
+		
+		warnings("Off")
 
 		includedirs({ "%{prj.location}/" })
 
@@ -174,6 +180,8 @@ end
 		kind("StaticLib")
 		targetdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
+		
+		warnings("Off")
 
 		includedirs({ "%{prj.location}/include/" })
 
@@ -187,6 +195,8 @@ end
 		targetdir("%{wks.location}/Bin/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/")
 		objdir("%{wks.location}/Int/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{prj.name}/")
 		debugdir("%{prj.location}/")
+		
+		warnings("Extra")
 
 		filter("configurations:Debug")
 			kind("ConsoleApp")
@@ -211,7 +221,6 @@ end
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
-				--, "OpenGL.framework" -- Not sure if this is needed, so I'll keep it out for now
 			})
 			sysincludedirs({ vulkanSDKPath .. "/include/" })
 		

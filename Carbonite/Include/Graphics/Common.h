@@ -8,7 +8,7 @@
 
 namespace Graphics
 {
-	struct Version
+	union Version
 	{
 	public:
 		constexpr Version();
@@ -21,17 +21,14 @@ namespace Graphics
 		}
 
 	public:
-		union
+		struct SubVersions
 		{
-			struct
-			{
-				std::uint32_t m_Patch : 12;
-				std::uint32_t m_Minor : 10;
-				std::uint32_t m_Major : 7;
-				std::uint32_t m_Variant : 3;
-			};
-			std::uint32_t m_Version;
-		};
+			std::uint32_t patch : 12;
+			std::uint32_t minor : 10;
+			std::uint32_t major : 7;
+			std::uint32_t variant : 3;
+		} m_SubVersions;
+		std::uint32_t m_Version;
 	};
 
 	struct HandleBase
@@ -113,7 +110,7 @@ namespace Graphics
 	    : m_Version(version) {}
 
 	constexpr Version::Version(std::uint32_t variant, std::uint32_t major, std::uint32_t minor, std::uint32_t patch)
-	    : m_Variant(variant), m_Major(major), m_Minor(minor), m_Patch(patch) {}
+	    : m_SubVersions({ patch, minor, major, variant }) {}
 
 	/* template <class HandleType, bool Destroyable> struct Handle */
 

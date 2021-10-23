@@ -6,8 +6,8 @@ namespace Graphics
 	DeviceLayer::DeviceLayer(std::string_view name, Version version, bool required)
 	    : m_Name(name), m_Version(version), m_Required(required) {}
 
-	Device::Device(Instance& instance)
-	    : m_Instance(&instance), Handle({ &instance })
+	Device::Device(Surface& surface)
+	    : m_Surface(&surface), Handle({ &surface })
 	{
 	}
 
@@ -71,8 +71,9 @@ namespace Graphics
 
 	void Device::createImpl()
 	{
-		auto& instanceHandle  = m_Instance->getHandle();
-		auto  physicalDevices = instanceHandle.enumeratePhysicalDevices();
+		[[maybe_unused]] auto& surfaceHandle   = m_Surface->getHandle();
+		auto&                  instanceHandle  = m_Surface->getInstance()->getHandle();
+		auto                   physicalDevices = instanceHandle.enumeratePhysicalDevices();
 
 		vk::PhysicalDevice bestPhysicalDevice = nullptr;
 		std::size_t        bestScore          = 0;

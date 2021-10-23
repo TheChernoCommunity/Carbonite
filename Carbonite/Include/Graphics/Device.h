@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "Surface.h"
 
 namespace Graphics
 {
@@ -20,7 +20,7 @@ namespace Graphics
 	struct Device : public Handle<vk::Device>
 	{
 	public:
-		Device(Instance& instance);
+		Device(Surface& surface);
 		~Device();
 
 		void requestLayer(std::string_view name, Version requiredVersion = {}, bool required = true);
@@ -29,9 +29,9 @@ namespace Graphics
 		Version getLayerVersion(std::string_view name) const;
 		Version getExtensionVersion(std::string_view name) const;
 
-		auto getInstance() const
+		auto getSurface() const
 		{
-			return m_Instance;
+			return m_Surface;
 		}
 		auto& getPhysicalDevice() const
 		{
@@ -65,7 +65,7 @@ namespace Graphics
 		std::vector<DeviceExtension> m_EnabledExtensions;
 
 	private:
-		Instance* m_Instance;
+		Surface* m_Surface;
 
 		vk::PhysicalDevice m_PhysicalDevice = nullptr;
 

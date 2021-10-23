@@ -1,6 +1,7 @@
 #include "Graphics/Debug.h"
 #include "Graphics/Device.h"
 #include "Graphics/Instance.h"
+#include "Graphics/Surface.h"
 
 #include <GLFW/glfw3.h>
 
@@ -9,7 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 
-int main(int argc, char** argv)
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	try
 	{
@@ -37,6 +38,9 @@ int main(int argc, char** argv)
 
 		// Create Graphics Instance
 		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
+		Graphics::Debug    debug    = { instance };
+		Graphics::Surface  surface  = { instance, windowPtr };
+		Graphics::Device   device   = { surface };
 
 		std::uint32_t glfwExtensionCount;
 		const char**  glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -55,14 +59,14 @@ int main(int argc, char** argv)
 				{
 					str << "Missing " << missingLayers.size() << " instance layers:";
 					for (auto& layer : missingLayers)
-						str << "\n  " << layer.m_Name << " with version: " << layer.m_Version.m_Variant << '.' << layer.m_Version.m_Major << '.' << layer.m_Version.m_Minor << '.' << layer.m_Version.m_Patch;
+						str << "\n  " << layer.m_Name << " with version: " << layer.m_Version.m_SubVersions.variant << '.' << layer.m_Version.m_SubVersions.major << '.' << layer.m_Version.m_SubVersions.minor << '.' << layer.m_Version.m_SubVersions.patch;
 				}
 
 				if (!missingExtensions.empty())
 				{
 					str << "Missing " << missingExtensions.size() << " instance extensions:";
 					for (auto& extension : missingExtensions)
-						str << "\n  " << extension.m_Name << " with version: " << extension.m_Version.m_Variant << '.' << extension.m_Version.m_Major << '.' << extension.m_Version.m_Minor << '.' << extension.m_Version.m_Patch;
+						str << "\n  " << extension.m_Name << " with version: " << extension.m_Version.m_SubVersions.variant << '.' << extension.m_Version.m_SubVersions.major << '.' << extension.m_Version.m_SubVersions.minor << '.' << extension.m_Version.m_SubVersions.patch;
 				}
 				throw std::runtime_error(str.str());
 			}
@@ -73,13 +77,13 @@ int main(int argc, char** argv)
 		}
 
 		// Create debug if enabled
-		Graphics::Debug debug = { instance };
 		if (Graphics::Debug::IsEnabled())
 			debug.create();
 
-		// Create Graphics Device
-		Graphics::Device device = { instance };
+		if (!surface.create())
+			throw std::runtime_error("Failed to create vulkan surface");
 
+		// Create Graphics Device
 		device.requestExtension("VK_KHR_swapchain");
 
 		if (!device.create())
@@ -108,7 +112,7 @@ int main(int argc, char** argv)
 #undef APIENTRY
 #include <Windows.h>
 
-int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+int WinMain([[maybe_unused]] _In_ HINSTANCE hInstance, [[maybe_unused]] _In_opt_ HINSTANCE hPrevInstance, [[maybe_unused]] _In_ LPSTR lpCmdLine, [[maybe_unused]] _In_ int nShowCmd)
 {
 	return main(__argc, __argv);
 }
