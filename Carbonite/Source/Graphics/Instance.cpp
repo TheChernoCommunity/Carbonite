@@ -1,5 +1,5 @@
 #include "Graphics/Instance.h"
-#include "Graphics/Debug.h"
+#include "Graphics/Debug/Debug.h"
 
 #include <utility>
 

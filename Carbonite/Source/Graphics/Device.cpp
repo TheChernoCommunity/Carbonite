@@ -1,5 +1,5 @@
 #include "Graphics/Device.h"
-#include "Graphics/Debug.h"
+#include "Graphics/Debug/Debug.h"
 
 namespace Graphics
 {
@@ -7,7 +7,7 @@ namespace Graphics
 	    : m_Name(name), m_Version(version), m_Required(required) {}
 
 	Device::Device(Surface& surface)
-	    : m_Surface(&surface), Handle({ &surface })
+	    : Handle({ &surface }), m_Surface(&surface)
 	{
 	}
 

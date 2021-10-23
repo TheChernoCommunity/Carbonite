@@ -1,8 +1,10 @@
 #include "Graphics/CommandPool.h"
-#include "Graphics/Debug.h"
+#include "Graphics/Debug/Debug.h"
 #include "Graphics/Device.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Surface.h"
+#include "Graphics/Sync/Fence.h"
+#include "Graphics/Sync/Semaphore.h"
 
 #include <GLFW/glfw3.h>
 
@@ -45,10 +47,23 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Surface  surface  = { instance, windowPtr };
 		Graphics::Device   device   = { surface };
 
-		std::vector<Graphics::CommandPool> commandPools;
+		std::vector<Graphics::CommandPool>     commandPools;
+		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
+		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
+		std::vector<Graphics::Sync::Fence>     inFlightFences;
+
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
 			commandPools.emplace_back(device /*, queue */);
+		imageAvailableSemaphores.reserve(MaxFramesInFlight);
+		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
+			imageAvailableSemaphores.emplace_back(device);
+		renderFinishedSemaphores.reserve(MaxFramesInFlight);
+		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
+			renderFinishedSemaphores.emplace_back(device);
+		inFlightFences.reserve(MaxFramesInFlight);
+		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
+			inFlightFences.emplace_back(device);
 
 		std::uint32_t glfwExtensionCount;
 		const char**  glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -97,7 +112,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
 
-		// Create Graphics Command Pools
+		// Create Graphics Command Pools and frame sync objects
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
 		{
 			auto& commandPool = commandPools[i];
@@ -105,6 +120,19 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 				throw std::runtime_error("Failed to create vulkan command pool");
 
 			commandPool.allocateBuffers(vk::CommandBufferLevel::ePrimary, 1);
+
+			auto& ias = imageAvailableSemaphores[i];
+			if (!ias.create())
+				throw std::runtime_error("Failed to create vulkan semaphore");
+
+			auto& rfs = renderFinishedSemaphores[i];
+			if (!rfs.create())
+				throw std::runtime_error("Failed to create vulkan semaphore");
+
+			auto& iff = inFlightFences[i];
+			iff.setSignaled();
+			if (!iff.create())
+				throw std::runtime_error("Failed to create vulkan fence");
 		}
 
 		while (!glfwWindowShouldClose(windowPtr))

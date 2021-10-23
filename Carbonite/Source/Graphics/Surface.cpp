@@ -5,7 +5,7 @@
 namespace Graphics
 {
 	Surface::Surface(Instance& instance, GLFWwindow* window)
-	    : m_Instance(&instance), m_Window(window), Handle({ &instance })
+	    : Handle({ &instance }), m_Instance(&instance), m_Window(window)
 	{
 	}
 
