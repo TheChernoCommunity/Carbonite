@@ -6,7 +6,7 @@ namespace Graphics
 {
 	struct Queue
 	{
-		unsigned  graphicsFamilyIndex;
-		vk::Queue graphicsQueue;
+		std::uint32_t graphicsFamilyIndex;
+		vk::Queue     graphicsQueue;
 	};
 } // namespace Graphics
