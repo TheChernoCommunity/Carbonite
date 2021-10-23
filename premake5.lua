@@ -1,4 +1,5 @@
 require("Premake/cleanAction")
+require("Premake/formatTidyAction")
 
 newoption({
 	trigger = "glfw_use_wayland",
@@ -31,6 +32,8 @@ workspace("Carbonite")
 	rtti("Off")
 	exceptionhandling("On")
 	flags("MultiProcessorCompile")
+	runclangformat(false)
+	runclangtidy(false)
 
 	filter("configurations:Debug")
 		defines({ "_DEBUG" })
@@ -248,6 +251,15 @@ end
 			"%{prj.location}/Include/",
 			"%{prj.location}/Source/"
 		})
-
+		
 		files({ "%{prj.location}/**" })
 		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
+		
+		filter("files:**.h")
+			runclangformat(true)
+		
+		filter("files:**.cpp")
+			runclangformat(true)
+			runclangtidy(true)
+		
+		filter({})
