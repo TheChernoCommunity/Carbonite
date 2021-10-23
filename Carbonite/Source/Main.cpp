@@ -1,3 +1,4 @@
+#include "Graphics/CommandPool.h"
 #include "Graphics/Debug.h"
 #include "Graphics/Device.h"
 #include "Graphics/Instance.h"
@@ -37,10 +38,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		GLFWwindow* windowPtr = glfwCreateWindow(1280, 720, "Carbonite", nullptr, nullptr);
 
 		// Create Graphics Instance
+		constexpr std::size_t MaxFramesInFlight = 2;
+
 		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
 		Graphics::Debug    debug    = { instance };
 		Graphics::Surface  surface  = { instance, windowPtr };
 		Graphics::Device   device   = { surface };
+
+		std::vector<Graphics::CommandPool> commandPools;
+		commandPools.reserve(MaxFramesInFlight);
+		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
+			commandPools.emplace_back(device /*, queue */);
 
 		std::uint32_t glfwExtensionCount;
 		const char**  glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -88,6 +96,21 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
+
+		// Create Graphics Command Pools
+		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
+		{
+			auto& commandPool = commandPools[i];
+			if (!commandPool.create())
+				throw std::runtime_error("Failed to create vulkan command pool");
+
+			commandPool.allocateBuffers(vk::CommandBufferLevel::ePrimary, 1);
+		}
+
+		while (!glfwWindowShouldClose(windowPtr))
+		{
+			glfwPollEvents();
+		}
 
 		// Because the system is very automatic we have no need to destroy anything other than the Graphics Instance, that is if we don't need to do temporary stuff :D
 		// But it will also auto destroy itself if we leave the scope. But since we have to manually destroy glfw, we have to manually call destroy before we destroy the window.
