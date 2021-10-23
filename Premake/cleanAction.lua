@@ -1,3 +1,5 @@
+-- Deletes Visual Studio, XCode4 and GMake2 build files.
+
 local function cleanDeleteLocalDir(dir)
 	local ok, err = os.rmdir(_MAIN_SCRIPT_DIR .. dir)
 	if ok then
@@ -63,9 +65,6 @@ newaction({
 		
 		-- GMake2:
 		cleanDeleteFile(premake.filename(wks, cleanGetMakeFilename(wks, false)))
-		
-		-- Codelite:
-		cleanDeleteFile(premake.filename(wks, ".workspace"))
 	end,
 	
 	onProject = function(prj)
@@ -97,9 +96,6 @@ newaction({
 		
 		-- GMake2:
 		cleanDeleteFile(premake.filename(prj, cleanGetMakeFilename(prj, true)))
-		
-		-- Codelite:
-		cleanDeleteFile(premake.filename(prj, ".project"))
 	end,
 	
 	onEnd = function()
