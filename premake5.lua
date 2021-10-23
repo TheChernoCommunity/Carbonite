@@ -221,8 +221,8 @@ end
 		filter("system:macosx")
 			libdirs({ vulkanSDKPath .. "/lib/" })
 			links({
-				"libvulkan.1.dylib",
-				"libglslang.a",
+				"vulkan",
+				"glslang",
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
