@@ -20,7 +20,7 @@ namespace Log
 #if defined(NDEBUG)
 		s_clientLogger->set_level(spdlog::level::level_enum::err);
 #else
-		s_clientLogger->set_level(spdlog::level::level_enum::trace);
+		s_clientLogger->set_level(spdlog::level::level_enum::info);
 #endif // NDEBUG
 	}
 
