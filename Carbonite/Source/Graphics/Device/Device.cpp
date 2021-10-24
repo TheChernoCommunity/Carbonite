@@ -267,13 +267,6 @@ namespace Graphics
 					found = true;
 					break;
 				}
-
-				// https://vulkan.lunarg.com/doc/view/1.2.189.0/mac/1.2-extensions/vkspec.html#VUID-VkDeviceCreateInfo-pProperties-04451
-				if (extensionName == "VK_KHR_portability_subset")
-				{
-					m_EnabledExtensions.push_back({ extensionName, availExtension.specVersion });
-					break;
-				}
 			}
 			if (found) continue;
 		}

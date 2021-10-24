@@ -117,6 +117,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Create Graphics Device
 		device.requestExtension("VK_KHR_swapchain");
+		device.requestExtension("VK_KHR_portability_subset", { ~0U }, false);
 
 		device.requestQueueFamily(1, vk::QueueFlagBits::eGraphics, true);
 
