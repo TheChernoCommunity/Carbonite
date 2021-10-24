@@ -61,13 +61,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
+		[[maybe_unused]] std::size_t           currentFrame = 0;
 
-		Graphics::Swapchain                swapchain  = { vma };
-		Graphics::RenderPass               renderPass = { device };
-		std::vector<Graphics::ImageView>   imageViews;
-		std::vector<Graphics::Image>       swapchainDepthImages;
-		std::vector<Graphics::ImageView>   swapchainDepthImageViews;
-		std::vector<Graphics::Framebuffer> framebuffers;
+		Graphics::Swapchain                 swapchain  = { vma };
+		Graphics::RenderPass                renderPass = { device };
+		std::vector<Graphics::ImageView>    imageViews;
+		std::vector<Graphics::Image>        swapchainDepthImages;
+		std::vector<Graphics::ImageView>    swapchainDepthImageViews;
+		std::vector<Graphics::Framebuffer>  framebuffers;
+		std::vector<Graphics::Sync::Fence*> imagesInFlight;
+		[[maybe_unused]] std::size_t        currentImage = 0;
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -265,6 +268,32 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			if (!framebuffer.create())
 				throw std::runtime_error("Failed to create vulkan framebuffer");
 		}
+
+		imagesInFlight.clear();
+		imagesInFlight.resize(swapchainImages.size(), nullptr);
+
+		// TODO(MarcasRealAccount): Implement Queue::submitCommandBuffers
+		// TODO(MarcasRealAccount): Implement Queue::waitIdle
+		// TODO(MarcasRealAccount): Implement CommandBuffer::cmdPipelineBarrier
+		/*{
+			auto& currentCommandPool = commandPools[currentFrame];
+			currentCommandPool.reset();
+			auto currentCommandBuffer = currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
+			if (currentCommandBuffer->begin())
+			{
+				std::vector<ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
+				for (std::size_t i = 0; i < swapchainImages.size(); ++i)
+				{
+					imageMemoryBarriers[i] = { 0, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, ~0U, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, swapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1 } };
+				}
+
+				currentCommandBuffer->cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, 0, nullptr, nullptr, imageMemoryBarriers);
+				currentCommandBuffer->end();
+
+				graphicsPresentQueue->submitCommandBuffers({ currentCommandBuffer }, nullptr, nullptr, nullptr, nullptr);
+				graphicsPresentQueue->waitIdle();
+			}
+		}*/
 		//
 
 		while (!glfwWindowShouldClose(windowPtr))
