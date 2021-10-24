@@ -7,8 +7,8 @@ namespace Graphics
 	{
 	}
 
-	Image::Image(Memory::VMA& vma, vk::Image& handle)
-	    : Handle({ &vma }, handle), m_Vma(&vma)
+	Image::Image(Memory::VMA& vma, HandleBase* parentHandle, vk::Image& handle)
+	    : Handle({ &vma, parentHandle }, handle), m_Vma(&vma)
 	{
 	}
 

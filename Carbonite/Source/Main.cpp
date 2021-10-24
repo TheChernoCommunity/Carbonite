@@ -3,6 +3,7 @@
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Device/Surface.h"
+#include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
 #include "Graphics/Swapchain/Swapchain.h"
@@ -59,7 +60,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
 
-		Graphics::Swapchain swapchain = { vma };
+		Graphics::Swapchain              swapchain = { vma };
+		std::vector<Graphics::ImageView> imageViews;
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -159,6 +161,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		}
 
 		// Create swapchain
+		imageViews.clear();
 
 		auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface.getHandle());
 		auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(surface.getHandle());
@@ -175,6 +178,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!swapchain.create())
 			throw std::runtime_error("Failed to create vulkan swapchain");
 
+		auto& swapchainImages = swapchain.getImages();
+		imageViews.reserve(swapchainImages.size());
+		for (std::size_t i = 0; i < swapchainImages.size(); ++i)
+		{
+			auto& imageView    = imageViews.emplace_back(swapchainImages[i]);
+			imageView.m_Format = swapchain.m_Format;
+			if (!imageView.create())
+				throw std::runtime_error("Failed to create vulkan imageview");
+		}
 		//
 
 		while (!glfwWindowShouldClose(windowPtr))

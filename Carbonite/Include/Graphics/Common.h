@@ -169,7 +169,7 @@ namespace Graphics
 		{
 			auto child = *itr;
 
-			if (child->isCreated())
+			if (child->isValid())
 			{
 				child->destroy();
 
@@ -181,7 +181,7 @@ namespace Graphics
 		}
 
 		if constexpr (Destroyable)
-			if (m_Destroyable && m_Handle && destroyImpl())
+			if (m_Destroyable && isCreated() && destroyImpl())
 				m_Handle = nullptr;
 		m_Created = false;
 	}

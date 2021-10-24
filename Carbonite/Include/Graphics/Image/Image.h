@@ -10,7 +10,7 @@ namespace Graphics
 	{
 	public:
 		Image(Memory::VMA& vma);
-		Image(Memory::VMA& vma, vk::Image& handle);
+		Image(Memory::VMA& vma, HandleBase* parentHandle, vk::Image& handle);
 		~Image();
 
 		auto getVma() const

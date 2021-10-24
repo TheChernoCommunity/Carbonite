@@ -38,7 +38,7 @@ namespace Graphics
 		auto images = deviceHandle.getSwapchainImagesKHR(m_Handle);
 		m_Images.reserve(images.size());
 		for (std::size_t i = 0; i < images.size(); ++i)
-			m_Images.emplace_back(*m_Vma, images[i]);
+			m_Images.emplace_back(*m_Vma, this, images[i]);
 	}
 
 	bool Swapchain::destroyImpl()
