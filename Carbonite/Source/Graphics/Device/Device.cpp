@@ -1,12 +1,21 @@
-#include <array>
-
+#include "Graphics/Device/Device.h"
 #include "Graphics/Debug/Debug.h"
-#include "Graphics/Device.h"
+#include "Graphics/Device/Queue.h"
+
+#include <array>
+#include <map>
 
 namespace Graphics
 {
 	DeviceLayer::DeviceLayer(std::string_view name, Version version, bool required)
-	    : m_Name(name), m_Version(version), m_Required(required) {}
+	    : m_Name(name), m_Version(version), m_Required(required)
+	{
+	}
+
+	DeviceQueueFamilyRequest::DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent, bool required)
+	    : m_Count(count), m_QueueFlags(queueFlags), m_SupportsPresent(supportsPresent), m_Required(required)
+	{
+	}
 
 	Device::Device(Surface& surface)
 	    : Handle({ &surface }), m_Surface(&surface)
@@ -55,6 +64,11 @@ namespace Graphics
 		}
 	}
 
+	void Device::requestQueueFamily(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent, bool required)
+	{
+		m_QueueRequests.emplace_back(count, queueFlags, supportsPresent, required);
+	}
+
 	Version Device::getLayerVersion(std::string_view name) const
 	{
 		for (auto& layer : m_EnabledLayers)
@@ -71,6 +85,14 @@ namespace Graphics
 		return {};
 	}
 
+	QueueFamily* Device::getQueueFamily(vk::QueueFlags queueFlags, bool supportsPresent) const
+	{
+		for (auto& queueFamily : m_QueueFamilies)
+			if ((queueFamily.getQueueFlags() & queueFlags) && (queueFamily.isPresentSupported() >= supportsPresent))
+				return const_cast<QueueFamily*>(&queueFamily);
+		return nullptr;
+	}
+
 	void Device::createImpl()
 	{
 		[[maybe_unused]] auto& surfaceHandle   = m_Surface->getHandle();
@@ -82,9 +104,11 @@ namespace Graphics
 
 		for (auto& physicalDevice : physicalDevices)
 		{
-			std::size_t score             = 1;
-			bool        missingLayers     = false;
-			bool        missingExtensions = false;
+			std::size_t score = 1;
+
+			bool missingLayers     = false;
+			bool missingExtensions = false;
+			bool missingQueue      = false;
 
 			auto availableLayers = physicalDevice.enumerateDeviceLayerProperties();
 			for (auto& layer : m_Layers)
@@ -144,19 +168,32 @@ namespace Graphics
 
 			// Check if the physical device supports a graphics queue, if not move on to the next physical device. If so
 			auto queueFamilyProperties = physicalDevice.getQueueFamilyProperties();
-
-			bool foundGraphicsFamily = false;
-
-			for (const auto& queueFamilyProperty : queueFamilyProperties)
+			for (auto& queueRequest : m_QueueRequests)
 			{
-				if (queueFamilyProperty.queueFlags | vk::QueueFlagBits::eGraphics)
+				bool found = false;
+				for (std::uint32_t i = 0; i < queueFamilyProperties.size(); ++i)
 				{
-					foundGraphicsFamily = true;
+					auto& queueFamilyProperty = queueFamilyProperties[i];
+
+					bool eval = (queueFamilyProperty.queueFlags & queueRequest.m_QueueFlags) && queueFamilyProperty.queueCount >= queueRequest.m_Count;
+					if (queueRequest.m_SupportsPresent)
+						eval = eval && physicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle());
+
+					if (eval)
+					{
+						if (!queueRequest.m_Required) ++score;
+						found = true;
+						break;
+					}
+				}
+				if (found) continue;
+				if (queueRequest.m_Required)
+				{
+					missingQueue = true;
 					break;
 				}
 			}
-
-			if (!foundGraphicsFamily) continue;
+			if (missingQueue) continue;
 
 			auto                  properties = physicalDevice.getProperties();
 			[[maybe_unused]] auto features   = physicalDevice.getFeatures(); // TODO(MarcasRealAccount): Unused for now, implement feature check for required and wanted features.
@@ -259,33 +296,51 @@ namespace Graphics
 			}
 		}
 
-		auto queueFamilyProperties = m_PhysicalDevice.getQueueFamilyProperties();
+		std::map<std::uint32_t, std::uint32_t> uniqueQueueFamilyIndices;
 
-		for (unsigned i = 0; i < queueFamilyProperties.size(); i++)
+		auto queueFamilyProperties = m_PhysicalDevice.getQueueFamilyProperties();
+		for (auto& queueRequest : m_QueueRequests)
 		{
-			if (queueFamilyProperties[i].queueFlags | vk::QueueFlagBits::eGraphics)
+			bool found = false;
+			for (std::uint32_t i = 0; i < queueFamilyProperties.size(); ++i)
 			{
-				m_queues.graphicsFamilyIndex = i;
+				auto& queueFamilyProperty = queueFamilyProperties[i];
+
+				bool eval = (queueFamilyProperty.queueFlags & queueRequest.m_QueueFlags) && queueFamilyProperty.queueCount >= queueRequest.m_Count;
+				if (queueRequest.m_SupportsPresent)
+					eval = eval && m_PhysicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle());
+
+				if (eval)
+				{
+					auto itr = uniqueQueueFamilyIndices.find(i);
+					if (itr == uniqueQueueFamilyIndices.end())
+						uniqueQueueFamilyIndices.insert({ i, queueRequest.m_Count });
+					else
+						itr->second = std::max(itr->second, queueRequest.m_Count);
+					found = true;
+					break;
+				}
 			}
-			if (m_PhysicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle()))
-			{
-				m_queues.presentFamilyIndex = i;
-			}
+			if (found) continue;
 		}
 
-		std::array<float, 1> queuePriorities = { 1 };
+		std::vector<std::vector<float>>        queuePriorities(uniqueQueueFamilyIndices.size());
+		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos(uniqueQueueFamilyIndices.size());
 
-		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos = { vk::DeviceQueueCreateInfo()
-			                                                            .setQueueFamilyIndex(m_queues.graphicsFamilyIndex)
-			                                                            .setQueueCount(1)
-			                                                            .setQueuePriorities(queuePriorities) };
-
-		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
 		{
-			queueCreateInfos.push_back(vk::DeviceQueueCreateInfo()
-			                               .setQueueFamilyIndex(m_queues.presentFamilyIndex)
-			                               .setQueueCount(1)
-			                               .setQueuePriorities(queuePriorities));
+			std::size_t i = 0;
+			for (auto itr = uniqueQueueFamilyIndices.begin(); itr != uniqueQueueFamilyIndices.end(); ++itr, ++i)
+			{
+				auto [familyIndex, queueCount] = *itr;
+
+				auto& queuePriority = queuePriorities[i];
+				queuePriority.resize(queueCount);
+				for (std::size_t j = 0; j < queueCount; ++j)
+					queuePriority[j] = 1.0f;
+
+				auto& queueCreateInfo = queueCreateInfos[i];
+				queueCreateInfo       = { {}, familyIndex, queuePriority };
+			}
 		}
 
 		vk::PhysicalDeviceFeatures enabledFeatures;
@@ -311,13 +366,15 @@ namespace Graphics
 
 		vk::DeviceCreateInfo createInfo = { {}, queueCreateInfos, useLayers, useExtensions, &enabledFeatures };
 
-		m_Handle               = m_PhysicalDevice.createDevice(createInfo);
-		m_queues.graphicsQueue = m_Handle.getQueue(m_queues.graphicsFamilyIndex, 0);
-		m_queues.presentQueue  = m_queues.graphicsQueue;
+		m_Handle = m_PhysicalDevice.createDevice(createInfo);
 
-		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
+		m_QueueFamilies.reserve(uniqueQueueFamilyIndices.size());
+		for (auto itr = uniqueQueueFamilyIndices.begin(); itr != uniqueQueueFamilyIndices.end(); ++itr)
 		{
-			m_queues.presentQueue = m_Handle.getQueue(m_queues.presentFamilyIndex, 0);
+			auto [familyIndex, queueCount] = *itr;
+
+			auto& queueFamilyProperty = queueFamilyProperties[familyIndex];
+			m_QueueFamilies.emplace_back(*this, familyIndex, queueFamilyProperty.queueFlags, queueFamilyProperty.timestampValidBits, queueFamilyProperty.minImageTransferGranularity, m_PhysicalDevice.getSurfaceSupportKHR(familyIndex, m_Surface->getHandle()), queueCount);
 		}
 	}
 
@@ -326,6 +383,7 @@ namespace Graphics
 		m_Handle.destroy();
 		m_EnabledLayers.clear();
 		m_EnabledExtensions.clear();
+		m_QueueFamilies.clear();
 		return true;
 	}
 } // namespace Graphics

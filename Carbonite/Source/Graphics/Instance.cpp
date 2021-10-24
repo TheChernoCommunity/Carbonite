@@ -269,6 +269,7 @@ namespace Graphics
 		}
 
 		m_Handle = vk::createInstance(createInfo);
+		m_ApiVersion = instanceVersion;
 	}
 
 	bool Instance::destroyImpl()

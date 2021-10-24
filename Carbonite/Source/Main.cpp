@@ -1,8 +1,10 @@
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
-#include "Graphics/Device.h"
+#include "Graphics/Device/Device.h"
+#include "Graphics/Device/Queue.h"
+#include "Graphics/Device/Surface.h"
 #include "Graphics/Instance.h"
-#include "Graphics/Surface.h"
+#include "Graphics/Memory/VMA.h"
 #include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
@@ -46,21 +48,22 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		// Create Graphics Instance
 		constexpr std::size_t MaxFramesInFlight = 2;
 
-		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
-		Graphics::Debug    debug    = { instance };
-		Graphics::Surface  surface  = { instance, windowPtr };
-		Graphics::Device   device   = { surface };
+		Graphics::Instance    instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
+		Graphics::Debug       debug    = { instance };
+		Graphics::Surface     surface  = { instance, windowPtr };
+		Graphics::Device      device   = { surface };
+		Graphics::Memory::VMA vma      = { device };
 
 		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
 
-		Graphics::Swapchain swapchain = { device };
+		Graphics::Swapchain swapchain = { vma };
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
-			commandPools.emplace_back(device /*, queue */);
+			commandPools.emplace_back(device);
 		imageAvailableSemaphores.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
 			imageAvailableSemaphores.emplace_back(device);
@@ -115,13 +118,26 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		// Create Graphics Device
 		device.requestExtension("VK_KHR_swapchain");
 
+		device.requestQueueFamily(1, vk::QueueFlagBits::eGraphics, true);
+
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
+
+		auto physicalDevice = device.getPhysicalDevice();
+
+		auto                  graphicsPresentQueueFamily = device.getQueueFamily(vk::QueueFlagBits::eGraphics, true);
+		[[maybe_unused]] auto graphicsPresentQueue       = graphicsPresentQueueFamily->getQueue(0);
+
+		if (!vma.create())
+			throw std::runtime_error("Failed to create vulkan memory allocator");
 
 		// Create Graphics Command Pools and frame sync objects
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
 		{
 			auto& commandPool = commandPools[i];
+
+			commandPool.setQueueFamily(*graphicsPresentQueueFamily);
+
 			if (!commandPool.create())
 				throw std::runtime_error("Failed to create vulkan command pool");
 
@@ -142,8 +158,23 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		}
 
 		// Create swapchain
+
+		auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface.getHandle());
+		auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(surface.getHandle());
+
+		swapchain.m_ImageCount   = std::min(surfaceCapabilities.minImageCount + 1, surfaceCapabilities.maxImageCount);
+		swapchain.m_PreTransform = surfaceCapabilities.currentTransform;
+		swapchain.m_Format       = surfaceFormats[0].format;
+		swapchain.m_ColorSpace   = surfaceFormats[0].colorSpace;
+		swapchain.m_PresentMode  = vk::PresentModeKHR::eFifo;
+		swapchain.m_Width        = surfaceCapabilities.currentExtent.width;
+		swapchain.m_Height       = surfaceCapabilities.currentExtent.height;
+		swapchain.m_Indices.clear();
+		swapchain.m_Indices.insert(graphicsPresentQueueFamily->getFamilyIndex());
 		if (!swapchain.create())
 			throw std::runtime_error("Failed to create vulkan swapchain");
+
+		//
 
 		while (!glfwWindowShouldClose(windowPtr))
 		{

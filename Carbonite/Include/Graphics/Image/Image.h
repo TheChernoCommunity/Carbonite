@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Device.h"
+#include "Graphics/Memory/VMA.h"
 
 #include <set>
 
@@ -9,13 +9,13 @@ namespace Graphics
 	struct Image : public Handle<vk::Image>
 	{
 	public:
-		Image(Device& device);
-		Image(Device& device, vk::Image& handle);
+		Image(Memory::VMA& vma);
+		Image(Memory::VMA& vma, vk::Image& handle);
 		~Image();
 
-		auto getDevice() const
+		auto getVma() const
 		{
-			return m_Device;
+			return m_Vma;
 		}
 
 	private:
@@ -34,11 +34,14 @@ namespace Graphics
 		vk::SampleCountFlagBits m_Samples       = vk::SampleCountFlagBits::e1;
 		vk::ImageTiling         m_Tiling        = vk::ImageTiling::eOptimal;
 		vk::ImageUsageFlags     m_Usage         = vk::ImageUsageFlagBits::eTransferDst;
+		VmaMemoryUsage          m_MemoryUsage   = VMA_MEMORY_USAGE_GPU_ONLY;
 		vk::ImageLayout         m_InitialLayout = vk::ImageLayout::eUndefined;
 
 		std::set<std::uint32_t> m_Indices;
 
 	private:
-		Device* m_Device;
+		Memory::VMA* m_Vma;
+
+		VmaAllocation m_Allocation;
 	};
 } // namespace Graphics

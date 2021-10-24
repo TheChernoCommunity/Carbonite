@@ -1,12 +1,11 @@
 #pragma once
 
-#include <optional>
-
-#include "Queue.h"
 #include "Surface.h"
 
 namespace Graphics
 {
+	struct QueueFamily;
+
 	struct DeviceLayer
 	{
 	public:
@@ -20,6 +19,19 @@ namespace Graphics
 
 	using DeviceExtension = DeviceLayer;
 
+	struct DeviceQueueFamilyRequest
+	{
+	public:
+		DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent = false, bool required = true);
+
+	public:
+		std::uint32_t  m_Count;
+		vk::QueueFlags m_QueueFlags;
+
+		bool m_SupportsPresent;
+		bool m_Required;
+	};
+
 	struct Device : public Handle<vk::Device>
 	{
 	public:
@@ -28,6 +40,8 @@ namespace Graphics
 
 		void requestLayer(std::string_view name, Version requiredVersion = {}, bool required = true);
 		void requestExtension(std::string_view name, Version requiredVersion = {}, bool required = true);
+
+		void requestQueueFamily(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent = false, bool required = true);
 
 		Version getLayerVersion(std::string_view name) const;
 		Version getExtensionVersion(std::string_view name) const;
@@ -50,9 +64,10 @@ namespace Graphics
 			return m_EnabledExtensions;
 		}
 
-		auto getQueues() const
+		QueueFamily* getQueueFamily(vk::QueueFlags queueFlags, bool supportsPresent = false) const;
+		auto&        getQueueFamilies() const
 		{
-			return m_queues;
+			return m_QueueFamilies;
 		}
 
 		bool isLayerEnabled(std::string_view name) const
@@ -72,6 +87,8 @@ namespace Graphics
 		std::vector<DeviceLayer>     m_EnabledLayers;
 		std::vector<DeviceExtension> m_EnabledExtensions;
 
+		std::vector<QueueFamily> m_QueueFamilies;
+
 	private:
 		Surface* m_Surface;
 
@@ -80,6 +97,6 @@ namespace Graphics
 		std::vector<DeviceLayer>     m_Layers;
 		std::vector<DeviceExtension> m_Extensions;
 
-		Queue m_queues;
+		std::vector<DeviceQueueFamilyRequest> m_QueueRequests;
 	};
 } // namespace Graphics

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/Device.h"
 #include "Graphics/Image/Image.h"
+#include "Graphics/Memory/VMA.h"
 
 #include <set>
 
@@ -10,12 +10,12 @@ namespace Graphics
 	struct Swapchain : public Handle<vk::SwapchainKHR>
 	{
 	public:
-		Swapchain(Device& device);
+		Swapchain(Memory::VMA& vma);
 		~Swapchain();
 
-		auto getDevice() const
+		auto getVma() const
 		{
-			return m_Device;
+			return m_Vma;
 		}
 
 		Image* getImage(std::uint32_t image) const;
@@ -51,7 +51,7 @@ namespace Graphics
 		std::set<std::uint32_t> m_Indices;
 
 	private:
-		Device* m_Device;
+		Memory::VMA* m_Vma;
 
 		std::vector<Image> m_Images;
 	};
