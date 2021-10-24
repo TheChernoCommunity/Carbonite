@@ -1,5 +1,7 @@
-#include "Graphics/Device.h"
+#include <array>
+
 #include "Graphics/Debug/Debug.h"
+#include "Graphics/Device.h"
 
 namespace Graphics
 {
@@ -140,6 +142,22 @@ namespace Graphics
 			}
 			if (missingExtensions) continue;
 
+			// Check if the physical device supports a graphics queue, if not move on to the next physical device. If so
+			auto queueFamilyProperties = physicalDevice.getQueueFamilyProperties();
+
+			bool foundGraphicsFamily = false;
+
+			for (const auto& queueFamilyProperty : queueFamilyProperties)
+			{
+				if (queueFamilyProperty.queueFlags | vk::QueueFlagBits::eGraphics)
+				{
+					foundGraphicsFamily = true;
+					break;
+				}
+			}
+
+			if (!foundGraphicsFamily) continue;
+
 			auto                  properties = physicalDevice.getProperties();
 			[[maybe_unused]] auto features   = physicalDevice.getFeatures(); // TODO(MarcasRealAccount): Unused for now, implement feature check for required and wanted features.
 
@@ -212,6 +230,13 @@ namespace Graphics
 					found = true;
 					break;
 				}
+
+				// https://vulkan.lunarg.com/doc/view/1.2.189.0/mac/1.2-extensions/vkspec.html#VUID-VkDeviceCreateInfo-pProperties-04451
+				if (extensionName == "VK_KHR_portability_subset")
+				{
+					m_EnabledExtensions.push_back({ extensionName, availExtension.specVersion });
+					break;
+				}
 			}
 			if (found) continue;
 		}
@@ -234,8 +259,36 @@ namespace Graphics
 			}
 		}
 
-		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
-		vk::PhysicalDeviceFeatures             enabledFeatures;
+		auto queueFamilyProperties = m_PhysicalDevice.getQueueFamilyProperties();
+
+		for (unsigned i = 0; i < queueFamilyProperties.size(); i++)
+		{
+			if (queueFamilyProperties[i].queueFlags | vk::QueueFlagBits::eGraphics)
+			{
+				m_queues.graphicsFamilyIndex = i;
+			}
+			if (m_PhysicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle()))
+			{
+				m_queues.presentFamilyIndex = i;
+			}
+		}
+
+		std::array<float, 1> queuePriorities = { 1 };
+
+		std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos = { vk::DeviceQueueCreateInfo()
+			                                                            .setQueueFamilyIndex(m_queues.graphicsFamilyIndex)
+			                                                            .setQueueCount(1)
+			                                                            .setQueuePriorities(queuePriorities) };
+
+		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
+		{
+			queueCreateInfos.push_back(vk::DeviceQueueCreateInfo()
+			                               .setQueueFamilyIndex(m_queues.presentFamilyIndex)
+			                               .setQueueCount(1)
+			                               .setQueuePriorities(queuePriorities));
+		}
+
+		vk::PhysicalDeviceFeatures enabledFeatures;
 
 		std::vector<const char*> useLayers(m_EnabledLayers.size());
 		std::vector<const char*> useExtensions(m_EnabledExtensions.size());
@@ -258,7 +311,14 @@ namespace Graphics
 
 		vk::DeviceCreateInfo createInfo = { {}, queueCreateInfos, useLayers, useExtensions, &enabledFeatures };
 
-		m_Handle = m_PhysicalDevice.createDevice(createInfo);
+		m_Handle               = m_PhysicalDevice.createDevice(createInfo);
+		m_queues.graphicsQueue = m_Handle.getQueue(m_queues.graphicsFamilyIndex, 0);
+		m_queues.presentQueue  = m_queues.graphicsQueue;
+
+		if (m_queues.graphicsFamilyIndex != m_queues.presentFamilyIndex)
+		{
+			m_queues.presentQueue = m_Handle.getQueue(m_queues.presentFamilyIndex, 0);
+		}
 	}
 
 	bool Device::destroyImpl()

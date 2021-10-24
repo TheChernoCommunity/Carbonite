@@ -226,8 +226,8 @@ end
 		filter("system:macosx")
 			libdirs({ vulkanSDKPath .. "/lib/" })
 			links({
-				"libvulkan.1.dylib",
-				"libglslang.a",
+				"vulkan",
+				"glslang",
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
@@ -244,7 +244,8 @@ end
 			"%{wks.location}/ThirdParty/VMA/include/",
 			"%{wks.location}/ThirdParty/ImGUI/",
 			"%{wks.location}/ThirdParty/STB/",
-			"%{wks.location}/ThirdParty/inipp/inipp/"
+			"%{wks.location}/ThirdParty/inipp/inipp/",
+			"%{wks.location}/ThirdParty/spdlog/include/"
 		})
 
 		includedirs({

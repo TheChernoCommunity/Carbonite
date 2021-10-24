@@ -1,5 +1,8 @@
 #pragma once
 
+#include <optional>
+
+#include "Queue.h"
 #include "Surface.h"
 
 namespace Graphics
@@ -47,6 +50,11 @@ namespace Graphics
 			return m_EnabledExtensions;
 		}
 
+		auto getQueues() const
+		{
+			return m_queues;
+		}
+
 		bool isLayerEnabled(std::string_view name) const
 		{
 			return getLayerVersion(name);
@@ -71,5 +79,7 @@ namespace Graphics
 
 		std::vector<DeviceLayer>     m_Layers;
 		std::vector<DeviceExtension> m_Extensions;
+
+		Queue m_queues;
 	};
 } // namespace Graphics
