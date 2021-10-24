@@ -19,9 +19,6 @@ namespace Graphics::Memory
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
-	public:
-		std::uint64_t size;
-
 	private:
 		Device* m_Device;
 	};

@@ -6,6 +6,7 @@
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
+#include "Graphics/Pipeline/RenderPass.h"
 #include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
@@ -60,7 +61,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
 
-		Graphics::Swapchain              swapchain = { vma };
+		Graphics::Swapchain              swapchain  = { vma };
+		Graphics::RenderPass             renderPass = { device };
 		std::vector<Graphics::ImageView> imageViews;
 
 		commandPools.reserve(MaxFramesInFlight);
@@ -163,13 +165,56 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		// Create swapchain
 		imageViews.clear();
 
+		auto oldFormat = swapchain.m_Format;
+
 		auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface.getHandle());
 		auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(surface.getHandle());
+		auto format              = surfaceFormats[0];
+
+		if (oldFormat != format.format)
+		{
+			renderPass.m_Attachments.clear();
+			renderPass.m_Subpasses.clear();
+			renderPass.m_Dependencies.clear();
+
+			Graphics::RenderPassAttachment colorAttachment;
+			colorAttachment.m_Format = format.format;
+			renderPass.m_Attachments.push_back(colorAttachment);
+
+			Graphics::RenderPassAttachment depthAttachment;
+			depthAttachment.m_Format         = vk::Format::eD32SfloatS8Uint;
+			depthAttachment.m_StoreOp        = vk::AttachmentStoreOp::eDontCare;
+			depthAttachment.m_StencilLoadOp  = vk::AttachmentLoadOp::eClear;
+			depthAttachment.m_StencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+			depthAttachment.m_FinalLayout    = vk::ImageLayout::eDepthStencilAttachmentOptimal;
+			renderPass.m_Attachments.push_back(depthAttachment);
+
+			Graphics::RenderPassSubpass       subpass;
+			Graphics::RenderPassAttachmentRef colorAttachmentRef;
+			colorAttachmentRef.m_Attachment = 0;
+			colorAttachmentRef.m_Layout     = vk::ImageLayout::eColorAttachmentOptimal;
+			subpass.m_ColorAttachmentRefs.push_back(colorAttachmentRef);
+			subpass.m_UseDepthStencilAttachment           = true;
+			subpass.m_DepthStencilAttachment.m_Attachment = 1;
+			subpass.m_DepthStencilAttachment.m_Layout     = vk::ImageLayout::eDepthStencilAttachmentOptimal;
+			renderPass.m_Subpasses.push_back(subpass);
+
+			Graphics::RenderPassSubpassDependency dependency;
+			dependency.m_SrcSubpass    = ~0U;
+			dependency.m_DstSubpass    = 0;
+			dependency.m_SrcStageMask  = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests;
+			dependency.m_SrcAccessMask = vk::AccessFlagBits::eNoneKHR;
+			dependency.m_DstStageMask  = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests;
+			dependency.m_DstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+			renderPass.m_Dependencies.push_back(dependency);
+
+			if (!renderPass.create()) throw std::runtime_error("Failed to create vulkan renderpass");
+		}
 
 		swapchain.m_ImageCount   = std::min(surfaceCapabilities.minImageCount + 1, surfaceCapabilities.maxImageCount);
 		swapchain.m_PreTransform = surfaceCapabilities.currentTransform;
-		swapchain.m_Format       = surfaceFormats[0].format;
-		swapchain.m_ColorSpace   = surfaceFormats[0].colorSpace;
+		swapchain.m_Format       = format.format;
+		swapchain.m_ColorSpace   = format.colorSpace;
 		swapchain.m_PresentMode  = vk::PresentModeKHR::eFifo;
 		swapchain.m_Width        = surfaceCapabilities.currentExtent.width;
 		swapchain.m_Height       = surfaceCapabilities.currentExtent.height;

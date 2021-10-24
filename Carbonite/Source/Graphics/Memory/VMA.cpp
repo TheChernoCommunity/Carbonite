@@ -18,7 +18,6 @@ namespace Graphics::Memory
 		auto surface  = m_Device->getSurface();
 		auto instance = surface->getInstance();
 
-
 		VmaAllocatorCreateInfo createInfo = { {}, m_Device->getPhysicalDevice(), m_Device->getHandle(), 0, nullptr, nullptr, 0, nullptr, nullptr, nullptr, instance->getHandle(), instance->getApiVersion(), nullptr };
 
 		VmaAllocator allocator;
