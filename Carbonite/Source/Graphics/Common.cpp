@@ -7,7 +7,7 @@ namespace Graphics
 	HandleBase::HandleBase(const std::vector<HandleBase*>& parents)
 	    : m_Parents(parents)
 	{
-		for (auto parent : m_Parents)
+		for (auto parent : parents)
 			parent->m_Children.push_back(this);
 	}
 
@@ -20,5 +20,6 @@ namespace Graphics
 			if (itr != children.end())
 				children.erase(itr);
 		}
+		m_Parents.clear();
 	}
 } // namespace Graphics

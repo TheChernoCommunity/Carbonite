@@ -54,7 +54,7 @@ namespace Graphics
 			return m_Children;
 		}
 
-	private:
+	protected:
 		std::vector<HandleBase*> m_Parents;
 		std::vector<HandleBase*> m_Children;
 	};
@@ -84,6 +84,7 @@ namespace Graphics
 		{
 			return Destroyable && m_Destroyable;
 		}
+
 		HandleT& getHandle()
 		{
 			return m_Handle;
@@ -103,6 +104,7 @@ namespace Graphics
 
 	private:
 		std::vector<HandleBase*> m_DestroyedChildren;
+		std::size_t              m_DestroyItr = 0;
 
 		bool m_Created = false;
 		bool m_Destroyable;
@@ -163,11 +165,9 @@ namespace Graphics
 		if (m_Recreate)
 			m_DestroyedChildren.clear();
 
-		auto& children = getChildren();
-		auto  itr      = children.begin();
-		while (itr != children.end())
+		for (m_DestroyItr = 0; m_DestroyItr < m_Children.size(); ++m_DestroyItr)
 		{
-			auto child = *itr;
+			auto& child = m_Children[m_DestroyItr];
 
 			if (child->isValid())
 			{
@@ -176,13 +176,12 @@ namespace Graphics
 				if (m_Recreate && child->isDestroyable())
 					m_DestroyedChildren.push_back(child);
 			}
-
-			++itr;
 		}
 
 		if constexpr (Destroyable)
 			if (m_Destroyable && isCreated() && destroyImpl())
 				m_Handle = nullptr;
-		m_Created = false;
+		m_Created    = false;
+		m_DestroyItr = 0;
 	}
 } // namespace Graphics

@@ -3,6 +3,7 @@
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Device/Surface.h"
+#include "Graphics/Image/Framebuffer.h"
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
@@ -61,9 +62,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
 
-		Graphics::Swapchain              swapchain  = { vma };
-		Graphics::RenderPass             renderPass = { device };
-		std::vector<Graphics::ImageView> imageViews;
+		Graphics::Swapchain                swapchain  = { vma };
+		Graphics::RenderPass               renderPass = { device };
+		std::vector<Graphics::ImageView>   imageViews;
+		std::vector<Graphics::Image>       swapchainDepthImages;
+		std::vector<Graphics::ImageView>   swapchainDepthImageViews;
+		std::vector<Graphics::Framebuffer> framebuffers;
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -164,6 +168,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Create swapchain
 		imageViews.clear();
+		swapchainDepthImageViews.clear();
+		swapchainDepthImages.clear();
+		framebuffers.clear();
 
 		auto oldFormat = swapchain.m_Format;
 
@@ -225,12 +232,38 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		auto& swapchainImages = swapchain.getImages();
 		imageViews.reserve(swapchainImages.size());
+		swapchainDepthImages.reserve(swapchainImages.size());
+		swapchainDepthImageViews.reserve(swapchainImages.size());
+		framebuffers.reserve(swapchainImages.size());
 		for (std::size_t i = 0; i < swapchainImages.size(); ++i)
 		{
 			auto& imageView    = imageViews.emplace_back(swapchainImages[i]);
 			imageView.m_Format = swapchain.m_Format;
 			if (!imageView.create())
 				throw std::runtime_error("Failed to create vulkan imageview");
+
+			auto& depthImage    = swapchainDepthImages.emplace_back(vma);
+			depthImage.m_Format = vk::Format::eD32SfloatS8Uint;
+			depthImage.m_Usage  = vk::ImageUsageFlagBits::eDepthStencilAttachment;
+			depthImage.m_Width  = swapchain.m_Width;
+			depthImage.m_Height = swapchain.m_Height;
+			if (!depthImage.create())
+				throw std::runtime_error("Failed to create vulkan image");
+
+			auto& depthImageView    = swapchainDepthImageViews.emplace_back(depthImage);
+			depthImageView.m_Format = depthImage.m_Format;
+
+			depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth;
+			if (!depthImageView.create())
+				throw std::runtime_error("Failed to create vulkan imageview");
+
+			auto& framebuffer = framebuffers.emplace_back(renderPass);
+			framebuffer.m_Attachments.push_back(&imageView);
+			framebuffer.m_Attachments.push_back(&depthImageView);
+			framebuffer.m_Width  = swapchain.m_Width;
+			framebuffer.m_Height = swapchain.m_Height;
+			if (!framebuffer.create())
+				throw std::runtime_error("Failed to create vulkan framebuffer");
 		}
 		//
 

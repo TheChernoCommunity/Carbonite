@@ -24,9 +24,9 @@ namespace Graphics
 
 	public:
 		vk::ImageType m_ImageType   = vk::ImageType::e2D;
-		std::uint32_t m_Width       = 0;
-		std::uint32_t m_Height      = 0;
-		std::uint32_t m_Depth       = 0;
+		std::uint32_t m_Width       = 1;
+		std::uint32_t m_Height      = 1;
+		std::uint32_t m_Depth       = 1;
 		std::uint32_t m_MipLevels   = 1;
 		std::uint32_t m_ArrayLevels = 1;
 
