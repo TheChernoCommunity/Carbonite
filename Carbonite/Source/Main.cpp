@@ -5,6 +5,7 @@
 #include "Graphics/Surface.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
+#include "Log.h"
 
 #include <GLFW/glfw3.h>
 
@@ -15,19 +16,21 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
+	Log::init();
+
 	try
 	{
 		// Initialize GLFW
 		if (!glfwInit())
 		{
-			std::cerr << "GLFW failed to initialize!\n";
+			Log::error("GLFW failed to initialize!");
 			return EXIT_FAILURE;
 		}
 
 		// Check for vulkan support
 		if (!glfwVulkanSupported())
 		{
-			std::cerr << "Vulkan is not supported on this system!\n";
+			Log::error("Vulkan is not supported on this system!");
 			return EXIT_FAILURE;
 		}
 
@@ -154,7 +157,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		Log::critical(e.what());
 		return EXIT_FAILURE;
 	}
 }

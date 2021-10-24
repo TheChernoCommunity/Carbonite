@@ -1,4 +1,5 @@
 #include "Graphics/Debug/Debug.h"
+#include "Log.h"
 
 #include <iostream>
 
@@ -63,11 +64,30 @@ namespace Graphics
 	VkBool32 Debug::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, [[maybe_unused]] void* pUserData)
 	{
 		std::string message = "VK Validation Layer " + GetSeverity(messageSeverity) + " (" + GetTypes(messageTypes) + "): " + pCallbackData->pMessage + "\n";
-		if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-			std::cerr << message;
-		else
-			std::cout << message;
-		return 0;
+		switch (static_cast<vk::DebugUtilsMessageSeverityFlagBitsEXT>(messageSeverity))
+		{
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
+			Log::trace(message);
+			break;
+
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
+			Log::info(message);
+			break;
+
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
+			Log::warn(message);
+			break;
+
+		case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
+			Log::error(message);
+			break;
+
+		default:
+			Log::debug(message);
+			break;
+		}
+
+		return VK_FALSE;
 	}
 
 	Debug::Debug(Instance& instance)

@@ -1,0 +1,32 @@
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include "Log.h"
+
+namespace
+{
+
+	static std::shared_ptr<spdlog::logger> s_coreLogger;
+	static std::shared_ptr<spdlog::logger> s_clientLogger;
+
+} // namespace
+
+namespace Log
+{
+
+	void init()
+	{
+		spdlog::set_pattern("[%T.%f][%^%8l%$][%7t] %v");
+
+#if defined(NDEBUG)
+		s_clientLogger->set_level(spdlog::level::level_enum::err);
+#else
+		s_clientLogger->set_level(spdlog::level::level_enum::trace);
+#endif // NDEBUG
+	}
+
+	std::shared_ptr<spdlog::logger> getClientLogger()
+	{
+		return s_clientLogger;
+	}
+
+} // namespace Log

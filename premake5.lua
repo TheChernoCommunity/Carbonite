@@ -239,7 +239,8 @@ end
 			"%{wks.location}/ThirdParty/VMA/include/",
 			"%{wks.location}/ThirdParty/ImGUI/",
 			"%{wks.location}/ThirdParty/STB/",
-			"%{wks.location}/ThirdParty/inipp/inipp/"
+			"%{wks.location}/ThirdParty/inipp/inipp/",
+			"%{wks.location}/ThirdParty/spdlog/include/"
 		})
 
 		includedirs({
