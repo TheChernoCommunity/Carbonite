@@ -5,17 +5,17 @@
 enum class ShaderType
 {
 	Vertex,
-  TessellationControl, // Currently unsupported.
-  TessellationEvaluation, // Currently unsupported.
-  Geometry, // Currently unsupported.
-  Fragment,
-  Compute, // Currently unsupported.
-  RTRayGen, // Currently unsupported.
-  RTAnyHit, // Currently unsupported.
-  RTClosestHit, // Currently unsupported.
-  RTMiss, // Currently unsupported.
-  RTIntersection, // Currently unsupported.
-  RTCallable // Currently unsupported.
+	TessellationControl,    // Currently unsupported.
+	TessellationEvaluation, // Currently unsupported.
+	Geometry,               // Currently unsupported.
+	Fragment,
+	Compute,        // Currently unsupported.
+	RTRayGen,       // Currently unsupported.
+	RTAnyHit,       // Currently unsupported.
+	RTClosestHit,   // Currently unsupported.
+	RTMiss,         // Currently unsupported.
+	RTIntersection, // Currently unsupported.
+	RTCallable      // Currently unsupported.
 };
 
 enum class CarboniteAssetType
@@ -34,12 +34,12 @@ class Asset
 class ShaderAsset : Asset
 {
 	std::string ShaderPath;
-	ShaderType Type;
+	ShaderType  Type;
 };
 
 class CarboniteAsset : Asset
 {
-	std::string AssetPath;
+	std::string        AssetPath;
 	CarboniteAssetType typePath;
 };
 
@@ -47,8 +47,9 @@ class AssetManager
 {
 protected:
 	std::vector<Asset> LoadedAssets;
+
 public:
-	void Load();
+	void  Load();
 	Asset LoadAsset(std::string path);
-	void UnloadAsset(Asset asset);
+	void  UnloadAsset(Asset asset);
 };
