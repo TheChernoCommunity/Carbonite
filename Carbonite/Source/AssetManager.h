@@ -1,5 +1,7 @@
 #pragma once
-#include <iostream>
+
+#include <fstream>
+#include <string>
 #include <vector>
 
 enum class ShaderType
@@ -28,7 +30,14 @@ enum class CarboniteAssetType
 
 class Asset
 {
-	unsigned int AssetID;
+	friend class AssetManager;
+
+public:
+	std::vector<char>& getData();
+
+private:
+	unsigned int      AssetID;
+	std::vector<char> data;
 };
 
 class ShaderAsset : Asset
