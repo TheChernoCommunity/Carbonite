@@ -4,14 +4,12 @@
 
 namespace
 {
-
 	static std::shared_ptr<spdlog::logger> s_clientLogger;
 
 } // namespace
 
 namespace Log
 {
-
 	void init()
 	{
 		s_clientLogger = spdlog::stderr_color_mt("Carbonite");

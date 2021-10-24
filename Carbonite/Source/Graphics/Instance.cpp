@@ -268,7 +268,7 @@ namespace Graphics
 			createInfo.pNext = &debugCreateInfo;
 		}
 
-		m_Handle = vk::createInstance(createInfo);
+		m_Handle     = vk::createInstance(createInfo);
 		m_ApiVersion = instanceVersion;
 	}
 
