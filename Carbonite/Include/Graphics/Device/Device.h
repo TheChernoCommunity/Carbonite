@@ -46,7 +46,11 @@ namespace Graphics
 		Version getLayerVersion(std::string_view name) const;
 		Version getExtensionVersion(std::string_view name) const;
 
-		auto getSurface() const
+		auto& getSurface()
+		{
+			return m_Surface;
+		}
+		auto& getSurface() const
 		{
 			return m_Surface;
 		}
@@ -90,7 +94,7 @@ namespace Graphics
 		std::vector<QueueFamily> m_QueueFamilies;
 
 	private:
-		Surface* m_Surface;
+		Surface& m_Surface;
 
 		vk::PhysicalDevice m_PhysicalDevice = nullptr;
 

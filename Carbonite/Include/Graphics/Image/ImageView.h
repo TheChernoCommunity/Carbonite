@@ -10,7 +10,11 @@ namespace Graphics
 		ImageView(Image& image);
 		~ImageView();
 
-		auto getImage() const
+		auto& getImage()
+		{
+			return m_Image;
+		}
+		auto& getImage() const
 		{
 			return m_Image;
 		}
@@ -26,6 +30,6 @@ namespace Graphics
 		vk::ImageSubresourceRange m_SubresourceRange = { vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1 };
 
 	private:
-		Image* m_Image;
+		Image& m_Image;
 	};
 } // namespace Graphics

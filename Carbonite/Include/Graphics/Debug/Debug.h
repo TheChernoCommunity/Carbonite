@@ -27,11 +27,20 @@ namespace Graphics
 		Debug(Instance& instance);
 		~Debug();
 
+		auto& getInstance()
+		{
+			return m_Instance;
+		}
+		auto& getInstance() const
+		{
+			return m_Instance;
+		}
+
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
 	private:
-		Instance* m_Instance;
+		Instance& m_Instance;
 	};
 } // namespace Graphics

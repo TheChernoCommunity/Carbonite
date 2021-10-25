@@ -6,12 +6,17 @@ namespace Graphics
 {
 	struct Queue;
 
-	struct QueueFamily
+	struct QueueFamily : public Handle<void*, false>
 	{
 	public:
 		QueueFamily(Device& device, std::uint32_t familyIndex, vk::QueueFlags queueFlags, std::uint32_t timestampValidBits, vk::Extent3D minImageTransferGranularity, bool supportsPresent, std::uint32_t queueCount);
+		~QueueFamily();
 
-		auto getDevice() const
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
 		{
 			return m_Device;
 		}
@@ -45,7 +50,11 @@ namespace Graphics
 		}
 
 	private:
-		Device* m_Device;
+		virtual void createImpl() override;
+		virtual bool destroyImpl() override;
+
+	private:
+		Device& m_Device;
 
 		vk::QueueFlags m_QueueFlags;
 		std::uint32_t  m_TimestampValidBits;
@@ -62,7 +71,11 @@ namespace Graphics
 		Queue(QueueFamily& queueFamily, std::uint32_t index, vk::Queue handle);
 		~Queue();
 
-		auto getQueueFamily() const
+		auto& getQueueFamily()
+		{
+			return m_QueueFamily;
+		}
+		auto& getQueueFamily() const
 		{
 			return m_QueueFamily;
 		}
@@ -77,7 +90,7 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	private:
-		QueueFamily* m_QueueFamily;
+		QueueFamily& m_QueueFamily;
 
 		std::uint32_t m_Index;
 	};

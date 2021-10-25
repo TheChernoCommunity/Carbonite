@@ -7,9 +7,9 @@ namespace Graphics::Sync
 		if (semaphores.empty())
 			return;
 
-		auto device = semaphores[0]->getDevice();
+		auto& device = semaphores[0]->getDevice();
 		for (std::size_t i = 1; i < semaphores.size(); ++i)
-			if (semaphores[i]->getDevice() != device)
+			if (&semaphores[i]->getDevice() != &device)
 				return;
 
 		std::vector<vk::Semaphore> semas(semaphores.size());
@@ -18,18 +18,20 @@ namespace Graphics::Sync
 
 		vk::SemaphoreWaitInfo waitInfo = { {}, semas };
 
-		[[maybe_unused]] auto result = device->getHandle().waitSemaphores(waitInfo, timeout);
+		[[maybe_unused]] auto result = device->waitSemaphores(waitInfo, timeout);
 	}
 
 	Semaphore::Semaphore(Device& device)
-	    : Handle({ &device }), m_Device(&device)
+	    : m_Device(device)
 	{
+		m_Device.addChild(this);
 	}
 
 	Semaphore::~Semaphore()
 	{
 		if (isCreated())
 			destroy();
+		m_Device.removeChild(this);
 	}
 
 	void Semaphore::waitFor(std::uint64_t timeout)
@@ -39,19 +41,19 @@ namespace Graphics::Sync
 
 	std::uint64_t Semaphore::getValue()
 	{
-		return m_Device->getHandle().getSemaphoreCounterValue(m_Handle);
+		return m_Device->getSemaphoreCounterValue(m_Handle);
 	}
 
 	void Semaphore::createImpl()
 	{
 		vk::SemaphoreCreateInfo createInfo = {};
 
-		m_Handle = m_Device->getHandle().createSemaphore(createInfo);
+		m_Handle = m_Device->createSemaphore(createInfo);
 	}
 
 	bool Semaphore::destroyImpl()
 	{
-		m_Device->getHandle().destroySemaphore(m_Handle);
+		m_Device->destroySemaphore(m_Handle);
 		return true;
 	}
 } // namespace Graphics::Sync

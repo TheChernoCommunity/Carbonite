@@ -4,22 +4,21 @@
 
 namespace Graphics
 {
-	HandleBase::HandleBase(const std::vector<HandleBase*>& parents)
-	    : m_Parents(parents)
+	void HandleBase::addChild(HandleBase* child)
 	{
-		for (auto parent : parents)
-			parent->m_Children.push_back(this);
+		auto itr = std::find(m_Children.begin(), m_Children.end(), child);
+		if (itr == m_Children.end())
+			m_Children.push_back(child);
 	}
 
-	HandleBase::~HandleBase()
+	void HandleBase::removeChild(HandleBase* child)
 	{
-		for (auto parent : m_Parents)
+		auto itr = std::find(m_Children.begin(), m_Children.end(), child);
+		if (itr != m_Children.end())
 		{
-			auto& children = parent->m_Children;
-			auto  itr      = std::find(children.begin(), children.end(), this);
-			if (itr != children.end())
-				children.erase(itr);
+			if (m_ChildItr < m_Children.size() && m_Children.begin() + m_ChildItr < itr)
+				--m_ChildItr;
+			m_Children.erase(itr);
 		}
-		m_Parents.clear();
 	}
 } // namespace Graphics

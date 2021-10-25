@@ -13,7 +13,11 @@ namespace Graphics
 		Swapchain(Memory::VMA& vma);
 		~Swapchain();
 
-		auto getVma() const
+		auto& getVma()
+		{
+			return m_Vma;
+		}
+		auto& getVma() const
 		{
 			return m_Vma;
 		}
@@ -51,7 +55,7 @@ namespace Graphics
 		std::set<std::uint32_t> m_Indices;
 
 	private:
-		Memory::VMA* m_Vma;
+		Memory::VMA& m_Vma;
 
 		std::vector<Image> m_Images;
 	};

@@ -10,10 +10,14 @@ namespace Graphics
 	{
 	public:
 		Image(Memory::VMA& vma);
-		Image(Memory::VMA& vma, HandleBase* parentHandle, vk::Image& handle);
+		Image(Memory::VMA& vma, vk::Image& handle);
 		~Image();
 
-		auto getVma() const
+		auto& getVma()
+		{
+			return m_Vma;
+		}
+		auto& getVma() const
 		{
 			return m_Vma;
 		}
@@ -40,7 +44,7 @@ namespace Graphics
 		std::set<std::uint32_t> m_Indices;
 
 	private:
-		Memory::VMA* m_Vma;
+		Memory::VMA& m_Vma;
 
 		VmaAllocation m_Allocation;
 	};

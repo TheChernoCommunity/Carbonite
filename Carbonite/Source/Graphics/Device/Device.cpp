@@ -18,14 +18,17 @@ namespace Graphics
 	}
 
 	Device::Device(Surface& surface)
-	    : Handle({ &surface }), m_Surface(&surface)
+	    : m_Surface(surface)
 	{
+		m_Surface.addChild(this);
 	}
 
 	Device::~Device()
 	{
 		if (isCreated())
 			destroy();
+
+		m_Surface.removeChild(this);
 	}
 
 	void Device::requestLayer(std::string_view name, Version requiredVersion, bool required)
@@ -95,9 +98,8 @@ namespace Graphics
 
 	void Device::createImpl()
 	{
-		[[maybe_unused]] auto& surfaceHandle   = m_Surface->getHandle();
-		auto&                  instanceHandle  = m_Surface->getInstance()->getHandle();
-		auto                   physicalDevices = instanceHandle.enumeratePhysicalDevices();
+		auto& instance        = m_Surface.getInstance();
+		auto  physicalDevices = instance->enumeratePhysicalDevices();
 
 		vk::PhysicalDevice bestPhysicalDevice = nullptr;
 		std::size_t        bestScore          = 0;
@@ -177,7 +179,7 @@ namespace Graphics
 
 					bool eval = (queueFamilyProperty.queueFlags & queueRequest.m_QueueFlags) && queueFamilyProperty.queueCount >= queueRequest.m_Count;
 					if (queueRequest.m_SupportsPresent)
-						eval = eval && physicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle());
+						eval = eval && physicalDevice.getSurfaceSupportKHR(i, *m_Surface);
 
 					if (eval)
 					{
@@ -301,7 +303,7 @@ namespace Graphics
 
 				bool eval = (queueFamilyProperty.queueFlags & queueRequest.m_QueueFlags) && queueFamilyProperty.queueCount >= queueRequest.m_Count;
 				if (queueRequest.m_SupportsPresent)
-					eval = eval && m_PhysicalDevice.getSurfaceSupportKHR(i, m_Surface->getHandle());
+					eval = eval && m_PhysicalDevice.getSurfaceSupportKHR(i, *m_Surface);
 
 				if (eval)
 				{
@@ -367,7 +369,7 @@ namespace Graphics
 			auto [familyIndex, queueCount] = *itr;
 
 			auto& queueFamilyProperty = queueFamilyProperties[familyIndex];
-			m_QueueFamilies.emplace_back(*this, familyIndex, queueFamilyProperty.queueFlags, queueFamilyProperty.timestampValidBits, queueFamilyProperty.minImageTransferGranularity, m_PhysicalDevice.getSurfaceSupportKHR(familyIndex, m_Surface->getHandle()), queueCount);
+			m_QueueFamilies.emplace_back(*this, familyIndex, queueFamilyProperty.queueFlags, queueFamilyProperty.timestampValidBits, queueFamilyProperty.minImageTransferGranularity, m_PhysicalDevice.getSurfaceSupportKHR(familyIndex, *m_Surface), queueCount);
 		}
 	}
 
