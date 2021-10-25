@@ -74,6 +74,24 @@ namespace Core
 	static constexpr bool s_IsLinux   = false;
 #endif
 
+#if CARBONITE_IS_TOOLSET_MSVC
+	static constexpr bool s_IsMSVC  = true;
+	static constexpr bool s_IsClang = false;
+	static constexpr bool s_IsGCC   = false;
+#elif CARBONITE_IS_TOOLSET_CLANG
+	static constexpr bool s_IsMSVC      = false;
+	static constexpr bool s_IsClang     = true;
+	static constexpr bool s_IsGCC       = false;
+#elif CARBONITE_IS_TOOLSET_GCC
+	static constexpr bool s_IsMSVC      = false;
+	static constexpr bool s_IsClang     = false;
+	static constexpr bool s_IsGCC       = true;
+#else
+	static constexpr bool s_IsMSVC    = false;
+	static constexpr bool s_IsClang   = false;
+	static constexpr bool s_IsGCC     = false;
+#endif
+
 #if CARBONITE_IS_PLATFORM_X64
 	static constexpr bool s_IsX64 = true;
 #else

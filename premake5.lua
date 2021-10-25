@@ -59,6 +59,7 @@ workspace("Carbonite")
 		symbols("Off")
 	
 	filter("system:windows")
+		toolset("msc")
 		defines({
 			"CARBONITE_SYSTEM=CARBONITE_SYSTEM_WINDOWS",
 			"NOMINMAX",
