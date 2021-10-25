@@ -132,3 +132,41 @@ newaction({
 		})
 	end
 })
+
+newaction({
+	trigger = "format",
+	description = "Run Clang-Format on all project files",
+	
+	onProject = function(prj)
+		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local tr = premake.project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if node.runclangformat then
+					local relpath = premake.workspace.getrelative(cfg.workspace, node.abspath)
+					print(relpath)
+					formatTidyExecuteClangFormatOnFile(cfg, node)
+				end
+			end
+		})
+	end
+})
+
+newaction({
+	trigger = "tidy",
+	description = "Run Clang-Tidy on all project files",
+	
+	onProject = function(prj)
+		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local tr = premake.project.getsourcetree(prj)
+		premake.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if node.runclangtidy then
+					local relpath = premake.workspace.getrelative(cfg.workspace, node.abspath)
+					print(relpath)
+					formatTidyExecuteClangTidyOnFile(cfg, node)
+				end
+			end
+		})
+	end
+})
