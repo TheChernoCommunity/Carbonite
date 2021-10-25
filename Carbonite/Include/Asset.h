@@ -35,5 +35,5 @@ struct Asset
 	std::uint32_t           type;
 	std::shared_ptr<char[]> data;
 
-	static Asset load(std::string path);
+	Asset(std::string path);
 };

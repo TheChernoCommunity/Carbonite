@@ -23,10 +23,9 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
+	Asset license("LICENSE");
+
 	Log::init();
-
-	Asset license = Asset::load("LICENSE");
-
 	Log::info(license.data.get());
 
 	try
