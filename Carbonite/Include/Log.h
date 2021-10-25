@@ -6,7 +6,6 @@
 
 namespace Log
 {
-
 	std::shared_ptr<spdlog::logger> getClientLogger();
 
 	void init();

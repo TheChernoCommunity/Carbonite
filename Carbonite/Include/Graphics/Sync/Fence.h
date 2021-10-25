@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Device.h"
+#include "Graphics/Device/Device.h"
 
 namespace Graphics::Sync
 {

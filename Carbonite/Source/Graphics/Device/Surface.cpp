@@ -1,4 +1,4 @@
-#include "Graphics/Surface.h"
+#include "Graphics/Device/Surface.h"
 
 #include <GLFW/glfw3.h>
 

@@ -1,4 +1,5 @@
-#include "Graphics/CommandPool.h"
+#include "Graphics/Commands/CommandPool.h"
+#include "Graphics/Device/Queue.h"
 
 namespace Graphics
 {
@@ -34,8 +35,8 @@ namespace Graphics
 		return true;
 	}
 
-	CommandPool::CommandPool(Device& device /*, Queue& queue */)
-	    : Handle({ &device /*, &queue */ }), m_Device(&device) /*, m_Queue(&queue) */
+	CommandPool::CommandPool(Device& device)
+	    : Handle({ &device }), m_Device(&device)
 	{
 	}
 
@@ -43,6 +44,11 @@ namespace Graphics
 	{
 		if (isCreated())
 			destroy();
+	}
+
+	void CommandPool::setQueueFamily(QueueFamily& queueFamily)
+	{
+		m_QueueFamily = &queueFamily;
 	}
 
 	void CommandPool::reset()
@@ -102,9 +108,10 @@ namespace Graphics
 
 	void CommandPool::createImpl()
 	{
-		vk::CommandPoolCreateInfo createInfo;
+		if (m_QueueFamily == nullptr)
+			return;
 
-		createInfo.setQueueFamilyIndex(m_Device->getQueues().graphicsFamilyIndex);
+		vk::CommandPoolCreateInfo createInfo = { {}, m_QueueFamily->getFamilyIndex() };
 
 		m_Handle = m_Device->getHandle().createCommandPool(createInfo);
 	}

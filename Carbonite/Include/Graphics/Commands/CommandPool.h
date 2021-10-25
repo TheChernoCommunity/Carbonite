@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Device.h"
+#include "Graphics/Device/Device.h"
 
 namespace Graphics
 {
@@ -43,8 +43,14 @@ namespace Graphics
 		using CommandBuffersT         = std::vector<CommandBufferLevelListT>;
 
 	public:
-		CommandPool(Device& device /*, Queue& queue */);
+		CommandPool(Device& device);
 		~CommandPool();
+
+		void setQueueFamily(QueueFamily& queueFamily);
+		auto getQueueFamily() const
+		{
+			return m_QueueFamily;
+		}
 
 		void reset();
 
@@ -58,13 +64,20 @@ namespace Graphics
 			return m_CommandBuffers;
 		}
 
+		auto getDevice() const
+		{
+			return m_Device;
+		}
+
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
+	protected:
+		QueueFamily* m_QueueFamily = nullptr;
+
 	private:
 		Device* m_Device;
-		/* Queue* m_Queue; */
 
 		CommandBuffersT m_CommandBuffers;
 	};
