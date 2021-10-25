@@ -13,10 +13,8 @@ namespace
 	static std::uniform_int_distribution<uint64_t> uniform_dist(std::numeric_limits<std::uint64_t>::min(), std::numeric_limits<std::uint64_t>::max());
 } // namespace
 
-Asset Asset::load(std::string path)
+Asset::Asset(std::string path)
 {
-	Asset asset;
-
 	// Get file extension
 	std::string extension;
 
@@ -30,38 +28,36 @@ Asset Asset::load(std::string path)
 	{
 		if (extension == "vert")
 		{
-			asset.type = static_cast<uint32_t>(ShaderType::Vertex);
+			type = static_cast<uint32_t>(ShaderType::Vertex);
 		}
 		else if (extension == "tesc")
 		{
-			asset.type = static_cast<uint32_t>(ShaderType::TessellationControl);
+			type = static_cast<uint32_t>(ShaderType::TessellationControl);
 		}
 		else if (extension == "tese")
 		{
-			asset.type = static_cast<uint32_t>(ShaderType::TessellationEvaluation);
+			type = static_cast<uint32_t>(ShaderType::TessellationEvaluation);
 		}
 		else if (extension == "geom")
 		{
-			asset.type = static_cast<uint32_t>(ShaderType::Geometry);
+			type = static_cast<uint32_t>(ShaderType::Geometry);
 		}
 		else if (extension == "comp")
 		{
-			asset.type = static_cast<uint32_t>(ShaderType::Compute);
+			type = static_cast<uint32_t>(ShaderType::Compute);
 		}
 	}
 
 	std::ifstream  file(path);
 	std::uintmax_t size = std::filesystem::file_size(path);
-	asset.data          = std::shared_ptr<char[]>(new char[size]);
 
-	asset.id = uniform_dist(engine);
+	data = std::shared_ptr<char[]>(new char[size]);
+	id   = uniform_dist(engine);
 
 	if (file.is_open())
 	{
-		file.read(asset.data.get(), size);
+		file.read(data.get(), size);
 	}
 
 	file.close();
-
-	return asset;
 }
