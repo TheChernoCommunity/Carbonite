@@ -3,14 +3,16 @@
 namespace Graphics
 {
 	RenderPass::RenderPass(Device& device)
-	    : Handle({ &device }), m_Device(&device)
+	    : m_Device(device)
 	{
+		m_Device.addChild(this);
 	}
 
 	RenderPass::~RenderPass()
 	{
 		if (isCreated())
 			destroy();
+		m_Device.removeChild(this);
 	}
 
 	void RenderPass::createImpl()
@@ -73,12 +75,12 @@ namespace Graphics
 
 		vk::RenderPassCreateInfo createInfo = { {}, attachments, subpasses, dependencies };
 
-		m_Handle = m_Device->getHandle().createRenderPass(createInfo);
+		m_Handle = m_Device->createRenderPass(createInfo);
 	}
 
 	bool RenderPass::destroyImpl()
 	{
-		m_Device->getHandle().destroyRenderPass(m_Handle);
+		m_Device->destroyRenderPass(m_Handle);
 		return true;
 	}
 } // namespace Graphics

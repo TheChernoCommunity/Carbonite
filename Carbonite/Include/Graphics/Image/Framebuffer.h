@@ -11,7 +11,11 @@ namespace Graphics
 		Framebuffer(RenderPass& renderPass);
 		~Framebuffer();
 
-		auto getRenderPass() const
+		auto& getRenderPass()
+		{
+			return m_RenderPass;
+		}
+		auto& getRenderPass() const
 		{
 			return m_RenderPass;
 		}
@@ -28,6 +32,7 @@ namespace Graphics
 		std::uint32_t m_Layers = 1;
 
 	private:
-		RenderPass* m_RenderPass;
+		RenderPass&             m_RenderPass;
+		std::vector<ImageView*> m_UsedAttachments;
 	};
 } // namespace Graphics

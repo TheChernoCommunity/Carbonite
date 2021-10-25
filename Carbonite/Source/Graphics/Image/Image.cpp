@@ -3,19 +3,22 @@
 namespace Graphics
 {
 	Image::Image(Memory::VMA& vma)
-	    : Handle({ &vma }), m_Vma(&vma)
+	    : m_Vma(vma)
 	{
+		m_Vma.addChild(this);
 	}
 
-	Image::Image(Memory::VMA& vma, HandleBase* parentHandle, vk::Image& handle)
-	    : Handle({ &vma, parentHandle }, handle), m_Vma(&vma)
+	Image::Image(Memory::VMA& vma, vk::Image& handle)
+	    : Handle(handle), m_Vma(vma)
 	{
+		m_Vma.addChild(this);
 	}
 
 	Image::~Image()
 	{
 		if (isCreated())
 			destroy();
+		m_Vma.removeChild(this);
 	}
 
 	void Image::createImpl()
@@ -35,14 +38,14 @@ namespace Graphics
 
 		VkImageCreateInfo vkCreateInfo = createInfo;
 
-		auto result = vmaCreateImage(m_Vma->getHandle(), &vkCreateInfo, &allocationCreateInfo, &image, &m_Allocation, nullptr);
+		auto result = vmaCreateImage(*m_Vma, &vkCreateInfo, &allocationCreateInfo, &image, &m_Allocation, nullptr);
 		if (result == VK_SUCCESS)
 			m_Handle = image;
 	}
 
 	bool Image::destroyImpl()
 	{
-		vmaDestroyImage(m_Vma->getHandle(), m_Handle, m_Allocation);
+		vmaDestroyImage(*m_Vma, m_Handle, m_Allocation);
 		m_Allocation = nullptr;
 		return true;
 	}

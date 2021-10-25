@@ -10,7 +10,11 @@ namespace Graphics::Memory
 		VMA(Device& device);
 		~VMA();
 
-		auto getDevice() const
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
 		{
 			return m_Device;
 		}
@@ -20,6 +24,6 @@ namespace Graphics::Memory
 		virtual bool destroyImpl() override;
 
 	private:
-		Device* m_Device;
+		Device& m_Device;
 	};
 } // namespace Graphics::Memory

@@ -3,26 +3,28 @@
 namespace Graphics::Memory
 {
 	Buffer::Buffer(VMA& vma)
-	    : Handle({ &vma }), m_Vma(&vma)
+	    : m_Vma(vma)
 	{
+		m_Vma.addChild(this);
 	}
 
 	Buffer::~Buffer()
 	{
 		if (isCreated())
 			destroy();
+		m_Vma.removeChild(this);
 	}
 
 	void* Buffer::mapMemory()
 	{
 		void* memory = nullptr;
-		vmaMapMemory(m_Vma->getHandle(), m_Allocation, &memory);
+		vmaMapMemory(*m_Vma, m_Allocation, &memory);
 		return memory;
 	}
 
 	void Buffer::unmapMemory()
 	{
-		vmaUnmapMemory(m_Vma->getHandle(), m_Allocation);
+		vmaUnmapMemory(*m_Vma, m_Allocation);
 	}
 
 	void Buffer::createImpl()
@@ -41,14 +43,14 @@ namespace Graphics::Memory
 
 		VkBufferCreateInfo vkCreateInfo = createInfo;
 
-		auto result = vmaCreateBuffer(m_Vma->getHandle(), &vkCreateInfo, &allocationCreateInfo, &buffer, &m_Allocation, nullptr);
+		auto result = vmaCreateBuffer(*m_Vma, &vkCreateInfo, &allocationCreateInfo, &buffer, &m_Allocation, nullptr);
 		if (result == VK_SUCCESS)
 			m_Handle = buffer;
 	}
 
 	bool Buffer::destroyImpl()
 	{
-		vmaDestroyBuffer(m_Vma->getHandle(), m_Handle, m_Allocation);
+		vmaDestroyBuffer(*m_Vma, m_Handle, m_Allocation);
 		m_Allocation = nullptr;
 		return true;
 	}

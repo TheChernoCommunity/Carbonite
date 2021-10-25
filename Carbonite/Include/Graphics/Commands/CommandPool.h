@@ -15,7 +15,11 @@ namespace Graphics
 		bool begin();
 		bool end();
 
-		auto getPool() const
+		auto& getPool()
+		{
+			return m_Pool;
+		}
+		auto& getPool() const
 		{
 			return m_Pool;
 		}
@@ -32,7 +36,7 @@ namespace Graphics
 		}
 
 	private:
-		CommandPool*           m_Pool;
+		CommandPool&           m_Pool;
 		vk::CommandBufferLevel m_Level;
 	};
 
@@ -64,7 +68,11 @@ namespace Graphics
 			return m_CommandBuffers;
 		}
 
-		auto getDevice() const
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
 		{
 			return m_Device;
 		}
@@ -77,7 +85,7 @@ namespace Graphics
 		QueueFamily* m_QueueFamily = nullptr;
 
 	private:
-		Device* m_Device;
+		Device& m_Device;
 
 		CommandBuffersT m_CommandBuffers;
 	};

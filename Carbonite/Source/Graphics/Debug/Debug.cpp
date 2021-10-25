@@ -91,26 +91,28 @@ namespace Graphics
 	}
 
 	Debug::Debug(Instance& instance)
-	    : Handle({ &instance }), m_Instance(&instance)
+	    : m_Instance(instance)
 	{
+		m_Instance.addChild(this);
 	}
 
 	Debug::~Debug()
 	{
 		if (isCreated())
 			destroy();
+		m_Instance.removeChild(this);
 	}
 
 	void Debug::createImpl()
 	{
 		vk::DebugUtilsMessengerCreateInfoEXT createInfo;
 		PopulateCreateInfo(createInfo);
-		m_Handle = m_Instance->getHandle().createDebugUtilsMessengerEXT(createInfo);
+		m_Handle = m_Instance->createDebugUtilsMessengerEXT(createInfo);
 	}
 
 	bool Debug::destroyImpl()
 	{
-		m_Instance->getHandle().destroyDebugUtilsMessengerEXT(m_Handle);
+		m_Instance->destroyDebugUtilsMessengerEXT(m_Handle);
 		return true;
 	}
 } // namespace Graphics

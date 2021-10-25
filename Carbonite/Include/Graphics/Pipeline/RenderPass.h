@@ -57,7 +57,11 @@ namespace Graphics
 		RenderPass(Device& device);
 		~RenderPass();
 
-		auto getDevice() const
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
 		{
 			return m_Device;
 		}
@@ -72,6 +76,6 @@ namespace Graphics
 		std::vector<RenderPassSubpassDependency> m_Dependencies;
 
 	private:
-		Device* m_Device;
+		Device& m_Device;
 	};
 } // namespace Graphics

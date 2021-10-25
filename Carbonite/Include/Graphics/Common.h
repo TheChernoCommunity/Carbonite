@@ -35,8 +35,8 @@ namespace Graphics
 	struct HandleBase
 	{
 	public:
-		HandleBase(const std::vector<HandleBase*>& parents = {});
-		virtual ~HandleBase();
+		HandleBase()          = default;
+		virtual ~HandleBase() = default;
 
 		virtual bool create()  = 0;
 		virtual void destroy() = 0;
@@ -45,17 +45,16 @@ namespace Graphics
 		virtual bool isCreated() const     = 0;
 		virtual bool isDestroyable() const = 0;
 
-		auto& getParents() const
-		{
-			return m_Parents;
-		}
+		void addChild(HandleBase* child);
+		void removeChild(HandleBase* child);
+
 		auto& getChildren() const
 		{
 			return m_Children;
 		}
 
 	protected:
-		std::vector<HandleBase*> m_Parents;
+		std::size_t              m_ChildItr = 0;
 		std::vector<HandleBase*> m_Children;
 	};
 
@@ -66,8 +65,8 @@ namespace Graphics
 		using HandleT = HandleType;
 
 	public:
-		Handle(const std::vector<HandleBase*>& parents = {});
-		Handle(const std::vector<HandleBase*>& parents, HandleT handle);
+		Handle();
+		Handle(HandleT handle);
 
 		virtual bool create() override;
 		virtual void destroy() override;
@@ -94,6 +93,23 @@ namespace Graphics
 			return m_Handle;
 		}
 
+		HandleT& operator*()
+		{
+			return m_Handle;
+		}
+		HandleT& operator*() const
+		{
+			return m_Handle;
+		}
+		HandleT* operator->()
+		{
+			return &m_Handle;
+		}
+		HandleT* operator->() const
+		{
+			return &m_Handle;
+		}
+
 	private:
 		virtual void createImpl()  = 0;
 		virtual bool destroyImpl() = 0;
@@ -104,7 +120,6 @@ namespace Graphics
 
 	private:
 		std::vector<HandleBase*> m_DestroyedChildren;
-		std::size_t              m_DestroyItr = 0;
 
 		bool m_Created = false;
 		bool m_Destroyable;
@@ -126,14 +141,14 @@ namespace Graphics
 	/* template <class HandleType, bool Destroyable> struct Handle */
 
 	template <class HandleType, bool Destroyable>
-	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents)
-	    : HandleBase(parents), m_Destroyable(true)
+	Handle<HandleType, Destroyable>::Handle()
+	    : m_Destroyable(true)
 	{
 	}
 
 	template <class HandleType, bool Destroyable>
-	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents, HandleT handle)
-	    : HandleBase(parents), m_Handle(handle), m_Destroyable(false)
+	Handle<HandleType, Destroyable>::Handle(HandleT handle)
+	    : m_Handle(handle), m_Destroyable(false)
 	{
 	}
 
@@ -165,9 +180,9 @@ namespace Graphics
 		if (m_Recreate)
 			m_DestroyedChildren.clear();
 
-		for (m_DestroyItr = 0; m_DestroyItr < m_Children.size(); ++m_DestroyItr)
+		for (m_ChildItr = 0; m_ChildItr < m_Children.size(); ++m_ChildItr)
 		{
-			auto& child = m_Children[m_DestroyItr];
+			auto child = m_Children[m_ChildItr];
 
 			if (child->isValid())
 			{
@@ -181,7 +196,7 @@ namespace Graphics
 		if constexpr (Destroyable)
 			if (m_Destroyable && isCreated() && destroyImpl())
 				m_Handle = nullptr;
-		m_Created    = false;
-		m_DestroyItr = 0;
+		m_Created  = false;
+		m_ChildItr = 0;
 	}
 } // namespace Graphics

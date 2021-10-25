@@ -5,14 +5,16 @@
 namespace Graphics
 {
 	Surface::Surface(Instance& instance, GLFWwindow* window)
-	    : Handle({ &instance }), m_Instance(&instance), m_Window(window)
+	    : m_Instance(instance), m_Window(window)
 	{
+		m_Instance.addChild(this);
 	}
 
 	Surface::~Surface()
 	{
 		if (isCreated())
 			destroy();
+		m_Instance.removeChild(this);
 	}
 
 	void Surface::setWindow(GLFWwindow* window)
@@ -24,14 +26,14 @@ namespace Graphics
 	{
 		VkSurfaceKHR surface;
 
-		auto result = glfwCreateWindowSurface(m_Instance->getHandle(), m_Window, nullptr, &surface);
+		auto result = glfwCreateWindowSurface(*m_Instance, m_Window, nullptr, &surface);
 		if (result == VK_SUCCESS)
 			m_Handle = surface;
 	}
 
 	bool Surface::destroyImpl()
 	{
-		m_Instance->getHandle().destroySurfaceKHR(m_Handle);
+		m_Instance->destroySurfaceKHR(m_Handle);
 		return true;
 	}
 } // namespace Graphics
