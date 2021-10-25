@@ -4,7 +4,7 @@
 
 namespace Graphics::Memory
 {
-	struct VMA : public Handle<VmaAllocator>
+	struct VMA : public Handle<VmaAllocator, true, true>
 	{
 	public:
 		VMA(Device& device);

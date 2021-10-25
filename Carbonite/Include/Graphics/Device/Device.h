@@ -1,38 +1,50 @@
 #pragma once
 
+namespace Graphics
+{
+	namespace Detail
+	{
+		struct DeviceLayer;
+		using DeviceExtension = DeviceLayer;
+		struct DeviceQueueFamilyRequest;
+	} // namespace Detail
+	struct Device;
+} // namespace Graphics
+
 #include "Surface.h"
 
 namespace Graphics
 {
 	struct QueueFamily;
 
-	struct DeviceLayer
+	namespace Detail
 	{
-	public:
-		DeviceLayer(std::string_view name, Version version, bool required = true);
+		struct DeviceLayer
+		{
+		public:
+			DeviceLayer(std::string_view name, Version version, bool required = true);
 
-	public:
-		std::string m_Name;
-		Version     m_Version;
-		bool        m_Required;
-	};
+		public:
+			std::string m_Name;
+			Version     m_Version;
+			bool        m_Required;
+		};
 
-	using DeviceExtension = DeviceLayer;
+		struct DeviceQueueFamilyRequest
+		{
+		public:
+			DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent = false, bool required = true);
 
-	struct DeviceQueueFamilyRequest
-	{
-	public:
-		DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent = false, bool required = true);
+		public:
+			std::uint32_t  m_Count;
+			vk::QueueFlags m_QueueFlags;
 
-	public:
-		std::uint32_t  m_Count;
-		vk::QueueFlags m_QueueFlags;
+			bool m_SupportsPresent;
+			bool m_Required;
+		};
+	} // namespace Detail
 
-		bool m_SupportsPresent;
-		bool m_Required;
-	};
-
-	struct Device : public Handle<vk::Device>
+	struct Device : public Handle<vk::Device, true, false>
 	{
 	public:
 		Device(Surface& surface);
@@ -88,8 +100,8 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	protected:
-		std::vector<DeviceLayer>     m_EnabledLayers;
-		std::vector<DeviceExtension> m_EnabledExtensions;
+		std::vector<Detail::DeviceLayer>     m_EnabledLayers;
+		std::vector<Detail::DeviceExtension> m_EnabledExtensions;
 
 		std::vector<QueueFamily> m_QueueFamilies;
 
@@ -98,9 +110,9 @@ namespace Graphics
 
 		vk::PhysicalDevice m_PhysicalDevice = nullptr;
 
-		std::vector<DeviceLayer>     m_Layers;
-		std::vector<DeviceExtension> m_Extensions;
+		std::vector<Detail::DeviceLayer>     m_Layers;
+		std::vector<Detail::DeviceExtension> m_Extensions;
 
-		std::vector<DeviceQueueFamilyRequest> m_QueueRequests;
+		std::vector<Detail::DeviceQueueFamilyRequest> m_QueueRequests;
 	};
 } // namespace Graphics

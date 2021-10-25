@@ -5,7 +5,7 @@
 
 namespace Graphics
 {
-	struct Framebuffer : public Handle<vk::Framebuffer>
+	struct Framebuffer : public Handle<vk::Framebuffer, true, true>
 	{
 	public:
 		Framebuffer(RenderPass& renderPass);

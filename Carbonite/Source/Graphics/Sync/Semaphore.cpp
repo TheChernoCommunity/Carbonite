@@ -29,7 +29,7 @@ namespace Graphics::Sync
 
 	Semaphore::~Semaphore()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}

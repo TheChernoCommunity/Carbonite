@@ -4,15 +4,14 @@
 namespace Graphics
 {
 	CommandBuffer::CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level)
-	    : m_Pool(pool), m_Level(level)
+	    : Handle(handle), m_Pool(pool), m_Level(level)
 	{
-		m_Handle = handle;
 		m_Pool.addChild(this);
 	}
 
 	CommandBuffer::~CommandBuffer()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Pool.removeChild(this);
 	}
@@ -45,7 +44,7 @@ namespace Graphics
 
 	CommandPool::~CommandPool()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}

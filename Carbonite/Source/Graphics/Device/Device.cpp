@@ -7,15 +7,18 @@
 
 namespace Graphics
 {
-	DeviceLayer::DeviceLayer(std::string_view name, Version version, bool required)
-	    : m_Name(name), m_Version(version), m_Required(required)
+	namespace Detail
 	{
-	}
+		DeviceLayer::DeviceLayer(std::string_view name, Version version, bool required)
+		    : m_Name(name), m_Version(version), m_Required(required)
+		{
+		}
 
-	DeviceQueueFamilyRequest::DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent, bool required)
-	    : m_Count(count), m_QueueFlags(queueFlags), m_SupportsPresent(supportsPresent), m_Required(required)
-	{
-	}
+		DeviceQueueFamilyRequest::DeviceQueueFamilyRequest(std::uint32_t count, vk::QueueFlags queueFlags, bool supportsPresent, bool required)
+		    : m_Count(count), m_QueueFlags(queueFlags), m_SupportsPresent(supportsPresent), m_Required(required)
+		{
+		}
+	} // namespace Detail
 
 	Device::Device(Surface& surface)
 	    : m_Surface(surface)
@@ -25,15 +28,14 @@ namespace Graphics
 
 	Device::~Device()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
-
 		m_Surface.removeChild(this);
 	}
 
 	void Device::requestLayer(std::string_view name, Version requiredVersion, bool required)
 	{
-		auto itr = std::find_if(m_Layers.begin(), m_Layers.end(), [name](const DeviceLayer& layer) -> bool
+		auto itr = std::find_if(m_Layers.begin(), m_Layers.end(), [name](const Detail::DeviceLayer& layer) -> bool
 		                        { return layer.m_Name == name; });
 
 		if (itr != m_Layers.end())
@@ -51,7 +53,7 @@ namespace Graphics
 
 	void Device::requestExtension(std::string_view name, Version requiredVersion, bool required)
 	{
-		auto itr = std::find_if(m_Extensions.begin(), m_Extensions.end(), [name](const DeviceExtension& extension) -> bool
+		auto itr = std::find_if(m_Extensions.begin(), m_Extensions.end(), [name](const Detail::DeviceExtension& extension) -> bool
 		                        { return extension.m_Name == name; });
 
 		if (itr != m_Extensions.end())

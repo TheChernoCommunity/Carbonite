@@ -4,7 +4,7 @@
 
 namespace Graphics::Sync
 {
-	struct Fence : Handle<vk::Fence>
+	struct Fence : Handle<vk::Fence, true, true>
 	{
 	public:
 		static void ResetFences(const std::vector<Fence*>& fences);

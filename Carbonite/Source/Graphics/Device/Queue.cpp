@@ -15,7 +15,7 @@ namespace Graphics
 
 	QueueFamily::~QueueFamily()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}
@@ -23,12 +23,6 @@ namespace Graphics
 	Queue* QueueFamily::getQueue(std::uint32_t index) const
 	{
 		return index < m_Queues.size() ? const_cast<Queue*>(&m_Queues[index]) : nullptr;
-	}
-
-	void QueueFamily::createImpl() {}
-	bool QueueFamily::destroyImpl()
-	{
-		return true;
 	}
 
 	Queue::Queue(QueueFamily& queueFamily, std::uint32_t index, vk::Queue handle)
@@ -39,17 +33,8 @@ namespace Graphics
 
 	Queue::~Queue()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_QueueFamily.removeChild(this);
-	}
-
-	void Queue::createImpl()
-	{
-	}
-
-	bool Queue::destroyImpl()
-	{
-		return true;
 	}
 } // namespace Graphics

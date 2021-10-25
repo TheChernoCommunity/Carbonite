@@ -5,12 +5,15 @@
 
 namespace Graphics
 {
-	InstanceLayer::InstanceLayer(std::string_view name, Version version, bool required)
-	    : m_Name(name), m_Version(version), m_Required(required) {}
+	namespace Detail
+	{
+		InstanceLayer::InstanceLayer(std::string_view name, Version version, bool required)
+		    : m_Name(name), m_Version(version), m_Required(required) {}
+	} // namespace Detail
 
-	Version                    Instance::s_CachedVersion;
-	std::vector<InstanceLayer> Instance::s_CachedAvailableLayers;
-	std::vector<InstanceLayer> Instance::s_CachedAvailableExtensions;
+	Version                            Instance::s_CachedVersion;
+	std::vector<Detail::InstanceLayer> Instance::s_CachedAvailableLayers;
+	std::vector<Detail::InstanceLayer> Instance::s_CachedAvailableExtensions;
 
 	Version Instance::GetVulkanVersion()
 	{
@@ -30,7 +33,7 @@ namespace Graphics
 		return s_CachedVersion;
 	}
 
-	const std::vector<InstanceLayer>& Instance::GetAvailableLayers(bool requery)
+	const std::vector<Detail::InstanceLayer>& Instance::GetAvailableLayers(bool requery)
 	{
 		if (requery || s_CachedAvailableLayers.empty())
 		{
@@ -52,7 +55,7 @@ namespace Graphics
 		return s_CachedAvailableLayers;
 	}
 
-	const std::vector<InstanceExtension>& Instance::GetAvailableExtensions(bool requery)
+	const std::vector<Detail::InstanceExtension>& Instance::GetAvailableExtensions(bool requery)
 	{
 		if (requery || s_CachedAvailableExtensions.empty())
 		{
@@ -91,17 +94,18 @@ namespace Graphics
 	}
 
 	Instance::Instance(std::string_view appName, Version appVersion, std::string_view engineName, Version engineVersion, Version minAPIVersion, Version maxAPIVersion)
-	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion) {}
+	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion), m_Debug(new Debug(*this)) {}
 
 	Instance::~Instance()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
+		delete m_Debug;
 	}
 
 	void Instance::requestLayer(std::string_view name, Version requiredVersion, bool required)
 	{
-		auto itr = std::find_if(m_Layers.begin(), m_Layers.end(), [name](const InstanceLayer& layer) -> bool
+		auto itr = std::find_if(m_Layers.begin(), m_Layers.end(), [name](const Detail::InstanceLayer& layer) -> bool
 		                        { return layer.m_Name == name; });
 
 		if (itr != m_Layers.end())
@@ -119,7 +123,7 @@ namespace Graphics
 
 	void Instance::requestExtension(std::string_view name, Version requiredVersion, bool required)
 	{
-		auto itr = std::find_if(m_Extensions.begin(), m_Extensions.end(), [name](const InstanceExtension& extension) -> bool
+		auto itr = std::find_if(m_Extensions.begin(), m_Extensions.end(), [name](const Detail::InstanceExtension& extension) -> bool
 		                        { return extension.m_Name == name; });
 
 		if (itr != m_Extensions.end())

@@ -44,7 +44,7 @@ namespace Graphics::Sync
 
 	Fence::~Fence()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}

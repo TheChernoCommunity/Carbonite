@@ -10,7 +10,7 @@ namespace Graphics
 
 	ImageView::~ImageView()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Image.removeChild(this);
 	}

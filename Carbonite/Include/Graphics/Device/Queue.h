@@ -6,7 +6,7 @@ namespace Graphics
 {
 	struct Queue;
 
-	struct QueueFamily : public Handle<void*, false>
+	struct QueueFamily : public Handle<void*, false, false>
 	{
 	public:
 		QueueFamily(Device& device, std::uint32_t familyIndex, vk::QueueFlags queueFlags, std::uint32_t timestampValidBits, vk::Extent3D minImageTransferGranularity, bool supportsPresent, std::uint32_t queueCount);
@@ -50,10 +50,6 @@ namespace Graphics
 		}
 
 	private:
-		virtual void createImpl() override;
-		virtual bool destroyImpl() override;
-
-	private:
 		Device& m_Device;
 
 		vk::QueueFlags m_QueueFlags;
@@ -65,7 +61,7 @@ namespace Graphics
 		std::vector<Queue> m_Queues;
 	};
 
-	struct Queue : public Handle<vk::Queue, false>
+	struct Queue : public Handle<vk::Queue, false, false>
 	{
 	public:
 		Queue(QueueFamily& queueFamily, std::uint32_t index, vk::Queue handle);
@@ -84,10 +80,6 @@ namespace Graphics
 		{
 			return m_Index;
 		}
-
-	private:
-		virtual void createImpl() override;
-		virtual bool destroyImpl() override;
 
 	private:
 		QueueFamily& m_QueueFamily;

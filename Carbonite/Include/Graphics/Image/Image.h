@@ -6,7 +6,7 @@
 
 namespace Graphics
 {
-	struct Image : public Handle<vk::Image>
+	struct Image : public Handle<vk::Image, true, true>
 	{
 	public:
 		Image(Memory::VMA& vma);

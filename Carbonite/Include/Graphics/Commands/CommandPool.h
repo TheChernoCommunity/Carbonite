@@ -6,7 +6,7 @@ namespace Graphics
 {
 	struct CommandPool;
 
-	struct CommandBuffer : Handle<vk::CommandBuffer, false>
+	struct CommandBuffer : public Handle<vk::CommandBuffer, false, true>
 	{
 	public:
 		CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level);
@@ -29,18 +29,11 @@ namespace Graphics
 		}
 
 	private:
-		virtual void createImpl() override {}
-		virtual bool destroyImpl() override
-		{
-			return true;
-		}
-
-	private:
 		CommandPool&           m_Pool;
 		vk::CommandBufferLevel m_Level;
 	};
 
-	struct CommandPool : Handle<vk::CommandPool>
+	struct CommandPool : public Handle<vk::CommandPool, true, true>
 	{
 	public:
 		using CommandBufferLevelListT = std::pair<vk::CommandBufferLevel, std::vector<CommandBuffer>>;

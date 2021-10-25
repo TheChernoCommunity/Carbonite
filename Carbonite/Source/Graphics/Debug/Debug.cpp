@@ -5,11 +5,7 @@
 
 namespace Graphics
 {
-#ifdef _DEBUG
-	bool Debug::s_Enabled = true;
-#else
-	bool Debug::s_Enabled = false;
-#endif
+	bool Debug::s_Enabled = Core::s_IsDebugMode;
 
 	void Debug::Disable()
 	{
@@ -98,7 +94,7 @@ namespace Graphics
 
 	Debug::~Debug()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Instance.removeChild(this);
 	}
@@ -107,12 +103,18 @@ namespace Graphics
 	{
 		vk::DebugUtilsMessengerCreateInfoEXT createInfo;
 		PopulateCreateInfo(createInfo);
-		m_Handle = m_Instance->createDebugUtilsMessengerEXT(createInfo);
+		m_DebugUtilsEXT.init(m_Instance);
+
+		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo;
+
+		VkDebugUtilsMessengerEXT debugMessenger;
+		m_DebugUtilsEXT.vkCreateDebugUtilsMessengerEXT(*m_Instance, &vkCreateInfo, nullptr, &debugMessenger);
+		m_Handle = debugMessenger;
 	}
 
 	bool Debug::destroyImpl()
 	{
-		m_Instance->destroyDebugUtilsMessengerEXT(m_Handle);
+		m_DebugUtilsEXT.vkDestroyDebugUtilsMessengerEXT(*m_Instance, m_Handle, nullptr);
 		return true;
 	}
 } // namespace Graphics

@@ -7,7 +7,7 @@
 
 namespace Graphics
 {
-	struct Swapchain : public Handle<vk::SwapchainKHR>
+	struct Swapchain : public Handle<vk::SwapchainKHR, true, true>
 	{
 	public:
 		Swapchain(Memory::VMA& vma);
