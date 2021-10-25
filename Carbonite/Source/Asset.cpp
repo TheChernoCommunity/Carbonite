@@ -48,9 +48,9 @@ Asset::Asset(std::string path)
 		}
 	}
 
-	std::ifstream  file(path);
-	std::uintmax_t size = std::filesystem::file_size(path);
+	std::ifstream file(path);
 
+	size = std::filesystem::file_size(path);
 	data = std::shared_ptr<char[]>(new char[size]);
 	id   = uniform_dist(engine);
 
