@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Device.h"
+#include "Graphics/Device/Device.h"
 
 namespace Graphics::Sync
 {
@@ -16,7 +16,11 @@ namespace Graphics::Sync
 		void          waitFor(std::uint64_t timeout);
 		std::uint64_t getValue();
 
-		auto getDevice() const
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
 		{
 			return m_Device;
 		}
@@ -26,6 +30,6 @@ namespace Graphics::Sync
 		virtual bool destroyImpl() override;
 
 	private:
-		Device* m_Device;
+		Device& m_Device;
 	};
 } // namespace Graphics::Sync

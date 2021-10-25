@@ -1,17 +1,20 @@
-#include "Graphics/CommandPool.h"
+#include "Graphics/Commands/CommandPool.h"
+#include "Graphics/Device/Queue.h"
 
 namespace Graphics
 {
 	CommandBuffer::CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level)
-	    : Handle({ &pool }), m_Pool(&pool), m_Level(level)
+	    : m_Pool(pool), m_Level(level)
 	{
 		m_Handle = handle;
+		m_Pool.addChild(this);
 	}
 
 	CommandBuffer::~CommandBuffer()
 	{
 		if (isCreated())
 			destroy();
+		m_Pool.removeChild(this);
 	}
 
 	bool CommandBuffer::begin()
@@ -34,20 +37,27 @@ namespace Graphics
 		return true;
 	}
 
-	CommandPool::CommandPool(Device& device /*, Queue& queue */)
-	    : Handle({ &device /*, &queue */ }), m_Device(&device) /*, m_Queue(&queue) */
+	CommandPool::CommandPool(Device& device)
+	    : m_Device(device)
 	{
+		m_Device.addChild(this);
 	}
 
 	CommandPool::~CommandPool()
 	{
 		if (isCreated())
 			destroy();
+		m_Device.removeChild(this);
+	}
+
+	void CommandPool::setQueueFamily(QueueFamily& queueFamily)
+	{
+		m_QueueFamily = &queueFamily;
 	}
 
 	void CommandPool::reset()
 	{
-		m_Device->getHandle().resetCommandPool(m_Handle);
+		m_Device->resetCommandPool(m_Handle);
 	}
 
 	std::vector<CommandBuffer*> CommandPool::allocateBuffers(vk::CommandBufferLevel level, std::uint32_t count)
@@ -59,7 +69,7 @@ namespace Graphics
 
 		std::vector<vk::CommandBuffer> cmdBuffers(count);
 
-		if (m_Device->getHandle().allocateCommandBuffers(&allocInfo, cmdBuffers.data()) == vk::Result::eSuccess)
+		if (m_Device->allocateCommandBuffers(&allocInfo, cmdBuffers.data()) == vk::Result::eSuccess)
 		{
 			auto commandBuffers = getCommandBuffers(level);
 			if (commandBuffers == nullptr)
@@ -102,16 +112,17 @@ namespace Graphics
 
 	void CommandPool::createImpl()
 	{
-		vk::CommandPoolCreateInfo createInfo;
+		if (m_QueueFamily == nullptr)
+			return;
 
-		createInfo.setQueueFamilyIndex(m_Device->getQueues().graphicsFamilyIndex);
+		vk::CommandPoolCreateInfo createInfo = { {}, m_QueueFamily->getFamilyIndex() };
 
-		m_Handle = m_Device->getHandle().createCommandPool(createInfo);
+		m_Handle = m_Device->createCommandPool(createInfo);
 	}
 
 	bool CommandPool::destroyImpl()
 	{
-		m_Device->getHandle().destroyCommandPool(m_Handle);
+		m_Device->destroyCommandPool(m_Handle);
 
 		m_CommandBuffers.clear();
 		return true;
