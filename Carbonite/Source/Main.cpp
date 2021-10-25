@@ -1,4 +1,4 @@
-#include "AssetManager.h"
+#include "Asset.h"
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Device.h"
@@ -25,10 +25,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	Log::init();
 
-	AssetManager assetManager;
-	Asset        license = assetManager.LoadAsset("LICENSE");
+	Asset license = Asset::load("LICENSE");
 
-	Log::info(license.getData().data());
+	Log::info(license.data.get());
 
 	try
 	{
