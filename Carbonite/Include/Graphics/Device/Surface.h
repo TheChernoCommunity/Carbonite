@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "Graphics/Instance.h"
 
 struct GLFWwindow;
 
@@ -12,7 +12,11 @@ namespace Graphics
 		Surface(Instance& instance, GLFWwindow* window);
 		~Surface();
 
-		auto getInstance() const
+		auto& getInstance()
+		{
+			return m_Instance;
+		}
+		auto& getInstance() const
 		{
 			return m_Instance;
 		}
@@ -28,7 +32,7 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	private:
-		Instance*   m_Instance;
+		Instance&   m_Instance;
 		GLFWwindow* m_Window;
 	};
 } // namespace Graphics

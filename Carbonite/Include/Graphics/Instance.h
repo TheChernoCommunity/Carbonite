@@ -60,6 +60,10 @@ namespace Graphics
 		{
 			return m_EngineVersion;
 		}
+		auto getApiVersion() const
+		{
+			return m_ApiVersion;
+		}
 
 		auto& getEnabledLayers() const
 		{
@@ -98,6 +102,7 @@ namespace Graphics
 		Version     m_EngineVersion;
 		Version     m_MinAPIVersion;
 		Version     m_MaxAPIVersion;
+		Version     m_ApiVersion;
 
 		std::vector<InstanceLayer>     m_EnabledLayers;
 		std::vector<InstanceExtension> m_EnabledExtensions;

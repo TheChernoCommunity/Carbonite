@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Device.h"
+#include "Graphics/Device/Device.h"
 
 namespace Graphics
 {
@@ -15,7 +15,11 @@ namespace Graphics
 		bool begin();
 		bool end();
 
-		auto getPool() const
+		auto& getPool()
+		{
+			return m_Pool;
+		}
+		auto& getPool() const
 		{
 			return m_Pool;
 		}
@@ -32,7 +36,7 @@ namespace Graphics
 		}
 
 	private:
-		CommandPool*           m_Pool;
+		CommandPool&           m_Pool;
 		vk::CommandBufferLevel m_Level;
 	};
 
@@ -43,8 +47,14 @@ namespace Graphics
 		using CommandBuffersT         = std::vector<CommandBufferLevelListT>;
 
 	public:
-		CommandPool(Device& device /*, Queue& queue */);
+		CommandPool(Device& device);
 		~CommandPool();
+
+		void setQueueFamily(QueueFamily& queueFamily);
+		auto getQueueFamily() const
+		{
+			return m_QueueFamily;
+		}
 
 		void reset();
 
@@ -58,13 +68,24 @@ namespace Graphics
 			return m_CommandBuffers;
 		}
 
+		auto& getDevice()
+		{
+			return m_Device;
+		}
+		auto& getDevice() const
+		{
+			return m_Device;
+		}
+
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
+	protected:
+		QueueFamily* m_QueueFamily = nullptr;
+
 	private:
-		Device* m_Device;
-		/* Queue* m_Queue; */
+		Device& m_Device;
 
 		CommandBuffersT m_CommandBuffers;
 	};

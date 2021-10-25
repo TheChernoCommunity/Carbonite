@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vk_mem_alloc.h>
 #include <vulkan/vulkan.hpp>
 
 #include <cstdint>
@@ -34,8 +35,8 @@ namespace Graphics
 	struct HandleBase
 	{
 	public:
-		HandleBase(const std::vector<HandleBase*>& parents = {});
-		virtual ~HandleBase();
+		HandleBase()          = default;
+		virtual ~HandleBase() = default;
 
 		virtual bool create()  = 0;
 		virtual void destroy() = 0;
@@ -44,17 +45,16 @@ namespace Graphics
 		virtual bool isCreated() const     = 0;
 		virtual bool isDestroyable() const = 0;
 
-		auto& getParents() const
-		{
-			return m_Parents;
-		}
+		void addChild(HandleBase* child);
+		void removeChild(HandleBase* child);
+
 		auto& getChildren() const
 		{
 			return m_Children;
 		}
 
-	private:
-		std::vector<HandleBase*> m_Parents;
+	protected:
+		std::size_t              m_ChildItr = 0;
 		std::vector<HandleBase*> m_Children;
 	};
 
@@ -65,7 +65,8 @@ namespace Graphics
 		using HandleT = HandleType;
 
 	public:
-		Handle(const std::vector<HandleBase*>& parents = {});
+		Handle();
+		Handle(HandleT handle);
 
 		virtual bool create() override;
 		virtual void destroy() override;
@@ -80,8 +81,9 @@ namespace Graphics
 		}
 		virtual bool isDestroyable() const override
 		{
-			return Destroyable;
+			return Destroyable && m_Destroyable;
 		}
+
 		HandleT& getHandle()
 		{
 			return m_Handle;
@@ -91,18 +93,36 @@ namespace Graphics
 			return m_Handle;
 		}
 
+		HandleT& operator*()
+		{
+			return m_Handle;
+		}
+		HandleT& operator*() const
+		{
+			return m_Handle;
+		}
+		HandleT* operator->()
+		{
+			return &m_Handle;
+		}
+		HandleT* operator->() const
+		{
+			return &m_Handle;
+		}
+
 	private:
 		virtual void createImpl()  = 0;
 		virtual bool destroyImpl() = 0;
 
 	protected:
-		HandleT m_Handle = nullptr;
+		HandleT m_Handle   = nullptr;
+		bool    m_Recreate = false;
 
 	private:
 		std::vector<HandleBase*> m_DestroyedChildren;
 
-		bool m_Created  = false;
-		bool m_Recreate = false;
+		bool m_Created = false;
+		bool m_Destroyable;
 	};
 
 	/* Implementation */
@@ -121,8 +141,14 @@ namespace Graphics
 	/* template <class HandleType, bool Destroyable> struct Handle */
 
 	template <class HandleType, bool Destroyable>
-	Handle<HandleType, Destroyable>::Handle(const std::vector<HandleBase*>& parents)
-	    : HandleBase(parents)
+	Handle<HandleType, Destroyable>::Handle()
+	    : m_Destroyable(true)
+	{
+	}
+
+	template <class HandleType, bool Destroyable>
+	Handle<HandleType, Destroyable>::Handle(HandleT handle)
+	    : m_Handle(handle), m_Destroyable(false)
 	{
 	}
 
@@ -154,26 +180,23 @@ namespace Graphics
 		if (m_Recreate)
 			m_DestroyedChildren.clear();
 
-		auto& children = getChildren();
-		auto  itr      = children.begin();
-		while (itr != children.end())
+		for (m_ChildItr = 0; m_ChildItr < m_Children.size(); ++m_ChildItr)
 		{
-			auto child = *itr;
+			auto child = m_Children[m_ChildItr];
 
-			if (child->isCreated())
+			if (child->isValid())
 			{
 				child->destroy();
 
 				if (m_Recreate && child->isDestroyable())
 					m_DestroyedChildren.push_back(child);
 			}
-
-			++itr;
 		}
 
 		if constexpr (Destroyable)
-			if (m_Handle && destroyImpl())
+			if (m_Destroyable && isCreated() && destroyImpl())
 				m_Handle = nullptr;
-		m_Created = false;
+		m_Created  = false;
+		m_ChildItr = 0;
 	}
 } // namespace Graphics
