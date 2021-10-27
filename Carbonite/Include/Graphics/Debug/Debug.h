@@ -1,15 +1,12 @@
 #pragma once
 
-namespace Graphics
-{
-	struct Debug;
-}
-
 #include "DebugUtilsEXT.h"
-#include "Graphics/Instance.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {
+	struct Instance;
+
 	struct Debug : public Handle<vk::DebugUtilsMessengerEXT, true, false>
 	{
 	public:

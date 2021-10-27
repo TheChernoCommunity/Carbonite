@@ -1,17 +1,6 @@
 #pragma once
 
-namespace Graphics
-{
-	namespace Detail
-	{
-		struct InstanceLayer;
-		using InstanceExtension = InstanceLayer;
-	} // namespace Detail
-	struct Instance;
-} // namespace Graphics
-
 #include "Common.h"
-#include "Debug/Debug.h"
 
 #include <string>
 #include <string_view>
@@ -30,21 +19,29 @@ namespace Graphics
 			Version     m_Version;
 			bool        m_Required;
 		};
+
+		using InstanceExtension = InstanceLayer;
 	} // namespace Detail
+
+	struct Debug;
 
 	struct Instance : public Handle<vk::Instance, true, false>
 	{
 	public:
-		static Version                                       GetVulkanVersion();
-		static const std::vector<Detail::InstanceLayer>&     GetAvailableLayers(bool requery = false);
-		static const std::vector<Detail::InstanceExtension>& GetAvailableExtensions(bool requery = false);
-		static bool                                          HasLayer(std::string_view name, Version lowestVersion = {});
-		static bool                                          HasExtension(std::string_view name, Version lowestVersion = {});
+		using InstanceLayers     = std::vector<Detail::InstanceLayer>;
+		using InstanceExtensions = std::vector<Detail::InstanceExtension>;
+
+	public:
+		static Version                   GetVulkanVersion();
+		static const InstanceLayers&     GetAvailableLayers(bool requery = false);
+		static const InstanceExtensions& GetAvailableExtensions(bool requery = false);
+		static bool                      HasLayer(std::string_view name, Version lowestVersion = {});
+		static bool                      HasExtension(std::string_view name, Version lowestVersion = {});
 
 	private:
-		static Version                            s_CachedVersion;
-		static std::vector<Detail::InstanceLayer> s_CachedAvailableLayers;
-		static std::vector<Detail::InstanceLayer> s_CachedAvailableExtensions;
+		static Version            s_CachedVersion;
+		static InstanceLayers     s_CachedAvailableLayers;
+		static InstanceExtensions s_CachedAvailableExtensions;
 
 	public:
 		Instance(std::string_view appName, Version appVersion, std::string_view engineName, Version engineVersion, Version minAPIVersion = {}, Version maxAPIVersion = { ~0U });
@@ -125,15 +122,15 @@ namespace Graphics
 		Version     m_MaxAPIVersion;
 		Version     m_ApiVersion;
 
-		std::vector<Detail::InstanceLayer>     m_EnabledLayers;
-		std::vector<Detail::InstanceExtension> m_EnabledExtensions;
+		InstanceLayer      m_EnabledLayers;
+		InstanceExtensions m_EnabledExtensions;
 
 	private:
 		Debug* m_Debug;
 
-		std::vector<Detail::InstanceLayer>     m_Layers;
-		std::vector<Detail::InstanceExtension> m_Extensions;
-		std::vector<Detail::InstanceLayer>     m_MissingLayers;
-		std::vector<Detail::InstanceExtension> m_MissingExtensions;
+		InstanceLayers     m_Layers;
+		InstanceExtensions m_Extensions;
+		InstanceLayers     m_MissingLayers;
+		InstanceExtensions m_MissingExtensions;
 	};
 } // namespace Graphics

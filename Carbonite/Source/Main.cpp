@@ -1,3 +1,5 @@
+#include "PCH.h"
+
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Device.h"
@@ -151,26 +153,25 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 			if (!commandPool.create())
 				throw std::runtime_error("Failed to create vulkan command pool");
-
-			commandPool.setDebugName(device, "commandPools_" + std::to_string(i));
+			device.setDebugName(commandPool, "commandPools_" + std::to_string(i));
 
 			commandPool.allocateBuffers(vk::CommandBufferLevel::ePrimary, 1);
 
 			auto& ias = imageAvailableSemaphores[i];
 			if (!ias.create())
 				throw std::runtime_error("Failed to create vulkan semaphore");
-			ias.setDebugName(device, "imageAvailableSemaphores_" + std::to_string(i));
+			device.setDebugName(ias, "imageAvailableSemaphores_" + std::to_string(i));
 
 			auto& rfs = renderFinishedSemaphores[i];
 			if (!rfs.create())
 				throw std::runtime_error("Failed to create vulkan semaphore");
-			rfs.setDebugName(device, "renderFinishedSemaphores_" + std::to_string(i));
+			device.setDebugName(rfs, "renderFinishedSemaphores_" + std::to_string(i));
 
 			auto& iff = inFlightFences[i];
 			iff.setSignaled();
 			if (!iff.create())
 				throw std::runtime_error("Failed to create vulkan fence");
-			iff.setDebugName(device, "inFlightFences_" + std::to_string(i));
+			device.setDebugName(iff, "inFlightFences_" + std::to_string(i));
 		}
 
 		// Create swapchain
@@ -223,7 +224,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			renderPass.m_Dependencies.push_back(dependency);
 
 			if (!renderPass.create()) throw std::runtime_error("Failed to create vulkan renderpass");
-			renderPass.setDebugName(device, "RenderPass");
+			device.setDebugName(renderPass, "RenderPass");
 		}
 
 		swapchain.m_ImageCount   = std::min(surfaceCapabilities.minImageCount + 1, surfaceCapabilities.maxImageCount);
@@ -237,7 +238,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		swapchain.m_Indices.insert(graphicsPresentQueueFamily->getFamilyIndex());
 		if (!swapchain.create())
 			throw std::runtime_error("Failed to create vulkan swapchain");
-		swapchain.setDebugName(device, "Swapchain");
+		device.setDebugName(swapchain, "Swapchain");
 
 		auto& swapchainImages = swapchain.getImages();
 		imageViews.reserve(swapchainImages.size());
@@ -250,7 +251,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			imageView.m_Format = swapchain.m_Format;
 			if (!imageView.create())
 				throw std::runtime_error("Failed to create vulkan imageview");
-			imageView.setDebugName(device, "imageViews_" + std::to_string(i));
+			device.setDebugName(imageView, "imageViews_" + std::to_string(i));
 
 			auto& depthImage    = swapchainDepthImages.emplace_back(vma);
 			depthImage.m_Format = vk::Format::eD32SfloatS8Uint;
@@ -259,7 +260,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			depthImage.m_Height = swapchain.m_Height;
 			if (!depthImage.create())
 				throw std::runtime_error("Failed to create vulkan image");
-			depthImage.setDebugName(device, "swapchainDepthImages_" + std::to_string(i));
+			device.setDebugName(depthImage, "swapchainDepthImages_" + std::to_string(i));
 
 			auto& depthImageView    = swapchainDepthImageViews.emplace_back(depthImage);
 			depthImageView.m_Format = depthImage.m_Format;
@@ -267,7 +268,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth;
 			if (!depthImageView.create())
 				throw std::runtime_error("Failed to create vulkan imageview");
-			depthImageView.setDebugName(device, "swapchainDepthImageViews_" + std::to_string(i));
+			device.setDebugName(depthImageView, "swapchainDepthImageViews_" + std::to_string(i));
 
 			auto& framebuffer = framebuffers.emplace_back(renderPass);
 			framebuffer.m_Attachments.push_back(&imageView);
@@ -276,7 +277,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			framebuffer.m_Height = swapchain.m_Height;
 			if (!framebuffer.create())
 				throw std::runtime_error("Failed to create vulkan framebuffer");
-			framebuffer.setDebugName(device, "framebuffers_" + std::to_string(i));
+			device.setDebugName(framebuffer, "framebuffers_" + std::to_string(i));
 		}
 
 		imagesInFlight.clear();

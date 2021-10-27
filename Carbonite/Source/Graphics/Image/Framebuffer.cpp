@@ -1,4 +1,8 @@
+#include "PCH.h"
+
 #include "Graphics/Image/Framebuffer.h"
+#include "Graphics/Image/ImageView.h"
+#include "Graphics/Pipeline/RenderPass.h"
 
 namespace Graphics
 {

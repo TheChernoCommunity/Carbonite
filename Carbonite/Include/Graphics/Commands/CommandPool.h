@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Graphics/Device/Device.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {
+	struct Device;
 	struct CommandPool;
 
 	struct CommandBuffer : public Handle<vk::CommandBuffer, false, true>

@@ -1,5 +1,7 @@
-#include "Graphics/Instance.h"
+#include "PCH.h"
+
 #include "Graphics/Debug/Debug.h"
+#include "Graphics/Instance.h"
 
 #include <utility>
 

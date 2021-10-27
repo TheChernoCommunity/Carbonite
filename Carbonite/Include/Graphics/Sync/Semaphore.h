@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Graphics/Device/Device.h"
+#include "Graphics/Common.h"
 
 namespace Graphics::Sync
 {
+	struct Device;
+
 	struct Semaphore : Handle<vk::Semaphore, true, true>
 	{
 	public:

@@ -1,3 +1,6 @@
+#include "PCH.h"
+
+#include "Graphics/Device/Device.h"
 #include "Graphics/Sync/Semaphore.h"
 
 namespace Graphics::Sync

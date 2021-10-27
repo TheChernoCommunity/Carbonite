@@ -1,4 +1,7 @@
+#include "PCH.h"
+
 #include "Graphics/Commands/CommandPool.h"
+#include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 
 namespace Graphics
