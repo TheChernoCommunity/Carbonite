@@ -10,7 +10,7 @@ namespace Graphics
 
 	Framebuffer::~Framebuffer()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_RenderPass.removeChild(this);
 	}

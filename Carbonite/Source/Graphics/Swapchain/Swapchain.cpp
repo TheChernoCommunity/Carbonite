@@ -11,7 +11,7 @@ namespace Graphics
 
 	Swapchain::~Swapchain()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Vma.removeChild(this);
 	}

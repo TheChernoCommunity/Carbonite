@@ -36,23 +36,54 @@ workspace("Carbonite")
 	runclangtidy(false)
 
 	filter("configurations:Debug")
-		defines({ "_DEBUG" })
+		defines({
+			"CARBONITE_CONFIG=CARBONITE_CONFIG_DEBUG",
+			"_DEBUG",
+			"NRELEASE"
+		})
 		optimize("Off")
 		symbols("On")
 
 	filter("configurations:Release")
-		defines({ "_RELEASE" })
+		defines({
+			"CARBONITE_CONFIG=CARBONITE_CONFIG_RELEASE",
+			"NDEBUG",
+			"_RELEASE"
+		})
 		optimize("Full")
 		symbols("On")
 
 	filter("configurations:Dist")
-		defines({ "_RELEASE" })
+		defines({ "CARBONITE_CONFIG=CARBONITE_CONFIG_DIST" })
 		optimize("Full")
 		symbols("Off")
-
+	
 	filter("system:windows")
 		toolset("msc")
-		defines({ "NOMINMAX", "WIN32_LEAN_AND_MEAN", "_CRT_SECURE_NO_WARNINGS" })
+		defines({
+			"CARBONITE_SYSTEM=CARBONITE_SYSTEM_WINDOWS",
+			"NOMINMAX",
+			"WIN32_LEAN_AND_MEAN",
+			"_CRT_SECURE_NO_WARNINGS"
+		})
+	
+	filter("system:macosx")
+		defines({ "CARBONITE_SYSTEM=CARBONITE_SYSTEM_MACOSX" })
+	
+	filter("system:linux")
+		defines({ "CARBONITE_SYSTEM=CARBONITE_SYSTEM_LINUX" })
+	
+	filter("toolset:msc")
+		defines({ "CARBONITE_TOOLSET=CARBONITE_TOOLSET_MSVC" })
+	
+	filter("toolset:clang")
+		defines({ "CARBONITE_TOOLSET=CARBONITE_TOOLSET_CLANG" })
+	
+	filter("toolset:gcc")
+		defines({ "CARBONITE_TOOLSET=CARBONITE_TOOLSET_GCC" })
+	
+	filter("platforms:x64")
+		defines({ "CARBONITE_PLATFORM=CARBONITE_PLATFORM_X64" })
 
 	filter({})
 	
@@ -235,8 +266,6 @@ end
 			sysincludedirs({ vulkanSDKPath .. "/include/" })
 		
 		filter({})
-		
-		defines({ "GLFW_INCLUDE_NONE" })
 
 		links({ "GLFW", "VMA", "ImGUI" })
 		sysincludedirs({
@@ -255,6 +284,9 @@ end
 		
 		files({ "%{prj.location}/**" })
 		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
+		
+		filter("files:**.inl")
+			runclangformat(true)
 		
 		filter("files:**.h")
 			runclangformat(true)

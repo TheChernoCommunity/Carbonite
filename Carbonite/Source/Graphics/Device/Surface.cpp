@@ -12,7 +12,7 @@ namespace Graphics
 
 	Surface::~Surface()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Instance.removeChild(this);
 	}

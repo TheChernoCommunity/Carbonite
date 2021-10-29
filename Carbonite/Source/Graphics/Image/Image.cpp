@@ -16,7 +16,7 @@ namespace Graphics
 
 	Image::~Image()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Vma.removeChild(this);
 	}

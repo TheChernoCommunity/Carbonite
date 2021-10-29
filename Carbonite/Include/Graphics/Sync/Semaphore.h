@@ -4,7 +4,7 @@
 
 namespace Graphics::Sync
 {
-	struct Semaphore : Handle<vk::Semaphore>
+	struct Semaphore : Handle<vk::Semaphore, true, true>
 	{
 	public:
 		static void WaitForSemaphores(const std::vector<Semaphore*>& semaphores, std::uint64_t timeout);

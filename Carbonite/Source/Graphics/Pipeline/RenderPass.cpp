@@ -10,7 +10,7 @@ namespace Graphics
 
 	RenderPass::~RenderPass()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}

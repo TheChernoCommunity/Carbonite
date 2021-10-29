@@ -10,7 +10,7 @@ namespace Graphics::Memory
 
 	VMA::~VMA()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Device.removeChild(this);
 	}

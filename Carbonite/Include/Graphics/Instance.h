@@ -1,38 +1,50 @@
 #pragma once
 
+namespace Graphics
+{
+	namespace Detail
+	{
+		struct InstanceLayer;
+		using InstanceExtension = InstanceLayer;
+	} // namespace Detail
+	struct Instance;
+} // namespace Graphics
+
 #include "Common.h"
+#include "Debug/Debug.h"
 
 #include <string>
 #include <string_view>
 
 namespace Graphics
 {
-	struct InstanceLayer
+	namespace Detail
+	{
+		struct InstanceLayer
+		{
+		public:
+			InstanceLayer(std::string_view name, Version version, bool required = true);
+
+		public:
+			std::string m_Name;
+			Version     m_Version;
+			bool        m_Required;
+		};
+	} // namespace Detail
+
+	struct Instance : public Handle<vk::Instance, true, false>
 	{
 	public:
-		InstanceLayer(std::string_view name, Version version, bool required = true);
-
-	public:
-		std::string m_Name;
-		Version     m_Version;
-		bool        m_Required;
-	};
-
-	using InstanceExtension = InstanceLayer;
-
-	struct Instance : public Handle<vk::Instance>
-	{
-	public:
-		static Version                               GetVulkanVersion();
-		static const std::vector<InstanceLayer>&     GetAvailableLayers(bool requery = false);
-		static const std::vector<InstanceExtension>& GetAvailableExtensions(bool requery = false);
-		static bool                                  HasLayer(std::string_view name, Version lowestVersion = {});
-		static bool                                  HasExtension(std::string_view name, Version lowestVersion = {});
+		static Version                                       GetVulkanVersion();
+		static const std::vector<Detail::InstanceLayer>&     GetAvailableLayers(bool requery = false);
+		static const std::vector<Detail::InstanceExtension>& GetAvailableExtensions(bool requery = false);
+		static bool                                          HasLayer(std::string_view name, Version lowestVersion = {});
+		static bool                                          HasExtension(std::string_view name, Version lowestVersion = {});
 
 	private:
-		static Version                    s_CachedVersion;
-		static std::vector<InstanceLayer> s_CachedAvailableLayers;
-		static std::vector<InstanceLayer> s_CachedAvailableExtensions;
+		static Version                            s_CachedVersion;
+		static std::vector<Detail::InstanceLayer> s_CachedAvailableLayers;
+		static std::vector<Detail::InstanceLayer> s_CachedAvailableExtensions;
 
 	public:
 		Instance(std::string_view appName, Version appVersion, std::string_view engineName, Version engineVersion, Version minAPIVersion = {}, Version maxAPIVersion = { ~0U });
@@ -91,6 +103,15 @@ namespace Graphics
 			return getExtensionVersion(name);
 		}
 
+		auto& getDebug()
+		{
+			return *m_Debug;
+		}
+		auto& getDebug() const
+		{
+			return *m_Debug;
+		}
+
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
@@ -104,13 +125,15 @@ namespace Graphics
 		Version     m_MaxAPIVersion;
 		Version     m_ApiVersion;
 
-		std::vector<InstanceLayer>     m_EnabledLayers;
-		std::vector<InstanceExtension> m_EnabledExtensions;
+		std::vector<Detail::InstanceLayer>     m_EnabledLayers;
+		std::vector<Detail::InstanceExtension> m_EnabledExtensions;
 
 	private:
-		std::vector<InstanceLayer>     m_Layers;
-		std::vector<InstanceExtension> m_Extensions;
-		std::vector<InstanceLayer>     m_MissingLayers;
-		std::vector<InstanceExtension> m_MissingExtensions;
+		Debug* m_Debug;
+
+		std::vector<Detail::InstanceLayer>     m_Layers;
+		std::vector<Detail::InstanceExtension> m_Extensions;
+		std::vector<Detail::InstanceLayer>     m_MissingLayers;
+		std::vector<Detail::InstanceExtension> m_MissingExtensions;
 	};
 } // namespace Graphics

@@ -10,7 +10,7 @@ namespace Graphics::Memory
 
 	Buffer::~Buffer()
 	{
-		if (isCreated())
+		if (isValid())
 			destroy();
 		m_Vma.removeChild(this);
 	}

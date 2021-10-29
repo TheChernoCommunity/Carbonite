@@ -6,7 +6,7 @@
 
 namespace Graphics::Memory
 {
-	struct Buffer : public Handle<vk::Buffer>
+	struct Buffer : public Handle<vk::Buffer, true, true>
 	{
 	public:
 		Buffer(VMA& vma);

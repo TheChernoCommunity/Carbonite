@@ -4,7 +4,7 @@
 
 namespace Graphics
 {
-	struct ImageView : public Handle<vk::ImageView>
+	struct ImageView : public Handle<vk::ImageView, true, true>
 	{
 	public:
 		ImageView(Image& image);

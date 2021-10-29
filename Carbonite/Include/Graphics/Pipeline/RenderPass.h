@@ -51,7 +51,7 @@ namespace Graphics
 		vk::DependencyFlags    m_DependencyFlags;
 	};
 
-	struct RenderPass : public Handle<vk::RenderPass>
+	struct RenderPass : public Handle<vk::RenderPass, true, true>
 	{
 	public:
 		RenderPass(Device& device);
