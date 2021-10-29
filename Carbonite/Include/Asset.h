@@ -1,6 +1,9 @@
 #pragma once
-#include <iostream>
-#include <vector>
+
+#include <cstdint>
+#include <fstream>
+#include <memory>
+#include <string>
 
 enum class ShaderType
 {
@@ -20,36 +23,18 @@ enum class ShaderType
 
 enum class CarboniteAssetType
 {
-	Item,
+	Item = 12,
 	Block,
 	Entity,
 	Recipe
 };
 
-class Asset
+struct Asset
 {
-	unsigned int AssetID;
-};
+	std::uint64_t           id;
+	std::uint32_t           type;
+	std::uint32_t           size;
+	std::shared_ptr<char[]> data;
 
-class ShaderAsset : Asset
-{
-	std::string ShaderPath;
-	ShaderType  Type;
-};
-
-class CarboniteAsset : Asset
-{
-	std::string        AssetPath;
-	CarboniteAssetType typePath;
-};
-
-class AssetManager
-{
-protected:
-	std::vector<Asset> LoadedAssets;
-
-public:
-	void  Load();
-	Asset LoadAsset(std::string path);
-	void  UnloadAsset(Asset asset);
+	Asset(std::string path);
 };
