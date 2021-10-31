@@ -90,7 +90,7 @@ namespace Graphics
 	}
 
 	Debug::Debug(Instance& instance)
-	    : m_Instance(instance)
+	    : m_DebugUtilsEXT({}), m_Instance(instance)
 	{
 		m_Instance.addChild(this);
 	}

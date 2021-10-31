@@ -40,7 +40,7 @@ namespace Graphics
 
 		protected:
 			std::size_t m_ChildItr = 0;
-			bool        m_Recreate;
+			bool        m_Recreate = false;
 
 			std::vector<HandleBase*> m_Children;
 			std::vector<HandleBase*> m_DestroyedChildren;
