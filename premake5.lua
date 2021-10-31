@@ -232,7 +232,13 @@ end
 		
 		warnings("Extra")
 		
-		pchheader("PCH.h")
+		filter("action:xcode4")
+			pchheader("%{prj.location}/Include/PCH.h")
+		
+		filter("action:not xcode4")
+			pchheader("PCH.h")
+		
+		filter({})
 		pchsource("%{prj.location}/Source/PCH.cpp")
 
 		filter("configurations:Debug")
