@@ -1,5 +1,6 @@
 #include "PCH.h"
 
+#include "Asset.h"
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Device.h"
@@ -25,7 +26,10 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
+	Asset license("LICENSE");
+
 	Log::init();
+	Log::info(license.data.get());
 
 	try
 	{
