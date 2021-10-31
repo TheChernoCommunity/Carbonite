@@ -60,35 +60,38 @@ namespace Graphics
 		template <class Handle, std::enable_if_t<std::is_base_of_v<HandleBase, Handle>, bool> = true>
 		void setDebugName(Handle& handle, std::string_view name)
 		{
-			if constexpr (Core::s_IsDebugMode && Handle::Debuggable)
+			if constexpr (Handle::Debuggable)
 			{
-				using HandleT                  = typename Handle::HandleT;
-				using BaseHandleT              = typename HandleT::CType;
-				HandleT&    baseHandle         = handle;
-				BaseHandleT evenMoreBaseHandle = baseHandle;
-
-				if (name.empty())
+				if (Graphics::Debug::IsEnabled())
 				{
-					vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), nullptr };
+					using HandleType               = typename Handle::HandleT;
+					using BaseHandleT              = typename HandleType::CType;
+					HandleType& baseHandle         = handle;
+					BaseHandleT evenMoreBaseHandle = baseHandle;
 
-					VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
-					getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(*m_Handle, &vkNameInfo);
-				}
-				else
-				{
-					std::string tName(name);
+					if (name.empty())
+					{
+						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), nullptr };
 
-					vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), tName.c_str() };
+						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
+						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+					}
+					else
+					{
+						std::string tName(name);
 
-					VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
-					getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(*m_Handle, &vkNameInfo);
+						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), tName.c_str() };
+
+						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
+						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+					}
 				}
 			}
 		}
 
 		Debug& getDebug();
 		Debug& getDebug() const;
-		auto& getSurface()
+		auto&  getSurface()
 		{
 			return m_Surface;
 		}

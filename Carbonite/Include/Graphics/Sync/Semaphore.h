@@ -2,36 +2,39 @@
 
 #include "Graphics/Common.h"
 
-namespace Graphics::Sync
+namespace Graphics
 {
 	struct Device;
 
-	struct Semaphore : Handle<vk::Semaphore, true, true>
+	namespace Sync
 	{
-	public:
-		static void WaitForSemaphores(const std::vector<Semaphore*>& semaphores, std::uint64_t timeout);
-
-	public:
-		Semaphore(Device& device);
-		~Semaphore();
-
-		void          waitFor(std::uint64_t timeout);
-		std::uint64_t getValue();
-
-		auto& getDevice()
+		struct Semaphore : Handle<vk::Semaphore, true, true>
 		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+		public:
+			static void WaitForSemaphores(const std::vector<Semaphore*>& semaphores, std::uint64_t timeout);
 
-	private:
-		virtual void createImpl() override;
-		virtual bool destroyImpl() override;
+		public:
+			Semaphore(Device& device);
+			~Semaphore();
 
-	private:
-		Device& m_Device;
-	};
-} // namespace Graphics::Sync
+			void          waitFor(std::uint64_t timeout);
+			std::uint64_t getValue();
+
+			auto& getDevice()
+			{
+				return m_Device;
+			}
+			auto& getDevice() const
+			{
+				return m_Device;
+			}
+
+		private:
+			virtual void createImpl() override;
+			virtual bool destroyImpl() override;
+
+		private:
+			Device& m_Device;
+		};
+	} // namespace Sync
+} // namespace Graphics

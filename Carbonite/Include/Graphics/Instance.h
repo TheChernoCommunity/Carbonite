@@ -122,7 +122,7 @@ namespace Graphics
 		Version     m_MaxAPIVersion;
 		Version     m_ApiVersion;
 
-		InstanceLayer      m_EnabledLayers;
+		InstanceLayers     m_EnabledLayers;
 		InstanceExtensions m_EnabledExtensions;
 
 	private:

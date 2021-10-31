@@ -3,8 +3,6 @@
 #include "Graphics/Device/Surface.h"
 #include "Graphics/Instance.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Graphics
 {
 	Surface::Surface(Instance& instance, GLFWwindow* window)

@@ -6,6 +6,7 @@
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Device/Surface.h"
 #include "Graphics/Image/Framebuffer.h"
+#include "Graphics/Image/Image.h"
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"

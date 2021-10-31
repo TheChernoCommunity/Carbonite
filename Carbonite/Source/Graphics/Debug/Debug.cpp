@@ -1,7 +1,7 @@
 #include "PCH.h"
 
 #include "Graphics/Debug/Debug.h"
-#include "Graphics/Device/Instance.h"
+#include "Graphics/Instance.h"
 #include "Log.h"
 
 #include <iostream>
@@ -108,7 +108,7 @@ namespace Graphics
 		PopulateCreateInfo(createInfo);
 		m_DebugUtilsEXT.init(m_Instance);
 
-		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo;
+		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo = createInfo;
 
 		VkDebugUtilsMessengerEXT debugMessenger;
 		m_DebugUtilsEXT.vkCreateDebugUtilsMessengerEXT(*m_Instance, &vkCreateInfo, nullptr, &debugMessenger);

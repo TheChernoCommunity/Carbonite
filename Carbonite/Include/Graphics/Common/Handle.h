@@ -17,6 +17,8 @@ namespace Graphics
 	{
 		struct HandleBase
 		{
+			// Base of a handle storing general stuff.
+
 		public:
 			HandleBase()          = default;
 			virtual ~HandleBase() = default;
@@ -47,6 +49,7 @@ namespace Graphics
 		template <class HandleType>
 		struct IsHandleValid
 		{
+			// Checks if HandleType is constructible and assignable with a nullptr and if it is copy and move constructible and assignable and if it is destructible.
 			static constexpr bool Value = std::is_constructible_v<HandleType, std::nullptr_t> && std::is_assignable_v<HandleType&, std::nullptr_t> && std::is_copy_constructible_v<HandleType> && std::is_copy_assignable_v<HandleType> && std::is_move_constructible_v<HandleType> && std::is_move_assignable_v<HandleType> && std::is_destructible_v<HandleType>;
 		};
 
@@ -56,11 +59,12 @@ namespace Graphics
 		template <class HandleType>
 		struct HandleStorage : public HandleBase
 		{
+			// Storage for a handle and the general functions associated with that handle.
+			// i.e. '->', '*', '(HandleType&)', '.getHandle()'
+
 		public:
 			HandleStorage()
 			    : m_Handle(nullptr) {}
-			HandleStorage(HandleType handle)
-			    : m_Handle(handle) {}
 			HandleStorage(const HandleType& handle)
 			    : m_Handle(handle) {}
 			HandleStorage(HandleType&& handle)
@@ -108,12 +112,17 @@ namespace Graphics
 			HandleType m_Handle;
 		};
 
+		// Template declaration for a handle.
+		// The actual struct is skipped here to be invalid when 'bool IsValid' = false.
+
 		template <class HandleType, bool IsDestroyable, bool IsDebuggable, bool IsValid>
 		struct Handle;
 
 		template <class HandleType, bool IsDebuggable>
 		struct Handle<HandleType, true, IsDebuggable, true> : public HandleStorage<HandleType>
 		{
+			// Definition of a destroyable handle.
+
 		public:
 			using HandleT                    = HandleType;
 			using Base                       = HandleStorage<HandleType>;
@@ -122,8 +131,6 @@ namespace Graphics
 		public:
 			Handle()
 			    : m_Created(false), m_Destroyable(true) {}
-			Handle(HandleType handle)
-			    : Base(handle), m_Created(true), m_Destroyable(false) {}
 			Handle(const HandleType& handle)
 			    : Base(handle), m_Created(true), m_Destroyable(false) {}
 			Handle(HandleType&& handle)
@@ -153,14 +160,14 @@ namespace Graphics
 		template <class HandleType, bool IsDebuggable>
 		struct Handle<HandleType, false, IsDebuggable, true> : public HandleStorage<HandleType>
 		{
+			// Definition for a non destroyable handle.
+
 		public:
 			using HandleT                    = HandleType;
 			using Base                       = HandleStorage<HandleType>;
 			static constexpr bool Debuggable = IsDebuggable;
 
 		public:
-			Handle(HandleType handle)
-			    : Base(handle) {}
 			Handle(const HandleType& handle)
 			    : Base(handle) {}
 			Handle(HandleType&& handle)
@@ -179,6 +186,10 @@ namespace Graphics
 			}
 		};
 	} // namespace Detail
+
+	// Alias converting the three template arguments into one of the two handle definitions, or nothing if the handle isn't valid.
+	// i.e. when passing some custom handle type that doesn't support the necessary functions.
+	// C++20 concepts would've made this prettier that's for sure.
 
 	template <class HandleType, bool IsDestroyable, bool IsDebuggable>
 	using Handle = Detail::Handle<HandleType, IsDestroyable, IsDebuggable && Core::s_IsDebugMode, Detail::IsHandleValidV<HandleType>>;
@@ -241,7 +252,7 @@ namespace Graphics::Detail
 		Base::m_Recreate = true;
 		destroy();
 
-		for (auto& child : Base::m_destroyedChildren)
+		for (auto& child : Base::m_DestroyedChildren)
 			child->create();
 		Base::m_DestroyedChildren.clear();
 

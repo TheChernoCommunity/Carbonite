@@ -232,7 +232,7 @@ end
 		
 		warnings("Extra")
 		
-		pchheader("%{prj.location}/Include/PCH.h")
+		pchheader("PCH.h")
 		pchsource("%{prj.location}/Source/PCH.cpp")
 
 		filter("configurations:Debug")

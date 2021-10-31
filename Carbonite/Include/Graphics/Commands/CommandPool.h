@@ -5,6 +5,7 @@
 namespace Graphics
 {
 	struct Device;
+	struct QueueFamily;
 	struct CommandPool;
 
 	struct CommandBuffer : public Handle<vk::CommandBuffer, false, true>

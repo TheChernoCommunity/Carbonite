@@ -2,46 +2,49 @@
 
 #include "Graphics/Common.h"
 
-namespace Graphics::Sync
+namespace Graphics
 {
 	struct Device;
 
-	struct Fence : Handle<vk::Fence, true, true>
+	namespace Sync
 	{
-	public:
-		static void ResetFences(const std::vector<Fence*>& fences);
-		static void WaitForFences(const std::vector<Fence*>& fences, bool waitAll, std::uint64_t timeout);
-
-	public:
-		Fence(Device& device);
-		~Fence();
-
-		void setSignaled()
+		struct Fence : Handle<vk::Fence, true, true>
 		{
-			m_Signaled = true;
-		}
+		public:
+			static void ResetFences(const std::vector<Fence*>& fences);
+			static void WaitForFences(const std::vector<Fence*>& fences, bool waitAll, std::uint64_t timeout);
 
-		void reset();
-		void waitFor(std::uint64_t timeout);
-		bool getState();
+		public:
+			Fence(Device& device);
+			~Fence();
 
-		auto& getDevice()
-		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+			void setSignaled()
+			{
+				m_Signaled = true;
+			}
 
-	private:
-		virtual void createImpl() override;
-		virtual bool destroyImpl() override;
+			void reset();
+			void waitFor(std::uint64_t timeout);
+			bool getState();
 
-	protected:
-		bool m_Signaled = false;
+			auto& getDevice()
+			{
+				return m_Device;
+			}
+			auto& getDevice() const
+			{
+				return m_Device;
+			}
 
-	private:
-		Device& m_Device;
-	};
-} // namespace Graphics::Sync
+		private:
+			virtual void createImpl() override;
+			virtual bool destroyImpl() override;
+
+		protected:
+			bool m_Signaled = false;
+
+		private:
+			Device& m_Device;
+		};
+	} // namespace Sync
+} // namespace Graphics
