@@ -1,16 +1,13 @@
 #pragma once
 
-namespace Graphics
-{
-	struct Surface;
-}
-
-#include "Graphics/Instance.h"
+#include "Graphics/Common.h"
 
 struct GLFWwindow;
 
 namespace Graphics
 {
+	struct Instance;
+
 	struct Surface : public Handle<vk::SurfaceKHR, true, false>
 	{
 	public:

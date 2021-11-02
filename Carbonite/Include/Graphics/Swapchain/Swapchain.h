@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Graphics/Image/Image.h"
-#include "Graphics/Memory/VMA.h"
+#include "Graphics/Common.h"
 
 #include <set>
 
 namespace Graphics
 {
+	namespace Memory
+	{
+		struct VMA;
+	}
+
+	struct Image;
+
 	struct Swapchain : public Handle<vk::SwapchainKHR, true, true>
 	{
 	public:

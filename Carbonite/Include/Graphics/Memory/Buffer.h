@@ -1,11 +1,13 @@
 #pragma once
 
-#include "VMA.h"
+#include "Graphics/Common.h"
 
 #include <set>
 
 namespace Graphics::Memory
 {
+	struct VMA;
+
 	struct Buffer : public Handle<vk::Buffer, true, true>
 	{
 	public:

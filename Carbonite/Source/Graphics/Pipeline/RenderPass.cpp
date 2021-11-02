@@ -1,3 +1,6 @@
+#include "PCH.h"
+
+#include "Graphics/Device/Device.h"
 #include "Graphics/Pipeline/RenderPass.h"
 
 namespace Graphics

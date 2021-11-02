@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Image.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {
+	struct Image;
+
 	struct ImageView : public Handle<vk::ImageView, true, true>
 	{
 	public:

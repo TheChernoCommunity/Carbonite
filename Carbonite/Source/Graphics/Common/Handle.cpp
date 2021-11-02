@@ -1,3 +1,5 @@
+#include "PCH.h"
+
 #include "Graphics/Common/Handle.h"
 
 #include <algorithm>

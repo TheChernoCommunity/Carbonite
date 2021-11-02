@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Graphics/Pipeline/RenderPass.h"
-#include "ImageView.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {
+	struct RenderPass;
+	struct ImageView;
+
 	struct Framebuffer : public Handle<vk::Framebuffer, true, true>
 	{
 	public:

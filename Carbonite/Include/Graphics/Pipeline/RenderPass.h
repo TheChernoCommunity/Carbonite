@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Device/Device.h"
+#include "Graphics/Common.h"
 
 #include <vector>
 
@@ -50,6 +50,8 @@ namespace Graphics
 		vk::AccessFlags        m_DstAccessMask = vk::AccessFlagBits::eNoneKHR;
 		vk::DependencyFlags    m_DependencyFlags;
 	};
+
+	struct Device;
 
 	struct RenderPass : public Handle<vk::RenderPass, true, true>
 	{

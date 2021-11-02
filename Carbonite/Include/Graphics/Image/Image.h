@@ -1,11 +1,16 @@
 #pragma once
 
-#include "Graphics/Memory/VMA.h"
+#include "Graphics/Common.h"
 
 #include <set>
 
 namespace Graphics
 {
+	namespace Memory
+	{
+		struct VMA;
+	}
+
 	struct Image : public Handle<vk::Image, true, true>
 	{
 	public:

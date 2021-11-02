@@ -1,29 +1,33 @@
 #pragma once
 
-#include "Graphics/Device/Device.h"
+#include "Graphics/Common.h"
 
-namespace Graphics::Memory
+namespace Graphics
 {
-	struct VMA : public Handle<VmaAllocator, true, true>
+	struct Device;
+	namespace Memory
 	{
-	public:
-		VMA(Device& device);
-		~VMA();
-
-		auto& getDevice()
+		struct VMA : public Handle<VmaAllocator, true, true>
 		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+		public:
+			VMA(Device& device);
+			~VMA();
 
-	private:
-		virtual void createImpl() override;
-		virtual bool destroyImpl() override;
+			auto& getDevice()
+			{
+				return m_Device;
+			}
+			auto& getDevice() const
+			{
+				return m_Device;
+			}
 
-	private:
-		Device& m_Device;
-	};
-} // namespace Graphics::Memory
+		private:
+			virtual void createImpl() override;
+			virtual bool destroyImpl() override;
+
+		private:
+			Device& m_Device;
+		};
+	} // namespace Memory
+} // namespace Graphics

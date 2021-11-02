@@ -13,12 +13,12 @@
 
 namespace Graphics
 {
-	struct Device;
-
 	namespace Detail
 	{
 		struct HandleBase
 		{
+			// Base of a handle storing general stuff.
+
 		public:
 			HandleBase()          = default;
 			virtual ~HandleBase() = default;
@@ -39,62 +39,66 @@ namespace Graphics
 			}
 
 		protected:
-			std::size_t              m_ChildItr = 0;
-			std::vector<HandleBase*> m_Children;
+			std::size_t m_ChildItr = 0;
+			bool        m_Recreate = false;
 
-			bool                     m_Recreate = false;
+			std::vector<HandleBase*> m_Children;
 			std::vector<HandleBase*> m_DestroyedChildren;
 		};
 
 		template <class HandleType>
+		struct IsHandleValid
+		{
+			// Checks if HandleType is constructible and assignable with a nullptr and if it is copy and move constructible and assignable and if it is destructible.
+			static constexpr bool Value = std::is_constructible_v<HandleType, std::nullptr_t> && std::is_assignable_v<HandleType&, std::nullptr_t> && std::is_copy_constructible_v<HandleType> && std::is_copy_assignable_v<HandleType> && std::is_move_constructible_v<HandleType> && std::is_move_assignable_v<HandleType> && std::is_destructible_v<HandleType>;
+		};
+
+		template <class HandleType>
+		static constexpr auto IsHandleValidV = IsHandleValid<HandleType>::Value;
+
+		template <class HandleType>
 		struct HandleStorage : public HandleBase
 		{
+			// Storage for a handle and the general functions associated with that handle.
+			// i.e. '->', '*', '(HandleType&)', '.getHandle()'
+
 		public:
 			HandleStorage()
-			    : m_Handle(nullptr)
-			{
-			}
-			template <std::enable_if_t<std::is_copy_constructible_v<HandleType>, bool> = true>
+			    : m_Handle(nullptr) {}
 			HandleStorage(const HandleType& handle)
-			    : m_Handle(handle)
-			{
-			}
+			    : m_Handle(handle) {}
 			HandleStorage(HandleType&& handle)
-			    : m_Handle(std::move(handle))
-			{
-			}
+			    : m_Handle(std::move(handle)) {}
 
 			virtual bool isValid() const override
 			{
 				return m_Handle;
 			}
 
-			HandleType& getHandle()
+			auto& getHandle()
 			{
 				return m_Handle;
 			}
-			HandleType& getHandle() const
+			auto& getHandle() const
 			{
 				return m_Handle;
 			}
-
-			HandleType& operator*()
+			auto& operator*()
 			{
 				return m_Handle;
 			}
-			HandleType& operator*() const
+			auto& operator*() const
 			{
 				return m_Handle;
 			}
-			HandleType* operator->()
+			auto* operator->()
 			{
 				return &m_Handle;
 			}
-			HandleType* operator->() const
+			auto* operator->() const
 			{
 				return &m_Handle;
 			}
-
 			operator HandleType&()
 			{
 				return m_Handle;
@@ -108,31 +112,33 @@ namespace Graphics
 			HandleType m_Handle;
 		};
 
-		template <class HandleType>
-		struct IsHandleTypeValid
-		{
-			static constexpr bool Value = std::is_constructible_v<HandleType, std::nullptr_t> && std::is_assignable_v<HandleType&, std::nullptr_t> && std::is_destructible_v<HandleType> && std::is_move_constructible_v<HandleType> && std::is_move_assignable_v<HandleType>;
-		};
-		template <class HandleType>
-		static constexpr auto IsHandleTypeValidV = IsHandleTypeValid<HandleType>::Value;
+		// Template declaration for a handle.
+		// The actual struct is skipped here to be invalid when 'bool IsValid' = false.
 
-		template <class HandleType, bool Destroyable = true, bool IsDebuggable = false, bool Valid = false>
+		template <class HandleType, bool IsDestroyable, bool IsDebuggable, bool IsValid>
 		struct Handle;
 
-		/* template <class HandleType, true> struct Handle; */
 		template <class HandleType, bool IsDebuggable>
 		struct Handle<HandleType, true, IsDebuggable, true> : public HandleStorage<HandleType>
 		{
-		public:
-			Handle();
-			template <std::enable_if_t<std::is_copy_constructible_v<HandleType>, bool> = true>
-			Handle(const HandleType& handle);
-			Handle(HandleType&& handle);
+			// Definition of a destroyable handle.
 
-			void setDebugName(Device& device, std::string_view name);
+		public:
+			using HandleT                    = HandleType;
+			using Base                       = HandleStorage<HandleType>;
+			static constexpr bool Debuggable = IsDebuggable;
+
+		public:
+			Handle()
+			    : m_Created(false), m_Destroyable(true) {}
+			Handle(const HandleType& handle)
+			    : Base(handle), m_Created(true), m_Destroyable(false) {}
+			Handle(HandleType&& handle)
+			    : Base(std::move(handle)), m_Created(true), m_Destroyable(false) {}
 
 			virtual bool create() override;
 			virtual void destroy() override;
+
 			virtual bool isCreated() const override
 			{
 				return m_Created;
@@ -151,16 +157,21 @@ namespace Graphics
 			bool m_Destroyable;
 		};
 
-		/* template <class HandleType, false> struct Handle; */
 		template <class HandleType, bool IsDebuggable>
 		struct Handle<HandleType, false, IsDebuggable, true> : public HandleStorage<HandleType>
 		{
-		public:
-			template <std::enable_if_t<std::is_copy_constructible_v<HandleType>, bool> = true>
-			Handle(const HandleType& handle);
-			Handle(HandleType&& handle);
+			// Definition for a non destroyable handle.
 
-			void setDebugName(Device& device, std::string_view name);
+		public:
+			using HandleT                    = HandleType;
+			using Base                       = HandleStorage<HandleType>;
+			static constexpr bool Debuggable = IsDebuggable;
+
+		public:
+			Handle(const HandleType& handle)
+			    : Base(handle) {}
+			Handle(HandleType&& handle)
+			    : Base(std::move(handle)) {}
 
 			virtual bool create() override;
 			virtual void destroy() override;
@@ -176,8 +187,97 @@ namespace Graphics
 		};
 	} // namespace Detail
 
-	template <class HandleType, bool Destroyable = true, bool IsDebuggable = false>
-	using Handle = Detail::Handle<HandleType, Destroyable, IsDebuggable && Core::s_IsDebugMode, Detail::IsHandleTypeValidV<HandleType>>;
+	// Alias converting the three template arguments into one of the two handle definitions, or nothing if the handle isn't valid.
+	// i.e. when passing some custom handle type that doesn't support the necessary functions.
+	// C++20 concepts would've made this prettier that's for sure.
+
+	template <class HandleType, bool IsDestroyable, bool IsDebuggable>
+	using Handle = Detail::Handle<HandleType, IsDestroyable, IsDebuggable && Core::s_IsDebugMode, Detail::IsHandleValidV<HandleType>>;
 } // namespace Graphics
 
-#include "HandleImpl.inl"
+/* Implementation */
+
+namespace Graphics::Detail
+{
+	template <class HandleType, bool IsDebuggable>
+	bool Handle<HandleType, true, IsDebuggable, true>::create()
+	{
+		bool pCreated = m_Created;
+		if (pCreated)
+		{
+			Base::m_Recreate = true;
+			destroy();
+		}
+
+		createImpl();
+		m_Created = Base::isValid();
+		if (pCreated && m_Created)
+		{
+			for (auto& child : Base::m_DestroyedChildren)
+				child->create();
+			Base::m_DestroyedChildren.clear();
+		}
+		Base::m_Recreate = false;
+		return m_Created;
+	}
+
+	template <class HandleType, bool IsDebuggable>
+	void Handle<HandleType, true, IsDebuggable, true>::destroy()
+	{
+		if (Base::m_Recreate)
+			Base::m_DestroyedChildren.clear();
+
+		for (Base::m_ChildItr = 0; Base::m_ChildItr < Base::m_Children.size(); ++Base::m_ChildItr)
+		{
+			auto child = Base::m_Children[Base::m_ChildItr];
+
+			if (child->isValid())
+			{
+				child->destroy();
+
+				if (Base::m_Recreate && child->isDestroyable())
+					Base::m_DestroyedChildren.push_back(child);
+			}
+		}
+
+		if (m_Destroyable && isCreated() && destroyImpl())
+			Base::m_Handle = nullptr;
+		m_Created        = false;
+		Base::m_ChildItr = 0;
+	}
+
+	template <class HandleType, bool IsDebuggable>
+	bool Handle<HandleType, false, IsDebuggable, true>::create()
+	{
+		Base::m_Recreate = true;
+		destroy();
+
+		for (auto& child : Base::m_DestroyedChildren)
+			child->create();
+		Base::m_DestroyedChildren.clear();
+
+		Base::m_Recreate = false;
+		return true;
+	}
+
+	template <class HandleType, bool IsDebuggable>
+	void Handle<HandleType, false, IsDebuggable, true>::destroy()
+	{
+		Base::m_DestroyedChildren.clear();
+
+		for (Base::m_ChildItr = 0; Base::m_ChildItr < Base::m_Children.size(); ++Base::m_ChildItr)
+		{
+			auto child = Base::m_Children[Base::m_ChildItr];
+
+			if (child->isValid())
+			{
+				child->destroy();
+
+				if (child->isDestroyable())
+					Base::m_DestroyedChildren.push_back(child);
+			}
+		}
+
+		Base::m_ChildItr = 0;
+	}
+} // namespace Graphics::Detail

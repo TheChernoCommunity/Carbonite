@@ -1,4 +1,7 @@
+#include "PCH.h"
+
 #include "Graphics/Debug/Debug.h"
+#include "Graphics/Instance.h"
 #include "Log.h"
 
 #include <iostream>
@@ -87,7 +90,7 @@ namespace Graphics
 	}
 
 	Debug::Debug(Instance& instance)
-	    : m_Instance(instance)
+	    : m_DebugUtilsEXT({}), m_Instance(instance)
 	{
 		m_Instance.addChild(this);
 	}
@@ -105,7 +108,7 @@ namespace Graphics
 		PopulateCreateInfo(createInfo);
 		m_DebugUtilsEXT.init(m_Instance);
 
-		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo;
+		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo = createInfo;
 
 		VkDebugUtilsMessengerEXT debugMessenger;
 		m_DebugUtilsEXT.vkCreateDebugUtilsMessengerEXT(*m_Instance, &vkCreateInfo, nullptr, &debugMessenger);

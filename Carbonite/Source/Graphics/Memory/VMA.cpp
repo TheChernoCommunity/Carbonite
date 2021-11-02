@@ -1,3 +1,8 @@
+#include "PCH.h"
+
+#include "Graphics/Device/Device.h"
+#include "Graphics/Device/Surface.h"
+#include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
 
 namespace Graphics::Memory

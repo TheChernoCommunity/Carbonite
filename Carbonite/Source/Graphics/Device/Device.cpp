@@ -1,6 +1,10 @@
-#include "Graphics/Device/Device.h"
+#include "PCH.h"
+
 #include "Graphics/Debug/Debug.h"
+#include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
+#include "Graphics/Device/Surface.h"
+#include "Graphics/Instance.h"
 
 #include <array>
 #include <map>
@@ -96,6 +100,16 @@ namespace Graphics
 			if ((queueFamily.getQueueFlags() & queueFlags) && (queueFamily.isPresentSupported() >= supportsPresent))
 				return const_cast<QueueFamily*>(&queueFamily);
 		return nullptr;
+	}
+
+	Debug& Device::getDebug()
+	{
+		return m_Surface.getInstance().getDebug();
+	}
+
+	Debug& Device::getDebug() const
+	{
+		return m_Surface.getInstance().getDebug();
 	}
 
 	void Device::createImpl()

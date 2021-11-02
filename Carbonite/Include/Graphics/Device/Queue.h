@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Device.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {
+	struct Device;
 	struct Queue;
 
 	struct QueueFamily : public Handle<void*, false, false>

@@ -1,6 +1,7 @@
-#include "Graphics/Device/Surface.h"
+#include "PCH.h"
 
-#include <GLFW/glfw3.h>
+#include "Graphics/Device/Surface.h"
+#include "Graphics/Instance.h"
 
 namespace Graphics
 {

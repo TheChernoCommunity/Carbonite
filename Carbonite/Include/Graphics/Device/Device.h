@@ -1,17 +1,8 @@
 #pragma once
 
-namespace Graphics
-{
-	namespace Detail
-	{
-		struct DeviceLayer;
-		using DeviceExtension = DeviceLayer;
-		struct DeviceQueueFamilyRequest;
-	} // namespace Detail
-	struct Device;
-} // namespace Graphics
-
-#include "Surface.h"
+#include "Graphics/Common.h"
+#include "Graphics/Debug/Debug.h"
+#include "Utils/Core.h"
 
 namespace Graphics
 {
@@ -30,6 +21,8 @@ namespace Graphics
 			bool        m_Required;
 		};
 
+		using DeviceExtension = DeviceLayer;
+
 		struct DeviceQueueFamilyRequest
 		{
 		public:
@@ -44,8 +37,14 @@ namespace Graphics
 		};
 	} // namespace Detail
 
+	struct Surface;
+
 	struct Device : public Handle<vk::Device, true, false>
 	{
+	public:
+		using DeviceLayers     = std::vector<Detail::DeviceLayer>;
+		using DeviceExtensions = std::vector<Detail::DeviceExtension>;
+
 	public:
 		Device(Surface& surface);
 		~Device();
@@ -58,7 +57,41 @@ namespace Graphics
 		Version getLayerVersion(std::string_view name) const;
 		Version getExtensionVersion(std::string_view name) const;
 
-		auto& getSurface()
+		template <class Handle, std::enable_if_t<std::is_base_of_v<HandleBase, Handle>, bool> = true>
+		void setDebugName(Handle& handle, std::string_view name)
+		{
+			if constexpr (Handle::Debuggable)
+			{
+				if (Graphics::Debug::IsEnabled())
+				{
+					using HandleType               = typename Handle::HandleT;
+					using BaseHandleT              = typename HandleType::CType;
+					HandleType& baseHandle         = handle;
+					BaseHandleT evenMoreBaseHandle = baseHandle;
+
+					if (name.empty())
+					{
+						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), nullptr };
+
+						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
+						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+					}
+					else
+					{
+						std::string tName(name);
+
+						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), tName.c_str() };
+
+						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
+						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+					}
+				}
+			}
+		}
+
+		Debug& getDebug();
+		Debug& getDebug() const;
+		auto&  getSurface()
 		{
 			return m_Surface;
 		}
@@ -100,8 +133,8 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	protected:
-		std::vector<Detail::DeviceLayer>     m_EnabledLayers;
-		std::vector<Detail::DeviceExtension> m_EnabledExtensions;
+		DeviceLayers     m_EnabledLayers;
+		DeviceExtensions m_EnabledExtensions;
 
 		std::vector<QueueFamily> m_QueueFamilies;
 
@@ -110,8 +143,8 @@ namespace Graphics
 
 		vk::PhysicalDevice m_PhysicalDevice = nullptr;
 
-		std::vector<Detail::DeviceLayer>     m_Layers;
-		std::vector<Detail::DeviceExtension> m_Extensions;
+		DeviceLayers     m_Layers;
+		DeviceExtensions m_Extensions;
 
 		std::vector<Detail::DeviceQueueFamilyRequest> m_QueueRequests;
 	};
