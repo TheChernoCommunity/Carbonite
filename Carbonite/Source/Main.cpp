@@ -1,6 +1,8 @@
 #include "PCH.h"
 
 #include "Asset.h"
+#include "Events/ApplicationEvent.h"
+#include "Events/Event.h"
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Device.h"
@@ -24,11 +26,24 @@
 #include <iostream>
 #include <stdexcept>
 
+class Handler : public EventHandler
+{
+	void onEvent(std::shared_ptr<Event> e) override
+	{
+		if (e->IsInCategory(Event::Category::MouseButton))
+		{
+			Log::info(e->ToString());
+		}
+	}
+};
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	Asset license("LICENSE");
 
 	Log::info(license.data.get());
+
+	Handler handler;
 
 	try
 	{
@@ -53,6 +68,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Create window
 		GLFWwindow* windowPtr = glfwCreateWindow(1280, 720, "Carbonite", nullptr, nullptr);
+		Event::addWindow(windowPtr);
 
 		// Create Graphics Instance
 		constexpr std::size_t MaxFramesInFlight = 2;
@@ -314,6 +330,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		while (!glfwWindowShouldClose(windowPtr))
 		{
 			glfwPollEvents();
+
+			Event::push(std::make_shared<AppUpdateEvent>());
+			Event::push(std::make_shared<AppRenderEvent>());
+
+			Event::dispatchEvents();
 		}
 
 		// Because the system is very automatic we have no need to destroy anything other than the Graphics Instance, that is if we don't need to do temporary stuff :D
