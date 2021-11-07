@@ -9,7 +9,7 @@
 
 enum class ShaderType
 {
-	Vertex,
+	Vertex = 4,
 	TessellationControl,    // Currently unsupported.
 	TessellationEvaluation, // Currently unsupported.
 	Geometry,               // Currently unsupported.
@@ -25,7 +25,7 @@ enum class ShaderType
 
 enum class CarboniteAssetType
 {
-	Item = 12,
+	Item,
 	Block,
 	Entity,
 	Recipe

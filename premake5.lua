@@ -268,6 +268,15 @@ end
 			links({
 				"vulkan",
 				"glslang",
+				"SPIRV",
+				"SPVRemapper",
+				"GenericCodeGen",
+				"MachineIndependent",
+				"OSDependent",
+				"OGLCompiler",
+				"SPIRV-Tools",
+				"SPIRV-Tools-opt",
+				"SPIRV-Tools-link",
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
