@@ -6,14 +6,6 @@
 
 #include "Asset.h"
 
-namespace
-{
-	static std::random_device r;
-
-	static std::default_random_engine              engine(r());
-	static std::uniform_int_distribution<uint64_t> uniform_dist(std::numeric_limits<std::uint64_t>::min(), std::numeric_limits<std::uint64_t>::max());
-} // namespace
-
 Asset::Asset(std::string path)
 {
 	// Get file extension
@@ -53,7 +45,6 @@ Asset::Asset(std::string path)
 
 	size = std::filesystem::file_size(path);
 	data = std::shared_ptr<char[]>(new char[size]);
-	id   = uniform_dist(engine);
 
 	if (file.is_open())
 	{

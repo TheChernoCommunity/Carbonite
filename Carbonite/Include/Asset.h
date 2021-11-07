@@ -5,6 +5,8 @@
 #include <memory>
 #include <string>
 
+#include <Utils/Identifiable.h>
+
 enum class ShaderType
 {
 	Vertex,
@@ -29,9 +31,8 @@ enum class CarboniteAssetType
 	Recipe
 };
 
-struct Asset
+struct Asset : public Identifiable
 {
-	std::uint64_t           id;
 	std::uint32_t           type;
 	std::uint32_t           size;
 	std::shared_ptr<char[]> data;

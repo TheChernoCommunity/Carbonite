@@ -99,7 +99,7 @@ EventHandler::~EventHandler()
 {
 	for (auto i = s_handlers.begin(); i != s_handlers.end(); ++i)
 	{
-		if (*(i.base()) == this)
+		if ((*i)->getID() == this->getID())
 		{
 			s_handlers.erase(i);
 			return;

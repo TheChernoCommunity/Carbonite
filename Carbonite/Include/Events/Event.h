@@ -5,8 +5,10 @@
 
 #include <glfw/glfw3.h>
 
+#include <Utils/Identifiable.h>
+#include <Utils/Utils.h>
+
 #include "KeyCodes.h"
-#include "Utils/Utils.h"
 
 // Code derived from https://github.com/TheCherno/Hazel
 
@@ -87,7 +89,7 @@ public:
 	}
 
 
-class EventHandler
+class EventHandler : public Identifiable
 {
 	friend void Event::dispatchEvents();
 
