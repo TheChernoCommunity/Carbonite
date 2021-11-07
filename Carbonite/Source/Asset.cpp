@@ -5,16 +5,17 @@
 #include <random>
 
 #include "Asset.h"
+#include "Log.h"
 
 Asset::Asset(std::string path)
 {
 	// Get file extension
 	std::string extension;
 
-	for (unsigned i = path.length() - 1; i == 0; i++)
+	for (unsigned i = path.length() - 1; i >= 0; i--)
 	{
 		if (path[i] == '.') break;
-		extension += path[i];
+		extension = path[i] + extension;
 	}
 
 	if (path != extension)
