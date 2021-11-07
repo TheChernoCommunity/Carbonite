@@ -119,23 +119,43 @@ namespace
 
 namespace Graphics
 {
-	Shader::Shader(const Asset asset)
-	    : m_asset(asset)
+	Shader::Shader(Device& device, const Asset asset)
+	    : m_device(device), m_sourceStr(asset.data.get()), m_type(static_cast<ShaderType>(asset.type))
 	{
 		if (m_ShaderCount == 0)
 		{
 			glslang::InitializeProcess();
 		}
 
+		m_device.addChild(this);
+
+		m_ShaderCount++;
+	}
+
+	Shader::Shader(Device& device, const std::string& source, const ShaderType type)
+	    : m_device(device), m_sourceStr(source), m_type(type)
+	{
+		if (m_ShaderCount == 0)
+		{
+			glslang::InitializeProcess();
+		}
+
+		m_device.addChild(this);
+
+		m_ShaderCount++;
+	}
+
+	void Shader::createImpl()
+	{
 		EShLanguage lang;
 
-		switch (asset.type)
+		switch (m_type)
 		{
-		case static_cast<uint32_t>(ShaderType::Vertex):
+		case ShaderType::Vertex:
 			lang = EShLangVertex;
 			break;
 
-		case static_cast<uint32_t>(ShaderType::Fragment):
+		case ShaderType::Fragment:
 			lang = EShLangFragment;
 			break;
 
@@ -151,7 +171,7 @@ namespace Graphics
 
 		EShMessages messages = (EShMessages) (EShMsgSpvRules | EShMsgVulkanRules);
 
-		const char* string = asset.data.get();
+		const char* string = m_sourceStr.c_str();
 
 		shader.setStrings(&string, 1);
 
@@ -167,14 +187,32 @@ namespace Graphics
 		{
 			std::vector<unsigned int> spirv;
 			glslang::GlslangToSpv(*(program.getIntermediate(lang)), spirv);
+			vk::ShaderModuleCreateInfo createInfo = { {}, spirv };
+			m_Handle                              = m_device->createShaderModule(createInfo);
+
+			Log::debug("Compiled shaders!");
 		}
 		else
 		{
-			Log::info(shader.getInfoLog());
+			Log::error(shader.getInfoLog());
 			Log::debug(shader.getInfoDebugLog());
 		}
+	}
 
-		m_ShaderCount++;
+	void Shader::setSourceStr(const std::string& source)
+	{
+		m_sourceStr = source;
+	}
+
+	ShaderType Shader::getType() const
+	{
+		return m_type;
+	}
+
+	bool Shader::destroyImpl()
+	{
+		m_device->destroy(m_Handle);
+		return true;
 	}
 
 	Shader::~Shader()

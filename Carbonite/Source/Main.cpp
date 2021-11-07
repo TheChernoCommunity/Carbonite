@@ -14,6 +14,7 @@
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
 #include "Graphics/Pipeline/RenderPass.h"
+#include "Graphics/Shader.h"
 #include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
@@ -40,7 +41,6 @@ class Handler : public EventHandler
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	Asset license("LICENSE");
-
 	Log::info(license.data.get());
 
 	Handler handler;
@@ -77,6 +77,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Surface     surface  = { instance, windowPtr };
 		Graphics::Device      device   = { surface };
 		Graphics::Memory::VMA vma      = { device };
+		Graphics::Shader      vert     = { device, { "Carbonite/Assets/test.vert" } };
 
 		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
@@ -155,6 +156,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
+
+		vert.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
