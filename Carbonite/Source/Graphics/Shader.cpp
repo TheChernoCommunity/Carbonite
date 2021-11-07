@@ -163,16 +163,16 @@ namespace Graphics
 
 		program.addShader(&shader);
 
-		if (!program.link(messages))
+		if (program.link(messages))
 		{
-			puts(shader.getInfoLog());
-			puts(shader.getInfoDebugLog());
-			fflush(stdout);
+			std::vector<unsigned int> spirv;
+			glslang::GlslangToSpv(*(program.getIntermediate(lang)), spirv);
 		}
-
-		std::vector<unsigned int> spirv;
-
-		glslang::GlslangToSpv(*(program.getIntermediate(lang)), spirv);
+		else
+		{
+			Log::info(shader.getInfoLog());
+			Log::debug(shader.getInfoDebugLog());
+		}
 
 		m_ShaderCount++;
 	}
