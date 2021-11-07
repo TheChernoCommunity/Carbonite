@@ -22,7 +22,7 @@ namespace Log
 #if defined(NDEBUG)
 			s_Logger->set_level(spdlog::level::level_enum::err);
 #else
-			s_Logger->set_level(spdlog::level::level_enum::info);
+			s_Logger->set_level(spdlog::level::level_enum::debug);
 #endif // NDEBUG
 		}
 
