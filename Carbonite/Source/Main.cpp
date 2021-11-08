@@ -1,6 +1,8 @@
 #include "PCH.h"
 
 #include "Asset.h"
+#include "Events/ApplicationEvent.h"
+#include "Events/Event.h"
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Device.h"
@@ -12,9 +14,11 @@
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
 #include "Graphics/Pipeline/RenderPass.h"
+#include "Graphics/Shader.h"
 #include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
+#include "Graphics/Window.h"
 #include "Log.h"
 
 #include <GLFW/glfw3.h>
@@ -24,44 +28,37 @@
 #include <iostream>
 #include <stdexcept>
 
+class Handler : public EventHandler
+{
+	void onEvent(std::shared_ptr<Event> e) override
+	{
+		if (e->IsInCategory(Event::Category::MouseButton))
+		{
+			Log::info(e->ToString());
+		}
+	}
+};
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
-	Asset license("LICENSE");
-
-	Log::init();
-	Log::info(license.data.get());
-
 	try
 	{
-		// Initialize GLFW
-		if (!glfwInit())
-		{
-			Log::error("GLFW failed to initialize!");
-			return EXIT_FAILURE;
-		}
+		Asset license("LICENSE");
+		Log::info(license.data.get());
 
-		// Check for vulkan support
-		if (!glfwVulkanSupported())
-		{
-			Log::error("Vulkan is not supported on this system!");
-			return EXIT_FAILURE;
-		}
-
-		// Set window hints
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // TODO(MarcasRealAccount): Disable resizing, enable once the Vulkan Swapchain can be recreated.
-
-		// Create window
-		GLFWwindow* windowPtr = glfwCreateWindow(1280, 720, "Carbonite", nullptr, nullptr);
+		Handler handler;
 
 		// Create Graphics Instance
 		constexpr std::size_t MaxFramesInFlight = 2;
 
-		Graphics::Instance    instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
-		Graphics::Surface     surface  = { instance, windowPtr };
-		Graphics::Device      device   = { surface };
-		Graphics::Memory::VMA vma      = { device };
+		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
+
+		Graphics::Window window = { instance, "Carbonite" };
+
+		Graphics::Surface     surface = { window };
+		Graphics::Device      device  = { surface };
+		Graphics::Memory::VMA vma     = { device };
+		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
 
 		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
@@ -125,6 +122,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			}
 		}
 
+		window.create();
+
+		Event::addWindow(window.getHandle());
+
 		// Create debug if enabled
 		if (Graphics::Debug::IsEnabled())
 			instance.getDebug().create();
@@ -140,6 +141,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
+
+		vert.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
@@ -312,9 +315,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		}*/
 		//
 
-		while (!glfwWindowShouldClose(windowPtr))
+		while (!glfwWindowShouldClose(window.getHandle()))
 		{
 			glfwPollEvents();
+
+			Event::push(std::make_shared<AppUpdateEvent>());
+			Event::push(std::make_shared<AppRenderEvent>());
+
+			Event::dispatchEvents();
 		}
 
 		// Because the system is very automatic we have no need to destroy anything other than the Graphics Instance, that is if we don't need to do temporary stuff :D
@@ -322,10 +330,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Destroy Graphics Instance
 		instance.destroy();
-
-		// Destroy window and terminate GLFW
-		glfwDestroyWindow(windowPtr);
-		glfwTerminate();
 
 		return EXIT_SUCCESS;
 	}

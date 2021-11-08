@@ -5,9 +5,11 @@
 #include <memory>
 #include <string>
 
+#include <Utils/Identifiable.h>
+
 enum class ShaderType
 {
-	Vertex,
+	Vertex = 4,
 	TessellationControl,    // Currently unsupported.
 	TessellationEvaluation, // Currently unsupported.
 	Geometry,               // Currently unsupported.
@@ -23,15 +25,14 @@ enum class ShaderType
 
 enum class CarboniteAssetType
 {
-	Item = 12,
+	Item,
 	Block,
 	Entity,
 	Recipe
 };
 
-struct Asset
+struct Asset : public Identifiable
 {
-	std::uint64_t           id;
 	std::uint32_t           type;
 	std::uint32_t           size;
 	std::shared_ptr<char[]> data;
