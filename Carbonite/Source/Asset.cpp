@@ -41,7 +41,7 @@ Asset::Asset(std::string path)
 		}
 	}
 
-	std::ifstream file(path);
+	std::ifstream file(path, std::ios::in | std::ios::binary);
 
 	size = std::filesystem::file_size(path);
 	data = std::shared_ptr<char[]>(new char[++size]);
