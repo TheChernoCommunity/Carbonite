@@ -172,8 +172,9 @@ namespace Graphics
 		EShMessages messages = (EShMessages) (EShMsgSpvRules | EShMsgVulkanRules);
 
 		const char* string = m_sourceStr.c_str();
+		const int   length = m_sourceStr.length();
 
-		shader.setStrings(&string, 1);
+		shader.setStringsWithLengths(&string, &length, 1);
 
 		if (!shader.parse(&Resources, 100, false, messages))
 		{

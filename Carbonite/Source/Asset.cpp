@@ -44,12 +44,14 @@ Asset::Asset(std::string path)
 	std::ifstream file(path);
 
 	size = std::filesystem::file_size(path);
-	data = std::shared_ptr<char[]>(new char[size]);
+	data = std::shared_ptr<char[]>(new char[++size]);
 
 	if (file.is_open())
 	{
 		file.read(data.get(), size);
 	}
+
+	data[size - 1] = '\0';
 
 	file.close();
 }
