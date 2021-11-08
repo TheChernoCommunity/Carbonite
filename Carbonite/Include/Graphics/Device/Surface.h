@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics/Common.h"
+#include "Graphics/Window.h"
 
 struct GLFWwindow;
 
@@ -11,22 +12,21 @@ namespace Graphics
 	struct Surface : public Handle<vk::SurfaceKHR, true, false>
 	{
 	public:
-		Surface(Instance& instance, GLFWwindow* window);
+		Surface(Window& window);
 		~Surface();
 
 		auto& getInstance()
 		{
-			return m_Instance;
+			return m_window.getInstance();
 		}
 		auto& getInstance() const
 		{
-			return m_Instance;
+			return m_window.getInstance();
 		}
 
-		void setWindow(GLFWwindow* window);
 		auto getWindow() const
 		{
-			return m_Window;
+			return m_window;
 		}
 
 	private:
@@ -34,7 +34,6 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	private:
-		Instance&   m_Instance;
-		GLFWwindow* m_Window;
+		Window& m_window;
 	};
 } // namespace Graphics
