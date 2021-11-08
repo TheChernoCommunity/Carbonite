@@ -19,15 +19,6 @@ namespace Graphics
 		Swapchain(Memory::VMA& vma);
 		~Swapchain();
 
-		auto& getVma()
-		{
-			return m_Vma;
-		}
-		auto& getVma() const
-		{
-			return m_Vma;
-		}
-
 		Image* getImage(std::uint32_t image) const;
 		auto&  getImages()
 		{
@@ -36,6 +27,15 @@ namespace Graphics
 		auto& getImages() const
 		{
 			return m_Images;
+		}
+
+		auto& getVma()
+		{
+			return m_Vma;
+		}
+		auto& getVma() const
+		{
+			return m_Vma;
 		}
 
 	private:
