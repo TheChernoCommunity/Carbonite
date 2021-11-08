@@ -5,36 +5,31 @@
 
 namespace Graphics
 {
-	Surface::Surface(Instance& instance, GLFWwindow* window)
-	    : m_Instance(instance), m_Window(window)
+	Surface::Surface(Window& window)
+	    : m_window(window)
 	{
-		m_Instance.addChild(this);
+		m_window.addChild(this);
 	}
 
 	Surface::~Surface()
 	{
 		if (isValid())
 			destroy();
-		m_Instance.removeChild(this);
-	}
-
-	void Surface::setWindow(GLFWwindow* window)
-	{
-		m_Window = window;
+		m_window.removeChild(this);
 	}
 
 	void Surface::createImpl()
 	{
 		VkSurfaceKHR surface;
 
-		auto result = glfwCreateWindowSurface(*m_Instance, m_Window, nullptr, &surface);
+		auto result = glfwCreateWindowSurface(m_window.getInstance().getHandle(), m_window.getHandle(), nullptr, &surface);
 		if (result == VK_SUCCESS)
 			m_Handle = surface;
 	}
 
 	bool Surface::destroyImpl()
 	{
-		m_Instance->destroySurfaceKHR(m_Handle);
+		m_window.getInstance().getHandle().destroySurfaceKHR(m_Handle);
 		return true;
 	}
 } // namespace Graphics

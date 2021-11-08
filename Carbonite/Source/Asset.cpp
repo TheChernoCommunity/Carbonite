@@ -6,23 +6,15 @@
 
 #include "Asset.h"
 
-namespace
-{
-	static std::random_device r;
-
-	static std::default_random_engine              engine(r());
-	static std::uniform_int_distribution<uint64_t> uniform_dist(std::numeric_limits<std::uint64_t>::min(), std::numeric_limits<std::uint64_t>::max());
-} // namespace
-
 Asset::Asset(std::string path)
 {
 	// Get file extension
 	std::string extension;
 
-	for (unsigned i = path.length() - 1; i == 0; i++)
+	for (int i = path.length() - 1; i >= 0; i--)
 	{
 		if (path[i] == '.') break;
-		extension += path[i];
+		extension = path[i] + extension;
 	}
 
 	if (path != extension)
@@ -49,16 +41,17 @@ Asset::Asset(std::string path)
 		}
 	}
 
-	std::ifstream file(path);
+	std::ifstream file(path, std::ios::in | std::ios::binary);
 
 	size = std::filesystem::file_size(path);
-	data = std::shared_ptr<char[]>(new char[size]);
-	id   = uniform_dist(engine);
+	data = std::shared_ptr<char[]>(new char[++size]);
 
 	if (file.is_open())
 	{
 		file.read(data.get(), size);
 	}
+
+	data[size - 1] = '\0';
 
 	file.close();
 }

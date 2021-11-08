@@ -251,7 +251,16 @@ end
 			libdirs({ vulkanSDKPath .. "/Lib/" })
 			links({
 				"vulkan-1.lib",
-				"glslang.lib"
+				"glslang.lib",
+				"SPIRV.lib",
+				"SPVRemapper.lib",
+				"GenericCodeGen.lib",
+				"MachineIndependent.lib",
+				"OSDependent.lib",
+				"OGLCompiler.lib",
+				"SPIRV-Tools.lib",
+				"SPIRV-Tools-opt.lib",
+				"SPIRV-Tools-link.lib"
 			})
 			sysincludedirs({ vulkanSDKPath .. "/Include/" })
 
@@ -268,6 +277,15 @@ end
 			links({
 				"vulkan",
 				"glslang",
+				"SPIRV",
+				"SPVRemapper",
+				"GenericCodeGen",
+				"MachineIndependent",
+				"OSDependent",
+				"OGLCompiler",
+				"SPIRV-Tools",
+				"SPIRV-Tools-opt",
+				"SPIRV-Tools-link",
 				"CoreGraphics.framework",
 				"IOKit.framework",
 				"AppKit.framework"
