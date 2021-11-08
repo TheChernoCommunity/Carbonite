@@ -24,9 +24,9 @@ namespace Graphics
 		~Shader();
 
 	private:
+		Device&     m_device;
 		std::string m_sourceStr;
 		ShaderType  m_type;
-		Device&     m_device;
 
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;

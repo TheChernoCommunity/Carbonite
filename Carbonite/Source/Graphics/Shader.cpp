@@ -223,6 +223,8 @@ namespace Graphics
 		{
 			glslang::FinalizeProcess();
 		}
+
+		m_device.removeChild(this);
 	}
 
 } // namespace Graphics
