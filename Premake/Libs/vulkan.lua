@@ -5,6 +5,13 @@ local vulkan = {
 	requiredSDKLibs = nil
 }
 
+newoption({
+	trigger = "vulkan-sdk",
+	description = "Overrides VULKAN_SDK environment variable",
+	value = "path",
+	default = os.getenv("VULKAN_SDK")
+})
+
 function vulkan:getRequiredSDKLibraries()
 	if common.host == "windows" then
 		self.requiredSDKLibs = {
@@ -143,7 +150,7 @@ If you think this is an issue with the premake setup please open an issue.]]
 end
 
 function vulkan:getVulkanSDKPath()
-	self.sdkPath = os.getenv("VULKAN_SDK")
+	self.sdkPath = _OPTIONS["vulkan-sdk"]
 
 	if common.host == "windows" then
 		self.libPath = "/Lib/"
