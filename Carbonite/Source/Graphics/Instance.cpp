@@ -29,7 +29,7 @@ namespace Graphics
 			}
 			else
 			{
-				s_CachedVersion = VK_VERSION_1_0;
+				s_CachedVersion = VK_API_VERSION_1_0;
 			}
 		}
 		return s_CachedVersion;
@@ -167,7 +167,7 @@ namespace Graphics
 		if (vulkanVersion >= m_MaxAPIVersion)
 			instanceVersion = m_MaxAPIVersion;
 		else if (vulkanVersion >= m_MinAPIVersion)
-			instanceVersion = m_MinAPIVersion;
+			instanceVersion = vulkanVersion;
 
 		m_MissingLayers.clear();
 		m_MissingExtensions.clear();
