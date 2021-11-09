@@ -4,6 +4,8 @@
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
+#include "Graphics/Image/Framebuffer.h"
+#include "Graphics/Pipeline/RenderPass.h"
 
 namespace Graphics
 {
@@ -38,6 +40,16 @@ namespace Graphics
 			return false;
 		}
 		return true;
+	}
+	
+	void CommandBuffer::cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues) {
+		vk::RenderPassBeginInfo beginInfo = { *renderPass, *framebuffer, renderArea, clearValues };
+		
+		m_Handle.beginRenderPass(beginInfo, vk::SubpassContents::eInline);
+	}
+	
+	void CommandBuffer::cmdEndRenderPass() {
+		m_Handle.endRenderPass();
 	}
 	
 	void CommandBuffer::cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier) {

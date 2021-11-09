@@ -6,6 +6,8 @@ namespace Graphics
 {
 	struct Device;
 	struct CommandPool;
+	struct RenderPass;
+	struct Framebuffer;
 
 	struct CommandBuffer : public Handle<vk::CommandBuffer, false, true>
 	{
@@ -15,6 +17,9 @@ namespace Graphics
 
 		bool begin();
 		bool end();
+		
+		void cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues);
+		void cmdEndRenderPass();
 		
 		void cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier);
 		

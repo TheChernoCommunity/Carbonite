@@ -353,6 +353,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			auto& currentCommandPool = commandPools[currentFrame];
 			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
 			if (currentCommandBuffer.begin()) {
+				vk::ClearColorValue u = { 0.1f, 0.1f, 0.1f, 1.0f };
+				
+				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue { 0.1f, 0.1f, 0.1f, 1.0f }, vk::ClearDepthStencilValue { 1.0f, 0 } });
+				
+				currentCommandBuffer.cmdEndRenderPass();
 				currentCommandBuffer.end();
 			}
 			
