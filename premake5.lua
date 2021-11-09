@@ -24,43 +24,32 @@ workspace("Carbonite")
 	group("Dependencies")
 	project("GLFW")
 		location("ThirdParty/GLFW/")
-
 		warnings("Off")
-
 		glfw:setup()
 
 	project("VMA")
 		location("ThirdParty/VMA/")
-
 		warnings("Off")
-
 		vma:setup()
 
 	project("ImGUI")
 		location("ThirdParty/ImGUI/")
-
 		warnings("Off")
-
 		imgui:setup()
 
 	project("STB")
 		location("ThirdParty/STB/")
-
 		warnings("Off")
-
 		stb:setup()
 
 	project("Vulkan")
 		location("")
-
 		warnings("Off")
-
 		vulkan:setup()
 
 	group("Game")
 	project("Carbonite")
 		location("Carbonite/")
-
 		warnings("Extra")
 
 		common:executableOutDirs()
