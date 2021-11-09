@@ -5,8 +5,8 @@
 #include "Graphics/Image/Image.h"
 #include "Graphics/Memory/VMA.h"
 #include "Graphics/Swapchain/Swapchain.h"
-#include "Graphics/Sync/Semaphore.h"
 #include "Graphics/Sync/Fence.h"
+#include "Graphics/Sync/Semaphore.h"
 
 namespace Graphics
 {
@@ -22,8 +22,9 @@ namespace Graphics
 			destroy();
 		m_Vma.removeChild(this);
 	}
-	
-	vk::Result Swapchain::acquireNextImage(std::uint64_t timeout, Sync::Semaphore* signalSemaphore, Sync::Fence* fence, std::uint32_t& image) {
+
+	vk::Result Swapchain::acquireNextImage(std::uint64_t timeout, Sync::Semaphore* signalSemaphore, Sync::Fence* fence, std::uint32_t& image)
+	{
 		return getDevice()->acquireNextImageKHR(m_Handle, timeout, signalSemaphore ? signalSemaphore->getHandle() : nullptr, fence ? fence->getHandle() : nullptr, &image);
 	}
 
@@ -32,14 +33,16 @@ namespace Graphics
 		return image < m_Images.size() ? const_cast<Image*>(&m_Images[image]) : nullptr;
 	}
 
-	Device& Swapchain::getDevice() {
+	Device& Swapchain::getDevice()
+	{
 		return m_Vma.getDevice();
 	}
-	
-		Device& Swapchain::getDevice() const {
-			return m_Vma.getDevice();
-		}
-	
+
+	Device& Swapchain::getDevice() const
+	{
+		return m_Vma.getDevice();
+	}
+
 	void Swapchain::createImpl()
 	{
 		vk::SharingMode imageSharingMode = vk::SharingMode::eExclusive;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/Common.h"
 #include "CommandBuffer.h"
+#include "Graphics/Common.h"
 
 namespace Graphics
 {

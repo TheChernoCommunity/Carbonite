@@ -43,8 +43,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	try
 	{
-		Asset license("LICENSE");
-		Log::info(license.data.get());
+		//Asset license("LICENSE");
+		//Log::info(license.data.get());
 
 		Handler handler;
 
@@ -58,13 +58,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Surface     surface = { window };
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
-		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
+		//Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
 
 		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
-		[[maybe_unused]] std::uint32_t           currentFrame = 0;
+		[[maybe_unused]] std::uint32_t         currentFrame = 0;
 
 		Graphics::Swapchain                 swapchain  = { vma };
 		Graphics::RenderPass                renderPass = { device };
@@ -73,7 +73,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		std::vector<Graphics::ImageView>    swapchainDepthImageViews;
 		std::vector<Graphics::Framebuffer>  framebuffers;
 		std::vector<Graphics::Sync::Fence*> imagesInFlight;
-		[[maybe_unused]] std::uint32_t        currentImage = 0;
+		[[maybe_unused]] std::uint32_t      currentImage = 0;
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -142,7 +142,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
 
-		vert.create();
+		//vert.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
@@ -195,7 +195,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface.getHandle());
 		auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(surface.getHandle());
 		auto format              = surfaceFormats[0];
-		
+
 		if (oldFormat != format.format)
 		{
 			renderPass.m_Attachments.clear();
@@ -312,7 +312,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 				graphicsPresentQueue.waitIdle();
 			}
 		}
-		
+
 		while (!glfwWindowShouldClose(*window))
 		{
 			glfwPollEvents();
@@ -321,69 +321,76 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			Event::push(std::make_shared<AppRenderEvent>());
 
 			Event::dispatchEvents();
-			
+
 			if (glfwGetWindowAttrib(*window, GLFW_ICONIFIED))
 				continue;
-			
+
 			// Begin frame
 			// TODO(MarcasRealAccount): Check if swapchain should be recreated and recreate it
-			
+
 			Graphics::Sync::Fence& iff = inFlightFences[currentFrame];
 			iff.waitFor(~0ULL);
 			iff.reset();
-			
+
 			vk::Result result = swapchain.acquireNextImage(~0U, &imageAvailableSemaphores[currentFrame], nullptr, currentImage);
-			if (result == vk::Result::eErrorOutOfDateKHR) {
+			if (result == vk::Result::eErrorOutOfDateKHR)
+			{
 				// recreate swapchain and restart frame
 				// createSwapchain();
 				continue;
-			} else if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR) {
+			}
+			else if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR)
+			{
 				throw std::runtime_error("Failed to acquire next Vulkan Swapchain image");
 			}
-			
+
 			if (imagesInFlight[currentImage])
 				imagesInFlight[currentImage]->waitFor(~0ULL);
 			imagesInFlight[currentImage] = &inFlightFences[currentFrame];
-			
+
 			commandPools[currentFrame].reset();
 			inFlightFences[currentFrame].reset();
-			
+
 			// -Begin frame
-			
-			auto& currentCommandPool = commandPools[currentFrame];
+
+			auto& currentCommandPool   = commandPools[currentFrame];
 			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
-			if (currentCommandBuffer.begin()) {
-				vk::ClearColorValue u = { 0.1f, 0.1f, 0.1f, 1.0f };
-				
-				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue { 0.1f, 0.1f, 0.1f, 1.0f }, vk::ClearDepthStencilValue { 1.0f, 0 } });
-				
+			if (currentCommandBuffer.begin())
+			{
+				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+
 				currentCommandBuffer.cmdEndRenderPass();
 				currentCommandBuffer.end();
 			}
-			
+
 			// End frame
-			
-			auto& commandBufferLevels = commandPools[currentFrame].getCommandBuffers();
+
+			auto&                                 commandBufferLevels = commandPools[currentFrame].getCommandBuffers();
 			std::vector<Graphics::CommandBuffer*> submitCommandBuffers;
-			std::size_t submitCommandBufferCount = 0;
+			std::size_t                           submitCommandBufferCount = 0;
 			for (auto& level : commandBufferLevels)
 				submitCommandBufferCount += level.second.size();
 			submitCommandBuffers.resize(submitCommandBufferCount);
 			std::size_t submitCommandBufferI = 0;
-			for (auto& level : commandBufferLevels) {
-				for (auto& buf : level.second) {
+			for (auto& level : commandBufferLevels)
+			{
+				for (auto& buf : level.second)
+				{
 					submitCommandBuffers[submitCommandBufferI] = const_cast<Graphics::CommandBuffer*>(&buf);
 					++submitCommandBufferI;
 				}
 			}
-			
+
 			graphicsPresentQueue.submitCommandBuffers(submitCommandBuffers, { &imageAvailableSemaphores[currentFrame] }, { &renderFinishedSemaphores[currentFrame] }, { vk::PipelineStageFlagBits::eColorAttachmentOutput }, &inFlightFences[currentFrame]);
 			result = graphicsPresentQueue.present({ &swapchain }, { currentImage }, { &renderFinishedSemaphores[currentFrame] })[0];
-			if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR) {
+			if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR)
+			{
 				// Recreate swapchain
 				// createSwapchain();
 				continue;
-			} else if (result != vk::Result::eSuccess) {
+			}
+			else if (result != vk::Result::eSuccess)
+			{
 				throw std::runtime_error("Failed to present to Vulkan Swapchain");
 			}
 

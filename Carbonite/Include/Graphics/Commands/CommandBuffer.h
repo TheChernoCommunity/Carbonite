@@ -17,12 +17,12 @@ namespace Graphics
 
 		bool begin();
 		bool end();
-		
+
 		void cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues);
 		void cmdEndRenderPass();
-		
+
 		void cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier);
-		
+
 		auto getLevel() const
 		{
 			return m_Level;
@@ -30,7 +30,7 @@ namespace Graphics
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto& getPool()
+		auto&   getPool()
 		{
 			return m_Pool;
 		}
@@ -43,4 +43,4 @@ namespace Graphics
 		CommandPool&           m_Pool;
 		vk::CommandBufferLevel m_Level;
 	};
-}
+} // namespace Graphics

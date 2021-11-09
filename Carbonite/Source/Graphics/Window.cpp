@@ -1,3 +1,5 @@
+#include "PCH.h"
+
 #include <cstdlib>
 
 #include "Graphics/Window.h"
@@ -11,7 +13,6 @@ namespace
 
 namespace Graphics
 {
-
 	Window::Window(Instance& instance, const std::string& title, unsigned width, unsigned height)
 	    : m_instance(instance), m_width(width), m_height(height), m_title(title)
 	{

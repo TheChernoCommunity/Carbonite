@@ -10,7 +10,6 @@
 
 namespace Graphics
 {
-
 	class Shader : public Handle<vk::ShaderModule, true, false>
 	{
 	public:
