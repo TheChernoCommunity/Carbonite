@@ -5,8 +5,8 @@
 
 #include <glfw/glfw3.h>
 
-#include <Utils/Identifiable.h>
-#include <Utils/Utils.h>
+#include "Utils/Identifiable.h"
+#include "Utils/Utils.h"
 
 #include "KeyCodes.h"
 

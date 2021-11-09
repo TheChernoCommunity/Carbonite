@@ -10,7 +10,12 @@ namespace Graphics
 	{
 		struct VMA;
 	}
+	namespace Sync {
+		struct Semaphore;
+		struct Fence;
+	}
 
+	struct Device;
 	struct Image;
 
 	struct Swapchain : public Handle<vk::SwapchainKHR, true, true>
@@ -18,6 +23,8 @@ namespace Graphics
 	public:
 		Swapchain(Memory::VMA& vma);
 		~Swapchain();
+		
+		vk::Result acquireNextImage(std::uint64_t timeout, Sync::Semaphore* signalSemaphore, Sync::Fence*, std::uint32_t& image);
 
 		Image* getImage(std::uint32_t image) const;
 		auto&  getImages()
@@ -29,6 +36,8 @@ namespace Graphics
 			return m_Images;
 		}
 
+		Device& getDevice();
+		Device& getDevice() const;
 		auto& getVma()
 		{
 			return m_Vma;
