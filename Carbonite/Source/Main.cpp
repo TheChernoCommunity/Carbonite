@@ -291,30 +291,26 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		imagesInFlight.clear();
 		imagesInFlight.resize(swapchainImages.size(), nullptr);
 
-		// TODO(MarcasRealAccount): Implement Queue::submitCommandBuffers
-		// TODO(MarcasRealAccount): Implement Queue::waitIdle
-		// TODO(MarcasRealAccount): Implement CommandBuffer::cmdPipelineBarrier
-		/*{
+		{
 			auto& currentCommandPool = commandPools[currentFrame];
 			currentCommandPool.reset();
 			auto currentCommandBuffer = currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
 			if (currentCommandBuffer->begin())
 			{
-				std::vector<ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
+				std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
 				for (std::size_t i = 0; i < swapchainImages.size(); ++i)
 				{
-					imageMemoryBarriers[i] = { 0, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, ~0U, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, swapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1 } };
+					imageMemoryBarriers[i] = { vk::AccessFlagBits::eNoneKHR, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, ~0U, ~0U, swapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1 } };
 				}
 
-				currentCommandBuffer->cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, 0, nullptr, nullptr, imageMemoryBarriers);
+				currentCommandBuffer->cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, {}, {}, {}, imageMemoryBarriers);
 				currentCommandBuffer->end();
 
-				graphicsPresentQueue->submitCommandBuffers({ currentCommandBuffer }, nullptr, nullptr, nullptr, nullptr);
+				graphicsPresentQueue->submitCommandBuffers({ currentCommandBuffer }, {}, {}, {}, nullptr);
 				graphicsPresentQueue->waitIdle();
 			}
-		}*/
-		//
-
+		}
+		
 		while (!glfwWindowShouldClose(window.getHandle()))
 		{
 			glfwPollEvents();

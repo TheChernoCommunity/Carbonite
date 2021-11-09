@@ -1,39 +1,12 @@
 #pragma once
 
 #include "Graphics/Common.h"
+#include "CommandBuffer.h"
 
 namespace Graphics
 {
 	struct Device;
 	struct QueueFamily;
-	struct CommandPool;
-
-	struct CommandBuffer : public Handle<vk::CommandBuffer, false, true>
-	{
-	public:
-		CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level);
-		~CommandBuffer();
-
-		bool begin();
-		bool end();
-
-		auto& getPool()
-		{
-			return m_Pool;
-		}
-		auto& getPool() const
-		{
-			return m_Pool;
-		}
-		auto getLevel() const
-		{
-			return m_Level;
-		}
-
-	private:
-		CommandPool&           m_Pool;
-		vk::CommandBufferLevel m_Level;
-	};
 
 	struct CommandPool : public Handle<vk::CommandPool, true, true>
 	{

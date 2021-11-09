@@ -2,6 +2,8 @@
 
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
+#include "Graphics/Commands/CommandPool.h"
+#include "Graphics/Sync/Semaphore.h"
 
 namespace Graphics
 {
@@ -39,5 +41,33 @@ namespace Graphics
 		if (isValid())
 			destroy();
 		m_QueueFamily.removeChild(this);
+	}
+	
+	bool Queue::submitCommandBuffers(const std::vector<CommandBuffer*>& commandBuffers, const std::vector<Semaphore*>& waitSemaphores, const std::vector<Semaphore*>& signalSemaphores, const std::vector<vk::PipelineStageFlags>& waitDstStageMask, vk::Fence fence) {
+		
+		std::vector<vk::CommandBuffer> vkCommandBuffers(commandBuffers.size());
+		for (std::size_t i = 0; i < commandBuffers.size(); ++i)
+			vkCommandBuffers[i] = commandBuffers[i]->getHandle();
+		std::vector<vk::Semaphore> vkWaitSemaphores(waitSemaphores.size());
+		for (std::size_t i = 0; i < waitSemaphores.size(); ++i)
+			vkWaitSemaphores[i] = waitSemaphores[i]->getHandle();
+		std::vector<vk::Semaphore> vkSignalSemaphores(signalSemaphores.size());
+		for (std::size_t i = 0; i < signalSemaphores.size(); ++i)
+			vkSignalSemaphores[i] = signalSemaphores[i]->getHandle();
+		
+		vk::SubmitInfo submit = { vkWaitSemaphores, waitDstStageMask, vkCommandBuffers, vkSignalSemaphores };
+		return m_Handle.submit(1, &submit, fence) == vk::Result::eSuccess;
+	}
+	
+	void Queue::waitIdle() {
+		m_Handle.waitIdle();
+	}
+	
+	Device& Queue::getDevice() {
+		return m_QueueFamily.getDevice();
+	}
+	
+	Device& Queue::getDevice() const {
+		return m_QueueFamily.getDevice();
 	}
 } // namespace Graphics

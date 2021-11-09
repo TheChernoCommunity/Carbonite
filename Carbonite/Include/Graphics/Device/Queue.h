@@ -2,11 +2,15 @@
 
 #include "Graphics/Common.h"
 
+#include <vector>
+
 namespace Graphics
 {
 	struct Device;
 	struct Queue;
-
+	struct CommandBuffer;
+	struct Semaphore;
+	
 	struct QueueFamily : public Handle<void*, false, false>
 	{
 	public:
@@ -67,7 +71,17 @@ namespace Graphics
 	public:
 		Queue(QueueFamily& queueFamily, std::uint32_t index, vk::Queue handle);
 		~Queue();
+		
+		bool submitCommandBuffers(const std::vector<CommandBuffer*>& commandBuffers, const std::vector<Semaphore*>& waitSemaphores, const std::vector<Semaphore*>& signalSemaphores, const std::vector<vk::PipelineStageFlags>& waitDstStageMask, vk::Fence fence);
+		void waitIdle();
+		
+		auto getIndex() const
+		{
+			return m_Index;
+		}
 
+		Device& getDevice();
+		Device& getDevice() const;
 		auto& getQueueFamily()
 		{
 			return m_QueueFamily;
@@ -75,11 +89,6 @@ namespace Graphics
 		auto& getQueueFamily() const
 		{
 			return m_QueueFamily;
-		}
-
-		auto getIndex() const
-		{
-			return m_Index;
 		}
 
 	private:

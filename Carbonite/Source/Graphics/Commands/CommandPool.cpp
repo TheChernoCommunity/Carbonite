@@ -6,39 +6,6 @@
 
 namespace Graphics
 {
-	CommandBuffer::CommandBuffer(CommandPool& pool, vk::CommandBuffer handle, vk::CommandBufferLevel level)
-	    : Handle(handle), m_Pool(pool), m_Level(level)
-	{
-		m_Pool.addChild(this);
-	}
-
-	CommandBuffer::~CommandBuffer()
-	{
-		if (isValid())
-			destroy();
-		m_Pool.removeChild(this);
-	}
-
-	bool CommandBuffer::begin()
-	{
-		vk::CommandBufferBeginInfo beginInfo = { {}, nullptr };
-		return m_Handle.begin(&beginInfo) == vk::Result::eSuccess;
-	}
-
-	bool CommandBuffer::end()
-	{
-		// INFO(MarcasRealAccount): Had to do an ugly hack here, because vulkan-hpp doesn't have a vk::Result return value for end.
-		try
-		{
-			m_Handle.end();
-		}
-		catch ([[maybe_unused]] const std::exception& e)
-		{
-			return false;
-		}
-		return true;
-	}
-
 	CommandPool::CommandPool(Device& device)
 	    : m_Device(device)
 	{
