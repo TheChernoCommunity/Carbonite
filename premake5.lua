@@ -42,7 +42,7 @@ workspace("Carbonite")
 		warnings("Off")
 		stb:setup()
 
-	project("Vulkan")
+	project("VulkanHeaders")
 		location("")
 		warnings("Off")
 		vulkan:setup()
@@ -76,7 +76,7 @@ workspace("Carbonite")
 		vma:setupDep()
 		imgui:setupDep()
 		stb:setupDep()
-		vulkan:setupDep()
+		vulkan:setupDep(false)
 
 		sysincludedirs({
 			"%{wks.location}/ThirdParty/inipp/inipp/",

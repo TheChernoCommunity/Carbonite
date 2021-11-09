@@ -179,9 +179,9 @@ function vulkan:setupDep(noLink)
 
 		filter("configurations:not Debug")
 			links(self.requiredSDKLibs.dist)
-	end
 
-	filter({})
+		filter({})
+	end
 end
 
 return vulkan

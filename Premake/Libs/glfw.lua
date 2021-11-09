@@ -84,6 +84,13 @@ function glfw:setup()
 end
 
 function glfw:setupDep()
+	filter("system:macosx")
+		links({
+			"CoreGraphics.framework",
+			"IOKit.framework",
+			"AppKit.framework"
+		})
+
 	links({ self.name })
 	sysincludedirs({ self.location .. self.includeDir })
 end
