@@ -7,6 +7,8 @@ glfw = require("Premake/Libs/glfw")
 vma = require("Premake/Libs/vma")
 imgui = require("Premake/Libs/imgui")
 stb = require("Premake/Libs/stb")
+inipp = require("Premake/Libs/inipp")
+spdlog = require("Premake/Libs/spdlog")
 vulkan = require("Premake/Libs/vulkan")
 
 workspace("Carbonite")
@@ -42,6 +44,16 @@ workspace("Carbonite")
 		warnings("Off")
 		stb:setup()
 
+	project("Inipp")
+		location("ThirdParty/inipp/")
+		warnings("Off")
+		inipp:setup()
+
+	project("Spdlog")
+		location("ThirdParty/spdlog/")
+		warnings("Off")
+		spdlog:setup()
+
 	project("VulkanHeaders")
 		location("")
 		warnings("Off")
@@ -76,12 +88,9 @@ workspace("Carbonite")
 		vma:setupDep()
 		imgui:setupDep()
 		stb:setupDep()
+		inipp:setupDep()
+		spdlog:setupDep()
 		vulkan:setupDep(false)
-
-		sysincludedirs({
-			"%{wks.location}/ThirdParty/inipp/inipp/",
-			"%{wks.location}/ThirdParty/spdlog/include/"
-		})
 
 		files({ "%{prj.location}/**" })
 		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })

@@ -1,8 +1,10 @@
 local imgui = {
+	name = "",
 	location = ""
 }
 
 function imgui:setup()
+	self.name = common:projectName()
 	self.location = common:projectLocation()
 
 	kind("StaticLib")
@@ -24,6 +26,7 @@ function imgui:setup()
 end
 
 function imgui:setupDep()
+	links({ self.name })
 	sysincludedirs({ self.location })
 end
 

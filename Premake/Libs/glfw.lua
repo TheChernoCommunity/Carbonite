@@ -91,6 +91,8 @@ function glfw:setupDep()
 			"AppKit.framework"
 		})
 
+	filter({})
+
 	links({ self.name })
 	sysincludedirs({ self.location .. self.includeDir })
 end

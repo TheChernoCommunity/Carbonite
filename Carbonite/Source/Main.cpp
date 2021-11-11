@@ -59,8 +59,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Surface     surface = { window };
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
-		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
-		Graphics::Shader      frag    = { device, { "Carbonite/Assets/test.frag" } };
+		Graphics::Shader      vert    = { device, { "Assets/test.vert" } };
+		Graphics::Shader      frag    = { device, { "Assets/test.frag" } };
 
 		// Passing Shader by value creates issues.
 		std::vector<Graphics::Shader*> shaders { &vert, &frag };
