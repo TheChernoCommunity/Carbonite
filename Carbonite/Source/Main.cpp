@@ -60,11 +60,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
 		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
+		Graphics::Shader      frag    = { device, { "Carbonite/Assets/test.frag" } };
 
 		// Passing Shader by value creates issues.
-		std::vector<Graphics::Shader*> shaders;
-
-		shaders.push_back(&vert);
+		std::vector<Graphics::Shader*> shaders { &vert, &frag };
 
 		std::vector<Graphics::CommandPool>
 		                                       commandPools;
@@ -152,6 +151,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			throw std::runtime_error("Found no suitable vulkan device");
 
 		vert.create();
+		frag.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
@@ -324,6 +324,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			}
 		}
 
+		vk::Viewport viewport = { 0, 0, static_cast<float>(swapchain.m_Width), static_cast<float>(swapchain.m_Height), 0, 1 };
+
+		std::vector<vk::Viewport> viewports = { viewport };
+
+		vk::Rect2D scissor = { { 0, 0 }, surfaceCapabilities.currentExtent };
+
+		std::vector<vk::Rect2D> scissors = { scissor };
+
 		while (!glfwWindowShouldClose(*window))
 		{
 			glfwPollEvents();
@@ -369,7 +377,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			if (currentCommandBuffer.begin())
 			{
 				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+				currentCommandBuffer.cmdBindPipeline(pipeline);
 
+				currentCommandBuffer.cmdSetViewport(viewports);
+				currentCommandBuffer.cmdSetScissor(scissors);
+
+				currentCommandBuffer.draw();
 				currentCommandBuffer.cmdEndRenderPass();
 				currentCommandBuffer.end();
 			}

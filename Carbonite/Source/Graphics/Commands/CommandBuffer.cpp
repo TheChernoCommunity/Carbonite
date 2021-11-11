@@ -54,6 +54,26 @@ namespace Graphics
 		m_Handle.endRenderPass();
 	}
 
+	void CommandBuffer::cmdSetScissor(std::vector<vk::Rect2D>& scissors)
+	{
+		m_Handle.setScissor(0, scissors);
+	}
+
+	void CommandBuffer::cmdSetViewport(std::vector<vk::Viewport>& viewports)
+	{
+		m_Handle.setViewport(0, viewports);
+	}
+
+	void CommandBuffer::cmdBindPipeline(Pipeline& pipeline)
+	{
+		m_Handle.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.getHandle());
+	}
+
+	void CommandBuffer::draw()
+	{
+		m_Handle.draw(3, 1, 0, 0);
+	}
+
 	void CommandBuffer::cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier)
 	{
 		m_Handle.pipelineBarrier(srcStageMask, dstStageMask, dependencyFlags, memoryBarriers, bufferMemoryBarriers, imageMemoryBarrier);

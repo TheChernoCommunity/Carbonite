@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics/Common.h"
+#include "Graphics/Pipeline/Pipeline.h"
 
 namespace Graphics
 {
@@ -20,6 +21,12 @@ namespace Graphics
 
 		void cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues);
 		void cmdEndRenderPass();
+
+		void cmdSetScissor(std::vector<vk::Rect2D>& scissors);
+		void cmdSetViewport(std::vector<vk::Viewport>& viewports);
+
+		void cmdBindPipeline(Pipeline& pipeline);
+		void draw();
 
 		void cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier);
 
