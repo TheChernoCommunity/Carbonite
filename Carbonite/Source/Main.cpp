@@ -13,6 +13,7 @@
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
+#include "Graphics/Pipeline/Pipeline.h"
 #include "Graphics/Pipeline/RenderPass.h"
 #include "Graphics/Shader.h"
 #include "Graphics/Swapchain/Swapchain.h"
@@ -58,16 +59,24 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Graphics::Surface     surface = { window };
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
-		//Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
+		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
 
-		std::vector<Graphics::CommandPool>     commandPools;
+		// Passing Shader by value creates issues.
+		std::vector<Graphics::Shader*> shaders;
+
+		shaders.push_back(&vert);
+
+		std::vector<Graphics::CommandPool>
+		                                       commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
 		[[maybe_unused]] std::uint32_t         currentFrame = 0;
 
-		Graphics::Swapchain                 swapchain  = { vma };
-		Graphics::RenderPass                renderPass = { device };
+		Graphics::Swapchain  swapchain  = { vma };
+		Graphics::RenderPass renderPass = { device };
+		Graphics::Pipeline   pipeline   = { swapchain, renderPass, shaders };
+
 		std::vector<Graphics::ImageView>    imageViews;
 		std::vector<Graphics::Image>        swapchainDepthImages;
 		std::vector<Graphics::ImageView>    swapchainDepthImageViews;
@@ -142,7 +151,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
 
-		//vert.create();
+		vert.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
@@ -249,6 +258,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!swapchain.create())
 			throw std::runtime_error("Failed to create vulkan swapchain");
 		device.setDebugName(swapchain, "Swapchain");
+
+		pipeline.create();
 
 		auto& swapchainImages = swapchain.getImages();
 		imageViews.reserve(swapchainImages.size());
