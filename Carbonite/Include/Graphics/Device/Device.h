@@ -87,7 +87,7 @@ namespace Graphics
 			}
 		}
 
-		auto&  getSurface()
+		auto& getSurface()
 		{
 			return m_Surface;
 		}
