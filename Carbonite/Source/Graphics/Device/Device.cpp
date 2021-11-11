@@ -102,16 +102,6 @@ namespace Graphics
 		return nullptr;
 	}
 
-	Debug& Device::getDebug()
-	{
-		return m_Surface.getInstance().getDebug();
-	}
-
-	Debug& Device::getDebug() const
-	{
-		return m_Surface.getInstance().getDebug();
-	}
-
 	void Device::createImpl()
 	{
 		auto& instance        = m_Surface.getInstance();
@@ -357,6 +347,8 @@ namespace Graphics
 			auto& queueFamilyProperty = queueFamilyProperties[familyIndex];
 			m_QueueFamilies.emplace_back(*this, familyIndex, queueFamilyProperty.queueFlags, queueFamilyProperty.timestampValidBits, queueFamilyProperty.minImageTransferGranularity, m_PhysicalDevice.getSurfaceSupportKHR(familyIndex, *m_Surface), queueCount);
 		}
+
+		m_Dispatcher = { instance.getHandle(), vkGetInstanceProcAddr, m_Handle };
 	}
 
 	bool Device::destroyImpl()

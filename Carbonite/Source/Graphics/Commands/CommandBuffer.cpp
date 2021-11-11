@@ -54,24 +54,29 @@ namespace Graphics
 		m_Handle.endRenderPass();
 	}
 
-	void CommandBuffer::cmdSetScissor(std::vector<vk::Rect2D>& scissors)
+	void CommandBuffer::cmdSetScissors(const std::vector<vk::Rect2D>& scissors)
 	{
 		m_Handle.setScissor(0, scissors);
 	}
 
-	void CommandBuffer::cmdSetViewport(std::vector<vk::Viewport>& viewports)
+	void CommandBuffer::cmdSetViewports(const std::vector<vk::Viewport>& viewports)
 	{
 		m_Handle.setViewport(0, viewports);
 	}
 
-	void CommandBuffer::cmdBindPipeline(Pipeline& pipeline)
+	void CommandBuffer::cmdSetLineWidth(float lineWidth)
 	{
-		m_Handle.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.getHandle());
+		m_Handle.setLineWidth(lineWidth);
 	}
 
-	void CommandBuffer::draw()
+	void CommandBuffer::cmdBindPipeline(Pipeline& pipeline)
 	{
-		m_Handle.draw(3, 1, 0, 0);
+		m_Handle.bindPipeline(pipeline.getBindPoint(), pipeline.getHandle());
+	}
+
+	void CommandBuffer::cmdDraw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance)
+	{
+		m_Handle.draw(vertexCount, instanceCount, firstVertex, firstInstance);
 	}
 
 	void CommandBuffer::cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier)

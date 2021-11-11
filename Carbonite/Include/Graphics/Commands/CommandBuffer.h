@@ -3,6 +3,8 @@
 #include "Graphics/Common.h"
 #include "Graphics/Pipeline/Pipeline.h"
 
+#include <vector>
+
 namespace Graphics
 {
 	struct Device;
@@ -22,11 +24,12 @@ namespace Graphics
 		void cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues);
 		void cmdEndRenderPass();
 
-		void cmdSetScissor(std::vector<vk::Rect2D>& scissors);
-		void cmdSetViewport(std::vector<vk::Viewport>& viewports);
+		void cmdSetScissors(const std::vector<vk::Rect2D>& scissors);
+		void cmdSetViewports(const std::vector<vk::Viewport>& viewports);
+		void cmdSetLineWidth(float lineWidth);
 
 		void cmdBindPipeline(Pipeline& pipeline);
-		void draw();
+		void cmdDraw(std::uint32_t vertexCount, std::uint32_t instanceCount, std::uint32_t firstVertex, std::uint32_t firstInstance);
 
 		void cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier);
 

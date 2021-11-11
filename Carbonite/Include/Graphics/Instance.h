@@ -100,13 +100,13 @@ namespace Graphics
 			return getExtensionVersion(name);
 		}
 
-		auto& getDebug()
+		auto& getDispatcher()
 		{
-			return *m_Debug;
+			return m_Dispatcher;
 		}
-		auto& getDebug() const
+		auto& getDispatcher() const
 		{
-			return *m_Debug;
+			return m_Dispatcher;
 		}
 
 	private:
@@ -126,11 +126,11 @@ namespace Graphics
 		InstanceExtensions m_EnabledExtensions;
 
 	private:
-		Debug* m_Debug;
-
 		InstanceLayers     m_Layers;
 		InstanceExtensions m_Extensions;
 		InstanceLayers     m_MissingLayers;
 		InstanceExtensions m_MissingExtensions;
+
+		vk::DispatchLoaderDynamic m_Dispatcher;
 	};
 } // namespace Graphics

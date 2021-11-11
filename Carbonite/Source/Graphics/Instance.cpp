@@ -96,13 +96,12 @@ namespace Graphics
 	}
 
 	Instance::Instance(std::string_view appName, Version appVersion, std::string_view engineName, Version engineVersion, Version minAPIVersion, Version maxAPIVersion)
-	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion), m_Debug(new Debug(*this)) {}
+	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion) {}
 
 	Instance::~Instance()
 	{
 		if (isValid())
 			destroy();
-		delete m_Debug;
 	}
 
 	void Instance::requestLayer(std::string_view name, Version requiredVersion, bool required)
@@ -272,6 +271,7 @@ namespace Graphics
 
 		m_Handle     = vk::createInstance(createInfo);
 		m_ApiVersion = instanceVersion;
+		m_Dispatcher = { m_Handle, &vkGetInstanceProcAddr };
 	}
 
 	bool Instance::destroyImpl()

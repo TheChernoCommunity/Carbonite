@@ -73,8 +73,7 @@ namespace Graphics
 					{
 						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), nullptr };
 
-						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
-						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+						m_Handle.setDebugUtilsObjectNameEXT(nameInfo, m_Dispatcher);
 					}
 					else
 					{
@@ -82,15 +81,12 @@ namespace Graphics
 
 						vk::DebugUtilsObjectNameInfoEXT nameInfo = { baseHandle.objectType, reinterpret_cast<std::uint64_t>(evenMoreBaseHandle), tName.c_str() };
 
-						VkDebugUtilsObjectNameInfoEXT vkNameInfo = nameInfo;
-						getDebug().getDebugUtilsEXT().vkSetDebugUtilsObjectNameEXT(m_Handle, &vkNameInfo);
+						m_Handle.setDebugUtilsObjectNameEXT(nameInfo, m_Dispatcher);
 					}
 				}
 			}
 		}
 
-		Debug& getDebug();
-		Debug& getDebug() const;
 		auto&  getSurface()
 		{
 			return m_Surface;
@@ -128,6 +124,15 @@ namespace Graphics
 			return getExtensionVersion(name);
 		}
 
+		auto& getDispatcher()
+		{
+			return m_Dispatcher;
+		}
+		auto& getDispatcher() const
+		{
+			return m_Dispatcher;
+		}
+
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
@@ -147,5 +152,7 @@ namespace Graphics
 		DeviceExtensions m_Extensions;
 
 		std::vector<Detail::DeviceQueueFamilyRequest> m_QueueRequests;
+
+		vk::DispatchLoaderDynamic m_Dispatcher;
 	};
 } // namespace Graphics

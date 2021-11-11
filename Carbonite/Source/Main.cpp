@@ -13,7 +13,8 @@
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
-#include "Graphics/Pipeline/Pipeline.h"
+#include "Graphics/Pipeline/GraphicsPipeline.h"
+#include "Graphics/Pipeline/PipelineLayout.h"
 #include "Graphics/Pipeline/RenderPass.h"
 #include "Graphics/Shader.h"
 #include "Graphics/Swapchain/Swapchain.h"
@@ -44,9 +45,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	try
 	{
-		//Asset license("LICENSE");
-		//Log::info(license.data.get());
-
 		Handler handler;
 
 		// Create Graphics Instance
@@ -54,19 +52,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
 
+		Graphics::Debug debug = { instance };
+
 		Graphics::Window window = { instance, "Carbonite" };
 
 		Graphics::Surface     surface = { window };
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
-		Graphics::Shader      vert    = { device, { "Assets/test.vert" } };
-		Graphics::Shader      frag    = { device, { "Assets/test.frag" } };
 
-		// Passing Shader by value creates issues.
-		std::vector<Graphics::Shader*> shaders { &vert, &frag };
-
-		std::vector<Graphics::CommandPool>
-		                                       commandPools;
+		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
@@ -74,7 +68,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		Graphics::Swapchain  swapchain  = { vma };
 		Graphics::RenderPass renderPass = { device };
-		Graphics::Pipeline   pipeline   = { swapchain, renderPass, shaders };
+
+		Graphics::PipelineLayout   pipelineLayout = { device };
+		Graphics::Shader           vert           = { device, { "Assets/test.vert" } };
+		Graphics::Shader           frag           = { device, { "Assets/test.frag" } };
+		Graphics::GraphicsPipeline pipeline       = { renderPass, pipelineLayout };
 
 		std::vector<Graphics::ImageView>    imageViews;
 		std::vector<Graphics::Image>        swapchainDepthImages;
@@ -136,7 +134,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Create debug if enabled
 		if (Graphics::Debug::IsEnabled())
-			instance.getDebug().create();
+			debug.create();
 
 		if (!surface.create())
 			throw std::runtime_error("Failed to create vulkan surface");
@@ -149,9 +147,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
-
-		vert.create();
-		frag.create();
 
 		auto physicalDevice = device.getPhysicalDevice();
 
@@ -259,8 +254,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			throw std::runtime_error("Failed to create vulkan swapchain");
 		device.setDebugName(swapchain, "Swapchain");
 
-		pipeline.create();
-
 		auto& swapchainImages = swapchain.getImages();
 		imageViews.reserve(swapchainImages.size());
 		swapchainDepthImages.reserve(swapchainImages.size());
@@ -323,6 +316,34 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 				graphicsPresentQueue.waitIdle();
 			}
 		}
+		// -Create swapchain
+
+		// Dynamic Data
+		if (!vert.create())
+			throw std::runtime_error("Failed to create vertex shader");
+
+		if (!frag.create())
+			throw std::runtime_error("Failed to create fragment shader");
+
+		if (!pipelineLayout.create())
+			throw std::runtime_error("Failed to create vulkan pipeline layout");
+		device.setDebugName(pipelineLayout, "pipelineLayout");
+
+		pipeline.m_Shaders.push_back(&vert);
+		pipeline.m_Shaders.push_back(&frag);
+
+		pipeline.m_ViewportState.m_Viewports = { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f } };
+		pipeline.m_ViewportState.m_Scissors  = { { { 0, 0 }, { 0, 0 } } };
+
+		pipeline.m_ColorBlendState.m_Attachments.emplace_back(true, vk::BlendFactor::eSrcAlpha, vk::BlendFactor::eOneMinusSrcAlpha, vk::BlendOp::eAdd, vk::BlendFactor::eOne, vk::BlendFactor::eZero, vk::BlendOp::eAdd, vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eViewport);
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eScissor);
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eLineWidth);
+
+		if (!pipeline.create()) throw std::runtime_error("Failed to create vulkan graphics pipeline");
+		device.setDebugName(pipeline, "pipeline");
+		// -Dynamic Data
 
 		vk::Viewport viewport = { 0, 0, static_cast<float>(swapchain.m_Width), static_cast<float>(swapchain.m_Height), 0, 1 };
 
@@ -346,6 +367,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 			// Begin frame
 			// TODO(MarcasRealAccount): Check if swapchain should be recreated and recreate it
+			// if (recreateSwapchain)
+			//	createSwapchain();
 
 			Graphics::Sync::Fence& iff = inFlightFences[currentFrame];
 			iff.waitFor(~0ULL);
@@ -377,12 +400,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			if (currentCommandBuffer.begin())
 			{
 				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+
+				currentCommandBuffer.cmdSetViewports({ { 0.0f, 0.0f, static_cast<float>(swapchain.m_Width), static_cast<float>(swapchain.m_Height), 0.0f, 1.0f } });
+				currentCommandBuffer.cmdSetScissors({ { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } } });
+				currentCommandBuffer.cmdSetLineWidth(1.0f);
 				currentCommandBuffer.cmdBindPipeline(pipeline);
 
-				currentCommandBuffer.cmdSetViewport(viewports);
-				currentCommandBuffer.cmdSetScissor(scissors);
-
-				currentCommandBuffer.draw();
+				currentCommandBuffer.cmdDraw(3, 1, 0, 0);
 				currentCommandBuffer.cmdEndRenderPass();
 				currentCommandBuffer.end();
 			}
