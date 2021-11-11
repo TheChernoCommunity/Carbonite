@@ -30,7 +30,7 @@ namespace Graphics
 				break;
 
 			case ShaderType::Fragment:
-				shaderStage = vk::ShaderStageFlagBits::eVertex;
+				shaderStage = vk::ShaderStageFlagBits::eFragment;
 				break;
 
 			default:

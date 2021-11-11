@@ -23,6 +23,10 @@ Asset::Asset(std::string path)
 		{
 			type = static_cast<uint32_t>(ShaderType::Vertex);
 		}
+		else if (extension == "frag")
+		{
+			type = static_cast<uint32_t>(ShaderType::Fragment);
+		}
 		else if (extension == "tesc")
 		{
 			type = static_cast<uint32_t>(ShaderType::TessellationControl);
