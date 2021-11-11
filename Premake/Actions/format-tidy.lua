@@ -115,7 +115,7 @@ newaction({
 	description = "Run Clang-Format and Clang-Tidy on all project files",
 
 	onStart = function()
-		if host == "windows" then
+		if common.host == "windows" then
 			formatTidy.formatCommand = "clang-format.exe"
 			formatTidy.tidyCommand = "clang-tidy.exe"
 		else
@@ -129,10 +129,10 @@ newaction({
 		formatTidy.canTidy = result ~= nil
 
 		if not formatTidy.canFormat then
-			print("You do not have " .. formatTidy.formatCommand .. " available and hence format-tidy will not format")
+			print("format-tidy will not format because " .. formatTidy.formatCommand .. " is unavailable")
 		end
 		if not formatTidy.canTidy then
-			print("You do not have " .. formatTidy.tidyCommand .. " available and hence format-tidy will not tidy")
+			print("format-tidy will not tidy because " .. formatTidy.tidyCommand .. " is unavailable")
 		end
 	end,
 
@@ -167,7 +167,7 @@ newaction({
 	description = "Run Clang-Format on all project files",
 
 	onStart = function()
-		if host == "windows" then
+		if common.host == "windows" then
 			formatTidy.formatCommand = "clang-format.exe"
 		else
 			formatTidy.formatCommand = "clang-format"
@@ -177,7 +177,7 @@ newaction({
 		formatTidy.canFormat = result ~= nil
 
 		if not formatTidy.canFormat then
-			print("You do not have " .. formatTidy.formatCommand .. " available and hence format-tidy will not format")
+			print("Formatting will not take place because " .. formatTidy.formatCommand .. " is unavailable")
 		end
 	end,
 
@@ -205,7 +205,7 @@ newaction({
 	description = "Run Clang-Tidy on all project files",
 
 	onStart = function()
-		if host == "windows" then
+		if common.host == "windows" then
 			formatTidy.tidyCommand = "clang-tidy.exe"
 		else
 			formatTidy.tidyCommand = "clang-tidy"
@@ -215,7 +215,7 @@ newaction({
 		formatTidy.canTidy = result ~= nil
 
 		if not formatTidy.canTidy then
-			print("You do not have " .. formatTidy.tidyCommand .. " available and hence format-tidy will not tidy")
+			print("Tidying will not take place because " .. formatTidy.tidyCommand .. " is unavailable")
 		end
 	end,
 
