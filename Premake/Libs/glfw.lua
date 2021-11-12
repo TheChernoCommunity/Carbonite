@@ -84,6 +84,11 @@ function glfw:setup()
 end
 
 function glfw:setupDep()
+	filter("system:linux")
+		links({ "dl" })
+
+		linkoptions({ "-pthread" })
+
 	filter("system:macosx")
 		links({
 			"CoreGraphics.framework",

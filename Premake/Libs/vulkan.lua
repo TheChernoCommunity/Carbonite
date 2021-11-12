@@ -107,7 +107,7 @@ If you have then please go into environment variables and add 'VULKAN_SDK' with 
 		if not self.sdkPath then
 			error([[Please find the Vulkan SDK and run the 'setup-env.sh' script in a terminal environment before running premake again!
 You can open '~/.zshrc' or '~/.bashrc' and add:
-cd \"PathToVulkanSDK\"
+cd "PathToVulkanSDK"
 source setup-env.sh
 cd ~/]])
 		end
@@ -115,7 +115,7 @@ cd ~/]])
 		if not self.sdkPath then
 			error([[Please find the Vulkan SDK and run the 'setup-env.sh' script in a terminal environment before running premake again!
 You can open '~/.zshrc' or '~/.bashrc' and add:
-source \"PathToVulkanSDK/setup-env.sh\"]])
+source "PathToVulkanSDK/setup-env.sh"]])
 		end
 	end
 	

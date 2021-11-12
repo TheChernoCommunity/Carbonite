@@ -10,7 +10,7 @@
 
 namespace Graphics
 {
-	class Shader : public Handle<vk::ShaderModule, true, false>
+	struct Shader : public Handle<vk::ShaderModule, true, false>
 	{
 	public:
 		Shader(Device& device, const Asset asset);
