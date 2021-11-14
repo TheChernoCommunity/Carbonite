@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DebugUtilsEXT.h"
 #include "Graphics/Common.h"
 
 namespace Graphics
@@ -39,21 +38,9 @@ namespace Graphics
 			return m_Instance;
 		}
 
-		auto& getDebugUtilsEXT()
-		{
-			return m_DebugUtilsEXT;
-		}
-		auto& getDebugUtilsEXT() const
-		{
-			return m_DebugUtilsEXT;
-		}
-
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
-
-	protected:
-		DebugUtilsEXT::FunctionPtrs m_DebugUtilsEXT;
 
 	private:
 		Instance& m_Instance;

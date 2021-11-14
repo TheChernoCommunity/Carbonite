@@ -7,7 +7,6 @@
 
 namespace Graphics
 {
-
 	class Window : public Handle<GLFWwindow*, true, false>
 	{
 	public:

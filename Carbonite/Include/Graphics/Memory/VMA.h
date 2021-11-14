@@ -7,7 +7,7 @@ namespace Graphics
 	struct Device;
 	namespace Memory
 	{
-		struct VMA : public Handle<VmaAllocator, true, true>
+		struct VMA : public Handle<VmaAllocator, true, false>
 		{
 		public:
 			VMA(Device& device);

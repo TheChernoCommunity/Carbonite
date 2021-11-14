@@ -18,6 +18,11 @@ namespace Graphics
 		Image(Memory::VMA& vma, vk::Image& handle);
 		~Image();
 
+		auto getAllocation() const
+		{
+			return m_Allocation;
+		}
+
 		auto& getVma()
 		{
 			return m_Vma;

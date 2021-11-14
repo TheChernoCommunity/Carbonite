@@ -102,16 +102,6 @@ namespace Graphics
 		return nullptr;
 	}
 
-	Debug& Device::getDebug()
-	{
-		return m_Surface.getInstance().getDebug();
-	}
-
-	Debug& Device::getDebug() const
-	{
-		return m_Surface.getInstance().getDebug();
-	}
-
 	void Device::createImpl()
 	{
 		auto& instance        = m_Surface.getInstance();
@@ -134,13 +124,9 @@ namespace Graphics
 				bool found = false;
 				for (auto& availLayer : availableLayers)
 				{
-					std::string layerName(availLayer.layerName.size(), '\0');
-					std::memcpy(layerName.data(), availLayer.layerName.data(), availLayer.layerName.size());
-					auto end = layerName.find_first_of('\0');
-					if (end < layerName.size())
-						layerName.resize(end);
+					std::string_view layerName = { availLayer.layerName, std::strlen(availLayer.layerName) };
 
-					if (layerName == layer.m_Name && availLayer.implementationVersion > layer.m_Version)
+					if (layerName == layer.m_Name && availLayer.implementationVersion >= layer.m_Version)
 					{
 						if (!layer.m_Required) ++score;
 						found = true;
@@ -162,13 +148,9 @@ namespace Graphics
 				bool found = false;
 				for (auto& availExtension : availableExtensions)
 				{
-					std::string extensionName(availExtension.extensionName.size(), '\0');
-					std::memcpy(extensionName.data(), availExtension.extensionName.data(), availExtension.extensionName.size());
-					auto end = extensionName.find_first_of('\0');
-					if (end < extensionName.size())
-						extensionName.resize(end);
+					std::string_view extensionName = { availExtension.extensionName, std::strlen(availExtension.extensionName) };
 
-					if (extensionName == extension.m_Name && availExtension.specVersion > extension.m_Version)
+					if (extensionName == extension.m_Name && availExtension.specVersion >= extension.m_Version)
 					{
 						if (!extension.m_Required) ++score;
 						found = true;
@@ -248,56 +230,38 @@ namespace Graphics
 		auto availableLayers = m_PhysicalDevice.enumerateDeviceLayerProperties();
 		for (auto& layer : m_Layers)
 		{
-			bool found = false;
 			for (auto& availLayer : availableLayers)
 			{
-				std::string layerName(availLayer.layerName.size(), '\0');
-				std::memcpy(layerName.data(), availLayer.layerName.data(), availLayer.layerName.size());
-				auto end = layerName.find_first_of('\0');
-				if (end < layerName.size())
-					layerName.resize(end);
+				std::string_view layerName = { availLayer.layerName, std::strlen(availLayer.layerName) };
 
 				if (layerName == layer.m_Name && availLayer.implementationVersion > layer.m_Version)
 				{
 					m_EnabledLayers.push_back({ layerName, availLayer.implementationVersion });
-					found = true;
 					break;
 				}
 			}
-			if (found) continue;
 		}
 
 		auto availableExtensions = m_PhysicalDevice.enumerateDeviceExtensionProperties();
 		for (auto& extension : m_Extensions)
 		{
-			bool found = false;
 			for (auto& availExtension : availableExtensions)
 			{
-				std::string extensionName(availExtension.extensionName.size(), '\0');
-				std::memcpy(extensionName.data(), availExtension.extensionName.data(), availExtension.extensionName.size());
-				auto end = extensionName.find_first_of('\0');
-				if (end < extensionName.size())
-					extensionName.resize(end);
+				std::string_view extensionName = { availExtension.extensionName, std::strlen(availExtension.extensionName) };
 
 				if (extensionName == extension.m_Name && availExtension.specVersion > extension.m_Version)
 				{
 					m_EnabledExtensions.push_back({ extensionName, availExtension.specVersion });
-					found = true;
 					break;
 				}
 			}
-			if (found) continue;
 		}
 
 		if (Debug::IsEnabled())
 		{
 			for (auto& availLayer : availableLayers)
 			{
-				std::string layerName(availLayer.layerName.size(), '\0');
-				std::memcpy(layerName.data(), availLayer.layerName.data(), availLayer.layerName.size());
-				auto end = layerName.find_first_of('\0');
-				if (end < layerName.size())
-					layerName.resize(end);
+				std::string_view layerName = { availLayer.layerName, std::strlen(availLayer.layerName) };
 
 				if (layerName == "VK_LAYER_KHRONOS_validation")
 				{
@@ -361,18 +325,14 @@ namespace Graphics
 
 		for (std::size_t i = 0; i < useLayers.size(); ++i)
 		{
-			auto& layer = m_EnabledLayers[i];
-			char* buf   = new char[layer.m_Name.size() + 1] { 0 };
-			std::memcpy(buf, layer.m_Name.c_str(), layer.m_Name.size());
-			useLayers[i] = buf;
+			auto& layer  = m_EnabledLayers[i];
+			useLayers[i] = layer.m_Name.c_str();
 		}
 
 		for (std::size_t i = 0; i < useExtensions.size(); ++i)
 		{
-			auto& extension = m_EnabledExtensions[i];
-			char* buf       = new char[extension.m_Name.size() + 1] { 0 };
-			std::memcpy(buf, extension.m_Name.c_str(), extension.m_Name.size());
-			useExtensions[i] = buf;
+			auto& extension  = m_EnabledExtensions[i];
+			useExtensions[i] = extension.m_Name.c_str();
 		}
 
 		vk::DeviceCreateInfo createInfo = { {}, queueCreateInfos, useLayers, useExtensions, &enabledFeatures };
@@ -387,6 +347,8 @@ namespace Graphics
 			auto& queueFamilyProperty = queueFamilyProperties[familyIndex];
 			m_QueueFamilies.emplace_back(*this, familyIndex, queueFamilyProperty.queueFlags, queueFamilyProperty.timestampValidBits, queueFamilyProperty.minImageTransferGranularity, m_PhysicalDevice.getSurfaceSupportKHR(familyIndex, *m_Surface), queueCount);
 		}
+
+		m_Dispatcher = { instance.getHandle(), vkGetInstanceProcAddr, m_Handle };
 	}
 
 	bool Device::destroyImpl()

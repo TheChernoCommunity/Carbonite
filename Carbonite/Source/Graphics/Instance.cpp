@@ -29,7 +29,7 @@ namespace Graphics
 			}
 			else
 			{
-				s_CachedVersion = VK_VERSION_1_0;
+				s_CachedVersion = VK_API_VERSION_1_0;
 			}
 		}
 		return s_CachedVersion;
@@ -96,13 +96,12 @@ namespace Graphics
 	}
 
 	Instance::Instance(std::string_view appName, Version appVersion, std::string_view engineName, Version engineVersion, Version minAPIVersion, Version maxAPIVersion)
-	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion), m_Debug(new Debug(*this)) {}
+	    : m_AppName(appName), m_AppVersion(appVersion), m_EngineName(engineName), m_EngineVersion(engineVersion), m_MinAPIVersion(minAPIVersion), m_MaxAPIVersion(maxAPIVersion) {}
 
 	Instance::~Instance()
 	{
 		if (isValid())
 			destroy();
-		delete m_Debug;
 	}
 
 	void Instance::requestLayer(std::string_view name, Version requiredVersion, bool required)
@@ -167,7 +166,7 @@ namespace Graphics
 		if (vulkanVersion >= m_MaxAPIVersion)
 			instanceVersion = m_MaxAPIVersion;
 		else if (vulkanVersion >= m_MinAPIVersion)
-			instanceVersion = m_MinAPIVersion;
+			instanceVersion = vulkanVersion;
 
 		m_MissingLayers.clear();
 		m_MissingExtensions.clear();
@@ -177,7 +176,7 @@ namespace Graphics
 			bool found = false;
 			for (auto& availLayer : s_CachedAvailableLayers)
 			{
-				if (availLayer.m_Name == layer.m_Name && availLayer.m_Version > layer.m_Version)
+				if (availLayer.m_Name == layer.m_Name && availLayer.m_Version >= layer.m_Version)
 				{
 					m_EnabledLayers.push_back(availLayer);
 					found = true;
@@ -195,7 +194,7 @@ namespace Graphics
 			bool found = false;
 			for (auto& availExtension : s_CachedAvailableExtensions)
 			{
-				if (availExtension.m_Name == extension.m_Name && availExtension.m_Version > extension.m_Version)
+				if (availExtension.m_Name == extension.m_Name && availExtension.m_Version >= extension.m_Version)
 				{
 					m_EnabledExtensions.push_back(availExtension);
 					found = true;
@@ -248,18 +247,14 @@ namespace Graphics
 
 		for (std::size_t i = 0; i < useLayers.size(); ++i)
 		{
-			auto& layer = m_EnabledLayers[i];
-			char* buf   = new char[layer.m_Name.size() + 1] { 0 };
-			std::memcpy(buf, layer.m_Name.c_str(), layer.m_Name.size());
-			useLayers[i] = buf;
+			auto& layer  = m_EnabledLayers[i];
+			useLayers[i] = layer.m_Name.c_str();
 		}
 
 		for (std::size_t i = 0; i < useExtensions.size(); ++i)
 		{
-			auto& extension = m_EnabledExtensions[i];
-			char* buf       = new char[extension.m_Name.size() + 1] { 0 };
-			std::memcpy(buf, extension.m_Name.c_str(), extension.m_Name.size());
-			useExtensions[i] = buf;
+			auto& extension  = m_EnabledExtensions[i];
+			useExtensions[i] = extension.m_Name.c_str();
 		}
 
 		vk::ApplicationInfo appInfo = { m_AppName.c_str(), m_AppVersion, m_EngineName.c_str(), m_EngineVersion, instanceVersion };
@@ -276,6 +271,7 @@ namespace Graphics
 
 		m_Handle     = vk::createInstance(createInfo);
 		m_ApiVersion = instanceVersion;
+		m_Dispatcher = { m_Handle, &vkGetInstanceProcAddr };
 	}
 
 	bool Instance::destroyImpl()

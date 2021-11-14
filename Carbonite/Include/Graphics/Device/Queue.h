@@ -2,10 +2,20 @@
 
 #include "Graphics/Common.h"
 
+#include <vector>
+
 namespace Graphics
 {
+	namespace Sync
+	{
+		struct Fence;
+		struct Semaphore;
+	} // namespace Sync
+
+	struct Swapchain;
 	struct Device;
 	struct Queue;
+	struct CommandBuffer;
 
 	struct QueueFamily : public Handle<void*, false, false>
 	{
@@ -62,24 +72,30 @@ namespace Graphics
 		std::vector<Queue> m_Queues;
 	};
 
-	struct Queue : public Handle<vk::Queue, false, false>
+	struct Queue : public Handle<vk::Queue, false, true>
 	{
 	public:
 		Queue(QueueFamily& queueFamily, std::uint32_t index, vk::Queue handle);
 		~Queue();
 
-		auto& getQueueFamily()
+		bool                    submitCommandBuffers(const std::vector<CommandBuffer*>& commandBuffers, const std::vector<Sync::Semaphore*>& waitSemaphores, const std::vector<Sync::Semaphore*>& signalSemaphores, const std::vector<vk::PipelineStageFlags>& waitDstStageMask, Sync::Fence* fence);
+		std::vector<vk::Result> present(const std::vector<Swapchain*>& swapchains, const std::vector<std::uint32_t>& imageIndices, const std::vector<Sync::Semaphore*>& waitSemaphores);
+		void                    waitIdle();
+
+		auto getIndex() const
+		{
+			return m_Index;
+		}
+
+		Device& getDevice();
+		Device& getDevice() const;
+		auto&   getQueueFamily()
 		{
 			return m_QueueFamily;
 		}
 		auto& getQueueFamily() const
 		{
 			return m_QueueFamily;
-		}
-
-		auto getIndex() const
-		{
-			return m_Index;
 		}
 
 	private:

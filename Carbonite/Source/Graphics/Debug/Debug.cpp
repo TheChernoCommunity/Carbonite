@@ -90,7 +90,7 @@ namespace Graphics
 	}
 
 	Debug::Debug(Instance& instance)
-	    : m_DebugUtilsEXT({}), m_Instance(instance)
+	    : m_Instance(instance)
 	{
 		m_Instance.addChild(this);
 	}
@@ -106,18 +106,13 @@ namespace Graphics
 	{
 		vk::DebugUtilsMessengerCreateInfoEXT createInfo;
 		PopulateCreateInfo(createInfo);
-		m_DebugUtilsEXT.init(m_Instance);
 
-		VkDebugUtilsMessengerCreateInfoEXT vkCreateInfo = createInfo;
-
-		VkDebugUtilsMessengerEXT debugMessenger;
-		m_DebugUtilsEXT.vkCreateDebugUtilsMessengerEXT(*m_Instance, &vkCreateInfo, nullptr, &debugMessenger);
-		m_Handle = debugMessenger;
+		m_Handle = m_Instance->createDebugUtilsMessengerEXT(createInfo, nullptr, m_Instance.getDispatcher());
 	}
 
 	bool Debug::destroyImpl()
 	{
-		m_DebugUtilsEXT.vkDestroyDebugUtilsMessengerEXT(*m_Instance, m_Handle, nullptr);
+		m_Instance->destroyDebugUtilsMessengerEXT(m_Handle, nullptr, m_Instance.getDispatcher());
 		return true;
 	}
 } // namespace Graphics

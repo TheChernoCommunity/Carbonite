@@ -1,7 +1,11 @@
 #include "PCH.h"
 
+#include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
+#include "Graphics/Swapchain/Swapchain.h"
+#include "Graphics/Sync/Fence.h"
+#include "Graphics/Sync/Semaphore.h"
 
 namespace Graphics
 {
@@ -39,5 +43,51 @@ namespace Graphics
 		if (isValid())
 			destroy();
 		m_QueueFamily.removeChild(this);
+	}
+
+	bool Queue::submitCommandBuffers(const std::vector<CommandBuffer*>& commandBuffers, const std::vector<Sync::Semaphore*>& waitSemaphores, const std::vector<Sync::Semaphore*>& signalSemaphores, const std::vector<vk::PipelineStageFlags>& waitDstStageMask, Sync::Fence* fence)
+	{
+		std::vector<vk::CommandBuffer> vkCommandBuffers(commandBuffers.size());
+		for (std::size_t i = 0; i < commandBuffers.size(); ++i)
+			vkCommandBuffers[i] = commandBuffers[i]->getHandle();
+		std::vector<vk::Semaphore> vkWaitSemaphores(waitSemaphores.size());
+		for (std::size_t i = 0; i < waitSemaphores.size(); ++i)
+			vkWaitSemaphores[i] = waitSemaphores[i]->getHandle();
+		std::vector<vk::Semaphore> vkSignalSemaphores(signalSemaphores.size());
+		for (std::size_t i = 0; i < signalSemaphores.size(); ++i)
+			vkSignalSemaphores[i] = signalSemaphores[i]->getHandle();
+
+		vk::SubmitInfo submit = { vkWaitSemaphores, waitDstStageMask, vkCommandBuffers, vkSignalSemaphores };
+		return m_Handle.submit(1, &submit, fence ? fence->getHandle() : nullptr) == vk::Result::eSuccess;
+	}
+
+	std::vector<vk::Result> Queue::present(const std::vector<Swapchain*>& swapchains, const std::vector<std::uint32_t>& imageIndices, const std::vector<Sync::Semaphore*>& waitSemaphores)
+	{
+		std::vector<vk::Semaphore> vkWaitSemaphores(waitSemaphores.size());
+		for (std::size_t i = 0; i < waitSemaphores.size(); ++i)
+			vkWaitSemaphores[i] = waitSemaphores[i]->getHandle();
+		std::vector<vk::SwapchainKHR> vkSwapchains(swapchains.size());
+		for (std::size_t i = 0; i < swapchains.size(); ++i)
+			vkSwapchains[i] = swapchains[i]->getHandle();
+		std::vector<vk::Result> results(swapchains.size());
+
+		vk::PresentInfoKHR    presentInfo = { vkWaitSemaphores, vkSwapchains, imageIndices, results };
+		[[maybe_unused]] auto result      = m_Handle.presentKHR(presentInfo);
+		return results;
+	}
+
+	void Queue::waitIdle()
+	{
+		m_Handle.waitIdle();
+	}
+
+	Device& Queue::getDevice()
+	{
+		return m_QueueFamily.getDevice();
+	}
+
+	Device& Queue::getDevice() const
+	{
+		return m_QueueFamily.getDevice();
 	}
 } // namespace Graphics

@@ -13,6 +13,8 @@
 #include "Graphics/Image/ImageView.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Memory/VMA.h"
+#include "Graphics/Pipeline/GraphicsPipeline.h"
+#include "Graphics/Pipeline/PipelineLayout.h"
 #include "Graphics/Pipeline/RenderPass.h"
 #include "Graphics/Shader.h"
 #include "Graphics/Swapchain/Swapchain.h"
@@ -43,9 +45,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	try
 	{
-		Asset license("LICENSE");
-		Log::info(license.data.get());
-
 		Handler handler;
 
 		// Create Graphics Instance
@@ -53,27 +52,34 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		Graphics::Instance instance = { "Carbonite", { 0, 0, 1, 0 }, "Carbonite", { 0, 0, 1, 0 }, VK_API_VERSION_1_0, VK_API_VERSION_1_2 };
 
+		Graphics::Debug debug = { instance };
+
 		Graphics::Window window = { instance, "Carbonite" };
 
 		Graphics::Surface     surface = { window };
 		Graphics::Device      device  = { surface };
 		Graphics::Memory::VMA vma     = { device };
-		Graphics::Shader      vert    = { device, { "Carbonite/Assets/test.vert" } };
 
 		std::vector<Graphics::CommandPool>     commandPools;
 		std::vector<Graphics::Sync::Semaphore> imageAvailableSemaphores;
 		std::vector<Graphics::Sync::Semaphore> renderFinishedSemaphores;
 		std::vector<Graphics::Sync::Fence>     inFlightFences;
-		[[maybe_unused]] std::size_t           currentFrame = 0;
+		[[maybe_unused]] std::uint32_t         currentFrame = 0;
 
-		Graphics::Swapchain                 swapchain  = { vma };
-		Graphics::RenderPass                renderPass = { device };
+		Graphics::Swapchain  swapchain  = { vma };
+		Graphics::RenderPass renderPass = { device };
+
+		Graphics::PipelineLayout   pipelineLayout = { device };
+		Graphics::Shader           vert           = { device, { "Assets/test.vert" } };
+		Graphics::Shader           frag           = { device, { "Assets/test.frag" } };
+		Graphics::GraphicsPipeline pipeline       = { renderPass, pipelineLayout };
+
 		std::vector<Graphics::ImageView>    imageViews;
 		std::vector<Graphics::Image>        swapchainDepthImages;
 		std::vector<Graphics::ImageView>    swapchainDepthImageViews;
 		std::vector<Graphics::Framebuffer>  framebuffers;
 		std::vector<Graphics::Sync::Fence*> imagesInFlight;
-		[[maybe_unused]] std::size_t        currentImage = 0;
+		[[maybe_unused]] std::uint32_t      currentImage = 0;
 
 		commandPools.reserve(MaxFramesInFlight);
 		for (std::size_t i = 0; i < MaxFramesInFlight; ++i)
@@ -128,7 +134,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		// Create debug if enabled
 		if (Graphics::Debug::IsEnabled())
-			instance.getDebug().create();
+			debug.create();
 
 		if (!surface.create())
 			throw std::runtime_error("Failed to create vulkan surface");
@@ -142,12 +148,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		if (!device.create())
 			throw std::runtime_error("Found no suitable vulkan device");
 
-		vert.create();
-
 		auto physicalDevice = device.getPhysicalDevice();
 
-		auto                  graphicsPresentQueueFamily = device.getQueueFamily(vk::QueueFlagBits::eGraphics, true);
-		[[maybe_unused]] auto graphicsPresentQueue       = graphicsPresentQueueFamily->getQueue(0);
+		auto&                  graphicsPresentQueueFamily = *device.getQueueFamily(vk::QueueFlagBits::eGraphics, true);
+		[[maybe_unused]] auto& graphicsPresentQueue       = *graphicsPresentQueueFamily.getQueue(0);
+		device.setDebugName(graphicsPresentQueue, "graphicsPresentQueue");
 
 		if (!vma.create())
 			throw std::runtime_error("Failed to create vulkan memory allocator");
@@ -157,7 +162,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		{
 			auto& commandPool = commandPools[i];
 
-			commandPool.setQueueFamily(*graphicsPresentQueueFamily);
+			commandPool.setQueueFamily(graphicsPresentQueueFamily);
 
 			if (!commandPool.create())
 				throw std::runtime_error("Failed to create vulkan command pool");
@@ -190,6 +195,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		auto oldFormat = swapchain.m_Format;
 
+		// TODO(MarcasRealAccount): Implement better system to get these variables.
 		auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface.getHandle());
 		auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(surface.getHandle());
 		auto format              = surfaceFormats[0];
@@ -243,7 +249,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		swapchain.m_Width        = surfaceCapabilities.currentExtent.width;
 		swapchain.m_Height       = surfaceCapabilities.currentExtent.height;
 		swapchain.m_Indices.clear();
-		swapchain.m_Indices.insert(graphicsPresentQueueFamily->getFamilyIndex());
+		swapchain.m_Indices.insert(graphicsPresentQueueFamily.getFamilyIndex());
 		if (!swapchain.create())
 			throw std::runtime_error("Failed to create vulkan swapchain");
 		device.setDebugName(swapchain, "Swapchain");
@@ -273,7 +279,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			auto& depthImageView    = swapchainDepthImageViews.emplace_back(depthImage);
 			depthImageView.m_Format = depthImage.m_Format;
 
-			depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth;
+			depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil;
 			if (!depthImageView.create())
 				throw std::runtime_error("Failed to create vulkan imageview");
 			device.setDebugName(depthImageView, "swapchainDepthImageViews_" + std::to_string(i));
@@ -291,31 +297,63 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		imagesInFlight.clear();
 		imagesInFlight.resize(swapchainImages.size(), nullptr);
 
-		// TODO(MarcasRealAccount): Implement Queue::submitCommandBuffers
-		// TODO(MarcasRealAccount): Implement Queue::waitIdle
-		// TODO(MarcasRealAccount): Implement CommandBuffer::cmdPipelineBarrier
-		/*{
+		{
 			auto& currentCommandPool = commandPools[currentFrame];
 			currentCommandPool.reset();
-			auto currentCommandBuffer = currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
-			if (currentCommandBuffer->begin())
+			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
+			if (currentCommandBuffer.begin())
 			{
-				std::vector<ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
+				std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
 				for (std::size_t i = 0; i < swapchainImages.size(); ++i)
 				{
-					imageMemoryBarriers[i] = { 0, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, ~0U, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, swapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1 } };
+					imageMemoryBarriers[i] = { vk::AccessFlagBits::eNoneKHR, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, ~0U, ~0U, swapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 0, 1, 0, 1 } };
 				}
 
-				currentCommandBuffer->cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, 0, nullptr, nullptr, imageMemoryBarriers);
-				currentCommandBuffer->end();
+				currentCommandBuffer.cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, {}, {}, {}, imageMemoryBarriers);
+				currentCommandBuffer.end();
 
-				graphicsPresentQueue->submitCommandBuffers({ currentCommandBuffer }, nullptr, nullptr, nullptr, nullptr);
-				graphicsPresentQueue->waitIdle();
+				graphicsPresentQueue.submitCommandBuffers({ &currentCommandBuffer }, {}, {}, {}, nullptr);
+				graphicsPresentQueue.waitIdle();
 			}
-		}*/
-		//
+		}
+		// -Create swapchain
 
-		while (!glfwWindowShouldClose(window.getHandle()))
+		// Dynamic Data
+		if (!vert.create())
+			throw std::runtime_error("Failed to create vertex shader");
+
+		if (!frag.create())
+			throw std::runtime_error("Failed to create fragment shader");
+
+		if (!pipelineLayout.create())
+			throw std::runtime_error("Failed to create vulkan pipeline layout");
+		device.setDebugName(pipelineLayout, "pipelineLayout");
+
+		pipeline.m_Shaders.push_back(&vert);
+		pipeline.m_Shaders.push_back(&frag);
+
+		pipeline.m_ViewportState.m_Viewports = { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f } };
+		pipeline.m_ViewportState.m_Scissors  = { { { 0, 0 }, { 0, 0 } } };
+
+		pipeline.m_ColorBlendState.m_Attachments.emplace_back(true, vk::BlendFactor::eSrcAlpha, vk::BlendFactor::eOneMinusSrcAlpha, vk::BlendOp::eAdd, vk::BlendFactor::eOne, vk::BlendFactor::eZero, vk::BlendOp::eAdd, vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eViewport);
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eScissor);
+		pipeline.m_DynamicStates.push_back(vk::DynamicState::eLineWidth);
+
+		if (!pipeline.create()) throw std::runtime_error("Failed to create vulkan graphics pipeline");
+		device.setDebugName(pipeline, "pipeline");
+		// -Dynamic Data
+
+		vk::Viewport viewport = { 0, 0, static_cast<float>(swapchain.m_Width), static_cast<float>(swapchain.m_Height), 0, 1 };
+
+		std::vector<vk::Viewport> viewports = { viewport };
+
+		vk::Rect2D scissor = { { 0, 0 }, surfaceCapabilities.currentExtent };
+
+		std::vector<vk::Rect2D> scissors = { scissor };
+
+		while (!glfwWindowShouldClose(*window))
 		{
 			glfwPollEvents();
 
@@ -323,6 +361,91 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			Event::push(std::make_shared<AppRenderEvent>());
 
 			Event::dispatchEvents();
+
+			if (glfwGetWindowAttrib(*window, GLFW_ICONIFIED))
+				continue;
+
+			// Begin frame
+			// TODO(MarcasRealAccount): Check if swapchain should be recreated and recreate it
+			// if (recreateSwapchain)
+			//	createSwapchain();
+
+			Graphics::Sync::Fence& iff = inFlightFences[currentFrame];
+			iff.waitFor(~0ULL);
+			iff.reset();
+
+			vk::Result result = swapchain.acquireNextImage(~0U, &imageAvailableSemaphores[currentFrame], nullptr, currentImage);
+			if (result == vk::Result::eErrorOutOfDateKHR)
+			{
+				// recreate swapchain and restart frame
+				// createSwapchain();
+				continue;
+			}
+			else if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR)
+			{
+				throw std::runtime_error("Failed to acquire next Vulkan Swapchain image");
+			}
+
+			if (imagesInFlight[currentImage])
+				imagesInFlight[currentImage]->waitFor(~0ULL);
+			imagesInFlight[currentImage] = &inFlightFences[currentFrame];
+
+			commandPools[currentFrame].reset();
+			inFlightFences[currentFrame].reset();
+
+			// -Begin frame
+
+			auto& currentCommandPool   = commandPools[currentFrame];
+			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
+			if (currentCommandBuffer.begin())
+			{
+				currentCommandBuffer.cmdBeginRenderPass(renderPass, framebuffers[currentImage], { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+
+				currentCommandBuffer.cmdSetViewports({ { 0.0f, 0.0f, static_cast<float>(swapchain.m_Width), static_cast<float>(swapchain.m_Height), 0.0f, 1.0f } });
+				currentCommandBuffer.cmdSetScissors({ { { 0, 0 }, { swapchain.m_Width, swapchain.m_Height } } });
+				currentCommandBuffer.cmdSetLineWidth(1.0f);
+				currentCommandBuffer.cmdBindPipeline(pipeline);
+
+				currentCommandBuffer.cmdDraw(3, 1, 0, 0);
+				currentCommandBuffer.cmdEndRenderPass();
+				currentCommandBuffer.end();
+			}
+
+			// End frame
+
+			auto&                                 commandBufferLevels = commandPools[currentFrame].getCommandBuffers();
+			std::vector<Graphics::CommandBuffer*> submitCommandBuffers;
+			std::size_t                           submitCommandBufferCount = 0;
+			for (auto& level : commandBufferLevels)
+				submitCommandBufferCount += level.second.size();
+			submitCommandBuffers.resize(submitCommandBufferCount);
+			std::size_t submitCommandBufferI = 0;
+			for (auto& level : commandBufferLevels)
+			{
+				for (auto& buf : level.second)
+				{
+					submitCommandBuffers[submitCommandBufferI] = const_cast<Graphics::CommandBuffer*>(&buf);
+					++submitCommandBufferI;
+				}
+			}
+
+			graphicsPresentQueue.submitCommandBuffers(submitCommandBuffers, { &imageAvailableSemaphores[currentFrame] }, { &renderFinishedSemaphores[currentFrame] }, { vk::PipelineStageFlagBits::eColorAttachmentOutput }, &inFlightFences[currentFrame]);
+			result = graphicsPresentQueue.present({ &swapchain }, { currentImage }, { &renderFinishedSemaphores[currentFrame] })[0];
+			if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR)
+			{
+				// Recreate swapchain
+				// createSwapchain();
+				continue;
+			}
+			else if (result != vk::Result::eSuccess)
+			{
+				throw std::runtime_error("Failed to present to Vulkan Swapchain");
+			}
+
+			graphicsPresentQueue.waitIdle();
+
+			currentFrame = (currentFrame + 1) % MaxFramesInFlight;
+			// -End frame
 		}
 
 		// Because the system is very automatic we have no need to destroy anything other than the Graphics Instance, that is if we don't need to do temporary stuff :D
