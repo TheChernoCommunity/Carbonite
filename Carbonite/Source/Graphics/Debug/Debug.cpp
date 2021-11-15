@@ -8,7 +8,7 @@
 
 namespace Graphics
 {
-	bool Debug::s_Enabled = Core::s_IsDebugMode;
+	bool Debug::s_Enabled = Core::s_IsConfigDebug;
 
 	void Debug::Disable()
 	{
