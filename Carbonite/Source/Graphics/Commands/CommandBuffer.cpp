@@ -28,18 +28,9 @@ namespace Graphics
 		return m_Handle.begin(&beginInfo) == vk::Result::eSuccess;
 	}
 
-	bool CommandBuffer::end()
+	void CommandBuffer::end()
 	{
-		// INFO(MarcasRealAccount): Had to do an ugly hack here, because vulkan-hpp doesn't have a vk::Result return value for end.
-		try
-		{
-			m_Handle.end();
-		}
-		catch ([[maybe_unused]] const std::exception& e)
-		{
-			return false;
-		}
-		return true;
+		m_Handle.end();
 	}
 
 	void CommandBuffer::cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues)

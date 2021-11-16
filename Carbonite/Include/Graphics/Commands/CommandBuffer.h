@@ -19,7 +19,7 @@ namespace Graphics
 		~CommandBuffer();
 
 		bool begin();
-		bool end();
+		void end();
 
 		void cmdBeginRenderPass(RenderPass& renderPass, Framebuffer& framebuffer, vk::Rect2D renderArea, const std::vector<vk::ClearValue>& clearValues);
 		void cmdEndRenderPass();

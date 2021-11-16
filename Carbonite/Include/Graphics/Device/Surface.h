@@ -1,39 +1,37 @@
 #pragma once
 
 #include "Graphics/Common.h"
-#include "Graphics/Window.h"
-
-struct GLFWwindow;
 
 namespace Graphics
 {
 	struct Instance;
+	struct Window;
 
 	struct Surface : public Handle<vk::SurfaceKHR, true, false>
 	{
 	public:
-		Surface(Window& window);
+		Surface(Instance& window);
 		~Surface();
 
 		auto& getInstance()
 		{
-			return m_window.getInstance();
+			return m_Instance;
 		}
 		auto& getInstance() const
 		{
-			return m_window.getInstance();
-		}
-
-		auto getWindow() const
-		{
-			return m_window;
+			return m_Instance;
 		}
 
 	private:
 		virtual void createImpl() override;
 		virtual bool destroyImpl() override;
 
+	public:
+		Window* m_Window;
+
 	private:
-		Window& m_window;
+		Instance& m_Instance;
+
+		Window* m_UsedWindow;
 	};
 } // namespace Graphics

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Renderer/Renderer.h"
+#include "Graphics/Window.h"
+
+class Renderer;
 
 class Carbonite
 {
@@ -13,11 +15,16 @@ public:
 	void run();
 	void deinit();
 
-	auto& getRenderer()
+	auto& getWindow()
 	{
-		return m_Renderer;
+		return m_Window;
 	}
-	auto& getRenderer() const
+	auto& getWindow() const
+	{
+		return m_Window;
+	}
+
+	auto getRenderer() const
 	{
 		return m_Renderer;
 	}
@@ -27,5 +34,6 @@ protected:
 	~Carbonite();
 
 private:
-	Renderer m_Renderer;
+	Graphics::Window m_Window;
+	Renderer*        m_Renderer;
 };

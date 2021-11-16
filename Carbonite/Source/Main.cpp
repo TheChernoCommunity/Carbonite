@@ -6,15 +6,19 @@
 
 #include <cstdlib>
 
+#include <stdexcept>
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 #if CARBONITE_IS_CONFIG_DIST
 	try
 	{
 #endif
-		auto& carbonite = Carbonite::Get(); // Get and initialize carbonite (if it hasn't already)
+		auto& carbonite = Carbonite::Get(); // Get carbonite instance
+		carbonite.init();                   // Initialize carbonite
 		carbonite.run();                    // Run carbonite
-		Carbonite::Destroy();               // Deinit and destroy carbonite instance
+		carbonite.deinit();                 // Deinitialize carbonite
+		Carbonite::Destroy();               // Destroy carbonite instance
 #if CARBONITE_IS_CONFIG_DIST
 	}
 	catch (const std::exception& e)

@@ -9,6 +9,10 @@ namespace Graphics
 	struct RenderPassAttachment
 	{
 	public:
+		RenderPassAttachment() = default;
+		RenderPassAttachment(vk::Format format, vk::SampleCountFlagBits samples, vk::AttachmentLoadOp loadOp, vk::AttachmentStoreOp storeOp, vk::AttachmentLoadOp stencilLoadOp, vk::AttachmentStoreOp stencilStoreOp, vk::ImageLayout initialLayout, vk::ImageLayout finalLayout);
+
+	public:
 		vk::Format              m_Format         = vk::Format::eB8G8R8A8Srgb;
 		vk::SampleCountFlagBits m_Samples        = vk::SampleCountFlagBits::e1;
 		vk::AttachmentLoadOp    m_LoadOp         = vk::AttachmentLoadOp::eClear;
@@ -22,6 +26,10 @@ namespace Graphics
 	struct RenderPassAttachmentRef
 	{
 	public:
+		RenderPassAttachmentRef() = default;
+		RenderPassAttachmentRef(std::uint32_t attachment, vk::ImageLayout layout);
+
+	public:
 		std::uint32_t   m_Attachment = 0;
 		vk::ImageLayout m_Layout     = vk::ImageLayout::eColorAttachmentOptimal;
 	};
@@ -29,6 +37,9 @@ namespace Graphics
 	struct RenderPassSubpass
 	{
 	public:
+		RenderPassSubpass() = default;
+		RenderPassSubpass(vk::PipelineBindPoint pipelineBindPoint, const std::vector<RenderPassAttachmentRef>& attachmentRefs, const std::vector<RenderPassAttachmentRef>& colorAttachmentRefs, std::vector<RenderPassAttachmentRef>& resolveAttachmentRefs, const std::vector<std::uint32_t>& preserveAttachments);
+
 		vk::PipelineBindPoint                m_PipelineBindPoint = vk::PipelineBindPoint::eGraphics;
 		std::vector<RenderPassAttachmentRef> m_AttachmentRefs;
 		std::vector<RenderPassAttachmentRef> m_ColorAttachmentRefs;
@@ -41,6 +52,10 @@ namespace Graphics
 
 	struct RenderPassSubpassDependency
 	{
+	public:
+		RenderPassSubpassDependency() = default;
+		RenderPassSubpassDependency(std::uint32_t srcSubpass, std::uint32_t dstSubpass, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, vk::DependencyFlags dependencyFlags);
+
 	public:
 		std::uint32_t          m_SrcSubpass    = 0;
 		std::uint32_t          m_DstSubpass    = 0;
