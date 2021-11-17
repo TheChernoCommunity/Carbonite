@@ -49,7 +49,7 @@ void RasterRenderer::deinitImpl()
 
 void RasterRenderer::renderImpl()
 {
-	auto& currentCommandPool = *getCurrentCommandPool();
+	auto& currentCommandPool   = *getCurrentCommandPool();
 	auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
 	if (currentCommandBuffer.begin())
 	{
