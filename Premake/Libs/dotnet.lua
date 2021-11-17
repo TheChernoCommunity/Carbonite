@@ -17,14 +17,42 @@ function dotnet:getDotNet()
 
 	local dotnetExe
 	if common.host == "windows" then
+		if not self.runtimeDir or #self.runtimeDir == 0 then
+			local result, errorCode = os.outputof("where dotnet.exe")
+			if not result then
+				error([[You don't seem to have dotnet 6.0 downloaded and installed.
+Please visit this download page and if your system isn't on the list you'll have to compile yourself.
+https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
+			end
+			
+			self.runtimeDir = path.getdirectory(result)
+		end
 		dotnetExe = "\"" .. self.runtimeDir .. "\\dotnet.exe\""
 	else
+		if not self.runtimeDir or #self.runtimeDir == 0 then
+			local result, errorCode = os.outputof("whereis dotnet")
+			if not result then
+				error([[You don't seem to have dotnet 6.0 downloaded and installed.
+Please visit this download page and if your system isn't on the list you'll have to compile yourself.
+https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
+			end
+			
+			local realMatch = string.match(result, ".*:%s*(%g+)")
+			if not realMatch then
+				error([[You don't seem to have dotnet 6.0 downloaded and installed.
+Please visit this download page and if your system isn't on the list you'll have to compile yourself.
+https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
+			end
+			self.runtimeDir = path.getdirectory(realMatch)
+		end
 		dotnetExe = "\"" .. self.runtimeDir .. "/dotnet\""
 	end
 
 	local dotnetOutput, errorCode = os.outputof(dotnetExe .. " --list-runtimes")
 	if not dotnetOutput then
-		error("'" .. dotnetExe .. " --list-runtimes' resulted in error code: " .. errorCode)
+		error([[You don't seem to have dotnet 6.0 downloaded and installed.
+Please visit this download page and if your system isn't on the list you'll have to compile yourself.
+https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
 	end
 
 	local runtimes = string.explode(dotnetOutput, "\n")
