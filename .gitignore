@@ -7,6 +7,7 @@
 *.sln
 *.vcxproj
 *.vcxproj.*
+*.csproj
 
 # Makefile
 Makefile

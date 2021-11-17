@@ -4,19 +4,20 @@ require("Premake/Actions/pch")
 
 newoption({
 	trigger = "only-csharp",
-	description = "Only generate a C# workspace",
-	value = "boolean",
-	default = false
+	description = "Only generate a C# workspace"
 })
 newoption({
 	trigger = "only-cpp",
-	description = "Only generate a C++ workspace",
-	value = "boolean",
-	default = false
+	description = "Only generate a C++ workspace"
 })
 
-local addCSharp = _OPTIONS["only-csharp"] or true
-local addCpp = _OPTIONS["only-cpp"] or true
+local addCSharp = true
+local addCpp = true
+if _OPTIONS["only-csharp"] then
+	addCpp = false
+elseif _OPTIONS["only-cpp"] then
+	addCSharp = false
+end
 
 common = require("Premake/common")
 dotnet = require("Premake/Libs/dotnet")
