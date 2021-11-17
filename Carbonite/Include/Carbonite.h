@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Block/Block.h"
+#include "Block/BlockState.h"
 #include "Graphics/Window.h"
-#include "Utils/Registry.h"
+#include "Mod/Mod.h"
+#include "Utils/InternalRegistry.h"
 #include "World/Dimension.h"
 
 #include <vector>
@@ -60,7 +62,11 @@ private:
 	Graphics::Window m_Window;
 	Renderer*        m_Renderer;
 
+	std::vector<ModInfo> m_AvailableMods;
+	std::vector<Mod>     m_EnabledMods;
+
 	std::vector<Dimension> m_LoadedDimensions;
 
-	Registry<Block> m_BlockRegistry;
+	Registry<Block>      m_BlockRegistry;
+	Registry<BlockState> m_BlockStateRegistry;
 };
