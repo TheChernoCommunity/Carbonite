@@ -18,9 +18,9 @@ Renderer::Renderer()
       m_GraphicsPresentQueue(nullptr),
       m_Vma(m_Device),
       m_CurrentFrame(0),
-      m_RenderPass(m_Device),
       m_Swapchain(m_Vma),
-      m_CurrentImage(0)
+      m_CurrentImage(0),
+      m_RenderPass(m_Device)
 {
 }
 
