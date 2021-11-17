@@ -17,10 +17,10 @@ Renderer::Renderer()
       m_GraphicsPresentQueueFamily(nullptr),
       m_GraphicsPresentQueue(nullptr),
       m_Vma(m_Device),
-      m_Swapchain(m_Vma),
-      m_CurrentImage(0),
       m_CurrentFrame(0),
-      m_RenderPass(m_Device)
+      m_RenderPass(m_Device),
+	  m_Swapchain(m_Vma),
+	  m_CurrentImage(0)
 {
 }
 
