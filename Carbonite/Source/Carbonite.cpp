@@ -21,6 +21,7 @@ void Carbonite::init()
 {
 	Log::trace("Carbonite init");
 
+	// TODO(MarcasRealAccount): Add a way to enable raytracing.
 	m_Renderer = new RasterRenderer();
 	m_Renderer->init();
 }
