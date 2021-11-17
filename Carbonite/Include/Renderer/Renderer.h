@@ -35,6 +35,10 @@ private:
 	virtual void renderImpl() = 0;
 
 	void recreateSwapchain();
+	void createSwapchain();
+	void createDepthImages(bool imageCountDiffer, bool imageSizeDiffer);
+	void createRenderPass(bool formatDiffer);
+	void createFramebuffers();
 
 protected:
 	Graphics::Instance m_Instance;

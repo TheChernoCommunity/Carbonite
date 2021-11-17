@@ -219,21 +219,140 @@ void Renderer::render()
 
 void Renderer::recreateSwapchain()
 {
-	m_SwapchainImageViews.clear();
-	m_SwapchainDepthImages.clear();
-	m_SwapchainDepthImageViews.clear();
-	m_Framebuffers.clear();
-	m_ImagesInFlight.clear();
+	auto oldFormat     = m_Swapchain.m_Format;
+	auto oldImageCount = m_Swapchain.m_ImageCount;
+	auto oldWidth      = m_Swapchain.m_Width;
+	auto oldHeight     = m_Swapchain.m_Height;
 
-	auto oldFormat = m_Swapchain.m_Format;
+	createSwapchain();
 
+	bool formatDiffer     = oldFormat != m_Swapchain.m_Format;
+	bool imageCountDiffer = oldImageCount != m_Swapchain.m_ImageCount;
+	bool imageSizeDiffer  = oldWidth != m_Swapchain.m_Width || oldHeight != m_Swapchain.m_Height;
+
+	if (imageCountDiffer)
+	{
+		m_ImagesInFlight.clear();
+		m_ImagesInFlight.resize(m_Swapchain.getImages().size(), nullptr);
+	}
+	else
+	{
+		std::fill(m_ImagesInFlight.begin(), m_ImagesInFlight.end(), nullptr);
+	}
+
+	createDepthImages(imageCountDiffer, imageSizeDiffer);
+	createRenderPass(formatDiffer);
+	createFramebuffers();
+}
+
+void Renderer::createSwapchain()
+{
 	auto& physicalDevice = m_Device.getPhysicalDevice();
 
 	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(*m_Surface);
 	auto surfaceFormats      = physicalDevice.getSurfaceFormatsKHR(*m_Surface);
 	auto format              = surfaceFormats[0];
 
-	if (oldFormat != format.format)
+	m_Swapchain.m_ImageCount   = std::min(surfaceCapabilities.minImageCount + 1, surfaceCapabilities.maxImageCount);
+	m_Swapchain.m_PreTransform = surfaceCapabilities.currentTransform;
+
+	// TODO(MarcasRealAccount): Implement better system to get these variables.
+	m_Swapchain.m_Format      = format.format;
+	m_Swapchain.m_ColorSpace  = format.colorSpace;
+	m_Swapchain.m_PresentMode = vk::PresentModeKHR::eFifo;
+	m_Swapchain.m_Width       = surfaceCapabilities.currentExtent.width;
+	m_Swapchain.m_Height      = surfaceCapabilities.currentExtent.height;
+
+	m_Swapchain.m_Indices.clear();
+	m_Swapchain.m_Indices.insert(m_GraphicsPresentQueueFamily->getFamilyIndex());
+	if (!m_Swapchain.create())
+		throw std::runtime_error("Failed to create vulkan swapchain");
+	m_Device.setDebugName(m_Swapchain, "m_Swapchain");
+
+	auto& swapchainImages = m_Swapchain.getImages();
+
+	m_SwapchainImageViews.clear();
+	m_Framebuffers.clear();
+	m_SwapchainImageViews.reserve(swapchainImages.size());
+	m_Framebuffers.reserve(swapchainImages.size());
+	for (std::size_t i = 0; i < swapchainImages.size(); ++i)
+	{
+		auto& imageView    = m_SwapchainImageViews.emplace_back(swapchainImages[i]);
+		imageView.m_Format = m_Swapchain.m_Format;
+		if (!imageView.create())
+			throw std::runtime_error("Failed to create vulkan image view");
+		m_Device.setDebugName(imageView, "m_SwapchainImageViews[" + std::to_string(i) + ']');
+	}
+}
+
+void Renderer::createDepthImages(bool imageCountDiffer, bool imageSizeDiffer)
+{
+	if (imageCountDiffer)
+	{
+		auto& swapchainImages = m_Swapchain.getImages();
+
+		m_SwapchainDepthImages.clear();
+		m_SwapchainDepthImageViews.clear();
+		m_SwapchainDepthImages.reserve(swapchainImages.size());
+		m_SwapchainDepthImageViews.reserve(swapchainImages.size());
+		for (std::size_t i = 0; i < swapchainImages.size(); ++i)
+		{
+			auto& depthImage    = m_SwapchainDepthImages.emplace_back(m_Vma);
+			depthImage.m_Format = vk::Format::eD32SfloatS8Uint;
+			depthImage.m_Usage  = vk::ImageUsageFlagBits::eDepthStencilAttachment;
+
+			auto& depthImageView    = m_SwapchainDepthImageViews.emplace_back(depthImage);
+			depthImageView.m_Format = depthImage.m_Format;
+
+			depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil;
+		}
+	}
+
+	if (imageCountDiffer || imageSizeDiffer)
+	{
+		for (std::size_t i = 0; i < m_SwapchainDepthImages.size(); ++i)
+		{
+			auto& depthImage    = m_SwapchainDepthImages[i];
+			depthImage.m_Width  = m_Swapchain.m_Width;
+			depthImage.m_Height = m_Swapchain.m_Height;
+			if (!depthImage.create())
+				throw std::runtime_error("Failed to create vulkan image");
+			m_Device.setDebugName(depthImage, "m_SwapchainDepthImages[" + std::to_string(i) + ']');
+
+			auto& depthImageView = m_SwapchainDepthImageViews[i];
+			if (!depthImageView.isValid() && !depthImageView.create())
+				throw std::runtime_error("Failed to create vulkan image view");
+			m_Device.setDebugName(depthImageView, "m_SwapchainDepthImageViews[" + std::to_string(i) + ']');
+		}
+
+		{
+			//-------------------------------------
+			// Setup swapchain depth image layouts
+			auto& currentCommandPool = m_CommandPools[m_CurrentFrame];
+			currentCommandPool.reset();
+			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
+			if (currentCommandBuffer.begin())
+			{
+				std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers(m_SwapchainDepthImages.size());
+				for (std::size_t i = 0; i < m_SwapchainDepthImages.size(); ++i)
+				{
+					imageMemoryBarriers[i] = { vk::AccessFlagBits::eNoneKHR, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, ~0U, ~0U, m_SwapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 0, 1, 0, 1 } };
+				}
+
+				currentCommandBuffer.cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, {}, {}, {}, imageMemoryBarriers);
+				currentCommandBuffer.end();
+
+				m_GraphicsPresentQueue->submitCommandBuffers({ &currentCommandBuffer }, {}, {}, {}, nullptr);
+				m_GraphicsPresentQueue->waitIdle();
+			}
+			//-------------------------------------
+		}
+	}
+}
+
+void Renderer::createRenderPass(bool formatDiffer)
+{
+	if (formatDiffer)
 	{
 		//-------------------
 		// Create RenderPass
@@ -242,7 +361,7 @@ void Renderer::recreateSwapchain()
 		m_RenderPass.m_Dependencies.clear();
 
 		Graphics::RenderPassAttachment colorAttachment;
-		colorAttachment.m_Format = format.format;
+		colorAttachment.m_Format = m_Swapchain.m_Format;
 		m_RenderPass.m_Attachments.push_back(colorAttachment);
 
 		Graphics::RenderPassAttachment depthAttachment;
@@ -273,100 +392,20 @@ void Renderer::recreateSwapchain()
 		m_Device.setDebugName(m_RenderPass, "m_RenderPass");
 		//-------------------
 	}
+}
 
-	//------------------
-	// Create Swapchain
-	m_Swapchain.m_ImageCount   = std::min(surfaceCapabilities.minImageCount + 1, surfaceCapabilities.maxImageCount);
-	m_Swapchain.m_PreTransform = surfaceCapabilities.currentTransform;
-
-	// TODO(MarcasRealAccount): Implement better system to get these variables.
-	m_Swapchain.m_Format      = format.format;
-	m_Swapchain.m_ColorSpace  = format.colorSpace;
-	m_Swapchain.m_PresentMode = vk::PresentModeKHR::eFifo;
-	m_Swapchain.m_Width       = surfaceCapabilities.currentExtent.width;
-	m_Swapchain.m_Height      = surfaceCapabilities.currentExtent.height;
-
-	m_Swapchain.m_Indices.clear();
-	m_Swapchain.m_Indices.insert(m_GraphicsPresentQueueFamily->getFamilyIndex());
-	if (!m_Swapchain.create())
-		throw std::runtime_error("Failed to create vulkan swapchain");
-	m_Device.setDebugName(m_Swapchain, "m_Swapchain");
-	//------------------
-
-	auto& swapchainImages = m_Swapchain.getImages();
-	m_SwapchainImageViews.reserve(swapchainImages.size());
-	m_SwapchainDepthImages.reserve(swapchainImages.size());
-	m_SwapchainDepthImageViews.reserve(swapchainImages.size());
-	m_Framebuffers.reserve(swapchainImages.size());
-	m_ImagesInFlight.resize(swapchainImages.size(), nullptr);
-	for (std::size_t i = 0; i < swapchainImages.size(); ++i)
+void Renderer::createFramebuffers()
+{
+	for (std::size_t i = 0; i < m_Swapchain.getImages().size(); ++i)
 	{
-		//----------------------------
-		// Create Swapchain ImageView
-		auto& imageView    = m_SwapchainImageViews.emplace_back(swapchainImages[i]);
-		imageView.m_Format = m_Swapchain.m_Format;
-		if (!imageView.create())
-			throw std::runtime_error("Failed to create vulkan image view");
-		m_Device.setDebugName(imageView, "m_SwapchainImageViews[" + std::to_string(i) + ']');
-		//----------------------------
-
-		//------------------------------
-		// Create Swapchain Depth Image
-		auto& depthImage    = m_SwapchainDepthImages.emplace_back(m_Vma);
-		depthImage.m_Format = vk::Format::eD32SfloatS8Uint;
-		depthImage.m_Usage  = vk::ImageUsageFlagBits::eDepthStencilAttachment;
-		depthImage.m_Width  = m_Swapchain.m_Width;
-		depthImage.m_Height = m_Swapchain.m_Height;
-		if (!depthImage.create())
-			throw std::runtime_error("Failed to create vulkan image");
-		m_Device.setDebugName(depthImage, "m_SwapchainDepthImages[" + std::to_string(i) + ']');
-		//------------------------------
-
-		//----------------------------------
-		// Create Swapchain Depth ImageView
-		auto& depthImageView    = m_SwapchainDepthImageViews.emplace_back(depthImage);
-		depthImageView.m_Format = depthImage.m_Format;
-
-		depthImageView.m_SubresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil;
-		if (!depthImageView.create())
-			throw std::runtime_error("Failed to create vulkan image view");
-		m_Device.setDebugName(depthImageView, "m_SwapchainDepthImageViews[" + std::to_string(i) + ']');
-		//----------------------------------
-
-		//--------------------
-		// Create Framebuffer
 		auto& framebuffer = m_Framebuffers.emplace_back(m_RenderPass);
-		framebuffer.m_Attachments.push_back(&imageView);
-		framebuffer.m_Attachments.push_back(&depthImageView);
+		framebuffer.m_Attachments.push_back(&m_SwapchainImageViews[i]);
+		framebuffer.m_Attachments.push_back(&m_SwapchainDepthImageViews[i]);
 		framebuffer.m_Width  = m_Swapchain.m_Width;
 		framebuffer.m_Height = m_Swapchain.m_Height;
 		if (!framebuffer.create())
 			throw std::runtime_error("Failed to create vulkan framebuffer");
 		m_Device.setDebugName(framebuffer, "m_Framebuffers[" + std::to_string(i) + ']');
-		//--------------------
-	}
-
-	{
-		//-------------------------------------
-		// Setup swapchain depth image layouts
-		auto& currentCommandPool = m_CommandPools[m_CurrentFrame];
-		currentCommandPool.reset();
-		auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
-		if (currentCommandBuffer.begin())
-		{
-			std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers(swapchainImages.size());
-			for (std::size_t i = 0; i < swapchainImages.size(); ++i)
-			{
-				imageMemoryBarriers[i] = { vk::AccessFlagBits::eNoneKHR, vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, ~0U, ~0U, m_SwapchainDepthImages[i], { vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 0, 1, 0, 1 } };
-			}
-
-			currentCommandBuffer.cmdPipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eEarlyFragmentTests, {}, {}, {}, imageMemoryBarriers);
-			currentCommandBuffer.end();
-
-			m_GraphicsPresentQueue->submitCommandBuffers({ &currentCommandBuffer }, {}, {}, {}, nullptr);
-			m_GraphicsPresentQueue->waitIdle();
-		}
-		//-------------------------------------
 	}
 }
 
