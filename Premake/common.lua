@@ -9,13 +9,19 @@ function common:executableOutDirs()
 	objdir(self.objDir)
 end
 
-function common:sharedLibOutDirs()
+function common:sharedLibOutDirs(isCSharp)
 	targetdir(self.binDir)
 	objdir(self.objDir)
 end
 
 function common:staticLibOutDirs()
 	targetdir(self.objDir)
+	objdir(self.objDir)
+end
+
+function common:modOutDirs()
+	local projectName = self:projectName()
+	targetdir("%{wks.location}/Carbonite/Run/Base/")
 	objdir(self.objDir)
 end
 
@@ -26,10 +32,17 @@ function common:debugDir()
 		
 		print([[xcode4 action doesn't support using debug directory.
 So you have to edit the scheme of ']] .. projectName .. [[' (Top center) to use this as the debug directory:
-]] .. projectLocation)
+]] .. projectLocation .. "/Run")
+	elseif _ACTION == "gmake2" then
+		local projectName = self:projectName()
+		local projectLocation = self:projectLocation()
+		
+		print([[gmake2 action doesn't support using debug directory.
+So you have to manually 'cd' into the debug directory:
+]] .. projectLocation .. "/Run")
 	end
 
-	debugdir("%{prj.location}/")
+	debugdir("%{prj.location}/Run/")
 end
 
 function common:addPCH(source, header)

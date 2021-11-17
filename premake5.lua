@@ -2,27 +2,63 @@ require("Premake/Actions/clean")
 require("Premake/Actions/format-tidy")
 require("Premake/Actions/pch")
 
+newoption({
+	trigger = "only-csharp",
+	description = "Only generate a C# workspace",
+	value = "boolean",
+	default = false
+})
+newoption({
+	trigger = "only-cpp",
+	description = "Only generate a C++ workspace",
+	value = "boolean",
+	default = false
+})
+
+local addCSharp = _OPTIONS["only-csharp"] or true
+local addCpp = _OPTIONS["only-cpp"] or true
+
 common = require("Premake/common")
-glfw = require("Premake/Libs/glfw")
-vma = require("Premake/Libs/vma")
-imgui = require("Premake/Libs/imgui")
-stb = require("Premake/Libs/stb")
-inipp = require("Premake/Libs/inipp")
-spdlog = require("Premake/Libs/spdlog")
-vulkan = require("Premake/Libs/vulkan")
+dotnet = require("Premake/Libs/dotnet")
 
-workspace("Carbonite")
+if addCpp then
+	glfw = require("Premake/Libs/glfw")
+	vma = require("Premake/Libs/vma")
+	imgui = require("Premake/Libs/imgui")
+	stb = require("Premake/Libs/stb")
+	inipp = require("Premake/Libs/inipp")
+	spdlog = require("Premake/Libs/spdlog")
+	vulkan = require("Premake/Libs/vulkan")
+end
+
+workspace((function()
+		if addCSharp and addCpp then
+			return "Carbonite"
+		elseif addCpp then
+			return "Carbonite-Cpp"
+		elseif addCSharp then
+			return "Carbonite-CSharp"
+		else
+			return "Carbonite"
+		end
+	end)())
 	common:setConfigsAndPlatforms()
+	
+	common:addCoreDefines()
 
+if addCSharp then
+	csversion("10")
+	dotnetframework("net6.0")
+end
+
+if addCpp then
 	cppdialect("C++17")
 	rtti("Off")
 	exceptionhandling("On")
 	flags("MultiProcessorCompile")
 
-	common:addCoreDefines()
-	
 	startproject("Carbonite")
-	
+
 	group("Dependencies")
 	project("GLFW")
 		location("ThirdParty/GLFW/")
@@ -77,7 +113,7 @@ workspace("Carbonite")
 
 		common:addPCH("%{prj.location}/Source/PCH.cpp", "%{prj.location}/Include/PCH.h")
 		
-		prebuildcommands({ _PREMAKE_COMMAND .. " \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" force-pch" })
+		prebuildcommands({ _PREMAKE_COMMAND .. " \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
 
 		includedirs({
 			"%{prj.location}/Include/",
@@ -91,6 +127,7 @@ workspace("Carbonite")
 		inipp:setupDep()
 		spdlog:setupDep()
 		vulkan:setupDep(false)
+		dotnet:setupDep()
 
 		files({ "%{prj.location}/**" })
 		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
@@ -107,3 +144,41 @@ workspace("Carbonite")
 			allowforcepch(true)
 
 		filter({})
+end
+
+if addCSharp then
+	group("Mods")
+	project("API")
+		location("CarboniteModAPI/")
+		language("C#")
+		kind("SharedLib")
+		warnings("Extra")
+
+		common:sharedLibOutDirs()
+
+		files({ "%{prj.location}/**" })
+		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
+
+		filter("files:**.cs")
+			runclangformat(true)
+
+		filter({})
+
+	project("Base")
+		location("CarboniteBaseMod/")
+		language("C#")
+		kind("SharedLib")
+		warnings("Extra")
+
+		common:modOutDirs()
+
+		links({ "API" })
+
+		files({ "%{prj.location}/**" })
+		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
+
+		filter("files:**.cs")
+			runclangformat(true)
+
+		filter({})
+end

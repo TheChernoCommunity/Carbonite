@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <BaseOutputPath>..\Bin\windows-x64-Debug\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\Bin\Int-windows-x64-Debug\API\</BaseIntermediateOutputPath>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DefineConstants>CARBONITE_CONFIG=CARBONITE_CONFIG_DEBUG;CARBONITE_SYSTEM=CARBONITE_SYSTEM_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;CARBONITE_TOOLSET=CARBONITE_TOOLSET_MSVC;CARBONITE_PLATFORM=CARBONITE_PLATFORM_X64</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>CARBONITE_CONFIG=CARBONITE_CONFIG_RELEASE;CARBONITE_SYSTEM=CARBONITE_SYSTEM_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;CARBONITE_TOOLSET=CARBONITE_TOOLSET_MSVC;CARBONITE_PLATFORM=CARBONITE_PLATFORM_X64</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Dist|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>CARBONITE_CONFIG=CARBONITE_CONFIG_DIST;CARBONITE_SYSTEM=CARBONITE_SYSTEM_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;CARBONITE_TOOLSET=CARBONITE_TOOLSET_MSVC;CARBONITE_PLATFORM=CARBONITE_PLATFORM_X64</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="API.csproj" />
+  </ItemGroup>
+</Project>
