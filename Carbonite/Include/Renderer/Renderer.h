@@ -28,7 +28,9 @@ public:
 	void deinit();
 
 	void render();
-
+	
+	Graphics::CommandPool* getCurrentCommandPool() const { return m_CurrentFrame < m_CommandPools.size() ? const_cast<Graphics::CommandPool*>(&m_CommandPools[m_CurrentFrame]) : nullptr; }
+	
 private:
 	virtual void initImpl()   = 0;
 	virtual void deinitImpl() = 0;

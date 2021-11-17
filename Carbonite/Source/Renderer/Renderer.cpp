@@ -182,7 +182,7 @@ void Renderer::render()
 
 	//-------------
 	// End frame
-	auto&       commandBufferLevels      = m_CommandPools[m_CurrentFrame].getCommandBuffers();
+	auto&       commandBufferLevels      = getCurrentCommandPool()->getCommandBuffers();
 	std::size_t submitCommandBufferCount = 0;
 	std::size_t submitCommandBufferI     = 0;
 	for (auto& level : commandBufferLevels)
@@ -328,7 +328,7 @@ void Renderer::createDepthImages(bool imageCountDiffer, bool imageSizeDiffer)
 		{
 			//-------------------------------------
 			// Setup swapchain depth image layouts
-			auto& currentCommandPool = m_CommandPools[m_CurrentFrame];
+			auto& currentCommandPool = *getCurrentCommandPool();
 			currentCommandPool.reset();
 			auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
 			if (currentCommandBuffer.begin())
