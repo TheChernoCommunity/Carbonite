@@ -36,32 +36,11 @@ public:
 		return m_Renderer;
 	}
 
-	auto& getLoadedDimensions()
-	{
-		return m_LoadedDimensions;
-	}
-	auto& getLoadedDimensions() const
-	{
-		return m_LoadedDimensions;
-	}
-
-	auto& getBlockRegistry()
-	{
-		return m_BlockRegistry;
-	}
-	auto& getBlockRegistry() const
-	{
-		return m_BlockRegistry;
-	}
-
 protected:
 	Carbonite();
 	~Carbonite();
 
-private:
-	Graphics::Window m_Window;
-	Renderer*        m_Renderer;
-
+public:
 	std::vector<ModInfo> m_AvailableMods;
 	std::vector<Mod>     m_EnabledMods;
 
@@ -69,4 +48,8 @@ private:
 
 	Registry<Block>      m_BlockRegistry;
 	Registry<BlockState> m_BlockStateRegistry;
+
+private:
+	Graphics::Window m_Window;
+	Renderer*        m_Renderer;
 };
