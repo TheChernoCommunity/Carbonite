@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Block/Block.h"
 #include "Graphics/Window.h"
 #include "Utils/Registry.h"
-#include "Voxel/Voxel.h"
 #include "World/Dimension.h"
 
 #include <vector>
@@ -43,13 +43,13 @@ public:
 		return m_LoadedDimensions;
 	}
 
-	auto& getVoxelRegistry()
+	auto& getBlockRegistry()
 	{
-		return m_VoxelRegistry;
+		return m_BlockRegistry;
 	}
-	auto& getVoxelRegistry() const
+	auto& getBlockRegistry() const
 	{
-		return m_VoxelRegistry;
+		return m_BlockRegistry;
 	}
 
 protected:
@@ -62,5 +62,5 @@ private:
 
 	std::vector<Dimension> m_LoadedDimensions;
 
-	Registry<Voxel> m_VoxelRegistry;
+	Registry<Block> m_BlockRegistry;
 };

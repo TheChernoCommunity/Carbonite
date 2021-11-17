@@ -1,6 +1,6 @@
 #pragma once
 
-struct Voxel
+struct Block
 {
 public:
 };
