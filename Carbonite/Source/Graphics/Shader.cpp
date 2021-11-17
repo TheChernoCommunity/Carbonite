@@ -220,7 +220,7 @@ namespace Graphics
 	{
 		if (isValid())
 			destroy();
-		
+
 		m_ShaderCount--;
 
 		if (m_ShaderCount == 0)

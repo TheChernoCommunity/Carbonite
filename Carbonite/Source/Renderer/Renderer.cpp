@@ -19,8 +19,8 @@ Renderer::Renderer()
       m_Vma(m_Device),
       m_CurrentFrame(0),
       m_RenderPass(m_Device),
-	  m_Swapchain(m_Vma),
-	  m_CurrentImage(0)
+      m_Swapchain(m_Vma),
+      m_CurrentImage(0)
 {
 }
 
