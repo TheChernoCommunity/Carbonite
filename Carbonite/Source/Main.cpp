@@ -12,12 +12,13 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
-	/*if (!CSharp::LoadFXR())
+#if true
+	if (!CSharp::LoadFXR())
 		throw std::runtime_error("Failed to load HostFXR");
 
 	CSharp::Handle handle = nullptr;
 	{
-		auto cwd = std::filesystem::current_path().wstring() + L"/runtimeconfig.json";
+		auto cwd = std::filesystem::current_path().string() + "/runtimeconfig.json";
 		auto rc  = CSharp::InitializeForRuntimeConfig(cwd.c_str(), nullptr, &handle);
 		if (rc || !handle)
 			throw std::runtime_error("Failed to initialize HostFXR handle");
@@ -35,7 +36,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 	CSharp::ComponentEntryPointFn hello = nullptr;
 	{
-		auto cwd = std::filesystem::current_path().wstring() + L"/Test.dll";
+		auto cwd = std::filesystem::current_path().string() + "/Test.dll";
 		auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("Hello"), nullptr, nullptr, reinterpret_cast<void**>(&hello));
 		if (rc || !hello)
 			throw std::runtime_error("Failed to load assembly and get function");
@@ -58,7 +59,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	CustomEntryPointFn custom = nullptr;
 
 	{
-		auto cwd = std::filesystem::current_path().wstring() + L"/Test.dll";
+		auto cwd = std::filesystem::current_path().string() + "/Test.dll";
 		auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("CustomEntryPointUnmanaged"), CSharp::UnmanagedCallersOnlyMethod, nullptr, reinterpret_cast<void**>(&custom));
 		if (rc || !custom)
 			throw std::runtime_error("Failed to load assembly and get function");
@@ -67,8 +68,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	LibArgs args = { CSHARP_STR("from host!"), ~0U };
 	custom(args);
 
-	CSharp::UnloadFXR();*/
-
+	CSharp::UnloadFXR();
+#else
 #if CARBONITE_IS_CONFIG_DIST
 	try
 	{
@@ -85,6 +86,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		Log::critical(e.what());
 		return EXIT_FAILURE;
 	}
+#endif
 #endif
 	return EXIT_SUCCESS;
 }

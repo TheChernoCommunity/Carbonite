@@ -155,7 +155,7 @@ if addCSharp then
 		kind("SharedLib")
 		warnings("Extra")
 
-		common:sharedLibOutDirs()
+		common:apiOutDirs()
 
 		files({ "%{prj.location}/**" })
 		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
@@ -171,7 +171,7 @@ if addCSharp then
 		kind("SharedLib")
 		warnings("Extra")
 
-		common:modOutDirs()
+		common:modOutDirs(true)
 
 		links({ "API" })
 

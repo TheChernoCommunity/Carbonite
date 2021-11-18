@@ -9,7 +9,7 @@ function common:executableOutDirs()
 	objdir(self.objDir)
 end
 
-function common:sharedLibOutDirs(isCSharp)
+function common:sharedLibOutDirs()
 	targetdir(self.binDir)
 	objdir(self.objDir)
 end
@@ -19,10 +19,57 @@ function common:staticLibOutDirs()
 	objdir(self.objDir)
 end
 
-function common:modOutDirs()
+function common:apiOutDirs()
 	local projectName = self:projectName()
-	targetdir("%{wks.location}/Carbonite/Run/Base/")
+	targetdir(self.objDir)
 	objdir(self.objDir)
+	-- Copy dll to binaries folder
+	local copy = self:copyCSharpBinary(projectName, "Bin/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{cfg.linktarget.name}", "%{cfg.linktarget.name}")
+	print(copy)
+	postbuildcommands({ copy })
+end
+
+function common:modOutDirs(base)
+	local projectName = self:projectName()
+	targetdir(self.objDir)
+	objdir(self.objDir)
+	if base then
+		-- Copy dll to Base/ in the working directory
+		local copy = self:copyCSharpBinary(projectName, "Carbonite/Run/Base/", "%{cfg.linktarget.name}")
+		print(copy)
+		postbuildcommands({ copy })
+	else
+		-- Copy dll to Mods/<Mod>/ in the working directory
+		local copy = self:copyCSharpBinary(projectName, "Carbonite/Run/Mods/" .. projectName .. "/", "%{cfg.linktarget.name}")
+		print(copy)
+		postbuildcommands({ copy })
+	end
+end
+
+function common:copyCSharpBinary(project, to, from)
+	local copy
+	local isVS = _ACTION == "vs2017" or _ACTION == "vs2019" or _ACTION == "vs2022"
+	if isVS then
+		if common.host == "windows" then
+			copy = "mkdir %{wks.location}/" .. path.getdirectory(to) .. " && copy /B /Y "
+		else
+			copy = "mkdir -p %{wks.location}/" .. path.getdirectory(to) .. " && cp -f "
+		end
+	else
+		copy = "{MKDIR} %{wks.location}/" .. path.getdirectory(to) .. " && {COPYFILE} "
+	end
+
+	copy = copy .. "%{wks.location}/Bin/Int-%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/" .. project .. "/"
+	
+	if isVS then
+		copy = copy .. "/%{cfg.platform}/%{cfg.buildcfg}/net6.0/"
+	else
+		copy = copy .. "/"
+	end
+	
+	copy = copy .. from .. " %{wks.location}/" .. to
+
+	return copy
 end
 
 function common:debugDir()

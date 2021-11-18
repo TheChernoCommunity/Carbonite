@@ -18,34 +18,16 @@ function dotnet:getDotNet()
 	local dotnetExe
 	if common.host == "windows" then
 		if not self.runtimeDir or #self.runtimeDir == 0 then
-			local result, errorCode = os.outputof("where dotnet.exe")
-			if not result then
-				error([[You don't seem to have dotnet 6.0 downloaded and installed.
-Please visit this download page and if your system isn't on the list you'll have to compile yourself.
-https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
-			end
-			
-			self.runtimeDir = path.getdirectory(result)
+			dotnetExe = "dotnet.exe"
+		else
+			dotnetExe = "\"" .. self.runtimeDir .. "\\dotnet.exe\""
 		end
-		dotnetExe = "\"" .. self.runtimeDir .. "\\dotnet.exe\""
 	else
 		if not self.runtimeDir or #self.runtimeDir == 0 then
-			local result, errorCode = os.outputof("whereis dotnet")
-			if not result then
-				error([[You don't seem to have dotnet 6.0 downloaded and installed.
-Please visit this download page and if your system isn't on the list you'll have to compile yourself.
-https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
-			end
-			
-			local realMatch = string.match(result, ".*:%s*(%g+)")
-			if not realMatch then
-				error([[You don't seem to have dotnet 6.0 downloaded and installed.
-Please visit this download page and if your system isn't on the list you'll have to compile yourself.
-https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
-			end
-			self.runtimeDir = path.getdirectory(realMatch)
+			dotnetExe = "dotnet"
+		else
+			dotnetExe = "'" .. self.runtimeDir .. "/dotnet'"
 		end
-		dotnetExe = "\"" .. self.runtimeDir .. "/dotnet\""
 	end
 
 	local dotnetOutput, errorCode = os.outputof(dotnetExe .. " --list-runtimes")
@@ -57,13 +39,14 @@ https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
 
 	local runtimes = string.explode(dotnetOutput, "\n")
 	for k, runtime in ipairs(runtimes) do
-		local name, versionMajor, versionMinor, versionPatch, path = string.match(runtime, "(%g+)%s*(%d+).(%d+).(%d+)%s*%[(.+)%]")
+		local name, versionMajor, versionMinor, versionPatch, runtimePath = string.match(runtime, "(%g+)%s*(%d+).(%d+).(%d+)%s*%[(.+)%]")
 		if name == "Microsoft.NETCore.App" then
 			self.dotnetVersion[1] = 6
 			self.dotnetVersion[2] = versionMinor
 			self.dotnetVersion[3] = versionPatch
+			self.runtimeDir = path.getabsolute("../../", runtimePath)
 			self.hostDir = self.runtimeDir .. "/host/fxr/" .. versionMajor .. "." .. versionMinor .. "." .. versionPatch
-			self.sharedDir = path .. "/" .. versionMajor .. "." .. versionMinor .. "." .. versionPatch
+			self.sharedDir = runtimePath .. "/" .. versionMajor .. "." .. versionMinor .. "." .. versionPatch
 		end
 	end
 end
@@ -72,14 +55,23 @@ dotnet:getDotNet()
 
 function dotnet:setupDep()
 	if common.host == "windows" then
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/hostfxr.dll %{cfg.linktarget.directory}/hostfxr.dll" })
+		prelinkcommands({
+			"{COPYFILE} " .. self.hostDir .. "/hostfxr.dll %{cfg.linktarget.directory}/hostfxr.dll",
+			--"{COPYDIR} " .. self.sharedDir .. " %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
+		})
 	elseif common.host == "macosx" then
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.dylib %{cfg.linktarget.directory}/libhostfxr.dylib" })
+		prelinkcommands({
+			"{COPYFILE} " .. self.hostDir .. "/libhostfxr.dylib %{cfg.linktarget.directory}/libhostfxr.dylib",
+			--"mkdir -p %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3] .. "/",
+			--"cp -af " .. self.sharedDir .. "/. %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
+		})
 	else
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.so %{cfg.linktarget.directory}/libhostfxr.so" })
+		prelinkcommands({
+			"{COPYFILE} " .. self.hostDir .. "/libhostfxr.so %{cfg.linktarget.directory}/libhostfxr.so",
+			--"mkdir -p %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3],
+			--"cp -af " .. self.sharedDir .. "/. %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
+		})
 	end
-	
-	prelinkcommands({ "{COPYDIR} " .. self.sharedDir .. " %{cfg.linktarget.directory}" })
 end
 
 -- Override Visual Studio CSharp project generator to fix output directories
