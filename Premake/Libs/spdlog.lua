@@ -12,12 +12,12 @@ function spdlog:setup()
 
 	defines({ "SPDLOG_COMPILED_LIB" })
 
-	sysincludedirs({ "%{prj.location}/include/" })
-	includedirs({ "%{prj.location}/include/" })
+	sysincludedirs({ self.location .. "/include/" })
+	includedirs({ self.location .. "/include/" })
 
 	files({
-		"%{prj.location}/include/**",
-		"%{prj.location}/src/**"
+		self.location .. "/include/**",
+		self.location .. "/src/**"
 	})
 end
 

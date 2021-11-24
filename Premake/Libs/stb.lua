@@ -7,9 +7,9 @@ function stb:setup()
 
 	kind("Utility")
 
-	includedirs({ "%{prj.location}/" })
+	includedirs({ self.location })
 
-	files({ "%{prj.location}/stb_image.h" })
+	files({ self.location .. "/stb_image.h" })
 end
 
 function stb:setupDep()

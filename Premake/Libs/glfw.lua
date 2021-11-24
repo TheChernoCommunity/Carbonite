@@ -18,50 +18,50 @@ function glfw:setup()
 	kind("StaticLib")
 	common:staticLibOutDirs()
 
-	includedirs({ "%{prj.location}" .. self.includeDir })
+	includedirs({ self.location .. self.includeDir })
 
 	files({
-		"%{prj.location}" .. self.includeDir .. "**",
-		"%{prj.location}" .. self.sourceDir .."context.c",
-		"%{prj.location}" .. self.sourceDir .."init.c",
-		"%{prj.location}" .. self.sourceDir .."input.c",
-		"%{prj.location}" .. self.sourceDir .."internal.h",
-		"%{prj.location}" .. self.sourceDir .."mappings.h",
-		"%{prj.location}" .. self.sourceDir .."monitor.c",
-		"%{prj.location}" .. self.sourceDir .."null_*",
-		"%{prj.location}" .. self.sourceDir .."platform.h",
-		"%{prj.location}" .. self.sourceDir .."platform.c",
-		"%{prj.location}" .. self.sourceDir .."vulkan.c",
-		"%{prj.location}" .. self.sourceDir .."window.c",
-		"%{prj.location}" .. self.sourceDir .."egl_*",
-		"%{prj.location}" .. self.sourceDir .."osmesa_*"
+		self.location .. self.includeDir .. "**",
+		self.location .. self.sourceDir .."context.c",
+		self.location .. self.sourceDir .."init.c",
+		self.location .. self.sourceDir .."input.c",
+		self.location .. self.sourceDir .."internal.h",
+		self.location .. self.sourceDir .."mappings.h",
+		self.location .. self.sourceDir .."monitor.c",
+		self.location .. self.sourceDir .."null_*",
+		self.location .. self.sourceDir .."platform.h",
+		self.location .. self.sourceDir .."platform.c",
+		self.location .. self.sourceDir .."vulkan.c",
+		self.location .. self.sourceDir .."window.c",
+		self.location .. self.sourceDir .."egl_*",
+		self.location .. self.sourceDir .."osmesa_*"
 	})
 
 	filter("system:windows")
 		files({
-			"%{prj.location}" .. self.sourceDir .. "win32_*",
-			"%{prj.location}" .. self.sourceDir .. "wgl_*"
+			self.location .. self.sourceDir .. "win32_*",
+			self.location .. self.sourceDir .. "wgl_*"
 		})
 
 		defines({ "_GLFW_WIN32" })
 
 	filter("system:linux")
 		files({
-			"%{prj.location}" .. self.sourceDir .. "linux_*",
-			"%{prj.location}" .. self.sourceDir .. "posix_*",
-			"%{prj.location}" .. self.sourceDir .. "xkb_*",
-			"%{prj.location}" .. self.sourceDir .. "glx_*"
+			self.location .. self.sourceDir .. "linux_*",
+			self.location .. self.sourceDir .. "posix_*",
+			self.location .. self.sourceDir .. "xkb_*",
+			self.location .. self.sourceDir .. "glx_*"
 		})
 	
 	if _OPTIONS["glfw-use-wayland"] then
 		files({
-			"%{prj.location}" .. self.sourceDir .. "wl_*"
+			self.location .. self.sourceDir .. "wl_*"
 		})
 
 		defines({ "_GLFW_WAYLAND" })
 	else
 		files({
-			"%{prj.location}" .. self.sourceDir .. "x11_*"
+			self.location .. self.sourceDir .. "x11_*"
 		})
 
 		defines({ "_GLFW_X11" })
@@ -69,13 +69,13 @@ function glfw:setup()
 
 	filter("system:macosx")
 		files({
-			"%{prj.location}" .. self.sourceDir .. "cocoa_*",
-			"%{prj.location}" .. self.sourceDir .. "nsgl_*",
-			"%{prj.location}" .. self.sourceDir .. "posix_*"
+			self.location .. self.sourceDir .. "cocoa_*",
+			self.location .. self.sourceDir .. "nsgl_*",
+			self.location .. self.sourceDir .. "posix_*"
 		})
 		removefiles({
-			"%{prj.location}" .. self.sourceDir .. "posix_time.h",
-			"%{prj.location}" .. self.sourceDir .. "posix_time.c"
+			self.location .. self.sourceDir .. "posix_time.h",
+			self.location .. self.sourceDir .. "posix_time.c"
 		})
 
 		defines({ "_GLFW_COCOA" })

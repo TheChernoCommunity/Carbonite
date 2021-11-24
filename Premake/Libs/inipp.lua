@@ -7,9 +7,9 @@ function inipp:setup()
 
 	kind("Utility")
 
-	includedirs({ "%{prj.location}/inipp/" })
+	includedirs({ self.location .. "/inipp/" })
 
-	files({ "%{prj.location}/inipp/inipp.h" })
+	files({ self.location .. "/inipp/inipp.h" })
 end
 
 function inipp:setupDep()
