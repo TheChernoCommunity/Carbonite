@@ -31,7 +31,7 @@ public:
 			return false;
 
 		m_Entries.insert({ id, { name, std::move(value) } });
-		m_NameToId.insert({ name, id });
+		m_NameToId.insert({ std::string { name }, id });
 		return true;
 	}
 

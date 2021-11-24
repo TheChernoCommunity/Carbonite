@@ -2,57 +2,22 @@ require("Premake/Actions/clean")
 require("Premake/Actions/format-tidy")
 require("Premake/Actions/pch")
 
-newoption({
-	trigger = "only-csharp",
-	description = "Only generate a C# workspace"
-})
-newoption({
-	trigger = "only-cpp",
-	description = "Only generate a C++ workspace"
-})
-
-local addCSharp = true
-local addCpp = true
-if _OPTIONS["only-csharp"] then
-	addCpp = false
-elseif _OPTIONS["only-cpp"] then
-	addCSharp = false
-end
-
 common = require("Premake/common")
 dotnet = require("Premake/Libs/dotnet")
 
-if addCpp then
-	glfw = require("Premake/Libs/glfw")
-	vma = require("Premake/Libs/vma")
-	imgui = require("Premake/Libs/imgui")
-	stb = require("Premake/Libs/stb")
-	inipp = require("Premake/Libs/inipp")
-	spdlog = require("Premake/Libs/spdlog")
-	vulkan = require("Premake/Libs/vulkan")
-end
+glfw = require("Premake/Libs/glfw")
+vma = require("Premake/Libs/vma")
+imgui = require("Premake/Libs/imgui")
+stb = require("Premake/Libs/stb")
+inipp = require("Premake/Libs/inipp")
+spdlog = require("Premake/Libs/spdlog")
+vulkan = require("Premake/Libs/vulkan")
 
-workspace((function()
-		if addCSharp and addCpp then
-			return "Carbonite"
-		elseif addCpp then
-			return "Carbonite-Cpp"
-		elseif addCSharp then
-			return "Carbonite-CSharp"
-		else
-			return "Carbonite"
-		end
-	end)())
+workspace("Carbonite")
 	common:setConfigsAndPlatforms()
 	
 	common:addCoreDefines()
 
-if addCSharp then
-	csversion("10")
-	dotnetframework("net6.0")
-end
-
-if addCpp then
 	cppdialect("C++17")
 	rtti("Off")
 	exceptionhandling("On")
@@ -65,36 +30,43 @@ if addCpp then
 		location("ThirdParty/GLFW/")
 		warnings("Off")
 		glfw:setup()
+		location("ThirdParty/")
 
 	project("VMA")
 		location("ThirdParty/VMA/")
 		warnings("Off")
 		vma:setup()
+		location("ThirdParty/")
 
 	project("ImGUI")
 		location("ThirdParty/ImGUI/")
 		warnings("Off")
 		imgui:setup()
+		location("ThirdParty/")
 
 	project("STB")
 		location("ThirdParty/STB/")
 		warnings("Off")
 		stb:setup()
+		location("ThirdParty/")
 
 	project("Inipp")
 		location("ThirdParty/inipp/")
 		warnings("Off")
 		inipp:setup()
+		location("ThirdParty/")
 
 	project("Spdlog")
 		location("ThirdParty/spdlog/")
 		warnings("Off")
 		spdlog:setup()
+		location("ThirdParty/")
 
 	project("VulkanHeaders")
 		location("")
 		warnings("Off")
 		vulkan:setup()
+		location("ThirdParty/")
 
 	group("Game")
 	project("Carbonite")
@@ -145,41 +117,3 @@ if addCpp then
 			allowforcepch(true)
 
 		filter({})
-end
-
-if addCSharp then
-	group("Mods")
-	project("API")
-		location("CarboniteModAPI/")
-		language("C#")
-		kind("SharedLib")
-		warnings("Extra")
-
-		common:apiOutDirs()
-
-		files({ "%{prj.location}/**" })
-		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
-
-		filter("files:**.cs")
-			runclangformat(true)
-
-		filter({})
-
-	project("Base")
-		location("CarboniteBaseMod/")
-		language("C#")
-		kind("SharedLib")
-		warnings("Extra")
-
-		common:modOutDirs(true)
-
-		links({ "API" })
-
-		files({ "%{prj.location}/**" })
-		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
-
-		filter("files:**.cs")
-			runclangformat(true)
-
-		filter({})
-end

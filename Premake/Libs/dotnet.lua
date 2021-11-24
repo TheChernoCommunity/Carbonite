@@ -55,82 +55,12 @@ dotnet:getDotNet()
 
 function dotnet:setupDep()
 	if common.host == "windows" then
-		prelinkcommands({
-			"{COPYFILE} " .. self.hostDir .. "/hostfxr.dll %{cfg.linktarget.directory}/hostfxr.dll",
-			--"{COPYDIR} " .. self.sharedDir .. " %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
-		})
+		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/hostfxr.dll %{cfg.linktarget.directory}/hostfxr.dll" })
 	elseif common.host == "macosx" then
-		prelinkcommands({
-			"{COPYFILE} " .. self.hostDir .. "/libhostfxr.dylib %{cfg.linktarget.directory}/libhostfxr.dylib",
-			--"mkdir -p %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3] .. "/",
-			--"cp -af " .. self.sharedDir .. "/. %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
-		})
+		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.dylib %{cfg.linktarget.directory}/libhostfxr.dylib" })
 	else
-		prelinkcommands({
-			"{COPYFILE} " .. self.hostDir .. "/libhostfxr.so %{cfg.linktarget.directory}/libhostfxr.so",
-			--"mkdir -p %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3],
-			--"cp -af " .. self.sharedDir .. "/. %{cfg.linktarget.directory}/shared/Microsoft.NETCore.App/" .. self.dotnetVersion[1] .. "." .. self.dotnetVersion[2] .. "." .. self.dotnetVersion[3]
-		})
+		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.so %{cfg.linktarget.directory}/libhostfxr.so" })
 	end
-end
-
--- Override Visual Studio CSharp project generator to fix output directories
-
-require('vstudio')
-
-local cs2005 = premake.vstudio.cs2005
-local dotnetbase = premake.vstudio.dotnetbase
-
-dotnetbase.outputProps = function(cfg)
-	local outdir = premake.vstudio.path(cfg, cfg.buildtarget.directory)
-	local objdir = premake.vstudio.path(cfg, cfg.objdir)
-	_x(2, '<BaseOutputPath>%s\\</BaseOutputPath>', outdir)
-	_x(2, '<BaseIntermediateOutputPath>%s\\</BaseIntermediateOutputPath>', objdir)
-end
-
-cs2005.elements.projectProperties = function(cfg)
-	if dotnetbase.isNewFormatProject(cfg) then
-		return {
-			dotnetbase.outputType,
-			dotnetbase.appDesignerFolder,
-			dotnetbase.rootNamespace,
-			dotnetbase.assemblyName,
-			dotnetbase.netcore.targetFramework,
-			dotnetbase.allowUnsafeBlocks,
-			dotnetbase.fileAlignment,
-			dotnetbase.bindingRedirects,
-			dotnetbase.netcore.useWpf,
-			dotnetbase.csversion,
-			dotnetbase.outputProps,
-			dotnetbase.netcore.enableDefaultCompileItems,
-		}
-	else
-		return {
-			dotnetbase.configurationCondition,
-			dotnetbase.platformCondition,
-			dotnetbase.productVersion,
-			dotnetbase.schemaVersion,
-			dotnetbase.projectGuid,
-			dotnetbase.outputType,
-			dotnetbase.appDesignerFolder,
-			dotnetbase.rootNamespace,
-			dotnetbase.assemblyName,
-			dotnetbase.targetFrameworkVersion,
-			dotnetbase.targetFrameworkProfile,
-			dotnetbase.fileAlignment,
-			dotnetbase.bindingRedirects,
-			dotnetbase.projectTypeGuids,
-			dotnetbase.csversion,
-		}
-	end
-end
-cs2005.elements.configuration = function()
-	return {
-		dotnetbase.propertyGroup,
-		dotnetbase.debugProps,
-		dotnetbase.compilerProps,
-		dotnetbase.NoWarn
-	}
 end
 
 return dotnet

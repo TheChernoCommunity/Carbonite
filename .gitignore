@@ -1,13 +1,11 @@
 # Output
 /Bin/
-/Int/
 
 # Visual Studio
 /.vs/
-*.sln
+Carbonite.sln
 *.vcxproj
 *.vcxproj.*
-*.csproj
 /CarboniteBaseMod/obj/
 /CarboniteModAPI/obj/
 
