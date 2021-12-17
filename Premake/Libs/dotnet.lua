@@ -1,8 +1,8 @@
 local dotnet = {
 	runtimeDir = "",
-	dotnetVersion = { 0, 0, 0 },
-	hostDir = "",
-	sharedDir = ""
+	dotnetVersion = "",
+	sdkRuntimeIdentifier = "",
+	hostDir = ""
 }
 
 newoption({
@@ -22,31 +22,38 @@ function dotnet:getDotNet()
 		else
 			dotnetExe = "\"" .. self.runtimeDir .. "\\dotnet.exe\""
 		end
+		self.sdkRuntimeIdentifier = "win-%{cfg.platform}"
 	else
 		if not self.runtimeDir or #self.runtimeDir == 0 then
 			dotnetExe = "dotnet"
 		else
 			dotnetExe = "'" .. self.runtimeDir .. "/dotnet'"
 		end
+		
+		if common.host == "macosx" then
+			self.sdkRuntimeIdentifier = "osx-%{cfg.platform}"
+		else
+			self.sdkRuntimeIdentifier = "%{cfg.system}-%{cfg.platform}"
+		end
 	end
 
 	local dotnetOutput, errorCode = os.outputof(dotnetExe .. " --list-runtimes")
 	if not dotnetOutput then
-		error([[You don't seem to have dotnet 6.0 downloaded and installed.
+		error([[You don't seem to have dotnet 6.0 sdk downloaded and installed.
 Please visit this download page and if your system isn't on the list you'll have to compile yourself.
-https://dotnet.microsoft.com/download/dotnet/6.0/runtime]])
+https://dotnet.microsoft.com/download/dotnet/6.0]])
 	end
 
 	local runtimes = string.explode(dotnetOutput, "\n")
 	for k, runtime in ipairs(runtimes) do
 		local name, versionMajor, versionMinor, versionPatch, runtimePath = string.match(runtime, "(%g+)%s*(%d+).(%d+).(%d+)%s*%[(.+)%]")
-		if name == "Microsoft.NETCore.App" then
-			self.dotnetVersion[1] = 6
-			self.dotnetVersion[2] = versionMinor
-			self.dotnetVersion[3] = versionPatch
+		local majorVersion = tonumber(versionMajor)
+		local minorVersion = tonumber(versionMinor)
+		local patchVersion = tonumber(versionPatch)
+		if majorVersion >= 6 and name == "Microsoft.NETCore.App" then
+			self.dotnetVersion = "6." .. tostring(minorVersion) .. "." ..tostring(patchVersion)
 			self.runtimeDir = path.getabsolute("../../", runtimePath)
-			self.hostDir = self.runtimeDir .. "/host/fxr/" .. versionMajor .. "." .. versionMinor .. "." .. versionPatch
-			self.sharedDir = runtimePath .. "/" .. versionMajor .. "." .. versionMinor .. "." .. versionPatch
+			self.hostDir = string.format("%s/packs/Microsoft.NETCore.App.Host.%s/%s/runtimes/%s/native", self.runtimeDir, self.sdkRuntimeIdentifier, self.dotnetVersion, self.sdkRuntimeIdentifier)
 		end
 	end
 end
@@ -54,13 +61,12 @@ end
 dotnet:getDotNet()
 
 function dotnet:setupDep()
-	if common.host == "windows" then
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/hostfxr.dll %{cfg.linktarget.directory}/hostfxr.dll" })
-	elseif common.host == "macosx" then
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.dylib %{cfg.linktarget.directory}/libhostfxr.dylib" })
-	else
-		prelinkcommands({ "{COPYFILE} " .. self.hostDir .. "/libhostfxr.so %{cfg.linktarget.directory}/libhostfxr.so" })
-	end
+	sysincludedirs({ self.hostDir })
+	filter({ "toolset:msc" })
+		links({ "nethost.lib" })
+	filter({ "toolset:clang or gcc" })
+		linkoptions({ self.hostDir .. "/libnethost.a" })
+	filter({})
 end
 
 return dotnet

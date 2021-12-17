@@ -2,6 +2,8 @@
 
 #include "CSharp/CSharpRuntime.h"
 
+#include <nethost.h>
+
 #if CARBONITE_IS_SYSTEM_WINDOWS
 #include <Windows.h>
 #else
@@ -34,13 +36,29 @@ namespace CSharp
 
 	bool LoadFXR()
 	{
-		// TODO(MarcasRealAccount): Load relative to Carbonite executable for security reasons
+		std::string hostfxrPath;
+		{
+			char* buffer;
+			std::size_t bufSize;
 #if CARBONITE_IS_SYSTEM_WINDOWS
-		s_Library = static_cast<void*>(LoadLibraryA("hostfxr.dll"));
-#elif CARBONITE_IS_SYSTEM_MACOSX
-		s_Library = dlopen("libhostfxr.dylib", RTLD_NOW);
+			buffer = new char[32767];
+			bufSize = 32767;
 #else
-		s_Library = dlopen("libhostfxr.so", RTLD_NOW);
+			buffer = new char[2048];
+			bufSize = 2048;
+#endif
+			int result = get_hostfxr_path(buffer, &bufSize, nullptr);
+			if (!result)
+				hostfxrPath = buffer;
+			delete[] buffer;
+			if (result)
+				return false;
+		}
+		
+#if CARBONITE_IS_SYSTEM_WINDOWS
+		s_Library = static_cast<void*>(LoadLibraryA(hostfxrPath.c_str()));
+#else
+		s_Library = dlopen(hostfxrPath.c_str(), RTLD_NOW);
 #endif
 		if (!s_Library)
 			return false;

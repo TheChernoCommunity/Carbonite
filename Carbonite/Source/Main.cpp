@@ -4,6 +4,7 @@
 #include "Carbonite.h"
 #include "Log.h"
 #include "Utils/Core.h"
+#include "Utils/FileIO.h"
 
 #include <cstdlib>
 
@@ -22,8 +23,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		CSharp::Handle handle = nullptr;
 		{
-			auto cwd = std::filesystem::current_path().string() + "/runtimeconfig.json";
-			auto rc  = CSharp::InitializeForRuntimeConfig(cwd.c_str(), nullptr, &handle);
+			auto cwd = FileIO::getGameDir() / "runtimeconfig.json";
+			auto rc  = CSharp::InitializeForRuntimeConfig(cwd.string().c_str(), nullptr, &handle);
 			if (rc || !handle)
 				throw std::runtime_error("Failed to initialize HostFXR handle");
 		}
@@ -40,8 +41,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		CSharp::ComponentEntryPointFn hello = nullptr;
 		{
-			auto cwd = std::filesystem::current_path().string() + "/Test.dll";
-			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("Hello"), nullptr, nullptr, reinterpret_cast<void**>(&hello));
+			auto cwd = FileIO::getGameDir() / "Test.dll";
+			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.string().c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("Hello"), nullptr, nullptr, reinterpret_cast<void**>(&hello));
 			if (rc || !hello)
 				throw std::runtime_error("Failed to load assembly and get function");
 		}
@@ -63,7 +64,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		CustomEntryPointFn custom = nullptr;
 
 		{
-			auto cwd = std::filesystem::current_path().string() + "/Test.dll";
+			auto cwd = FileIO::getGameDir() / "Test.dll";
 			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("CustomEntryPointUnmanaged"), CSharp::UnmanagedCallersOnlyMethod, nullptr, reinterpret_cast<void**>(&custom));
 			if (rc || !custom)
 				throw std::runtime_error("Failed to load assembly and get function");
