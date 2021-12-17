@@ -18,6 +18,8 @@ namespace CSharp
 #define CSHARP_STR(str) str
 	using CharT = char;
 #endif
+	
+	using StringT = std::basic_string<CharT>;
 
 	enum class EDelegateType : std::int32_t
 	{
