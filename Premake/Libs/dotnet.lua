@@ -62,11 +62,15 @@ dotnet:getDotNet()
 
 function dotnet:setupDep()
 	sysincludedirs({ self.hostDir })
-	filter({ "toolset:msc" })
-		links({ "nethost.lib" })
-	filter({ "toolset:clang or gcc" })
-		linkoptions({ self.hostDir .. "/libnethost.a" })
-	filter({})
+	libdirs({ self.hostDir })
+	links({ "nethost" })
+	if common.host == "windows" then
+		prelinkcommands({ "{COPYFILE} \"" .. self.hostDir .. "\\nethost.dll\" \"%{cfg.linktarget.directory}\\nethost.dll\"" })
+	elseif common.host == "macosx" then
+		prelinkcommands({ "{COPYFILE} \"" .. self.hostDir .. "/libnethost.dylib\" \"%{cfg.linktarget.directory}/libnethost.dylib\"" })
+	else
+		prelinkcommands({ "{COPYFILE} \"" .. self.hostDir .. "/libnethost.so\" \"%{cfg.linktarget.directory}/libnethost.so\"" })
+	end
 end
 
 return dotnet

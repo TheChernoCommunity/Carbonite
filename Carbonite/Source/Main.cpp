@@ -41,7 +41,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		CSharp::ComponentEntryPointFn hello = nullptr;
 		{
-			auto cwd = FileIO::getGameDir() / "Test.dll";
+			auto cwd = FileIO::getGameDir() / "Mods/Test/Test.dll";
 			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("Hello"), nullptr, nullptr, reinterpret_cast<void**>(&hello));
 			if (rc || !hello)
 				throw std::runtime_error("Failed to load assembly and get function");
@@ -64,7 +64,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		CustomEntryPointFn custom = nullptr;
 
 		{
-			auto cwd = FileIO::getGameDir() / "Test.dll";
+			auto cwd = FileIO::getGameDir() / "Mods/Test/Test.dll";
 			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("CustomEntryPointUnmanaged"), CSharp::UnmanagedCallersOnlyMethod, nullptr, reinterpret_cast<void**>(&custom));
 			if (rc || !custom)
 				throw std::runtime_error("Failed to load assembly and get function");

@@ -2,6 +2,7 @@
 
 #include "CSharp/CSharpRuntime.h"
 
+#define NETHOST_USE_AS_STATIC
 #include <nethost.h>
 
 #if CARBONITE_IS_SYSTEM_WINDOWS
@@ -36,15 +37,15 @@ namespace CSharp
 
 	bool LoadFXR()
 	{
-		std::string hostfxrPath;
+		StringT hostfxrPath;
 		{
-			char* buffer;
+			CharT*      buffer;
 			std::size_t bufSize;
 #if CARBONITE_IS_SYSTEM_WINDOWS
-			buffer = new char[32767];
+			buffer  = new CharT[32767];
 			bufSize = 32767;
 #else
-			buffer = new char[2048];
+			buffer  = new CharT[2048];
 			bufSize = 2048;
 #endif
 			int result = get_hostfxr_path(buffer, &bufSize, nullptr);
@@ -54,9 +55,9 @@ namespace CSharp
 			if (result)
 				return false;
 		}
-		
+
 #if CARBONITE_IS_SYSTEM_WINDOWS
-		s_Library = static_cast<void*>(LoadLibraryA(hostfxrPath.c_str()));
+		s_Library = static_cast<void*>(LoadLibraryW(hostfxrPath.c_str()));
 #else
 		s_Library = dlopen(hostfxrPath.c_str(), RTLD_NOW);
 #endif
