@@ -92,6 +92,10 @@ workspace("Carbonite")
 			"%{prj.location}/Include/",
 			"%{prj.location}/Source/"
 		})
+		
+		if common.host == "macosx" then
+			linkoptions({ "-Wl,-rpath,'@executable_path'" })
+		end
 
 		glfw:setupDep()
 		vma:setupDep()
