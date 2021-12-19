@@ -3,6 +3,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "Log.h"
+#include "Utils/Core.h"
 
 namespace
 {
@@ -19,10 +20,10 @@ namespace Log
 			s_Logger = spdlog::stderr_color_mt("Carbonite");
 			spdlog::set_pattern("[%T.%f][%^%8l%$][%7t] %v");
 
-#if defined(NDEBUG)
+#if CARBONITE_IS_CONFIG_DIST
 			s_Logger->set_level(spdlog::level::level_enum::err);
 #else
-			s_Logger->set_level(spdlog::level::level_enum::debug);
+			s_Logger->set_level(spdlog::level::level_enum::trace);
 #endif // NDEBUG
 		}
 

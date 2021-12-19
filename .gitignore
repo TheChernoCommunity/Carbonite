@@ -1,12 +1,13 @@
 # Output
 /Bin/
-/Int/
 
 # Visual Studio
 /.vs/
-*.sln
+Carbonite.sln
 *.vcxproj
 *.vcxproj.*
+/CarboniteBaseMod/obj/
+/CarboniteModAPI/obj/
 
 # Makefile
 Makefile
@@ -19,6 +20,10 @@ Makefile
 
 # Macos
 *.DS_Store
+
+# C#
+Carbonite/Run/Base/Base.dll
+Carbonite/Run/Mods/*.dll
 
 # Premake
 premake5.exe

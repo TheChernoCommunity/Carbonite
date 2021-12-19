@@ -192,7 +192,7 @@ namespace Graphics
 	// C++20 concepts would've made this prettier that's for sure.
 
 	template <class HandleType, bool IsDestroyable, bool IsDebuggable>
-	using Handle = Detail::Handle<HandleType, IsDestroyable, IsDebuggable && Core::s_IsDebugMode, Detail::IsHandleValidV<HandleType>>;
+	using Handle = Detail::Handle<HandleType, IsDestroyable, IsDebuggable && Core::s_IsConfigDebug, Detail::IsHandleValidV<HandleType>>;
 } // namespace Graphics
 
 /* Implementation */

@@ -218,6 +218,9 @@ namespace Graphics
 
 	Shader::~Shader()
 	{
+		if (isValid())
+			destroy();
+
 		m_ShaderCount--;
 
 		if (m_ShaderCount == 0)

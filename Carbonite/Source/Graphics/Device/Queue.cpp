@@ -72,7 +72,7 @@ namespace Graphics
 		std::vector<vk::Result> results(swapchains.size());
 
 		vk::PresentInfoKHR    presentInfo = { vkWaitSemaphores, vkSwapchains, imageIndices, results };
-		[[maybe_unused]] auto result      = m_Handle.presentKHR(presentInfo);
+		[[maybe_unused]] auto result      = m_Handle.presentKHR(&presentInfo);
 		return results;
 	}
 

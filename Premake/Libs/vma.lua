@@ -12,7 +12,7 @@ function vma:setup()
 	kind("StaticLib")
 	common:staticLibOutDirs()
 
-	includedirs({ "%{prj.location}/include/" })
+	includedirs({ self.location .. "/include/" })
 	
 	filter("system:windows")
 		removedefines({ "NOMINMAX", "WIN32_LEAN_AND_MEAN" })
@@ -22,9 +22,9 @@ function vma:setup()
 	vulkan:setupDep(true)
 
 	files({
-		"%{prj.location}" .. self.includeDir .. "**",
-		"%{prj.location}" .. self.sourceDir .. "VmaUsage.h",
-		"%{prj.location}" .. self.sourceDir .. "VmaUsage.cpp"
+		self.location .. self.includeDir .. "**",
+		self.location .. self.sourceDir .. "VmaUsage.h",
+		self.location .. self.sourceDir .. "VmaUsage.cpp"
 	})
 end
 

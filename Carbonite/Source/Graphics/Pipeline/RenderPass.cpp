@@ -5,6 +5,18 @@
 
 namespace Graphics
 {
+	RenderPassAttachment::RenderPassAttachment(vk::Format format, vk::SampleCountFlagBits samples, vk::AttachmentLoadOp loadOp, vk::AttachmentStoreOp storeOp, vk::AttachmentLoadOp stencilLoadOp, vk::AttachmentStoreOp stencilStoreOp, vk::ImageLayout initialLayout, vk::ImageLayout finalLayout)
+	    : m_Format(format), m_Samples(samples), m_LoadOp(loadOp), m_StoreOp(storeOp), m_StencilLoadOp(stencilLoadOp), m_StencilStoreOp(stencilStoreOp), m_InitialLayout(initialLayout), m_FinalLayout(finalLayout) {}
+
+	RenderPassAttachmentRef::RenderPassAttachmentRef(std::uint32_t attachment, vk::ImageLayout layout)
+	    : m_Attachment(attachment), m_Layout(layout) {}
+
+	RenderPassSubpass::RenderPassSubpass(vk::PipelineBindPoint pipelineBindPoint, const std::vector<RenderPassAttachmentRef>& attachmentRefs, const std::vector<RenderPassAttachmentRef>& colorAttachmentRefs, std::vector<RenderPassAttachmentRef>& resolveAttachmentRefs, const std::vector<std::uint32_t>& preserveAttachments)
+	    : m_PipelineBindPoint(pipelineBindPoint), m_AttachmentRefs(attachmentRefs), m_ColorAttachmentRefs(colorAttachmentRefs), m_ResolveAttachmentRefs(resolveAttachmentRefs), m_PreserveAttachments(preserveAttachments) {}
+
+	RenderPassSubpassDependency::RenderPassSubpassDependency(std::uint32_t srcSubpass, std::uint32_t dstSubpass, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, vk::DependencyFlags dependencyFlags)
+	    : m_SrcSubpass(srcSubpass), m_DstSubpass(dstSubpass), m_SrcStageMask(srcStageMask), m_DstStageMask(dstStageMask), m_SrcAccessMask(srcAccessMask), m_DstAccessMask(dstAccessMask), m_DependencyFlags(dependencyFlags) {}
+
 	RenderPass::RenderPass(Device& device)
 	    : m_Device(device)
 	{
