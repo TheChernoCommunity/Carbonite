@@ -17,6 +17,11 @@ namespace Graphics::Memory
 		void* mapMemory();
 		void  unmapMemory();
 
+		std::uint64_t getSize() const
+		{
+			return m_AllocatedSize;
+		}
+
 		auto& getVma()
 		{
 			return m_Vma;
@@ -42,8 +47,10 @@ namespace Graphics::Memory
 		std::set<std::uint32_t> m_Indices;
 
 	private:
+		std::uint64_t m_AllocatedSize = 0;
+
 		VMA& m_Vma;
 
-		VmaAllocation m_Allocation;
+		VmaAllocation m_Allocation = {};
 	};
 } // namespace Graphics::Memory

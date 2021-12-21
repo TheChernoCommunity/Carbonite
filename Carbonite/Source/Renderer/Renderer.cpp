@@ -40,6 +40,14 @@ void Renderer::init()
 		m_InFlightFences.emplace_back(m_Device);
 	}
 
+	//---------------
+	// Create Window
+	auto& window = Carbonite::Get().getWindow();
+	if (!window.create())
+		throw std::runtime_error("Failed to create GLFW window");
+	Event::addWindow(*window);
+	//---------------
+
 	//-----------------
 	// Create Instance
 	{
@@ -61,12 +69,7 @@ void Renderer::init()
 	//--------------
 
 	//----------------
-	// Create Window and Surface
-	auto& window = Carbonite::Get().getWindow();
-	if (!window.create())
-		throw std::runtime_error("Failed to create GLFW window");
-	Event::addWindow(*window);
-
+	// Create surface
 	m_Surface.m_Window = &window;
 	if (!m_Surface.create())
 		throw std::runtime_error("Failed to create vulkan surface");

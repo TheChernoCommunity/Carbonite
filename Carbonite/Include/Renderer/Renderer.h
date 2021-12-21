@@ -34,6 +34,11 @@ public:
 		return m_CurrentFrame < m_CommandPools.size() ? const_cast<Graphics::CommandPool*>(&m_CommandPools[m_CurrentFrame]) : nullptr;
 	}
 
+	auto getMaxFramesInFlight() const
+	{
+		return m_MaxFramesInFlight;
+	}
+
 private:
 	virtual void initImpl()   = 0;
 	virtual void deinitImpl() = 0;
@@ -45,7 +50,7 @@ private:
 	void createRenderPass(bool formatDiffer);
 	void createFramebuffers();
 
-protected:
+public:
 	Graphics::Instance m_Instance;
 	Graphics::Debug    m_Debug;
 	Graphics::Surface  m_Surface;

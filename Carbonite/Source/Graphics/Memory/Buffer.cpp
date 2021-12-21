@@ -48,7 +48,10 @@ namespace Graphics::Memory
 
 		auto result = vmaCreateBuffer(*m_Vma, &vkCreateInfo, &allocationCreateInfo, &buffer, &m_Allocation, nullptr);
 		if (result == VK_SUCCESS)
-			m_Handle = buffer;
+		{
+			m_Handle        = buffer;
+			m_AllocatedSize = m_Size;
+		}
 	}
 
 	bool Buffer::destroyImpl()

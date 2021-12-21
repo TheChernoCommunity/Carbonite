@@ -17,7 +17,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	try
 	{
 #endif
-#if true
+#if false
 		if (!CSharp::LoadFXR())
 			throw std::runtime_error("Failed to load HostFXR");
 
@@ -75,11 +75,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 		CSharp::UnloadFXR();
 #else
-		auto& carbonite = Carbonite::Get(); // Get carbonite instance
-		carbonite.init();                   // Initialize carbonite
-		carbonite.run();                    // Run carbonite
-		carbonite.deinit();                 // Deinitialize carbonite
-		Carbonite::Destroy();               // Destroy carbonite instance
+	auto& carbonite = Carbonite::Get(); // Get carbonite instance
+	carbonite.init();                   // Initialize carbonite
+	carbonite.run();                    // Run carbonite
+	carbonite.deinit();                 // Deinitialize carbonite
+	Carbonite::Destroy();               // Destroy carbonite instance
 #endif
 #if CARBONITE_IS_CONFIG_DIST
 	}
