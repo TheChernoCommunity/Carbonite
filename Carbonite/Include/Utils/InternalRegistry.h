@@ -27,7 +27,7 @@ public:
 
 	bool addEntry(std::string_view name, std::uint64_t id, T&& value)
 	{
-		if (m_Entries.find(id) != m_Entries.end() || m_NameToId.find(name) != m_NameToId.end())
+		if (m_Entries.find(id) != m_Entries.end() || m_NameToId.find(std::string { name }) != m_NameToId.end())
 			return false;
 
 		m_Entries.insert({ id, { name, std::move(value) } });

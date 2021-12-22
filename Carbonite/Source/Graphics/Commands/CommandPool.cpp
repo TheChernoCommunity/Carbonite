@@ -84,7 +84,7 @@ namespace Graphics
 		if (m_QueueFamily == nullptr)
 			return;
 
-		vk::CommandPoolCreateInfo createInfo = { {}, m_QueueFamily->getFamilyIndex() };
+		vk::CommandPoolCreateInfo createInfo = { vk::CommandPoolCreateFlagBits::eResetCommandBuffer, m_QueueFamily->getFamilyIndex() };
 
 		m_Handle = m_Device->createCommandPool(createInfo);
 	}
