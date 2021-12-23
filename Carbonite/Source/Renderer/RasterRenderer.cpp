@@ -2,6 +2,10 @@
 
 #include "Log.h"
 #include "Renderer/RasterRenderer.h"
+#include "Scene/Components/CameraComponent.h"
+#include "Scene/Components/MeshComponent.h"
+#include "Scene/Components/TransformComponent.h"
+#include "Scene/ECS.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -14,9 +18,7 @@ RasterRenderer::RasterRenderer()
       m_DescriptorSetLayout(m_Device),
       m_DescriptorPool(m_Device),
       m_UniformBuffer(m_Vma),
-      m_Mesh(m_Vma)
-{
-}
+      m_Mesh(m_Vma) {}
 
 void RasterRenderer::initImpl()
 {
@@ -125,72 +127,22 @@ void RasterRenderer::initImpl()
 	}
 
 	m_DescriptorPool.updateDescriptorSets(writeDescriptorSets, {});
+
+	auto& ecs      = ECS::Get();
+	auto& registry = ecs.getRegistry();
+
+	entt::entity camera = m_Scene.instantiate({});
+	registry.emplace<CameraComponent>(camera);
+	m_CameraTransform = &registry.get<TransformComponent>(camera);
+
+	entt::entity cube = m_Scene.instantiate({});
+	registry.emplace<MeshComponent>(cube, &m_Mesh);
+	m_CubeTransform = &registry.get<TransformComponent>(cube);
 }
 
 void RasterRenderer::deinitImpl()
 {
 	Log::trace("RasterRenderer deinit");
-}
-
-static glm::fmat4 transformationMatrix(glm::fvec3 position, glm::fvec3 rotation, glm::fvec3 scale, bool negative = false)
-{
-	if (negative)
-	{
-		// What even is all of this???
-		// Look at the old src/Engine/Scene/Entity.cpp file ;)
-		float rx = rotation.x * 0.01745329251994329576923690768489f;
-		float ry = rotation.y * 0.01745329251994329576923690768489f;
-		float rz = rotation.z * 0.01745329251994329576923690768489f;
-		float cx = cosf(rx);
-		float cy = cosf(ry);
-		float cz = cosf(rz);
-		float sx = sinf(rx);
-		float sy = sinf(ry);
-		float sz = sinf(rz);
-
-		glm::fvec4 r0 = { (cy * cz) * scale.x, (cx * sz + cz * sx * sy) * scale.x, (sx * sz - cx * cz * sy) * scale.x, 0.0f };
-		glm::fvec4 r1 = { (-cy * sz) * scale.y, (cx * cz - sx * sy * sz) * scale.y, (cz * sx + cx * sy * sz) * scale.y, 0.0f };
-		glm::fvec4 r2 = { sy * scale.z, (-cy * sx) * scale.z, (cx * cy) * scale.z, 0.0f };
-
-		return {
-			r0,
-			r1,
-			r2,
-			{ r0.x * -position.x + r1.x * -position.y + r2.x * -position.z, r0.y * -position.x + r1.y * -position.y + r2.y * -position.z, r0.z * -position.x + r1.z * -position.y + r2.z * -position.z, 1.0f }
-		};
-	}
-	else
-	{
-		float rx = rotation.x * 0.01745329251994329576923690768489f;
-		float ry = rotation.y * 0.01745329251994329576923690768489f;
-		float rz = rotation.z * 0.01745329251994329576923690768489f;
-		float cx = cosf(rx);
-		float cy = cosf(ry);
-		float cz = cosf(rz);
-		float sx = sinf(rx);
-		float sy = sinf(ry);
-		float sz = sinf(rz);
-
-		return {
-			{ (cy * cz) * scale.x, (cx * sz + cz * sx * sy) * scale.x, (sx * sz - cx * cz * sy) * scale.x, 0.0f },
-			{ (-cy * sz) * scale.y, (cx * cz - sx * sy * sz) * scale.y, (cz * sx + cx * sy * sz) * scale.y, 0.0f },
-			{ sy * scale.z, (-cy * sx) * scale.z, (cx * cy) * scale.z, 0.0f },
-			{ position.x, position.y, position.z, 1.0f }
-		};
-	}
-}
-
-static glm::fmat4 infinitePerspective(float fovx, float aspectRatio, float near)
-{
-	float invAsp      = 1.0f / aspectRatio;
-	float focalLength = 1.0f / std::tanf(glm::radians(fovx * invAsp) * 0.5f);
-
-	return {
-		0.0f, 0.0f, 0.0f, 1.0f,
-		focalLength * invAsp, 0.0f, 0.0f, 0.0f,
-		0.0f, -focalLength, 0.0f, 0.0f,
-		0.0f, 0.0f, near, 0.0f
-	};
 }
 
 static glm::fvec3 rotation = { 0.0f, 0.0f, 0.0f };
@@ -209,34 +161,56 @@ void RasterRenderer::renderImpl()
 	};
 	glm::fvec3 position = forward * 5.0f;
 
-	glm::fmat4 modelMatrix = transformationMatrix(position, {}, { 1.0f, 1.0f, 1.0f });
-	glm::fmat4 viewMatrix  = transformationMatrix({}, rotation, { 1.0f, 1.0f, 1.0f }, true);
-	glm::fmat4 projMatrix  = infinitePerspective(90.0f, static_cast<float>(m_Swapchain.m_Width) / m_Swapchain.m_Height, 0.01f);
-
-	glm::fmat4 projViewMatrix = projMatrix * viewMatrix;
+	m_CameraTransform->setRotation(rotation);
+	m_CubeTransform->setTranslation(position);
 
 	void* uniformBufferMemory = m_UniformBuffer.mapMemory();
-	std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + 128 * m_CurrentFrame), &modelMatrix, sizeof(glm::fmat4));
-	std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + 128 * m_CurrentFrame + 64), &projViewMatrix, sizeof(glm::fmat4));
-	m_UniformBuffer.unmapMemory();
 
 	auto& currentCommandPool   = *getCurrentCommandPool();
 	auto& currentCommandBuffer = *currentCommandPool.getCommandBuffer(vk::CommandBufferLevel::ePrimary, 0);
 	if (currentCommandBuffer.begin())
 	{
-		currentCommandBuffer.cmdBeginRenderPass(m_RenderPass, m_Framebuffers[m_CurrentImage], { { 0, 0 }, { m_Swapchain.m_Width, m_Swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+		auto& ecs      = ECS::Get();
+		auto& registry = ecs.getRegistry();
+		auto  cameras  = registry.view<CameraComponent>();
+		auto  meshes   = registry.view<TransformComponent, MeshComponent>();
 
-		currentCommandBuffer.cmdSetViewports({ { 0.0f, 0.0f, static_cast<float>(m_Swapchain.m_Width), static_cast<float>(m_Swapchain.m_Height), 0.0f, 1.0f } });
-		currentCommandBuffer.cmdSetScissors({ { { 0, 0 }, { m_Swapchain.m_Width, m_Swapchain.m_Height } } });
+		for (auto camera : cameras)
+		{
+			auto& cameraComponent = cameras.get<CameraComponent>(camera);
+			cameraComponent.setAspect(static_cast<float>(m_Swapchain.m_Width) / m_Swapchain.m_Height);
+			auto& projectionViewMatrix = cameraComponent.getProjectionViewMatrix();
+			std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + 128 * m_CurrentFrame), &projectionViewMatrix, sizeof(projectionViewMatrix));
 
-		currentCommandBuffer.cmdSetLineWidth(1.0f);
-		currentCommandBuffer.cmdBindPipeline(m_Pipeline);
-		currentCommandBuffer.cmdBindVertexBuffers(0, { &m_Mesh.getMeshData() }, { 0 });
-		currentCommandBuffer.cmdBindIndexBuffer(m_Mesh.getMeshData(), m_Mesh.getVertexCount() * sizeof(Vertex), vk::IndexType::eUint32);
-		currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});
-		currentCommandBuffer.cmdDrawIndexed(m_Mesh.getIndexCount(), 1, 0, 0, 0);
+			currentCommandBuffer.cmdBeginRenderPass(m_RenderPass, m_Framebuffers[m_CurrentImage], { { 0, 0 }, { m_Swapchain.m_Width, m_Swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
+			currentCommandBuffer.cmdSetViewports({ { 0.0f, 0.0f, static_cast<float>(m_Swapchain.m_Width), static_cast<float>(m_Swapchain.m_Height), 0.0f, 1.0f } });
+			currentCommandBuffer.cmdSetScissors({ { { 0, 0 }, { m_Swapchain.m_Width, m_Swapchain.m_Height } } });
 
-		currentCommandBuffer.cmdEndRenderPass();
+			for (auto mesh : meshes)
+			{
+				auto [transformComponent, meshComponent] = meshes.get<TransformComponent, MeshComponent>(mesh);
+
+				Mesh* pMesh = meshComponent.m_Mesh;
+				if (pMesh)
+				{
+					auto& transformationMatrix = transformComponent.getMatrix();
+					std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + 128 * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
+
+					currentCommandBuffer.cmdBindPipeline(m_Pipeline);
+					currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});
+
+					currentCommandBuffer.cmdSetLineWidth(1.0f);
+					currentCommandBuffer.cmdBindVertexBuffers(0, { &pMesh->getMeshData() }, { 0 });
+					currentCommandBuffer.cmdBindIndexBuffer(pMesh->getMeshData(), pMesh->getVertexCount() * sizeof(Vertex), vk::IndexType::eUint32);
+					currentCommandBuffer.cmdDrawIndexed(static_cast<std::uint32_t>(pMesh->getIndexCount()), 1, 0, 0, 0);
+				}
+			}
+
+			currentCommandBuffer.cmdEndRenderPass();
+		}
+
 		currentCommandBuffer.end();
 	}
+
+	m_UniformBuffer.unmapMemory();
 }

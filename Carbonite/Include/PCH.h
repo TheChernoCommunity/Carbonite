@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/entt.hpp>
+#include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 #include <stb_image.h>
 #include <vk_mem_alloc.h>
@@ -14,4 +16,5 @@
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>

@@ -5,6 +5,7 @@
 #include "Renderer/RTRenderer.h"
 #include "Renderer/RasterRenderer.h"
 #include "Renderer/Renderer.h"
+#include "Scene/ECS.h"
 
 Carbonite& Carbonite::Get()
 {
@@ -20,6 +21,8 @@ void Carbonite::Destroy()
 void Carbonite::init()
 {
 	Log::trace("Carbonite init");
+
+	[[maybe_unused]] auto& ecs = ECS::Get();
 
 	// TODO(MarcasRealAccount): Add a way to enable raytracing.
 	m_Renderer = new RasterRenderer();
@@ -43,6 +46,8 @@ void Carbonite::deinit()
 	m_Renderer->deinit();
 	delete m_Renderer;
 	m_Renderer = nullptr;
+
+	ECS::Destroy();
 
 	Log::trace("Carbonite deinit");
 }

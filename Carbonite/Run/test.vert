@@ -7,8 +7,8 @@ layout(location = 2) in vec2 inUV;
 layout(location = 0) out vec2 outUV;
 
 layout(set = 0, binding = 0) uniform Matrices {
-	mat4 model;
 	mat4 projView;
+	mat4 model;
 } matrices;
 
 void main() {

@@ -9,6 +9,7 @@
 #include "Graphics/Shader.h"
 #include "Mesh/Mesh.h"
 #include "Renderer.h"
+#include "Scene/Scene.h"
 
 class RasterRenderer : public Renderer
 {
@@ -31,5 +32,8 @@ public:
 	std::vector<Graphics::DescriptorSet> m_DescriptorSets;
 	Graphics::Memory::Buffer             m_UniformBuffer;
 
-	Mesh m_Mesh;
+	Scene               m_Scene;
+	TransformComponent* m_CameraTransform;
+	Mesh                m_Mesh;
+	TransformComponent* m_CubeTransform;
 };
