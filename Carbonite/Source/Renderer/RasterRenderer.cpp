@@ -164,7 +164,7 @@ void RasterRenderer::renderImpl()
 
 	m_CameraTransform->setRotation(rotation);
 	m_CubeTransform->setTranslation(position);
-	
+
 	void* uniformBufferMemory = m_UniformBuffer.mapMemory();
 
 	auto& currentCommandPool   = *getCurrentCommandPool();

@@ -88,7 +88,7 @@ private:
 	glm::fvec3 m_Scale             = { 1.0f, 1.0f, 1.0f };
 	bool       m_RecalculateMatrix = false;
 	bool       m_HasChanged        = false;
-	glm::fmat4 m_CachedMatrix      = glm::fmat4{ 1.0f };
+	glm::fmat4 m_CachedMatrix      = glm::fmat4 { 1.0f };
 };
 
 template <>

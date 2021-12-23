@@ -113,7 +113,7 @@ private:
 	bool       m_RecalculateProjectionMatrix     = true;
 	bool       m_RecalculateProjectionViewMatrix = true;
 	bool       m_HasChanged                      = false;
-	glm::fmat4 m_CachedViewMatrix                = glm::fmat4{ 1.0f };
-	glm::fmat4 m_CachedProjectionMatrix          = glm::fmat4{ 1.0f };
-	glm::fmat4 m_CachedProjectionViewMatrix      = glm::fmat4{ 1.0f };
+	glm::fmat4 m_CachedViewMatrix                = glm::fmat4 { 1.0f };
+	glm::fmat4 m_CachedProjectionMatrix          = glm::fmat4 { 1.0f };
+	glm::fmat4 m_CachedProjectionViewMatrix      = glm::fmat4 { 1.0f };
 };
