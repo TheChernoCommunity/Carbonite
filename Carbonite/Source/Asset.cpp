@@ -11,7 +11,7 @@ Asset::Asset(std::string path)
 	// Get file extension
 	std::string extension;
 
-	for (int i = path.length() - 1; i >= 0; i--)
+	for (int i = static_cast<int>(path.length()) - 1; i >= 0; i--)
 	{
 		if (path[i] == '.') break;
 		extension = path[i] + extension;
@@ -47,7 +47,7 @@ Asset::Asset(std::string path)
 
 	std::ifstream file(path, std::ios::in | std::ios::binary);
 
-	size = std::filesystem::file_size(path);
+	size = static_cast<std::uint32_t>(std::filesystem::file_size(path));
 	data = std::shared_ptr<char[]>(new char[++size]);
 
 	if (file.is_open())

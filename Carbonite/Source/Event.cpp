@@ -12,14 +12,14 @@ namespace
 	static std::queue<std::shared_ptr<Event>> s_queue;
 	static std::vector<EventHandler*>         s_handlers;
 
-	void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	void keyCallback([[maybe_unused]] GLFWwindow* window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods)
 	{
 		std::shared_ptr<Event> e = nullptr;
 
 		switch (action)
 		{
 		case GLFW_PRESS:
-			e = std::make_shared<KeyPressedEvent>(static_cast<KeyCode>(key), 0);
+			e = std::make_shared<KeyPressedEvent>(static_cast<KeyCode>(key), std::uint16_t { 0 });
 			break;
 
 		case GLFW_RELEASE:
@@ -33,12 +33,12 @@ namespace
 		s_queue.push(e);
 	}
 
-	void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+	void cursorPositionCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos)
 	{
-		s_queue.push(std::make_shared<MouseMovedEvent>(xpos, ypos));
+		s_queue.push(std::make_shared<MouseMovedEvent>(static_cast<float>(xpos), static_cast<float>(ypos)));
 	}
 
-	void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	void mouseButtonCallback([[maybe_unused]] GLFWwindow* window, int button, int action, [[maybe_unused]] int mods)
 	{
 		std::shared_ptr<Event> e = nullptr;
 
@@ -60,9 +60,9 @@ namespace
 		s_queue.push(e);
 	}
 
-	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	void scrollCallback([[maybe_unused]] GLFWwindow* window, double xoffset, double yoffset)
 	{
-		s_queue.push(std::make_shared<MouseScrolledEvent>(xoffset, yoffset));
+		s_queue.push(std::make_shared<MouseScrolledEvent>(static_cast<float>(xoffset), static_cast<float>(yoffset)));
 	}
 
 } // namespace

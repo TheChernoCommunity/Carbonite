@@ -107,7 +107,9 @@ workspace("Carbonite")
 			"%{prj.location}/Source/"
 		})
 		
-		if common.host == "macosx" then
+		if common.host == "windows" then
+			linkoptions({ "/IGNORE:4099" })
+		elseif common.host == "macosx" then
 			linkoptions({ "-Wl,-rpath,'@executable_path'" })
 		end
 
@@ -122,8 +124,11 @@ workspace("Carbonite")
 		glm:setupDep()
 		entt:setupDep()
 
-		files({ "%{prj.location}/**" })
-		removefiles({ "*.vcxproj", "*.vcxproj.*", "*.Make", "*.mak", "*.xcodeproj/", "*.DS_Store" })
+		files({
+			"%{prj.location}/Include/**",
+			"%{prj.location}/Source/**"
+		})
+		removefiles({ "*.DS_Store" })
 
 		filter("files:**.inl")
 			runclangformat(true)

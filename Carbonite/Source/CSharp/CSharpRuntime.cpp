@@ -6,6 +6,7 @@
 #include <nethost.h>
 
 #if CARBONITE_IS_SYSTEM_WINDOWS
+#undef APIENTRY
 #include <Windows.h>
 #else
 #include <dlfcn.h>

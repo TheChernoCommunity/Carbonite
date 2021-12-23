@@ -154,13 +154,23 @@ namespace Graphics
 		case ShaderType::Vertex:
 			lang = EShLangVertex;
 			break;
-
 		case ShaderType::Fragment:
 			lang = EShLangFragment;
 			break;
-
-		default:
+		case ShaderType::TessellationControl:
+			lang = EShLangTessControl;
 			break;
+		case ShaderType::TessellationEvaluation:
+			lang = EShLangTessEvaluation;
+			break;
+		case ShaderType::Geometry:
+			lang = EShLangGeometry;
+			break;
+		case ShaderType::Compute:
+			lang = EShLangCompute;
+			break;
+		default:
+			return;
 		}
 
 		glslang::TShader  shader(lang);
@@ -172,7 +182,7 @@ namespace Graphics
 		EShMessages messages = (EShMessages) (EShMsgSpvRules | EShMsgVulkanRules);
 
 		const char* string = m_sourceStr.c_str();
-		const int   length = m_sourceStr.length();
+		const int   length = static_cast<int>(m_sourceStr.length());
 
 		shader.setStringsWithLengths(&string, &length, 1);
 

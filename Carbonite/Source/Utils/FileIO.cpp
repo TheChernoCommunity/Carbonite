@@ -6,6 +6,7 @@
 #include "Log.h"
 
 #if CARBONITE_IS_SYSTEM_WINDOWS
+#undef APIENTRY
 #include <Windows.h>
 #elif CARBONITE_IS_SYSTEM_MACOSX
 #include <mach-o/dyld.h>

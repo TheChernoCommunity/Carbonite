@@ -108,7 +108,7 @@ private:
 	float      m_Fov                             = 90.0f;
 	float      m_Near                            = 0.01f;
 	float      m_Far                             = -1.0f; // m_Far < 0.0f => Infinite projection matrix
-	float      m_Aspect                          = 1.0f;
+	float      m_Aspect                          = 1.0f; // TODO(MarcasRealAccount): Replace with render target of some kind.
 	bool       m_RecalculateViewMatrix           = true;
 	bool       m_RecalculateProjectionMatrix     = true;
 	bool       m_RecalculateProjectionViewMatrix = true;

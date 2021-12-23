@@ -19,6 +19,7 @@ RasterRenderer::RasterRenderer()
       m_DescriptorSetLayout(m_Device),
       m_DescriptorPool(m_Device),
       m_UniformBuffer(m_Vma),
+      m_CameraTransform(nullptr),
       m_Mesh(m_Vma) {}
 
 void RasterRenderer::initImpl()
@@ -108,7 +109,7 @@ void RasterRenderer::initImpl()
 
 	m_Mesh.updateMeshData();
 
-	m_UniformBuffer.m_Size = Utils::alignCeil<vk::DeviceSize>(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * getMaxFramesInFlight();
+	m_UniformBuffer.m_Size = Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * getMaxFramesInFlight();
 	m_UniformBuffer.m_Usage |= vk::BufferUsageFlagBits::eUniformBuffer;
 	m_UniformBuffer.m_MemoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 	if (!m_UniformBuffer.create())
@@ -123,7 +124,7 @@ void RasterRenderer::initImpl()
 	writeDescriptorSets.resize(getMaxFramesInFlight());
 	for (std::size_t i = 0; i < getMaxFramesInFlight(); ++i)
 	{
-		writeDescriptorBufferInfos[i] = { m_UniformBuffer, Utils::alignCeil<vk::DeviceSize>(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * i, 128 };
+		writeDescriptorBufferInfos[i] = { m_UniformBuffer, Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * i, 128 };
 		writeDescriptorSets[i]        = { m_DescriptorSets[i], 0, 0, 1, vk::DescriptorType::eUniformBuffer, nullptr, &writeDescriptorBufferInfos[i], nullptr };
 	}
 
@@ -170,7 +171,7 @@ void RasterRenderer::renderImpl()
 			auto& cameraComponent = cameras.get<CameraComponent>(camera);
 			cameraComponent.setAspect(static_cast<float>(m_Swapchain.m_Width) / m_Swapchain.m_Height);
 			auto& projectionViewMatrix = cameraComponent.getProjectionViewMatrix();
-			std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil<vk::DeviceSize>(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame), &projectionViewMatrix, sizeof(projectionViewMatrix));
+			std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame), &projectionViewMatrix, sizeof(projectionViewMatrix));
 
 			currentCommandBuffer.cmdBeginRenderPass(m_RenderPass, m_Framebuffers[m_CurrentImage], { { 0, 0 }, { m_Swapchain.m_Width, m_Swapchain.m_Height } }, { vk::ClearColorValue(std::array<float, 4> { 0.1f, 0.1f, 0.1f, 1.0f }), vk::ClearDepthStencilValue(1.0f, 0) });
 			currentCommandBuffer.cmdSetViewports({ { 0.0f, 0.0f, static_cast<float>(m_Swapchain.m_Width), static_cast<float>(m_Swapchain.m_Height), 0.0f, 1.0f } });
@@ -184,7 +185,7 @@ void RasterRenderer::renderImpl()
 				if (pMesh)
 				{
 					auto& transformationMatrix = transformComponent.getMatrix();
-					std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil<vk::DeviceSize>(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
+					std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
 
 					currentCommandBuffer.cmdBindPipeline(m_Pipeline);
 					currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});

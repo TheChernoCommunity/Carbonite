@@ -1,7 +1,21 @@
 #pragma once
 
+#include "Utils/Core.h"
+
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
+
+#if CARBONITE_IS_TOOLSET_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4201)
+#endif
+
+#include <glm/gtx/quaternion.hpp>
+
+#if CARBONITE_IS_TOOLSET_MSVC
+#pragma warning(pop)
+#endif
+
 #include <spdlog/spdlog.h>
 #include <stb_image.h>
 #include <vk_mem_alloc.h>

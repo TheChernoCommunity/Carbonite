@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 namespace Utils
 {
 	constexpr unsigned bit(const int x)
@@ -8,14 +10,85 @@ namespace Utils
 	}
 
 	template <class T>
-	constexpr T alignFloor(T value, T floor)
+	struct FloorImpl;
+
+	template <>
+	struct FloorImpl<std::int8_t>
 	{
-		return std::floor(value / floor) * floor;
+		std::int8_t operator()(std::int8_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::int16_t>
+	{
+		std::int16_t operator()(std::int16_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::int32_t>
+	{
+		std::int32_t operator()(std::int32_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::int64_t>
+	{
+		std::int64_t operator()(std::int64_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::uint8_t>
+	{
+		std::uint8_t operator()(std::uint8_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::uint16_t>
+	{
+		std::uint16_t operator()(std::uint16_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::uint32_t>
+	{
+		std::uint32_t operator()(std::uint32_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::uint64_t>
+	{
+		std::uint64_t operator()(std::uint64_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<float>
+	{
+		float operator()(float value) { return std::floorf(value); }
+	};
+
+	template <>
+	struct FloorImpl<double>
+	{
+		double operator()(double value) { return std::floor(value); }
+	};
+
+	template <>
+	struct FloorImpl<long double>
+	{
+		long double operator()(long double value) { return std::floorl(value); }
+	};
+
+	template <class L, class R>
+	constexpr auto alignFloor(L value, R floor)
+	{
+		auto div = value / floor;
+		return FloorImpl<decltype(div)>()(div) * floor;
 	}
 
-	template <class T>
-	constexpr T alignCeil(T value, T ceil)
+	template <class L, class R>
+	constexpr auto alignCeil(L value, R ceil)
 	{
-		return std::ceil((value + (ceil - T(1))) / ceil) * ceil;
+		auto div = (value + (ceil - R(1))) / ceil;
+		return FloorImpl<decltype(div)>()(div) * ceil;
 	}
 } // namespace Utils
