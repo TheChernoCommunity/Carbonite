@@ -10,10 +10,7 @@ TransformComponent::TransformComponent(const glm::fvec3& translation, const glm:
       m_Scale(scale),
       m_RecalculateMatrix(true),
       m_HasChanged(false),
-      m_CachedMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                     0.0f, 1.0f, 0.0f, 0.0f,
-                     0.0f, 0.0f, 1.0f, 0.0f,
-                     0.0f, 0.0f, 0.0f, 1.0f) {}
+      m_CachedMatrix(1.0f) {}
 
 TransformComponent::TransformComponent(const glm::fvec3& translation)
     : m_Translation(translation),
@@ -21,10 +18,7 @@ TransformComponent::TransformComponent(const glm::fvec3& translation)
       m_Scale(1.0f, 1.0f, 1.0f),
       m_RecalculateMatrix(true),
       m_HasChanged(false),
-      m_CachedMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                     0.0f, 1.0f, 0.0f, 0.0f,
-                     0.0f, 0.0f, 1.0f, 0.0f,
-                     0.0f, 0.0f, 0.0f, 1.0f) {}
+      m_CachedMatrix(1.0f) {}
 
 void TransformComponent::recalculateMatrix()
 {

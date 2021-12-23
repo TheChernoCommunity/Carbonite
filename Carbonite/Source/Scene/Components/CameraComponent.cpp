@@ -13,18 +13,9 @@ CameraComponent::CameraComponent(float fov, float near, float far)
       m_RecalculateProjectionMatrix(true),
       m_RecalculateProjectionViewMatrix(true),
       m_HasChanged(false),
-      m_CachedViewMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                         0.0f, 1.0f, 0.0f, 0.0f,
-                         0.0f, 0.0f, 1.0f, 0.0f,
-                         0.0f, 0.0f, 0.0f, 1.0f),
-      m_CachedProjectionMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                               0.0f, 1.0f, 0.0f, 0.0f,
-                               0.0f, 0.0f, 1.0f, 0.0f,
-                               0.0f, 0.0f, 0.0f, 1.0f),
-      m_CachedProjectionViewMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                                   0.0f, 1.0f, 0.0f, 0.0f,
-                                   0.0f, 0.0f, 1.0f, 0.0f,
-                                   0.0f, 0.0f, 0.0f, 1.0f) {}
+      m_CachedViewMatrix(1.0f),
+      m_CachedProjectionMatrix(1.0f),
+      m_CachedProjectionViewMatrix(1.0f) {}
 
 CameraComponent::CameraComponent(float fov, float near)
     : m_Fov(fov),
@@ -35,18 +26,9 @@ CameraComponent::CameraComponent(float fov, float near)
       m_RecalculateProjectionMatrix(true),
       m_RecalculateProjectionViewMatrix(true),
       m_HasChanged(false),
-      m_CachedViewMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                         0.0f, 1.0f, 0.0f, 0.0f,
-                         0.0f, 0.0f, 1.0f, 0.0f,
-                         0.0f, 0.0f, 0.0f, 1.0f),
-      m_CachedProjectionMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                               0.0f, 1.0f, 0.0f, 0.0f,
-                               0.0f, 0.0f, 1.0f, 0.0f,
-                               0.0f, 0.0f, 0.0f, 1.0f),
-      m_CachedProjectionViewMatrix(1.0f, 0.0f, 0.0f, 0.0f,
-                                   0.0f, 1.0f, 0.0f, 0.0f,
-                                   0.0f, 0.0f, 1.0f, 0.0f,
-                                   0.0f, 0.0f, 0.0f, 1.0f) {}
+      m_CachedViewMatrix(1.0f),
+      m_CachedProjectionMatrix(1.0f),
+      m_CachedProjectionViewMatrix(1.0f) {}
 
 void CameraComponent::recalculateViewMatrix()
 {
@@ -148,5 +130,5 @@ void CameraComponent::recalculateProjectionMatrix()
 
 void CameraComponent::recalculateProjectionViewMatrix()
 {
-	m_CachedProjectionViewMatrix = m_CachedProjectionMatrix * m_CachedViewMatrix;
+	m_CachedProjectionViewMatrix = getProjectionMatrix() * getViewMatrix();
 }

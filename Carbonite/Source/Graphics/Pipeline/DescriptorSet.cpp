@@ -6,7 +6,7 @@
 namespace Graphics
 {
 	DescriptorSet::DescriptorSet(DescriptorPool& descriptorPool, vk::DescriptorSet handle)
-	    : m_DescriptorPool(descriptorPool), Handle(handle)
+	    : Handle(handle), m_DescriptorPool(descriptorPool)
 	{
 		m_DescriptorPool.addChild(this);
 	}
