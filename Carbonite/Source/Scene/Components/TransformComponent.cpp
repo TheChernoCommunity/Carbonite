@@ -20,6 +20,24 @@ TransformComponent::TransformComponent(const glm::fvec3& translation)
       m_HasChanged(false),
       m_CachedMatrix(1.0f) {}
 
+glm::fvec3 TransformComponent::getForward()
+{
+	auto& matrix = getMatrix();
+	return { matrix[0][0], matrix[1][0], matrix[2][0] };
+}
+
+glm::fvec3 TransformComponent::getRight()
+{
+	auto& matrix = getMatrix();
+	return { matrix[0][1], matrix[1][1], matrix[2][1] };
+}
+
+glm::fvec3 TransformComponent::getUp()
+{
+	auto& matrix = getMatrix();
+	return { matrix[0][2], matrix[1][2], matrix[2][2] };
+}
+
 void TransformComponent::recalculateMatrix()
 {
 	// translation(x, y, z) = [ 1, 0, 0, 0 ]

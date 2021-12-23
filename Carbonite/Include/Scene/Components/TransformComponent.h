@@ -35,6 +35,10 @@ public:
 		return m_CachedMatrix;
 	}
 
+	glm::fvec3 getForward();
+	glm::fvec3 getRight();
+	glm::fvec3 getUp();
+
 	void setParent(TransformComponent* parent)
 	{
 		if (m_Parent != parent)

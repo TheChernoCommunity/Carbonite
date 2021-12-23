@@ -35,5 +35,4 @@ public:
 	Scene               m_Scene;
 	TransformComponent* m_CameraTransform;
 	Mesh                m_Mesh;
-	TransformComponent* m_CubeTransform;
 };

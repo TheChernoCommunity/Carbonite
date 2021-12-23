@@ -138,7 +138,6 @@ void RasterRenderer::initImpl()
 
 	entt::entity cube = m_Scene.instantiate({});
 	registry.emplace<MeshComponent>(cube, &m_Mesh);
-	m_CubeTransform = &registry.get<TransformComponent>(cube);
 }
 
 void RasterRenderer::deinitImpl()
@@ -147,23 +146,13 @@ void RasterRenderer::deinitImpl()
 }
 
 static glm::fvec3 rotation = { 0.0f, 0.0f, 0.0f };
-static float      t        = 0.0f;
 
 void RasterRenderer::renderImpl()
 {
-	t += 0.01f;
-	rotation.y += 1.10f;
-	rotation.z += 2.30f;
-
-	glm::fvec3 forward = {
-		cosf(glm::radians(rotation.y)) * cosf(glm::radians(rotation.z)),
-		cosf(glm::radians(rotation.y)) * -sinf(glm::radians(rotation.z)),
-		sinf(glm::radians(rotation.y))
-	};
-	glm::fvec3 position = forward * 5.0f;
-
+	rotation.y += 0.01f;
+	rotation.z += 0.03f;
 	m_CameraTransform->setRotation(rotation);
-	m_CubeTransform->setTranslation(position);
+	m_CameraTransform->setTranslation(m_CameraTransform->getForward() * -5.0f);
 
 	void* uniformBufferMemory = m_UniformBuffer.mapMemory();
 
