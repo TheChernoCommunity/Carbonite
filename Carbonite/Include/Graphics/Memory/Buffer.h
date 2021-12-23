@@ -17,24 +17,12 @@ namespace Graphics::Memory
 		void* mapMemory();
 		void  unmapMemory();
 
-		std::uint64_t getSize() const
-		{
-			return m_AllocatedSize;
-		}
+		std::uint64_t getSize() const { return m_AllocatedSize; }
 
-		auto& getVma()
-		{
-			return m_Vma;
-		}
-		auto& getVma() const
-		{
-			return m_Vma;
-		}
+		auto& getVma() { return m_Vma; }
+		auto& getVma() const { return m_Vma; }
 
-		auto& getAllocation() const
-		{
-			return m_Allocation;
-		}
+		auto& getAllocation() const { return m_Allocation; }
 
 	private:
 		virtual void createImpl() override;

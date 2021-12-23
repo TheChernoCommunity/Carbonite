@@ -12,14 +12,8 @@ namespace Graphics
 		DescriptorSetLayout(Device& device);
 		~DescriptorSetLayout();
 
-		auto& getDevice()
-		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+		auto& getDevice() { return m_Device; }
+		auto& getDevice() const { return m_Device; }
 
 	private:
 		virtual void createImpl() override;

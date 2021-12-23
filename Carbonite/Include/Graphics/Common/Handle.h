@@ -33,10 +33,7 @@ namespace Graphics
 			void addChild(HandleBase* child);
 			void removeChild(HandleBase* child);
 
-			auto& getChildren() const
-			{
-				return m_Children;
-			}
+			auto& getChildren() const { return m_Children; }
 
 		protected:
 			std::size_t m_ChildItr = 0;
@@ -63,50 +60,20 @@ namespace Graphics
 			// i.e. '->', '*', '(HandleType&)', '.getHandle()'
 
 		public:
-			HandleStorage()
-			    : m_Handle(nullptr) {}
-			HandleStorage(const HandleType& handle)
-			    : m_Handle(handle) {}
-			HandleStorage(HandleType&& handle)
-			    : m_Handle(std::move(handle)) {}
+			HandleStorage() : m_Handle(nullptr) {}
+			HandleStorage(const HandleType& handle) : m_Handle(handle) {}
+			HandleStorage(HandleType&& handle) : m_Handle(std::move(handle)) {}
 
-			virtual bool isValid() const override
-			{
-				return m_Handle;
-			}
+			virtual bool isValid() const override { return m_Handle; }
 
-			auto& getHandle()
-			{
-				return m_Handle;
-			}
-			auto& getHandle() const
-			{
-				return m_Handle;
-			}
-			auto& operator*()
-			{
-				return m_Handle;
-			}
-			auto& operator*() const
-			{
-				return m_Handle;
-			}
-			auto* operator->()
-			{
-				return &m_Handle;
-			}
-			auto* operator->() const
-			{
-				return &m_Handle;
-			}
-			operator HandleType&()
-			{
-				return m_Handle;
-			}
-			operator const HandleType&() const
-			{
-				return m_Handle;
-			}
+			auto& getHandle() { return m_Handle; }
+			auto& getHandle() const { return m_Handle; }
+			auto& operator*() { return m_Handle; }
+			auto& operator*() const { return m_Handle; }
+			auto* operator->() { return &m_Handle; }
+			auto* operator->() const { return &m_Handle; }
+			      operator HandleType&() { return m_Handle; }
+			      operator const HandleType&() const { return m_Handle; }
 
 		protected:
 			HandleType m_Handle;
@@ -129,24 +96,15 @@ namespace Graphics
 			static constexpr bool Debuggable = IsDebuggable;
 
 		public:
-			Handle()
-			    : m_Created(false), m_Destroyable(true) {}
-			Handle(const HandleType& handle)
-			    : Base(handle), m_Created(true), m_Destroyable(false) {}
-			Handle(HandleType&& handle)
-			    : Base(std::move(handle)), m_Created(true), m_Destroyable(false) {}
+			Handle() : m_Created(false), m_Destroyable(true) {}
+			Handle(const HandleType& handle) : Base(handle), m_Created(true), m_Destroyable(false) {}
+			Handle(HandleType&& handle) : Base(std::move(handle)), m_Created(true), m_Destroyable(false) {}
 
 			virtual bool create() override;
 			virtual void destroy() override;
 
-			virtual bool isCreated() const override
-			{
-				return m_Created;
-			}
-			virtual bool isDestroyable() const override
-			{
-				return m_Destroyable;
-			}
+			virtual bool isCreated() const override { return m_Created; }
+			virtual bool isDestroyable() const override { return m_Destroyable; }
 
 		private:
 			virtual void createImpl()  = 0;
@@ -168,22 +126,14 @@ namespace Graphics
 			static constexpr bool Debuggable = IsDebuggable;
 
 		public:
-			Handle(const HandleType& handle)
-			    : Base(handle) {}
-			Handle(HandleType&& handle)
-			    : Base(std::move(handle)) {}
+			Handle(const HandleType& handle) : Base(handle) {}
+			Handle(HandleType&& handle) : Base(std::move(handle)) {}
 
 			virtual bool create() override;
 			virtual void destroy() override;
 
-			virtual bool isCreated() const override
-			{
-				return true;
-			}
-			virtual bool isDestroyable() const override
-			{
-				return false;
-			}
+			virtual bool isCreated() const override { return true; }
+			virtual bool isDestroyable() const override { return false; }
 		};
 	} // namespace Detail
 

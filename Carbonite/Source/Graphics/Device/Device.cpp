@@ -226,8 +226,9 @@ namespace Graphics
 		if (!bestPhysicalDevice)
 			return;
 
-		m_PhysicalDevice     = bestPhysicalDevice;
-		auto availableLayers = m_PhysicalDevice.enumerateDeviceLayerProperties();
+		m_PhysicalDevice           = bestPhysicalDevice;
+		m_PhysicalDeviceProperties = m_PhysicalDevice.getProperties();
+		auto availableLayers       = m_PhysicalDevice.enumerateDeviceLayerProperties();
 		for (auto& layer : m_Layers)
 		{
 			for (auto& availLayer : availableLayers)

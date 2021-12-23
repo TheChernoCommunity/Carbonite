@@ -20,14 +20,8 @@ namespace Graphics
 			void          waitFor(std::uint64_t timeout);
 			std::uint64_t getValue();
 
-			auto& getDevice()
-			{
-				return m_Device;
-			}
-			auto& getDevice() const
-			{
-				return m_Device;
-			}
+			auto& getDevice() { return m_Device; }
+			auto& getDevice() const { return m_Device; }
 
 		private:
 			virtual void createImpl() override;

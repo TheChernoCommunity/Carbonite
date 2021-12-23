@@ -14,21 +14,12 @@ namespace Graphics
 		ComputePipeline(PipelineLayout& pipelineLayout);
 		~ComputePipeline();
 
-		virtual vk::PipelineBindPoint getBindPoint() override
-		{
-			return vk::PipelineBindPoint::eCompute;
-		}
+		virtual vk::PipelineBindPoint getBindPoint() override { return vk::PipelineBindPoint::eCompute; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getPipelineLayout()
-		{
-			return m_PipelineLayout;
-		}
-		auto& getPipelineLayout() const
-		{
-			return m_PipelineLayout;
-		}
+		auto&   getPipelineLayout() { return m_PipelineLayout; }
+		auto&   getPipelineLayout() const { return m_PipelineLayout; }
 
 	private:
 		virtual void createImpl() override;

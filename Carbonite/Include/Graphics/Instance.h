@@ -53,61 +53,22 @@ namespace Graphics
 		Version getLayerVersion(std::string_view name) const;
 		Version getExtensionVersion(std::string_view name) const;
 
-		auto& getAppName() const
-		{
-			return m_AppName;
-		}
-		auto getAppVersion() const
-		{
-			return m_AppVersion;
-		}
-		auto& getEngineName() const
-		{
-			return m_EngineName;
-		}
-		auto getEngineVersion() const
-		{
-			return m_EngineVersion;
-		}
-		auto getApiVersion() const
-		{
-			return m_ApiVersion;
-		}
+		auto& getAppName() const { return m_AppName; }
+		auto  getAppVersion() const { return m_AppVersion; }
+		auto& getEngineName() const { return m_EngineName; }
+		auto  getEngineVersion() const { return m_EngineVersion; }
+		auto  getApiVersion() const { return m_ApiVersion; }
 
-		auto& getEnabledLayers() const
-		{
-			return m_EnabledLayers;
-		}
-		auto& getEnabledExtensions() const
-		{
-			return m_EnabledExtensions;
-		}
-		auto& getMissingLayers() const
-		{
-			return m_MissingLayers;
-		}
-		auto& getMissingExtensions() const
-		{
-			return m_MissingExtensions;
-		}
+		auto& getEnabledLayers() const { return m_EnabledLayers; }
+		auto& getEnabledExtensions() const { return m_EnabledExtensions; }
+		auto& getMissingLayers() const { return m_MissingLayers; }
+		auto& getMissingExtensions() const { return m_MissingExtensions; }
 
-		bool isLayerEnabled(std::string_view name) const
-		{
-			return getLayerVersion(name);
-		}
-		bool isExtensionEnabled(std::string_view name) const
-		{
-			return getExtensionVersion(name);
-		}
+		bool isLayerEnabled(std::string_view name) const { return getLayerVersion(name); }
+		bool isExtensionEnabled(std::string_view name) const { return getExtensionVersion(name); }
 
-		auto& getDispatcher()
-		{
-			return m_Dispatcher;
-		}
-		auto& getDispatcher() const
-		{
-			return m_Dispatcher;
-		}
+		auto& getDispatcher() { return m_Dispatcher; }
+		auto& getDispatcher() const { return m_Dispatcher; }
 
 	private:
 		virtual void createImpl() override;

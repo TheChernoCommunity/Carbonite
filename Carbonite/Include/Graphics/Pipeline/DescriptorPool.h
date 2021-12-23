@@ -16,15 +16,9 @@ namespace Graphics
 		DescriptorPool(Device& device);
 		~DescriptorPool();
 
-		auto& getDevice()
-		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
-
+		auto& getDevice() { return m_Device; }
+		auto& getDevice() const { return m_Device; }
+		
 		std::vector<DescriptorSet> allocateSets(const std::vector<DescriptorSetLayout*>& descriptorSetLayouts);
 		void                       updateDescriptorSets(const std::vector<vk::WriteDescriptorSet>& writes, const std::vector<vk::CopyDescriptorSet>& copies);
 

@@ -18,23 +18,14 @@ namespace Graphics
 			Fence(Device& device);
 			~Fence();
 
-			void setSignaled()
-			{
-				m_Signaled = true;
-			}
+			void setSignaled() { m_Signaled = true; }
 
 			void reset();
 			void waitFor(std::uint64_t timeout);
 			bool getState();
 
-			auto& getDevice()
-			{
-				return m_Device;
-			}
-			auto& getDevice() const
-			{
-				return m_Device;
-			}
+			auto& getDevice() { return m_Device; }
+			auto& getDevice() const { return m_Device; }
 
 		private:
 			virtual void createImpl() override;

@@ -87,51 +87,23 @@ namespace Graphics
 			}
 		}
 
-		auto& getSurface()
-		{
-			return m_Surface;
-		}
-		auto& getSurface() const
-		{
-			return m_Surface;
-		}
-		auto& getPhysicalDevice() const
-		{
-			return m_PhysicalDevice;
-		}
+		auto& getSurface() { return m_Surface; }
+		auto& getSurface() const { return m_Surface; }
+		auto& getPhysicalDevice() const { return m_PhysicalDevice; }
+		auto& getPhysicalDeviceProperties() const { return m_PhysicalDeviceProperties; }
+		auto& getPhysicalDeviceLimits() const { return m_PhysicalDeviceProperties.limits; }
 
-		auto& getEnabledLayers() const
-		{
-			return m_EnabledLayers;
-		}
-		auto& getEnabledExtensions() const
-		{
-			return m_EnabledExtensions;
-		}
+		auto& getEnabledLayers() const { return m_EnabledLayers; }
+		auto& getEnabledExtensions() const { return m_EnabledExtensions; }
 
 		QueueFamily* getQueueFamily(vk::QueueFlags queueFlags, bool supportsPresent = false) const;
-		auto&        getQueueFamilies() const
-		{
-			return m_QueueFamilies;
-		}
+		auto&        getQueueFamilies() const { return m_QueueFamilies; }
 
-		bool isLayerEnabled(std::string_view name) const
-		{
-			return getLayerVersion(name);
-		}
-		bool isExtensionEnabled(std::string_view name) const
-		{
-			return getExtensionVersion(name);
-		}
+		bool isLayerEnabled(std::string_view name) const { return getLayerVersion(name); }
+		bool isExtensionEnabled(std::string_view name) const { return getExtensionVersion(name); }
 
-		auto& getDispatcher()
-		{
-			return m_Dispatcher;
-		}
-		auto& getDispatcher() const
-		{
-			return m_Dispatcher;
-		}
+		auto& getDispatcher() { return m_Dispatcher; }
+		auto& getDispatcher() const { return m_Dispatcher; }
 
 	private:
 		virtual void createImpl() override;
@@ -146,7 +118,8 @@ namespace Graphics
 	private:
 		Surface& m_Surface;
 
-		vk::PhysicalDevice m_PhysicalDevice = nullptr;
+		vk::PhysicalDevice           m_PhysicalDevice = nullptr;
+		vk::PhysicalDeviceProperties m_PhysicalDeviceProperties;
 
 		DeviceLayers     m_Layers;
 		DeviceExtensions m_Extensions;

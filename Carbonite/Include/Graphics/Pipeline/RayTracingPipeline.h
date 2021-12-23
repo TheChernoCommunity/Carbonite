@@ -16,21 +16,12 @@ namespace Graphics
 		RayTracingPipeline(PipelineLayout& pipelineLayout);
 		~RayTracingPipeline();
 
-		virtual vk::PipelineBindPoint getBindPoint() override
-		{
-			return vk::PipelineBindPoint::eRayTracingKHR;
-		}
+		virtual vk::PipelineBindPoint getBindPoint() override { return vk::PipelineBindPoint::eRayTracingKHR; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getPipelineLayout()
-		{
-			return m_PipelineLayout;
-		}
-		auto& getPipelineLayout() const
-		{
-			return m_PipelineLayout;
-		}
+		auto&   getPipelineLayout() { return m_PipelineLayout; }
+		auto&   getPipelineLayout() const { return m_PipelineLayout; }
 
 	private:
 		virtual void createImpl() override;

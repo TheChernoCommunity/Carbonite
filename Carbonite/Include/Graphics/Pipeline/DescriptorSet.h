@@ -15,14 +15,8 @@ namespace Graphics
 		DescriptorSet(DescriptorPool& descriptorPool, vk::DescriptorSet handle);
 		~DescriptorSet();
 
-		auto& getDescriptorPool()
-		{
-			return m_DescriptorPool;
-		}
-		auto& getDescriptorPool() const
-		{
-			return m_DescriptorPool;
-		}
+		auto& getDescriptorPool() { return m_DescriptorPool; }
+		auto& getDescriptorPool() const { return m_DescriptorPool; }
 
 	private:
 		DescriptorPool& m_DescriptorPool;

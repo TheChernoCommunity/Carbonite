@@ -7,17 +7,11 @@ namespace Graphics
 	union Version
 	{
 	public:
-		constexpr Version()
-		    : m_Version(0) {}
-		constexpr Version(std::uint32_t version)
-		    : m_Version(version) {}
-		constexpr Version(std::uint32_t variant, std::uint32_t major, std::uint32_t minor, std::uint32_t patch)
-		    : m_SubVersions({ patch, minor, major, variant }) {}
+		constexpr Version() : m_Version(0) {}
+		constexpr Version(std::uint32_t version) : m_Version(version) {}
+		constexpr Version(std::uint32_t variant, std::uint32_t major, std::uint32_t minor, std::uint32_t patch) : m_SubVersions({ patch, minor, major, variant }) {}
 
-		constexpr operator std::uint32_t() const
-		{
-			return m_Version;
-		}
+		constexpr operator std::uint32_t() const { return m_Version; }
 
 	public:
 		struct SubVersions

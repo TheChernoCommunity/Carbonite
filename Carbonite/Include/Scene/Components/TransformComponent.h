@@ -94,8 +94,8 @@ private:
                                   0.0f, 0.0f, 0.0f, 1.0f };
 };
 
-/*template <>
+template <>
 struct entt::component_traits<TransformComponent> : basic_component_traits
 {
-	using in_place_delete = std::true_type;
-};*/
+	static constexpr bool in_place_delete = true;
+};

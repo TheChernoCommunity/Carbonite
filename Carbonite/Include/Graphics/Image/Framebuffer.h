@@ -13,14 +13,8 @@ namespace Graphics
 		Framebuffer(RenderPass& renderPass);
 		~Framebuffer();
 
-		auto& getRenderPass()
-		{
-			return m_RenderPass;
-		}
-		auto& getRenderPass() const
-		{
-			return m_RenderPass;
-		}
+		auto& getRenderPass() { return m_RenderPass; }
+		auto& getRenderPass() const { return m_RenderPass; }
 
 	private:
 		virtual void createImpl() override;

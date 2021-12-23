@@ -41,11 +41,11 @@ public:
 	enum class Category
 	{
 		None        = 0,
-		Application = bit(0),
-		Input       = bit(1),
-		Keyboard    = bit(2),
-		Mouse       = bit(3),
-		MouseButton = bit(4)
+		Application = Utils::bit(0),
+		Input       = Utils::bit(1),
+		Keyboard    = Utils::bit(2),
+		Mouse       = Utils::bit(3),
+		MouseButton = Utils::bit(4)
 	};
 
 	virtual ~Event() = default;

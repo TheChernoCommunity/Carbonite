@@ -18,19 +18,10 @@ namespace Graphics
 		Image(Memory::VMA& vma, vk::Image& handle);
 		~Image();
 
-		auto getAllocation() const
-		{
-			return m_Allocation;
-		}
+		auto getAllocation() const { return m_Allocation; }
 
-		auto& getVma()
-		{
-			return m_Vma;
-		}
-		auto& getVma() const
-		{
-			return m_Vma;
-		}
+		auto& getVma() { return m_Vma; }
+		auto& getVma() const { return m_Vma; }
 
 	private:
 		virtual void createImpl() override;

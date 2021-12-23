@@ -1,8 +1,8 @@
 #include "PCH.h"
 
-#include "Scene/Scene.h"
 #include "Scene/Components/TransformComponent.h"
 #include "Scene/ECS.h"
+#include "Scene/Scene.h"
 
 Scene::Scene()
 {

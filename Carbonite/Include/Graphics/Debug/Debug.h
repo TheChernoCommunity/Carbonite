@@ -10,10 +10,7 @@ namespace Graphics
 	{
 	public:
 		static void Disable();
-		static auto IsEnabled()
-		{
-			return s_Enabled;
-		}
+		static auto IsEnabled() { return s_Enabled; }
 
 		static void PopulateCreateInfo(vk::DebugUtilsMessengerCreateInfoEXT& createInfo);
 
@@ -29,14 +26,8 @@ namespace Graphics
 		Debug(Instance& instance);
 		~Debug();
 
-		auto& getInstance()
-		{
-			return m_Instance;
-		}
-		auto& getInstance() const
-		{
-			return m_Instance;
-		}
+		auto& getInstance() { return m_Instance; }
+		auto& getInstance() const { return m_Instance; }
 
 	private:
 		virtual void createImpl() override;

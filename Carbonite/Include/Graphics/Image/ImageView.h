@@ -12,14 +12,8 @@ namespace Graphics
 		ImageView(Image& image);
 		~ImageView();
 
-		auto& getImage()
-		{
-			return m_Image;
-		}
-		auto& getImage() const
-		{
-			return m_Image;
-		}
+		auto& getImage() { return m_Image; }
+		auto& getImage() const { return m_Image; }
 
 	private:
 		virtual void createImpl() override;

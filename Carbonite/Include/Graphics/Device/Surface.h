@@ -13,14 +13,8 @@ namespace Graphics
 		Surface(Instance& window);
 		~Surface();
 
-		auto& getInstance()
-		{
-			return m_Instance;
-		}
-		auto& getInstance() const
-		{
-			return m_Instance;
-		}
+		auto& getInstance() { return m_Instance; }
+		auto& getInstance() const { return m_Instance; }
 
 	private:
 		virtual void createImpl() override;

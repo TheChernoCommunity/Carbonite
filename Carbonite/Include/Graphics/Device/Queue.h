@@ -23,42 +23,18 @@ namespace Graphics
 		QueueFamily(Device& device, std::uint32_t familyIndex, vk::QueueFlags queueFlags, std::uint32_t timestampValidBits, vk::Extent3D minImageTransferGranularity, bool supportsPresent, std::uint32_t queueCount);
 		~QueueFamily();
 
-		auto& getDevice()
-		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+		auto& getDevice() { return m_Device; }
+		auto& getDevice() const { return m_Device; }
 
-		auto getQueueFlags() const
-		{
-			return m_QueueFlags;
-		}
-		auto getTimestampValidBits() const
-		{
-			return m_TimestampValidBits;
-		}
-		auto& getMinImageTransferGranularity() const
-		{
-			return m_MinImageTransferGranularity;
-		}
-		auto isPresentSupported() const
-		{
-			return m_SupportsPresent;
-		}
+		auto  getQueueFlags() const { return m_QueueFlags; }
+		auto  getTimestampValidBits() const { return m_TimestampValidBits; }
+		auto& getMinImageTransferGranularity() const { return m_MinImageTransferGranularity; }
+		auto  isPresentSupported() const { return m_SupportsPresent; }
 
-		auto getFamilyIndex() const
-		{
-			return m_FamilyIndex;
-		}
+		auto getFamilyIndex() const { return m_FamilyIndex; }
 
 		Queue* getQueue(std::uint32_t index) const;
-		auto&  getQueues() const
-		{
-			return m_Queues;
-		}
+		auto&  getQueues() const { return m_Queues; }
 
 	private:
 		Device& m_Device;
@@ -82,21 +58,12 @@ namespace Graphics
 		std::vector<vk::Result> present(const std::vector<Swapchain*>& swapchains, const std::vector<std::uint32_t>& imageIndices, const std::vector<Sync::Semaphore*>& waitSemaphores);
 		void                    waitIdle();
 
-		auto getIndex() const
-		{
-			return m_Index;
-		}
+		auto getIndex() const { return m_Index; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getQueueFamily()
-		{
-			return m_QueueFamily;
-		}
-		auto& getQueueFamily() const
-		{
-			return m_QueueFamily;
-		}
+		auto&   getQueueFamily() { return m_QueueFamily; }
+		auto&   getQueueFamily() const { return m_QueueFamily; }
 
 	private:
 		QueueFamily& m_QueueFamily;

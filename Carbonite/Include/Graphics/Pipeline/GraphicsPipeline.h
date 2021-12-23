@@ -102,29 +102,14 @@ namespace Graphics
 		GraphicsPipeline(RenderPass& renderPass, PipelineLayout& pipelineLayout);
 		~GraphicsPipeline();
 
-		virtual vk::PipelineBindPoint getBindPoint() override
-		{
-			return vk::PipelineBindPoint::eGraphics;
-		}
+		virtual vk::PipelineBindPoint getBindPoint() override { return vk::PipelineBindPoint::eGraphics; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getRenderPass()
-		{
-			return m_RenderPass;
-		}
-		auto& getRenderPass() const
-		{
-			return m_RenderPass;
-		}
-		auto& getPipelineLayout()
-		{
-			return m_PipelineLayout;
-		}
-		auto& getPipelineLayout() const
-		{
-			return m_PipelineLayout;
-		}
+		auto&   getRenderPass() { return m_RenderPass; }
+		auto&   getRenderPass() const { return m_RenderPass; }
+		auto&   getPipelineLayout() { return m_PipelineLayout; }
+		auto&   getPipelineLayout() const { return m_PipelineLayout; }
 
 	private:
 		virtual void createImpl() override;

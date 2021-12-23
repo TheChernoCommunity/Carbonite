@@ -19,10 +19,7 @@ namespace Graphics
 		~CommandPool();
 
 		void setQueueFamily(QueueFamily& queueFamily);
-		auto getQueueFamily() const
-		{
-			return m_QueueFamily;
-		}
+		auto getQueueFamily() const { return m_QueueFamily; }
 
 		void reset();
 
@@ -31,19 +28,10 @@ namespace Graphics
 		CommandBuffer*                    getCommandBuffer(vk::CommandBufferLevel level, std::uint32_t index) const;
 		std::vector<CommandBuffer>*       getCommandBuffers(vk::CommandBufferLevel level);
 		const std::vector<CommandBuffer>* getCommandBuffers(vk::CommandBufferLevel level) const;
-		auto&                             getCommandBuffers() const
-		{
-			return m_CommandBuffers;
-		}
+		auto&                             getCommandBuffers() const { return m_CommandBuffers; }
 
-		auto& getDevice()
-		{
-			return m_Device;
-		}
-		auto& getDevice() const
-		{
-			return m_Device;
-		}
+		auto& getDevice() { return m_Device; }
+		auto& getDevice() const { return m_Device; }
 
 	private:
 		virtual void createImpl() override;

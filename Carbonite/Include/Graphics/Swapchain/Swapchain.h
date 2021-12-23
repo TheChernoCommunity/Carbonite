@@ -28,25 +28,13 @@ namespace Graphics
 		vk::Result acquireNextImage(std::uint64_t timeout, Sync::Semaphore* signalSemaphore, Sync::Fence*, std::uint32_t& image);
 
 		Image* getImage(std::uint32_t image) const;
-		auto&  getImages()
-		{
-			return m_Images;
-		}
-		auto& getImages() const
-		{
-			return m_Images;
-		}
+		auto&  getImages() { return m_Images; }
+		auto&  getImages() const { return m_Images; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getVma()
-		{
-			return m_Vma;
-		}
-		auto& getVma() const
-		{
-			return m_Vma;
-		}
+		auto&   getVma() { return m_Vma; }
+		auto&   getVma() const { return m_Vma; }
 
 	private:
 		virtual void createImpl() override;

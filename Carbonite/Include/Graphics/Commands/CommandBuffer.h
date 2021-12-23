@@ -46,21 +46,12 @@ namespace Graphics
 		void cmdCopyBufferToImage(Memory::Buffer& srcBuffer, Image& dstImage, vk::ImageLayout dstImageLayout, const std::vector<vk::BufferImageCopy>& regions);
 		void cmdPipelineBarrier(vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, const std::vector<vk::MemoryBarrier>& memoryBarriers, const std::vector<vk::BufferMemoryBarrier>& bufferMemoryBarriers, const std::vector<vk::ImageMemoryBarrier>& imageMemoryBarrier);
 
-		auto getLevel() const
-		{
-			return m_Level;
-		}
+		auto getLevel() const { return m_Level; }
 
 		Device& getDevice();
 		Device& getDevice() const;
-		auto&   getPool()
-		{
-			return m_Pool;
-		}
-		auto& getPool() const
-		{
-			return m_Pool;
-		}
+		auto&   getPool() { return m_Pool; }
+		auto&   getPool() const { return m_Pool; }
 
 	private:
 		CommandPool&           m_Pool;
