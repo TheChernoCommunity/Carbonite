@@ -150,7 +150,7 @@ If you think this is an issue with the premake setup please open an issue.]]
 end
 
 function vulkan:getVulkanSDKPath()
-	self.sdkPath = _OPTIONS["vulkan-sdk"]
+	self.sdkPath = path.translate(_OPTIONS["vulkan-sdk"], "/")
 
 	if common.host == "windows" then
 		self.libPath = "/Lib/"

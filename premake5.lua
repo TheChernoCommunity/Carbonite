@@ -98,14 +98,15 @@ workspace("Carbonite")
 
 		filter({})
 
-		common:addPCH("%{prj.location}/Source/PCH.cpp", "%{prj.location}/Include/PCH.h")
+		common:addPCH("%{prj.location}/Source/PCH.cpp", "%{prj.location}/Source/PCH.h")
 		
-		prebuildcommands({ _PREMAKE_COMMAND .. " \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
+		if common.host == "windows" then
+			prebuildcommands({ "\"" .. _PREMAKE_COMMAND .. "\" \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
+		else
+			prebuildcommands({ "'" .. _PREMAKE_COMMAND .. "' \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
+		end
 
-		includedirs({
-			"%{prj.location}/Include/",
-			"%{prj.location}/Source/"
-		})
+		includedirs({ "%{prj.location}/Source/" })
 		
 		if common.host == "windows" then
 			linkoptions({ "/IGNORE:4099" })
@@ -124,10 +125,7 @@ workspace("Carbonite")
 		glm:setupDep()
 		entt:setupDep()
 
-		files({
-			"%{prj.location}/Include/**",
-			"%{prj.location}/Source/**"
-		})
+		files({ "%{prj.location}/Source/**" })
 		removefiles({ "*.DS_Store" })
 
 		filter("files:**.inl")

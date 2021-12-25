@@ -19,33 +19,6 @@ function common:staticLibOutDirs()
 	objdir(self.objDir)
 end
 
-function common:apiOutDirs()
-	local projectName = self:projectName()
-	targetdir(self.objDir)
-	objdir(self.objDir)
-	-- Copy dll to binaries folder
-	local copy = self:copyCSharpBinary(projectName, "Bin/%{cfg.system}-%{cfg.platform}-%{cfg.buildcfg}/%{cfg.linktarget.name}", "%{cfg.linktarget.name}")
-	print(copy)
-	postbuildcommands({ copy })
-end
-
-function common:modOutDirs(base)
-	local projectName = self:projectName()
-	targetdir(self.objDir)
-	objdir(self.objDir)
-	if base then
-		-- Copy dll to Base/ in the working directory
-		local copy = self:copyCSharpBinary(projectName, "Carbonite/Run/Base/", "%{cfg.linktarget.name}")
-		print(copy)
-		postbuildcommands({ copy })
-	else
-		-- Copy dll to Mods/<Mod>/ in the working directory
-		local copy = self:copyCSharpBinary(projectName, "Carbonite/Run/Mods/" .. projectName .. "/", "%{cfg.linktarget.name}")
-		print(copy)
-		postbuildcommands({ copy })
-	end
-end
-
 function common:copyCSharpBinary(project, to, from)
 	local copy
 	local isVS = _ACTION == "vs2017" or _ACTION == "vs2019" or _ACTION == "vs2022"

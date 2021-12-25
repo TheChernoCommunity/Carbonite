@@ -14,13 +14,16 @@ newoption({
 
 function dotnet:getDotNet()
 	self.runtimeDir = _OPTIONS["dotnet-runtime-dir"]
+	if self.runtimeDir then
+		self.runtimeDir = path.translate(self.runtimeDir, "/")
+	end
 
 	local dotnetExe
 	if common.host == "windows" then
 		if not self.runtimeDir or #self.runtimeDir == 0 then
 			dotnetExe = "dotnet.exe"
 		else
-			dotnetExe = "\"" .. self.runtimeDir .. "\\dotnet.exe\""
+			dotnetExe = "\"" .. path.translate(self.runtimeDir, "\\") .. "\\dotnet.exe\""
 		end
 		self.sdkRuntimeIdentifier = "win-%{cfg.platform}"
 	else
@@ -52,7 +55,7 @@ https://dotnet.microsoft.com/download/dotnet/6.0]])
 		local patchVersion = tonumber(versionPatch)
 		if majorVersion >= 6 and name == "Microsoft.NETCore.App" then
 			self.dotnetVersion = "6." .. tostring(minorVersion) .. "." ..tostring(patchVersion)
-			self.runtimeDir = path.getabsolute("../../", runtimePath)
+			self.runtimeDir = path.translate(path.getabsolute("../../", runtimePath), "/")
 			self.hostDir = string.format("%s/packs/Microsoft.NETCore.App.Host.%s/%s/runtimes/%s/native", self.runtimeDir, self.sdkRuntimeIdentifier, self.dotnetVersion, self.sdkRuntimeIdentifier)
 		end
 	end
