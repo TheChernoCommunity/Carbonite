@@ -1,7 +1,7 @@
 #include "PCH.h"
 
 #include "Carbonite/Scene/Components/CameraComponent.h"
-#include "Carbonite/Scene/Components/MeshComponent.h"
+#include "Carbonite/Scene/Components/StaticMeshComponent.h"
 #include "Carbonite/Scene/Components/TransformComponent.h"
 #include "Carbonite/Scene/ECS.h"
 #include "RasterRenderer.h"
@@ -140,7 +140,7 @@ void RasterRenderer::initImpl()
 	m_CameraTransform = &registry.get<TransformComponent>(camera);
 
 	entt::entity cube = m_Scene.instantiate({});
-	registry.emplace<MeshComponent>(cube, &m_Mesh);
+	registry.emplace<StaticMeshComponent>(cube, &m_Mesh);
 }
 
 void RasterRenderer::deinitImpl()
@@ -166,7 +166,7 @@ void RasterRenderer::renderImpl()
 		auto& ecs      = ECS::Get();
 		auto& registry = ecs.getRegistry();
 		auto  cameras  = registry.view<CameraComponent>();
-		auto  meshes   = registry.view<TransformComponent, MeshComponent>();
+		auto  meshes   = registry.view<TransformComponent, StaticMeshComponent>();
 
 		for (auto camera : cameras)
 		{
@@ -181,7 +181,7 @@ void RasterRenderer::renderImpl()
 
 			for (auto mesh : meshes)
 			{
-				auto [transformComponent, meshComponent] = meshes.get<TransformComponent, MeshComponent>(mesh);
+				auto [transformComponent, meshComponent] = meshes.get<TransformComponent, StaticMeshComponent>(mesh);
 
 				Mesh* pMesh = meshComponent.m_Mesh;
 				if (pMesh)
