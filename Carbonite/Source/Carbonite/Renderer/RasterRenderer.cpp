@@ -64,6 +64,9 @@ void RasterRenderer::initImpl()
 		throw std::runtime_error("Failed to create vulkan graphics pipeline");
 	m_Device.setDebugName(m_Pipeline, "m_Pipeline");
 
+	m_VertexShader.getShaderModule().destroy();
+	m_FragmentShader.getShaderModule().destroy();
+
 	m_DescriptorPool.m_MaxSets   = static_cast<std::uint32_t>(getMaxFramesInFlight());
 	m_DescriptorPool.m_PoolSizes = { { vk::DescriptorType::eUniformBuffer, static_cast<std::uint32_t>(getMaxFramesInFlight()) } };
 
