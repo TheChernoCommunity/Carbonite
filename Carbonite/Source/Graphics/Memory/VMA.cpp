@@ -3,7 +3,7 @@
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Surface.h"
 #include "Graphics/Instance.h"
-#include "Graphics/Memory/VMA.h"
+#include "VMA.h"
 
 namespace Graphics::Memory
 {

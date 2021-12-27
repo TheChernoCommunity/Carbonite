@@ -1,13 +1,13 @@
 #include "PCH.h"
 
-#include "Graphics/Commands/CommandBuffer.h"
-#include "Graphics/Commands/CommandPool.h"
+#include "CommandBuffer.h"
+#include "CommandPool.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Image/Framebuffer.h"
 #include "Graphics/Image/Image.h"
 #include "Graphics/Memory/Buffer.h"
-#include "Graphics/Pipeline/DescriptorSet.h"
+#include "Graphics/Pipeline/Descriptor/DescriptorSet.h"
 #include "Graphics/Pipeline/PipelineLayout.h"
 #include "Graphics/Pipeline/RenderPass.h"
 

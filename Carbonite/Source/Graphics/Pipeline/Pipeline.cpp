@@ -1,6 +1,6 @@
 #include "PCH.h"
 
-#include "Graphics/Pipeline/Pipeline.h"
+#include "Pipeline.h"
 
 namespace Graphics
 {

@@ -48,19 +48,10 @@ public:
 		return *this;
 	}
 
-	constexpr operator ValueT&()
-	{
-		return m_Value;
-	}
-	constexpr ValueT& getValue()
-	{
-		return m_Value;
-	}
+	constexpr         operator ValueT&() { return m_Value; }
+	constexpr ValueT& getValue() { return m_Value; }
 
-	friend constexpr Flags operator~(const Flags& flags)
-	{
-		return ~flags.m_Value;
-	}
+	friend constexpr Flags operator~(const Flags& flags) { return ~flags.m_Value; }
 	template <class U>
 	friend constexpr bool operator==(const Flags& lhs, const Flags<U>& rhs)
 	{
@@ -191,10 +182,7 @@ public:
 		return *this;
 	}
 
-	friend std::ostream& operator<<(std::ostream& stream, const Flags& flags)
-	{
-		return stream << flags.m_Value;
-	}
+	friend std::ostream& operator<<(std::ostream& stream, const Flags& flags) { return stream << flags.m_Value; }
 
 public:
 	ValueT m_Value;

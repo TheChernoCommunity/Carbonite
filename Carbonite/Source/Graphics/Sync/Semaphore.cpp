@@ -1,7 +1,7 @@
 #include "PCH.h"
 
 #include "Graphics/Device/Device.h"
-#include "Graphics/Sync/Semaphore.h"
+#include "Semaphore.h"
 
 namespace Graphics::Sync
 {

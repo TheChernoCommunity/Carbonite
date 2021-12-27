@@ -4,10 +4,7 @@
 
 namespace Utils
 {
-	constexpr unsigned bit(const int x)
-	{
-		return 1 << x;
-	}
+	constexpr unsigned bit(const int x) { return 1 << x; }
 
 	template <class T>
 	struct FloorImpl;

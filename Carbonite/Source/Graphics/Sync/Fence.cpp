@@ -1,7 +1,7 @@
 #include "PCH.h"
 
+#include "Fence.h"
 #include "Graphics/Device/Device.h"
-#include "Graphics/Sync/Fence.h"
 
 namespace Graphics::Sync
 {

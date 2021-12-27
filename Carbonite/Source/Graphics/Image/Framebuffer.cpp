@@ -1,9 +1,9 @@
 #include "PCH.h"
 
+#include "Framebuffer.h"
 #include "Graphics/Device/Device.h"
-#include "Graphics/Image/Framebuffer.h"
-#include "Graphics/Image/ImageView.h"
 #include "Graphics/Pipeline/RenderPass.h"
+#include "ImageView.h"
 
 namespace Graphics
 {

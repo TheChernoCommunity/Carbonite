@@ -1,7 +1,7 @@
 #include "PCH.h"
 
-#include "Graphics/Memory/Buffer.h"
-#include "Graphics/Memory/VMA.h"
+#include "Buffer.h"
+#include "VMA.h"
 
 namespace Graphics::Memory
 {

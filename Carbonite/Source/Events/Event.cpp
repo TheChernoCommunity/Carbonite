@@ -1,8 +1,8 @@
 #include "PCH.h"
 
-#include "Events/Event.h"
-#include "Events/KeyEvent.h"
-#include "Events/MouseEvent.h"
+#include "Event.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
 
 #include <queue>
 #include <vector>

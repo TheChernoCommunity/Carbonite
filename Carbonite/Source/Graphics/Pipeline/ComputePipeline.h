@@ -6,7 +6,7 @@ namespace Graphics
 {
 	struct Device;
 	struct PipelineLayout;
-	struct Shader;
+	struct ShaderModule;
 
 	struct ComputePipeline : public Pipeline
 	{
@@ -26,11 +26,9 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	public:
-		Shader* m_Shader = nullptr;
+		ShaderModule* m_ShaderModule = nullptr;
 
 	private:
 		PipelineLayout& m_PipelineLayout;
-
-		Shader* m_UsedShader = nullptr;
 	};
 } // namespace Graphics

@@ -23,6 +23,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include <glslang/Include/ResourceLimits.h>
+#include <glslang/SPIRV/GlslangToSpv.h>
+
 #include <cstdint>
 
 #include <iostream>

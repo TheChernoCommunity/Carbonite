@@ -1,6 +1,6 @@
 #include "PCH.h"
 
-#include "Graphics/Commands/CommandPool.h"
+#include "CommandPool.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 

@@ -8,7 +8,7 @@ namespace Graphics
 {
 	struct Device;
 	struct PipelineLayout;
-	struct Shader;
+	struct ShaderModule;
 
 	struct RayTracingPipeline : Pipeline
 	{
@@ -32,8 +32,8 @@ namespace Graphics
 		std::uint32_t m_MaxPipelineRayPayloadSize      = 1;
 		std::uint32_t m_MaxPipelineRayHitAttributeSize = 1;
 
-		std::vector<Shader*>   m_Shaders;
-		std::vector<Pipeline*> m_Libraries;
+		std::vector<ShaderModule*> m_ShaderStages;
+		std::vector<Pipeline*>     m_Libraries;
 
 		std::vector<vk::RayTracingShaderGroupCreateInfoKHR> m_Groups;
 
@@ -42,7 +42,6 @@ namespace Graphics
 	private:
 		PipelineLayout& m_PipelineLayout;
 
-		std::vector<Shader*>   m_UsedShaders;
 		std::vector<Pipeline*> m_UsedLibraries;
 	};
 } // namespace Graphics

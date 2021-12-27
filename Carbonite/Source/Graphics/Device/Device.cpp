@@ -1,7 +1,7 @@
 #include "PCH.h"
 
+#include "Device.h"
 #include "Graphics/Debug/Debug.h"
-#include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Device/Surface.h"
 #include "Graphics/Instance.h"

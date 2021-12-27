@@ -94,7 +94,7 @@ namespace Graphics
 	struct Device;
 	struct RenderPass;
 	struct PipelineLayout;
-	struct Shader;
+	struct ShaderModule;
 
 	struct GraphicsPipeline : public Pipeline
 	{
@@ -126,12 +126,10 @@ namespace Graphics
 		GraphicsPipelineColorBlendState    m_ColorBlendState;
 		std::vector<vk::DynamicState>      m_DynamicStates;
 
-		std::vector<Shader*> m_Shaders;
+		std::vector<ShaderModule*> m_ShaderStages;
 
 	private:
 		RenderPass&     m_RenderPass;
 		PipelineLayout& m_PipelineLayout;
-
-		std::vector<Shader*> m_UsedShaders;
 	};
 } // namespace Graphics

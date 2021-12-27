@@ -1,8 +1,8 @@
 #include "PCH.h"
 
+#include "Descriptor/DescriptorSetLayout.h"
 #include "Graphics/Device/Device.h"
-#include "Graphics/Pipeline/DescriptorSetLayout.h"
-#include "Graphics/Pipeline/PipelineLayout.h"
+#include "PipelineLayout.h"
 
 namespace Graphics
 {

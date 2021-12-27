@@ -1,9 +1,9 @@
 #include "PCH.h"
 
+#include "ComputePipeline.h"
 #include "Graphics/Device/Device.h"
-#include "Graphics/Pipeline/ComputePipeline.h"
-#include "Graphics/Pipeline/PipelineLayout.h"
-#include "Graphics/Shader.h"
+#include "PipelineLayout.h"
+#include "ShaderModule.h"
 
 namespace Graphics
 {
@@ -33,25 +33,23 @@ namespace Graphics
 
 	void ComputePipeline::createImpl()
 	{
-		if (!m_Shader || m_Shader->getType() != ShaderType::Compute)
+		if (!m_ShaderModule || m_ShaderModule->getCreatedType() != EShaderType::Compute)
 			return;
 
-		m_UsedShader = m_Shader;
-
-		vk::ComputePipelineCreateInfo createInfo = { {}, { {}, vk::ShaderStageFlagBits::eCompute, m_UsedShader->getHandle(), "main" }, *m_PipelineLayout, (m_BasePipeline && m_BasePipeline != this) ? m_BasePipeline->getHandle() : nullptr, m_BasePipelineIndex };
+		vk::ComputePipelineCreateInfo createInfo = {
+			{},
+			{ {}, vk::ShaderStageFlagBits::eCompute, m_ShaderModule->getHandle(), "main" },
+			*m_PipelineLayout,
+			(m_BasePipeline && m_BasePipeline != this) ? m_BasePipeline->getHandle() : nullptr,
+			m_BasePipelineIndex
+		};
 
 		m_Handle = getDevice()->createComputePipeline(nullptr, createInfo).value;
-		m_UsedShader->addChild(this);
 	}
 
 	bool ComputePipeline::destroyImpl()
 	{
 		getDevice()->destroyPipeline(m_Handle);
-		if (m_UsedShader)
-		{
-			m_UsedShader->removeChild(this);
-			m_UsedShader = nullptr;
-		}
 		return true;
 	}
 } // namespace Graphics

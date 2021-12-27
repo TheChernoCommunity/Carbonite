@@ -59,14 +59,8 @@ public:
 		return itr != m_Entries.end() ? itr->second.m_Name : ~0ULL;
 	}
 
-	auto& getEntries() const
-	{
-		return m_Entries;
-	}
-	auto& getNameToIds() const
-	{
-		return m_NameToId;
-	}
+	auto& getEntries() const { return m_Entries; }
+	auto& getNameToIds() const { return m_NameToId; }
 
 private:
 	std::unordered_map<std::uint64_t, RegistryValue<T>> m_Entries;

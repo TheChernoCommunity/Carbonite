@@ -1,7 +1,7 @@
 #include "PCH.h"
 
-#include "Graphics/Image/Image.h"
 #include "Graphics/Memory/VMA.h"
+#include "Image.h"
 
 namespace Graphics
 {

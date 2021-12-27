@@ -1,8 +1,8 @@
 #include "PCH.h"
 
-#include "Graphics/Debug/Debug.h"
+#include "Debug.h"
 #include "Graphics/Instance.h"
-#include "Log.h"
+#include "Utils/Log.h"
 
 #include <iostream>
 
