@@ -71,7 +71,7 @@ std::vector<std::uint32_t> GLSLang::compileShader(std::string_view sourceString,
 	EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
 
 	const char*  strings[] { sourceString.data() };
-	std::int32_t lengths[] { sourceString.size() };
+	std::int32_t lengths[] { static_cast<std::int32_t>(sourceString.size()) };
 
 	shader.setStringsWithLengths(strings, lengths, sizeof(strings) / sizeof(strings[0]));
 

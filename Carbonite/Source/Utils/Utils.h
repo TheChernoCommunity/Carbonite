@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 
 namespace Utils
 {
@@ -55,6 +56,12 @@ namespace Utils
 	struct FloorImpl<std::uint64_t>
 	{
 		std::uint64_t operator()(std::uint64_t value) { return value; }
+	};
+
+	template <>
+	struct FloorImpl<std::size_t>
+	{
+		long double operator()(std::size_t value) { return std::floorl(value); }
 	};
 
 	template <>
