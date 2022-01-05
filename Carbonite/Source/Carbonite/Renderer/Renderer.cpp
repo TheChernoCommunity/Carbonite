@@ -79,6 +79,7 @@ void Renderer::init()
 	//---------------
 	// Create Device
 	m_Device.requestExtension("VK_KHR_swapchain");
+	m_Device.requestExtension("VK_KHR_timeline_semaphore");
 	m_Device.requestExtension("VK_KHR_portability_subset", { 0U }, false); // Requested for MoltenVK on MacOS
 
 	m_Device.requestQueueFamily(1, vk::QueueFlagBits::eGraphics, true);
