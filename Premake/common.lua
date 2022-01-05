@@ -74,6 +74,27 @@ function common:addPCH(source, header)
 		pchheader(path.getname(header))
 
 	filter({})
+	
+	if common.host == "windows" then
+		prebuildcommands({ "\"" .. _PREMAKE_COMMAND .. "\" \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
+	else
+		prebuildcommands({ "'" .. _PREMAKE_COMMAND .. "' \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
+	end
+end
+
+function common:addActions()
+	filter("files:**.inl")
+		runclangformat(true)
+
+	filter("files:**.h")
+		runclangformat(true)
+
+	filter("files:**.cpp")
+		runclangformat(true)
+		runclangtidy(true)
+		allowforcepch(true)
+
+	filter({})
 end
 
 function common:addCoreDefines()

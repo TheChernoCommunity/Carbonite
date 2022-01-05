@@ -17,7 +17,7 @@ entt = require("Premake/Libs/entt")
 
 workspace("Carbonite")
 	common:setConfigsAndPlatforms()
-	
+
 	common:addCoreDefines()
 
 	cppdialect("C++17")
@@ -99,15 +99,9 @@ workspace("Carbonite")
 		filter({})
 
 		common:addPCH("%{prj.location}/Source/PCH.cpp", "%{prj.location}/Source/PCH.h")
-		
-		if common.host == "windows" then
-			prebuildcommands({ "\"" .. _PREMAKE_COMMAND .. "\" \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
-		else
-			prebuildcommands({ "'" .. _PREMAKE_COMMAND .. "' \"--file=" .. _MAIN_SCRIPT .. "\" \"--vulkan-sdk=" .. vulkan.sdkPath .. "\" \"--dotnet-runtime-dir=" .. dotnet.runtimeDir .. "\" force-pch" })
-		end
 
 		includedirs({ "%{prj.location}/Source/" })
-		
+
 		if common.host == "windows" then
 			linkoptions({ "/IGNORE:4099" })
 		elseif common.host == "macosx" then
@@ -128,15 +122,4 @@ workspace("Carbonite")
 		files({ "%{prj.location}/Source/**" })
 		removefiles({ "*.DS_Store" })
 
-		filter("files:**.inl")
-			runclangformat(true)
-
-		filter("files:**.h")
-			runclangformat(true)
-
-		filter("files:**.cpp")
-			runclangformat(true)
-			runclangtidy(true)
-			allowforcepch(true)
-
-		filter({})
+		common:addActions()

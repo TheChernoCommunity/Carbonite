@@ -41,7 +41,7 @@ namespace Graphics
 		virtual bool destroyImpl() override;
 
 	public:
-		std::uint32_t m_ImageCount       = 2;
+		std::uint32_t m_ImageCount       = 0;
 		std::uint32_t m_ImageArrayLayers = 1;
 
 		vk::ImageUsageFlags             m_ImageUsage     = vk::ImageUsageFlagBits::eColorAttachment;
