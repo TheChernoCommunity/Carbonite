@@ -27,8 +27,14 @@ namespace Graphics
 			virtual void createImpl() override;
 			virtual bool destroyImpl() override;
 
+		public:
+			vk::SemaphoreType m_Type         = vk::SemaphoreType::eBinary;
+			std::uint64_t     m_InitialValue = 0;
+
 		private:
 			Device& m_Device;
+
+			vk::SemaphoreType m_CreatedType = vk::SemaphoreType::eBinary;
 		};
 	} // namespace Sync
 } // namespace Graphics

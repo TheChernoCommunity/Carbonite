@@ -87,11 +87,13 @@ namespace Graphics
 			}
 		}
 
-		auto& getSurface() { return m_Surface; }
-		auto& getSurface() const { return m_Surface; }
-		auto& getPhysicalDevice() const { return m_PhysicalDevice; }
-		auto& getPhysicalDeviceProperties() const { return m_PhysicalDeviceProperties; }
-		auto& getPhysicalDeviceLimits() const { return m_PhysicalDeviceProperties.limits; }
+		Instance& getInstance();
+		Instance& getInstance() const;
+		auto&     getSurface() { return m_Surface; }
+		auto&     getSurface() const { return m_Surface; }
+		auto&     getPhysicalDevice() const { return m_PhysicalDevice; }
+		auto&     getPhysicalDeviceProperties() const { return m_PhysicalDeviceProperties; }
+		auto&     getPhysicalDeviceLimits() const { return m_PhysicalDeviceProperties.limits; }
 
 		auto& getEnabledLayers() const { return m_EnabledLayers; }
 		auto& getEnabledExtensions() const { return m_EnabledExtensions; }

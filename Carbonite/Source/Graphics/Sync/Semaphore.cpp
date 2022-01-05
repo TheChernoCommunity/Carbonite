@@ -1,6 +1,7 @@
 #include "PCH.h"
 
 #include "Graphics/Device/Device.h"
+#include "Graphics/Instance.h"
 #include "Semaphore.h"
 
 namespace Graphics::Sync
@@ -15,9 +16,11 @@ namespace Graphics::Sync
 			if (&semaphores[i]->getDevice() != &device)
 				return;
 
-		std::vector<vk::Semaphore> semas(semaphores.size());
+		std::vector<vk::Semaphore> semas;
+		semas.reserve(semaphores.size());
 		for (std::size_t i = 0; i < semaphores.size(); ++i)
-			semas[i] = semaphores[i]->getHandle();
+			if (semaphores[i]->m_CreatedType == vk::SemaphoreType::eTimeline)
+				semas.emplace_back(semaphores[i]->getHandle());
 
 		vk::SemaphoreWaitInfo waitInfo = { {}, semas };
 
@@ -39,19 +42,31 @@ namespace Graphics::Sync
 
 	void Semaphore::waitFor(std::uint64_t timeout)
 	{
-		WaitForSemaphores({ this }, timeout);
+		if (m_CreatedType == vk::SemaphoreType::eTimeline)
+			WaitForSemaphores({ this }, timeout);
 	}
 
 	std::uint64_t Semaphore::getValue()
 	{
-		return m_Device->getSemaphoreCounterValue(m_Handle, m_Device.getDispatcher());
+		if (m_CreatedType == vk::SemaphoreType::eTimeline)
+			return m_Device->getSemaphoreCounterValue(m_Handle, m_Device.getDispatcher());
+		return 0;
 	}
 
 	void Semaphore::createImpl()
 	{
+		bool supportsTimelineSemaphores = m_Device.getInstance().getApiVersion() > Version { 0, 1, 2, 0 } || m_Device.getExtensionVersion("VK_KHR_timeline_semaphores");
+
 		vk::SemaphoreCreateInfo createInfo = {};
 
+		vk::SemaphoreTypeCreateInfoKHR typeCreateInfo = { m_Type, m_InitialValue };
+		if (supportsTimelineSemaphores)
+			createInfo.pNext = &typeCreateInfo;
+
 		m_Handle = m_Device->createSemaphore(createInfo);
+
+		if (supportsTimelineSemaphores)
+			m_CreatedType = m_Type;
 	}
 
 	bool Semaphore::destroyImpl()

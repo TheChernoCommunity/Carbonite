@@ -102,6 +102,16 @@ namespace Graphics
 		return nullptr;
 	}
 
+	Instance& Device::getInstance()
+	{
+		return m_Surface.getInstance();
+	}
+
+	Instance& Device::getInstance() const
+	{
+		return m_Surface.getInstance();
+	}
+
 	void Device::createImpl()
 	{
 		auto& instance        = m_Surface.getInstance();

@@ -59,6 +59,10 @@ https://dotnet.microsoft.com/download/dotnet/6.0]])
 			self.hostDir = string.format("%s/packs/Microsoft.NETCore.App.Host.%s/%s/runtimes/%s/native", self.runtimeDir, self.sdkRuntimeIdentifier, self.dotnetVersion, self.sdkRuntimeIdentifier)
 		end
 	end
+
+	if not self.runtimeDir then
+		error([[Your dotnet install doesn't include the Microsoft.NETCore.App framework with a 6.0.0 or higher version]])
+	end
 end
 
 dotnet:getDotNet()
