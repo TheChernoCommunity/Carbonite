@@ -44,7 +44,7 @@ namespace Graphics::Sync
 
 	std::uint64_t Semaphore::getValue()
 	{
-		return m_Device->getSemaphoreCounterValue(m_Handle);
+		return m_Device->getSemaphoreCounterValue(m_Handle, m_Device.getDispatcher());
 	}
 
 	void Semaphore::createImpl()
