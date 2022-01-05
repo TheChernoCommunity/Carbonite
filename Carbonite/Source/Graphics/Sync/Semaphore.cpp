@@ -21,7 +21,7 @@ namespace Graphics::Sync
 
 		vk::SemaphoreWaitInfo waitInfo = { {}, semas };
 
-		[[maybe_unused]] auto result = device->waitSemaphores(waitInfo, timeout);
+		[[maybe_unused]] auto result = device->waitSemaphores(waitInfo, timeout, device.getDispatcher());
 	}
 
 	Semaphore::Semaphore(Device& device)
