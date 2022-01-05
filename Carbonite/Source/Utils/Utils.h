@@ -58,11 +58,13 @@ namespace Utils
 		std::uint64_t operator()(std::uint64_t value) { return value; }
 	};
 
+#if (SIZE_MAX != UINT32_MAX)
 	template <>
 	struct FloorImpl<std::size_t>
 	{
 		long double operator()(std::size_t value) { return std::floorl(value); }
 	};
+#endif
 
 	template <>
 	struct FloorImpl<float>
