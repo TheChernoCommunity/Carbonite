@@ -20,7 +20,7 @@ workspace("Carbonite")
 
 	common:addCoreDefines()
 
-	cppdialect("C++17")
+	cppdialect("C++20")
 	rtti("Off")
 	exceptionhandling("On")
 	flags("MultiProcessorCompile")
