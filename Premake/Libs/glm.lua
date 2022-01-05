@@ -10,7 +10,10 @@ function glm:setup()
 	kind("StaticLib")
 	common:staticLibOutDirs()
 
-	includedirs({ self.location .. "/glm/" })
+	includedirs({
+		self.location,
+		self.location .. "/glm/"
+	})
 
 	files({ self.location .. "/glm/**" })
 end
