@@ -6,7 +6,9 @@
 Carbonite.sln
 *.vcxproj
 *.vcxproj.*
+/CarboniteBaseMod/bin/
 /CarboniteBaseMod/obj/
+/CarboniteModAPI/bin/
 /CarboniteModAPI/obj/
 
 # Makefile

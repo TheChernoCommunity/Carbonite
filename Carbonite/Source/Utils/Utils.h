@@ -4,15 +4,19 @@
 #include <cstdint>
 
 #include <concepts>
+#include <type_traits>
 
 namespace Utils
 {
+	template <class T>
+	concept Integral = std::is_integral_v<T>;
+
 	constexpr unsigned bit(const int x) { return 1 << x; }
 
 	template <class T>
 	struct FloorImpl;
 
-	template <std::integral T>
+	template <Integral T>
 	struct FloorImpl<T>
 	{
 		T operator()(T value) { return value; }

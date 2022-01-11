@@ -10,6 +10,7 @@ function spdlog:setup()
 	kind("StaticLib")
 	common:staticLibOutDirs()
 
+	cppdialect("C++17")
 	defines({ "SPDLOG_COMPILED_LIB" })
 
 	sysincludedirs({ self.location .. "/include/" })

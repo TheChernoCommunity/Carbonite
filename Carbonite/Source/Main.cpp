@@ -1,6 +1,7 @@
 #include "PCH.h"
 
-#include "CSharp/CSharpRuntime.h"
+#include "CSharp/Assembly.h"
+#include "CSharp/Runtime.h"
 #include "Carbonite/Carbonite.h"
 #include "Utils/Core.h"
 #include "Utils/FileIO.h"
@@ -13,67 +14,39 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
-#if CARBONITE_IS_CONFIG_DIST
+#if BUILD_IS_CONFIG_DIST
 	try
 	{
 #endif
-#if false
-		if (!CSharp::LoadFXR())
-			throw std::runtime_error("Failed to load HostFXR");
-
-		CSharp::Handle handle = nullptr;
+#if true
+		auto& runtime = CSharp::Runtime::Get();
+		runtime.init();
+		while (true)
 		{
-			auto cwd = FileIO::getGameDir() / "runtimeconfig.json";
-			auto rc  = CSharp::InitializeForRuntimeConfig(cwd.c_str(), nullptr, &handle);
-			if (rc || !handle)
-				throw std::runtime_error("Failed to initialize HostFXR handle");
+			CSharp::EAssemblyLoadStatus status;
+
+			auto assembly = runtime.loadAssembly(FileIO::getGameDir() / "Mods/Test/ModAPI.dll", status);
+			if (!assembly)
+			{
+				Log::error("Failed to load assembly: {}", status);
+				break;
+			}
+
+			auto clazz = assembly->getClass("Test", "Test");
+			if (!clazz)
+			{
+				Log::error("Assembly doesn't have the class Test.Test");
+				break;
+			}
+
+			for (auto& field : clazz->getFields())
+				Log::info("Field '{} {} {}'", field.second.getVisibility(), "?", field.second.getName());
+
+			runtime.unloadAssembly(assembly);
+			break;
 		}
-
-		auto loadAssemblyAndGetFunctionPtr = CSharp::GetLoadAssemblyAndGetFunctionPointer(handle);
-		if (!loadAssemblyAndGetFunctionPtr)
-			throw std::runtime_error("Failed to get delegate");
-
-		auto getFunctionPtr = CSharp::GetGetFunctionPointer(handle);
-		if (!getFunctionPtr)
-			throw std::runtime_error("Failed to get delegate");
-
-		CSharp::Close(handle);
-
-		CSharp::ComponentEntryPointFn hello = nullptr;
-		{
-			auto cwd = FileIO::getGameDir() / "Mods/Test/Test.dll";
-			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("Hello"), nullptr, nullptr, reinterpret_cast<void**>(&hello));
-			if (rc || !hello)
-				throw std::runtime_error("Failed to load assembly and get function");
-		}
-
-		struct LibArgs
-		{
-			const CSharp::CharT* message;
-
-			std::uint32_t number;
-		};
-
-		for (std::uint32_t i = 0; i < 3; ++i)
-		{
-			LibArgs args = { CSHARP_STR("from host!"), i };
-			hello(&args, sizeof(args));
-		}
-
-		using CustomEntryPointFn  = void (*)(LibArgs args);
-		CustomEntryPointFn custom = nullptr;
-
-		{
-			auto cwd = FileIO::getGameDir() / "Mods/Test/Test.dll";
-			auto rc  = loadAssemblyAndGetFunctionPtr(cwd.c_str(), CSHARP_STR("DotNetLib.Lib, Test"), CSHARP_STR("CustomEntryPointUnmanaged"), CSharp::UnmanagedCallersOnlyMethod, nullptr, reinterpret_cast<void**>(&custom));
-			if (rc || !custom)
-				throw std::runtime_error("Failed to load assembly and get function");
-		}
-
-		LibArgs args = { CSHARP_STR("from host!"), ~0U };
-		custom(args);
-
-		CSharp::UnloadFXR();
+		runtime.deinit();
+		CSharp::Runtime::Destroy();
 #else
 	auto& carbonite = Carbonite::Get(); // Get carbonite instance
 	carbonite.init();                   // Initialize carbonite
@@ -81,7 +54,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	carbonite.deinit();                 // Deinitialize carbonite
 	Carbonite::Destroy();               // Destroy carbonite instance
 #endif
-#if CARBONITE_IS_CONFIG_DIST
+#if BUILD_IS_CONFIG_DIST
 	}
 	catch (const std::exception& e)
 	{
@@ -92,7 +65,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	return EXIT_SUCCESS;
 }
 
-#if _WIN32
+#if BUILD_IS_SYSTEM_WINDOWS
 #undef APIENTRY
 #include <Windows.h>
 

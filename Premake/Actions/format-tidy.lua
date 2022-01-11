@@ -54,35 +54,35 @@ local function getCommandLine(cfg, file)
 	local isCFile = path.iscfile(fcfg.name)
 	local getflags = iif(isCFile, toolset.getcflags, function(cfg) return table.join(toolset.getcppflags(cfg), toolset.getcxxflags(cfg)) end)
 	local value = list(table.join(getflags(cfg), cfg.buildoptions), table.join(getflags(fcfg), fcfg.buildoptions))
-	
+
 	if cfg.defines or cfg.undefines then
 		local defs = table.join(toolset.getdefines(cfg.defines, cfg), toolset.getundefines(cfg.undefines))
 		if #defs > 0 then
 			value = value .. list(defs)
 		end
 	end
-	
+
 	if cfg.includedirs or cfg.sysincludedirs or cfg.frameworkdirs then
 		local includes = getIncludeDirs(cfg, cfg.includedirs, cfg.sysincludedirs, cfg.frameworkdirs)
 		if #includes > 0 then
 			value = value .. list(includes)
 		end
 	end
-	
+
 	if fcfg.defines or fcfg.undefines then
 		local defs = table.join(toolset.getdefines(fcfg.defines, cfg), toolset.getundefines(fcfg.undefines))
 		if #defs > 0 then
 			value = value .. list(defs)
 		end
 	end
-	
+
 	if fcfg.includedirs or fcfg.sysincludedirs or fcfg.frameworkdirs then
 		local includes = getIncludeDirs(cfg, fcfg.includedirs, fcfg.sysincludedirs, fcfg.frameworkdirs)
 		if #includes > 0 then
 			value = value .. list(includes)
 		end
 	end
-	
+
 	return value
 end
 
@@ -141,7 +141,7 @@ newaction({
 			return
 		end
 
-		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local cfg = premake.project.getconfig(prj, "Dist", common.targetArchs[1])
 		local tr = premake.project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
@@ -186,7 +186,7 @@ newaction({
 			return
 		end
 
-		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local cfg = premake.project.getconfig(prj, "Dist", common.targetArchs[1])
 		local tr = premake.project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)
@@ -224,7 +224,7 @@ newaction({
 			return
 		end
 
-		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local cfg = premake.project.getconfig(prj, "Dist", common.targetArchs[1])
 		local tr = premake.project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)

@@ -6,30 +6,30 @@
 
 namespace Core
 {
-	std::ostream& printCarboniteConfigFlags(std::ostream& stream, const CarboniteConfigFlags& flags)
+	std::ostream& printBuildConfigFlags(std::ostream& stream, const BuildConfigFlags& flags)
 	{
 		std::ostringstream str;
 		bool               hasAppended = false;
 
-		CarboniteConfigFlags value = flags;
-		if (value == CarboniteConfigFlag::Unknown)
+		BuildConfigFlags value = flags;
+		if (value == BuildConfigFlag::Unknown)
 		{
 			str << "Unknown";
 		}
 		else
 		{
-			if ((value & CarboniteConfigFlag::Debug) == CarboniteConfigFlag::Debug)
+			if ((value & BuildConfigFlag::Debug) == BuildConfigFlag::Debug)
 			{
 				str << "Debug";
-				value &= ~CarboniteConfigFlag::Debug;
+				value &= ~BuildConfigFlag::Debug;
 				hasAppended = true;
 			}
-			if ((value & CarboniteConfigFlag::Dist) == CarboniteConfigFlag::Dist)
+			if ((value & BuildConfigFlag::Dist) == BuildConfigFlag::Dist)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "Dist";
-				value &= ~CarboniteConfigFlag::Dist;
+				value &= ~BuildConfigFlag::Dist;
 				hasAppended = true;
 			}
 			if (static_cast<std::uint16_t>(value) != 0)
@@ -43,46 +43,46 @@ namespace Core
 		return stream << str.str();
 	}
 
-	std::ostream& printCarboniteSystemFlags(std::ostream& stream, const CarboniteSystemFlags& flags)
+	std::ostream& printBuildSystemFlags(std::ostream& stream, const BuildSystemFlags& flags)
 	{
 		std::ostringstream str;
 		bool               hasAppended = false;
 
-		CarboniteSystemFlags value = flags;
-		if (value == CarboniteSystemFlag::Unknown)
+		BuildSystemFlags value = flags;
+		if (value == BuildSystemFlag::Unknown)
 		{
 			str << "Unknown";
 		}
 		else
 		{
-			if ((value & CarboniteSystemFlag::Windows) == CarboniteSystemFlag::Windows)
+			if ((value & BuildSystemFlag::Windows) == BuildSystemFlag::Windows)
 			{
 				str << "Windows";
-				value &= ~CarboniteSystemFlag::Windows;
+				value &= ~BuildSystemFlag::Windows;
 				hasAppended = true;
 			}
-			if ((value & CarboniteSystemFlag::Macosx) == CarboniteSystemFlag::Macosx)
+			if ((value & BuildSystemFlag::Macosx) == BuildSystemFlag::Macosx)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "Macosx";
-				value &= ~CarboniteSystemFlag::Macosx;
+				value &= ~BuildSystemFlag::Macosx;
 				hasAppended = true;
 			}
-			if ((value & CarboniteSystemFlag::Linux) == CarboniteSystemFlag::Linux)
+			if ((value & BuildSystemFlag::Linux) == BuildSystemFlag::Linux)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "Linux";
-				value &= ~CarboniteSystemFlag::Linux;
+				value &= ~BuildSystemFlag::Linux;
 				hasAppended = true;
 			}
-			if ((value & CarboniteSystemFlag::Unix) == CarboniteSystemFlag::Unix)
+			if ((value & BuildSystemFlag::Unix) == BuildSystemFlag::Unix)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "Unix";
-				value &= ~CarboniteSystemFlag::Unix;
+				value &= ~BuildSystemFlag::Unix;
 				hasAppended = true;
 			}
 			if (static_cast<std::uint16_t>(value) != 0)
@@ -96,38 +96,38 @@ namespace Core
 		return stream << str.str();
 	}
 
-	std::ostream& printCarboniteToolsetFlags(std::ostream& stream, const CarboniteToolsetFlags& flags)
+	std::ostream& printBuildToolsetFlags(std::ostream& stream, const BuildToolsetFlags& flags)
 	{
 		std::ostringstream str;
 		bool               hasAppended = false;
 
-		CarboniteToolsetFlags value = flags;
-		if (value == CarboniteToolsetFlag::Unknown)
+		BuildToolsetFlags value = flags;
+		if (value == BuildToolsetFlag::Unknown)
 		{
 			str << "Unknown";
 		}
 		else
 		{
-			if ((value & CarboniteToolsetFlag::MSVC) == CarboniteToolsetFlag::MSVC)
+			if ((value & BuildToolsetFlag::MSVC) == BuildToolsetFlag::MSVC)
 			{
 				str << "MSVC";
-				value &= ~CarboniteToolsetFlag::MSVC;
+				value &= ~BuildToolsetFlag::MSVC;
 				hasAppended = true;
 			}
-			if ((value & CarboniteToolsetFlag::Clang) == CarboniteToolsetFlag::Clang)
+			if ((value & BuildToolsetFlag::Clang) == BuildToolsetFlag::Clang)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "Clang";
-				value &= ~CarboniteToolsetFlag::Clang;
+				value &= ~BuildToolsetFlag::Clang;
 				hasAppended = true;
 			}
-			if ((value & CarboniteToolsetFlag::GCC) == CarboniteToolsetFlag::GCC)
+			if ((value & BuildToolsetFlag::GCC) == BuildToolsetFlag::GCC)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "GCC";
-				value &= ~CarboniteToolsetFlag::GCC;
+				value &= ~BuildToolsetFlag::GCC;
 				hasAppended = true;
 			}
 			if (static_cast<std::uint16_t>(value) != 0)
@@ -141,30 +141,30 @@ namespace Core
 		return stream << str.str();
 	}
 
-	std::ostream& printCarbonitePlatformFlags(std::ostream& stream, const CarbonitePlatformFlags& flags)
+	std::ostream& printBuildPlatformFlags(std::ostream& stream, const BuildPlatformFlags& flags)
 	{
 		std::ostringstream str;
 		bool               hasAppended = false;
 
-		CarbonitePlatformFlags value = flags;
-		if (value == CarbonitePlatformFlag::Unknown)
+		BuildPlatformFlags value = flags;
+		if (value == BuildPlatformFlag::Unknown)
 		{
 			str << "Unknown";
 		}
 		else
 		{
-			if ((value & CarbonitePlatformFlag::X86) == CarbonitePlatformFlag::X86)
+			if ((value & BuildPlatformFlag::X86) == BuildPlatformFlag::X86)
 			{
 				str << "X86";
-				value &= ~CarbonitePlatformFlag::X86;
+				value &= ~BuildPlatformFlag::X86;
 				hasAppended = true;
 			}
-			if ((value & CarbonitePlatformFlag::AMD64) == CarbonitePlatformFlag::AMD64)
+			if ((value & BuildPlatformFlag::AMD64) == BuildPlatformFlag::AMD64)
 			{
 				if (hasAppended)
 					str << " | ";
 				str << "AMD64";
-				value &= ~CarbonitePlatformFlag::AMD64;
+				value &= ~BuildPlatformFlag::AMD64;
 				hasAppended = true;
 			}
 			if (static_cast<std::uint16_t>(value) != 0)

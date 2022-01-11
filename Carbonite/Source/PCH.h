@@ -5,14 +5,14 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
-#if CARBONITE_IS_TOOLSET_MSVC
+#if BUILD_IS_TOOLSET_MSVC
 #pragma warning(push)
 #pragma warning(disable : 4201)
 #endif
 
 #include <glm/gtx/quaternion.hpp>
 
-#if CARBONITE_IS_TOOLSET_MSVC
+#if BUILD_IS_TOOLSET_MSVC
 #pragma warning(pop)
 #endif
 

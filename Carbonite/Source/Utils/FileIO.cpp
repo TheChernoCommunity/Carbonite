@@ -7,12 +7,12 @@
 
 #include <fstream>
 
-#if CARBONITE_IS_SYSTEM_WINDOWS
+#if BUILD_IS_SYSTEM_WINDOWS
 #undef APIENTRY
 #include <Windows.h>
-#elif CARBONITE_IS_SYSTEM_MACOSX
+#elif BUILD_IS_SYSTEM_MACOSX
 #include <mach-o/dyld.h>
-#elif CARBONITE_IS_SYSTEM_LINUX
+#elif BUILD_IS_SYSTEM_LINUX
 #include <unistd.h>
 #endif
 
@@ -60,13 +60,13 @@ namespace FileIO
 	std::filesystem::path platformGetExecutableDir()
 	{
 		std::filesystem::path path;
-#if CARBONITE_IS_SYSTEM_WINDOWS
+#if BUILD_IS_SYSTEM_WINDOWS
 		wchar_t* buffer = new wchar_t[32767]; // Windows can only support upto 32ki long filenames, and it's probably way more than unix would handle.
 		DWORD    result = GetModuleFileNameW(nullptr, buffer, 32767);
 		if (result > 0)
 			path = std::filesystem::path(buffer).parent_path();
 		delete[] buffer;
-#elif CARBONITE_IS_SYSTEM_MACOSX
+#elif BUILD_IS_SYSTEM_MACOSX
 		std::uint32_t bufSize = 0;
 		int           result  = _NSGetExecutablePath(nullptr, &bufSize);
 		char*         buffer  = new char[bufSize + 1];
@@ -74,7 +74,7 @@ namespace FileIO
 		if (result == 0)
 			path = std::filesystem::path(buffer).parent_path();
 		delete[] buffer;
-#elif CARBONITE_IS_SYSTEM_LINUX
+#elif BUILD_IS_SYSTEM_LINUX
 		std::size_t bufSize = 0;
 		stat        stat;
 		if (lstat("/proc/self/exe", &stat) >= 0)

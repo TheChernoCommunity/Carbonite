@@ -18,7 +18,7 @@ end
 
 local function forcePCH(cfg, file)
 	-- TODO(MarcasRealAccount): Stop assuming single space between #include and quote ""
-	
+
 	local fileStr = readNonBinaryFile(file.abspath)
 	if string.startswith(fileStr, "#include \"" .. cfg.pchheader .. "\"") then
 		return
@@ -46,7 +46,7 @@ newaction({
 	description = "Force PCH include",
 
 	onProject = function(prj)
-		local cfg = premake.project.getconfig(prj, "Dist", "x64")
+		local cfg = premake.project.getconfig(prj, "Dist", common.targetArchs[1])
 		local tr = premake.project.getsourcetree(prj)
 		premake.tree.traverse(tr, {
 			onleaf = function(node, depth)

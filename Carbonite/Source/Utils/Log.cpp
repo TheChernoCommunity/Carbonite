@@ -19,7 +19,7 @@ namespace Log
 			s_Logger = spdlog::stderr_color_mt("Carbonite");
 			spdlog::set_pattern("[%T.%f][%^%8l%$][%7t] %v");
 
-#if CARBONITE_IS_CONFIG_DIST
+#if BUILD_IS_CONFIG_DIST
 			s_Logger->set_level(spdlog::level::level_enum::err);
 #else
 			s_Logger->set_level(spdlog::level::level_enum::trace);

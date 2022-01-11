@@ -1,4 +1,4 @@
--- Delets Visual STudio, XCode4 and GMake2 build files.
+-- Deletes Visual Studio, XCode4, GMake and GMake2 build files.
 
 local function deleteLocalDir(dir)
 	local ok, err = os.rmdir(_MAIN_SCRIPT_DIR .. dir)
@@ -62,7 +62,7 @@ newaction({
 		-- XCode4:
 		deleteDir(premake.filename(wks, ".xcworkspace") .. "/")
 
-		-- GMake2:
+		-- GMake / GMake2:
 		deleteFile(premake.filename(wks, getMakeFilename(wks, false)))
 	end,
 
@@ -93,7 +93,7 @@ newaction({
 		-- XCode4:
 		deleteDir(premake.filename(prj, ".xcodeproj") .. "/")
 
-		-- GMake2:
+		-- GMake / GMake2:
 		deleteFile(premake.filename(prj, getMakeFilename(prj, true)))
 	end,
 
