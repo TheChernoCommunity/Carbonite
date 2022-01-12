@@ -10,8 +10,7 @@ function spdlog:setup()
 	kind("StaticLib")
 	common:staticLibOutDirs()
 
-	cppdialect("C++17")
-	defines({ "SPDLOG_COMPILED_LIB" })
+	defines({ "SPDLOG_COMPILED_LIB", "FMT_CONSTEVAL=" })
 
 	sysincludedirs({ self.location .. "/include/" })
 	includedirs({ self.location .. "/include/" })
@@ -26,7 +25,7 @@ function spdlog:setupDep()
 	links({ self.name })
 	sysincludedirs({ self.location .. "/include/" })
 
-	defines({ "SPDLOG_COMPILED_LIB" })
+	defines({ "SPDLOG_COMPILED_LIB", "FMT_CONSTEVAL=" })
 end
 
 return spdlog

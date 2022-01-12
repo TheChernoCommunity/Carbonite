@@ -168,9 +168,7 @@ vulkan:getVulkanSDKPath()
 
 function vulkan:setup()
 	kind("Utility")
-	
-	common:staticLibOutDirs()
-	
+
 	includedirs({ self.sdkPath .. self.includePath })
 	
 	files({ self.sdkPath .. self.includePath .. "**" })

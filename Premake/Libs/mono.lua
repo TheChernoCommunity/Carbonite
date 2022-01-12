@@ -2,6 +2,7 @@ local mono = {
 	name = "",
 	location = "",
 	requiredLibs = nil,
+	requiredNativeLibs = nil,
 	requiredRuntimeLibs = nil
 }
 
@@ -37,6 +38,14 @@ function mono:getRequiredLibs()
 end
 
 function mono:getRequiredRuntimeLibs()
+    mono.requiredNativeLibs = {
+        "System.Globalization.Native",
+        "System.IO.Compression.Native",
+        "System.IO.Ports.Native",
+        "System.Native",
+        "System.Net.Security.Native",
+        "System.Security.Cryptography.Native.OpenSsl"
+    }
 	mono.requiredRuntimeLibs = {
 		"Microsoft.CSharp",
 		"System",
@@ -275,9 +284,11 @@ function mono:validate(secondRun)
 						table.insert(missing.missingLibs, v)
 					end
 				end
-				
-				if not os.isfile(searchPath .. "System.IO.Compression.Native.dll") or not os.isfile(searchPath .. "System.IO.Compression.Native.pdb") then
-					table.insert(missing.missingLibs, "System.IO.Compression.Native")
+
+				for _, v in ipairs(self.requiredNativeLibs) do
+				    if not common:hasSharedLib(v, searchPath) then
+				        table.insert(missing.missingLibs, v)
+				    end
 				end
 				
 				if not os.isfile(searchPath .. "System.Private.CoreLib.dll") or not os.isfile(searchPath .. "System.Private.CoreLib.pdb") then
@@ -378,7 +389,7 @@ function mono:validate(secondRun)
 				local dotnetVersion = "net6.0" -- TODO(MarcasRealAccount): Get this from the build somehow
 				for arch, configs in pairs(missingTriples) do
 					for config, missing in pairs(configs) do
-						local args = " -a " .. self:toMonoArch(arch) .. " -rf Mono -lc " .. config .. " -rc " .. config .. " -c " .. config .. " -cmakeargs -DDISABLE_AOT=1"
+						local args = " -a " .. self:toMonoArch(arch) .. " -rf Mono -lc " .. config .. " -rc " .. config .. " -c " .. config
 						local monoRID = nil
 						local monoArtifact = nil
 						local monoBackend = nil
@@ -405,7 +416,7 @@ function mono:validate(secondRun)
 						if code < 0 then goto copyFailure end
 						code, err = common:copyFiles(monoBinArtifact, { common:sharedlibname("coreclr"), "System.Private.CoreLib.dll", "System.Private.CoreLib.pdb" }, monoBackend .. "/bin/")
 						if code < 0 then goto copyFailure end
-						code, err = common:copyFiles(nativeBinArtifact, { "System.IO.Compression.Native.dll", "System.IO.Compression.Native.pdb" }, monoBackend .. "/bin/")
+						code, err = common:copyFiles(nativeBinArtifact, common:sharedlibname(self.requiredNativeLibs, true), monoBackend .. "/bin/")
 						if code < 0 then goto copyFailure end
 						
 						goto continue
@@ -427,7 +438,7 @@ function mono:validate(secondRun)
 					local code, err = nil, nil
 					local rid = nil
 					for _, subset in ipairs(subsets.libs) do
-						command = commandBase .. " " .. subset .. " -a " .. self:toMonoArch(common.targetArchs[1]) .. " -rf Mono -lc Release -rc Release -c Release -cmakeargs -DDISABLE_AOT=1"
+						command = commandBase .. " " .. subset .. " -a " .. self:toMonoArch(common.targetArchs[1]) .. " -rf Mono -lc Release -rc Release -c Release"
 						if not os.execute(command) then
 							goto failed
 						end
@@ -508,13 +519,9 @@ function mono:setup()
 	
 	for _, arch in ipairs(common.targetArchs) do
 		for _, config in ipairs({ "Debug", "Release", "Dist" }) do
-			local native = self.location .. "/Backends/" .. self:toMonoTriple(common.target, arch, config)
-			filter({ "architecture:" .. arch, "configurations:" .. config })
-				files({ native .. "/include/**" })
+			files({ self.location .. "/Backends/" .. self:toMonoTriple(common.target, arch, config) .. "/include/**" })
 		end
 	end
-	
-	filter({})
 end
 
 function mono:setupDep()
@@ -523,7 +530,10 @@ function mono:setupDep()
 			local native = self.location .. "/Backends/" .. self:toMonoTriple(common.target, arch, config)
 			filter({ "architecture:" .. arch, "configurations:" .. config })
 				sysincludedirs({ native .. "/include/" })
-				libdirs({ native .. "/lib/" })
+				libdirs({
+				    native .. "/bin/",
+				    native .. "/lib/"
+				})
 			
 				prelinkcommands({
 					"{COPYDIR} \"" .. native .. "/bin/\" \"%{cfg.linktarget.directory}/\"",

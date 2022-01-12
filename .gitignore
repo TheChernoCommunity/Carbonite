@@ -11,6 +11,14 @@ Carbonite.sln
 /CarboniteModAPI/bin/
 /CarboniteModAPI/obj/
 
+# CLion
+/.idea/
+
+# CMake
+CMakeLists.txt
+*.cmake
+/cmake-build-*/
+
 # Makefile
 Makefile
 *.Make

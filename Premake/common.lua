@@ -200,13 +200,16 @@ function common:libname(names)
 	end
 end
 
-function common:sharedlibname(names)
+function common:sharedlibname(names, withDebug)
 	if type(names) == "table" then
 		local libnames = {}
 		
 		for _, v in ipairs(names) do
 			local libname = v
 			if self.target == "windows" then
+				if withDebug then
+				    table.insert(libnames, libname .. ".pdb")
+				end
 				libname = libname .. ".dll"
 			elseif self.target == "macosx" then
 				libname = "lib" .. libname .. ".dylib"
@@ -218,7 +221,9 @@ function common:sharedlibname(names)
 		
 		return libnames
 	else
-		return self:sharedlibname({ names })[1]
+		local libnames = self:sharedlibname({ names })
+		if #libnames == 1 then return libnames[1] end
+		return libnames
 	end
 end
 
@@ -230,14 +235,19 @@ function common:hasLib(lib, searchPaths)
 end
 
 function common:hasSharedLib(lib, searchPaths)
+    if type(searchPaths) ~= "table" then searchPaths = { searchPaths } end
 	for _, searchPath in ipairs(searchPaths) do
 		return #os.matchfiles(searchPath .. "/" .. self:sharedlibname(lib)) > 0
 	end
 	return false
 end
 
+function common:normalizedPath(filepath)
+    return path.translate(filepath, "/")
+end
+
 function common:rmdir(dir)
-	local realDir = path.translate(os.realpath(dir .. "/"), "/")
+	local realDir = self:normalizedPath(dir) .. "/"
 	
 	if not os.isdir(realDir) then
 		return 1, "'" .. dir .. "' is not a directory!"
@@ -250,7 +260,7 @@ function common:rmdir(dir)
 end
 
 function common:mkdirs(dir)
-	local realDir = path.translate(os.realpath(dir .. "/"), "/")
+	local realDir = self:normalizedPath(dir) .. "/"
 	
 	if not os.isdir(realDir) then
 		local curPath = ""
@@ -265,8 +275,8 @@ function common:mkdirs(dir)
 end
 
 function common:copyFile(from, to)
-	local realFrom = path.translate(os.realpath(from), "/")
-	local realTo = path.translate(os.realpath(to), "/")
+	local realFrom = self:normalizedPath(from)
+	local realTo = self:normalizedPath(to)
 	local realToDir = path.getdirectory(realTo) .. "/"
 	
 	local code, err = self:mkdirs(realToDir)
@@ -279,8 +289,8 @@ function common:copyFile(from, to)
 end
 
 function common:copyFiles(from, filenames, to)
-	local realFrom = path.translate(os.realpath(from .. "/"), "/")
-	local realTo = path.translate(os.realpath(to .. "/"), "/")
+	local realFrom = self:normalizedPath(from)
+	local realTo = self:normalizedPath(to)
 	
 	for _, v in ipairs(filenames) do
 		local code, err = self:copyFile(realFrom .. v, realTo .. v)
@@ -291,8 +301,8 @@ function common:copyFiles(from, filenames, to)
 end
 
 function common:copyDir(from, to)
-	local realFrom = path.translate(os.realpath(from .. "/"), "/")
-	local realTo = path.translate(os.realpath(to .. "/"), "/")
+	local realFrom = self:normalizedPath(from) .. "/"
+	local realTo = self:normalizedPath(to) .. "/"
 
 	if not os.isdir(realFrom) then
 		return -1, "'" .. from .. "' is not a directory!"

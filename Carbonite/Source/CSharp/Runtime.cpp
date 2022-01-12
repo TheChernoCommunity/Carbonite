@@ -8,8 +8,8 @@
 #include <mono/jit/mono-private-unstable.h>
 #include <mono/metadata/assembly.h>
 
+#include <functional>
 #include <string>
-#include <xhash>
 
 namespace CSharp
 {
@@ -190,6 +190,8 @@ namespace CSharp
 			case MONO_IMAGE_IMAGE_INVALID:
 				status = EAssemblyLoadStatus::ImageInvalid;
 				break;
+			default:
+				status = EAssemblyLoadStatus::Unknown;
 			}
 			return nullptr;
 		}

@@ -6,8 +6,8 @@
 #include <mono/metadata/image.h>
 #include <mono/metadata/tokentype.h>
 
+#include <functional>
 #include <stdexcept>
-#include <xhash>
 
 namespace CSharp
 {
