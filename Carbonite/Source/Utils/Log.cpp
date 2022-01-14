@@ -19,8 +19,8 @@ namespace Log
 		{
 			std::vector<spdlog::sink_ptr> sinks;
 			if constexpr (Core::s_IsConfigDebug)
-				sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_st>());
-			sinks.push_back(std::make_shared<spdlog::sinks::daily_file_sink_st>("Logs/Log", 23, 59));
+				sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+			sinks.push_back(std::make_shared<spdlog::sinks::daily_file_sink_mt>("Logs/Log", 23, 59));
 			s_Logger = std::make_shared<spdlog::logger>("Carbonite", sinks.begin(), sinks.end());
 			spdlog::set_pattern("[%T.%f][%^%8l%$][%7t] %v");
 
