@@ -18,7 +18,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	try
 	{
 #endif
-#if true
+#if false
 		auto& runtime = CSharp::Runtime::Get();
 		runtime.init();
 		while (true)
@@ -48,11 +48,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		runtime.deinit();
 		CSharp::Runtime::Destroy();
 #else
-	auto& carbonite = Carbonite::Get(); // Get carbonite instance
-	carbonite.init();                   // Initialize carbonite
-	carbonite.run();                    // Run carbonite
-	carbonite.deinit();                 // Deinitialize carbonite
-	Carbonite::Destroy();               // Destroy carbonite instance
+	auto& carbonite = Carbonite::Get(); // Get Carbonite instance
+	carbonite.init();                   // Initialize Carbonite
+	carbonite.run();                    // Run Carbonite
+	carbonite.deinit();                 // Deinitialize Carbonite
+	Carbonite::Destroy();               // Destroy Carbonite instance
 #endif
 #if BUILD_IS_CONFIG_DIST
 	}
