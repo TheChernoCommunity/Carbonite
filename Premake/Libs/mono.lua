@@ -534,10 +534,10 @@ function mono:setupDep()
 				    native .. "/bin/",
 				    native .. "/lib/"
 				})
-			
+
 				prelinkcommands({
-					"{COPYDIR} \"" .. native .. "/bin/\" \"%{cfg.linktarget.directory}/\"",
-					"{COPYDIR} \"" .. self.location .. "/.NET/\" \"%{cfg.linktarget.directory}/.NET/\""
+					"{COPYDIR} \"" .. native .. "/bin/\" \"%{!cfg.linktarget.directory}/\"",
+					"{COPYDIR} \"" .. self.location .. "/.NET/\" \"%{!cfg.linktarget.directory}/.NET/\""
 				})
 		end
 	end

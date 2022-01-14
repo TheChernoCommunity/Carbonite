@@ -17,7 +17,6 @@ Carbonite.sln
 # CMake
 CMakeLists.txt
 *.cmake
-/cmake-build-*/
 
 # Makefile
 Makefile
