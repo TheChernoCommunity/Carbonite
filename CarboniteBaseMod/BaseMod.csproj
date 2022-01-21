@@ -7,9 +7,6 @@
   <ItemGroup>
     <None Remove="Src\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Src\" />
-  </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>10</LangVersion>
