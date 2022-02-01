@@ -17,58 +17,22 @@ function vulkan:getRequiredSDKLibraries()
 		self.requiredSDKLibs = {
 			dist = {
 				"vulkan-1",
-				"glslang",
-				"SPIRV",
-				"SPVRemapper",
-				"GenericCodeGen",
-				"MachineIndependent",
-				"OSDependent",
-				"OGLCompiler",
-				"SPIRV-Tools",
-				"SPIRV-Tools-opt",
-				"SPIRV-Tools-link"
+				"shaderc_combined"
 			},
 			debug = {
 				"vulkan-1",
-				"glslangd",
-				"SPIRVd",
-				"SPVRemapperd",
-				"GenericCodeGend",
-				"MachineIndependentd",
-				"OSDependentd",
-				"OGLCompilerd",
-				"SPIRV-Toolsd",
-				"SPIRV-Tools-optd",
-				"SPIRV-Tools-linkd"
+				"shaderc_combined"
 			}
 		}
 	else
 		self.requiredSDKLibs = {
 			dist = {
 				"vulkan",
-				"glslang",
-				"SPIRV",
-				"SPVRemapper",
-				"GenericCodeGen",
-				"MachineIndependent",
-				"OSDependent",
-				"OGLCompiler",
-				"SPIRV-Tools",
-				"SPIRV-Tools-opt",
-				"SPIRV-Tools-link"
+				"shaderc_combined"
 			},
 			debug = {
 				"vulkan",
-				"glslang",
-				"SPIRV",
-				"SPVRemapper",
-				"GenericCodeGen",
-				"MachineIndependent",
-				"OSDependent",
-				"OGLCompiler",
-				"SPIRV-Tools",
-				"SPIRV-Tools-opt",
-				"SPIRV-Tools-link"
+				"shaderc_combined"
 			}
 		}
 	end

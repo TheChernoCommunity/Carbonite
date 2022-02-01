@@ -22,8 +22,4 @@ public:
 protected:
 	GLSLang();
 	~GLSLang();
-
-private:
-	bool             m_Initialized = false;
-	TBuiltInResource m_Resources;
 };
