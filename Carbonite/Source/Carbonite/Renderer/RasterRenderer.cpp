@@ -184,19 +184,19 @@ void RasterRenderer::renderImpl()
 				auto [transformComponent, meshComponent] = meshes.get<TransformComponent, StaticMeshComponent>(mesh);
 
 				Mesh* pMesh = meshComponent.m_Mesh;
-				if (pMesh)
-				{
-					auto& transformationMatrix = transformComponent.getMatrix();
-					std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
+				if (!pMesh)
+					continue;
 
-					currentCommandBuffer.cmdBindPipeline(m_Pipeline);
-					currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});
+				auto& transformationMatrix = transformComponent.getMatrix();
+				std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
 
-					currentCommandBuffer.cmdSetLineWidth(1.0f);
-					currentCommandBuffer.cmdBindVertexBuffers(0, { &pMesh->getMeshData() }, { 0 });
-					currentCommandBuffer.cmdBindIndexBuffer(pMesh->getMeshData(), pMesh->getVertexCount() * sizeof(Vertex), vk::IndexType::eUint32);
-					currentCommandBuffer.cmdDrawIndexed(static_cast<std::uint32_t>(pMesh->getIndexCount()), 1, 0, 0, 0);
-				}
+				currentCommandBuffer.cmdBindPipeline(m_Pipeline);
+				currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});
+
+				currentCommandBuffer.cmdSetLineWidth(1.0f);
+				currentCommandBuffer.cmdBindVertexBuffers(0, { &pMesh->getMeshData() }, { 0 });
+				currentCommandBuffer.cmdBindIndexBuffer(pMesh->getMeshData(), pMesh->getVertexCount() * sizeof(Vertex), vk::IndexType::eUint32);
+				currentCommandBuffer.cmdDrawIndexed(static_cast<std::uint32_t>(pMesh->getIndexCount()), 1, 0, 0, 0);
 			}
 
 			currentCommandBuffer.cmdEndRenderPass();
