@@ -202,5 +202,35 @@ namespace ModAPI.Math
                 lhs.m10 * rhs.x + lhs.m11 * rhs.y + lhs.m12 * rhs.z + lhs.m13,
                 lhs.m20 * rhs.x + lhs.m21 * rhs.y + lhs.m22 * rhs.z + lhs.m23);
         }
+
+        public float Determinant => (m00 * ((m11 * m22 * m33 + m12 * m23 * m31 + m13 * m21 * m32) - m13 * m22 * m31 - m11 * m23 * m32 - m12 * m21 * m33)) - (m01 * ((m10 * m22 * m33 + m12 * m23 * m30 + m13 * m20 * m32) - m13 * m22 * m30 - m10 * m23 * m32 - m12 * m20 * m33)) + (m02 * ((m10 * m21 * m33 + m11 * m23 * m30 + m13 * m20 * m31) - m13 * m21 * m30 - m10 * m23 * m31 - m11 * m20 * m33)) - (m03 * ((m10 * m21 * m32 + m11 * m22 * m30 + m12 * m20 * m31) - m12 * m21 * m30 - m10 * m22 * m31 - m11 * m20 * m32));
+
+        public Mat4f Transposed
+        {
+            get
+            {
+                return new Mat4f(r0, r1, r2, r3);
+            }
+        }
+
+        public Mat4f Inverted
+        {
+            get
+            {
+                float inv = 1.0f / Determinant;
+
+                return new Mat4f(new Vec4f(Determinant3x3(m11, m12, m13, m21, m22, m23, m31, m32, m33) * inv, -Determinant3x3(m01, m02, m03, m21, m22, m23, m31, m32, m33) * inv, Determinant3x3(m01, m02, m03, m11, m12, m13, m31, m32, m33) * inv, -Determinant3x3(m01, m02, m03, m11, m12, m13, m21, m22, m23) * inv),
+                    new Vec4f(-Determinant3x3(m10, m12, m13, m20, m22, m23, m30, m32, m33) * inv, Determinant3x3(m00, m02, m03, m20, m22, m23, m30, m32, m33) * inv, -Determinant3x3(m00, m02, m03, m10, m12, m13, m30, m32, m33) * inv, Determinant3x3(m00, m02, m03, m10, m12, m13, m20, m22, m23) * inv),
+                    new Vec4f(Determinant3x3(m10, m11, m13, m20, m21, m23, m30, m31, m33) * inv, -Determinant3x3(m00, m01, m03, m20, m21, m23, m30, m31, m33) * inv, Determinant3x3(m00, m01, m03, m10, m11, m13, m30, m31, m33) * inv, -Determinant3x3(m00, m01, m03, m10, m11, m13, m20, m21, m23) * inv),
+                    new Vec4f(-Determinant3x3(m10, m11, m12, m20, m21, m22, m30, m31, m32) * inv, Determinant3x3(m00, m01, m02, m20, m21, m22, m30, m31, m32) * inv, -Determinant3x3(m00, m01, m02, m10, m11, m12, m30, m31, m32) * inv, Determinant3x3(m00, m01, m02, m10, m11, m12, m20, m21, m22) * inv));
+            }
+        }
+
+        internal static float Determinant3x3(float t00, float t01, float t02, float t10, float t11, float t12, float t20, float t21, float t22)
+        {
+            return t00 * (t11 * t22 - t12 * t21) + t01 * (t12 * t20 - t10 * t22) + t02 * (t10 * t21 - t11 * t20);
+        }
+
+        public Mat4f Negated => new Mat4f(-c0, -c1, -c2, -c3);
     }
 }

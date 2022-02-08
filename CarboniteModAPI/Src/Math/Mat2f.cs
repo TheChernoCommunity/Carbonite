@@ -95,5 +95,26 @@ namespace ModAPI.Math
         {
             return new Vec2f(lhs.m00 * rhs.x + lhs.m01 * rhs.y, lhs.m10 * rhs.x + lhs.m11 * rhs.y);
         }
+
+        public float Determinant => m00 * m11 - m10 * m01;
+
+        public Mat2f Transposed
+        {
+            get
+            {
+                return new Mat2f(r0, r1);
+            }
+        }
+
+        public Mat2f Inverted
+        {
+            get
+            {
+                float inv = 1.0f / Determinant;
+                return new Mat2f(new Vec2f(m11 * inv, -m01 * inv), new Vec2f(m00 * inv, -m10 * inv));
+            }
+        }
+
+        public Mat2f Negated => new Mat2f(-c0, -c1);
     }
 }
