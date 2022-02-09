@@ -112,7 +112,7 @@ void RasterRenderer::initImpl()
 	m_Mesh.updateMeshData();
 
 	m_UniformBuffer.m_Size = Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * getMaxFramesInFlight();
-	m_UniformBuffer.m_Usage |= vk::BufferUsageFlagBits::eUniformBuffer;
+	m_UniformBuffer.m_Usage = vk::BufferUsageFlagBits::eUniformBuffer;
 	m_UniformBuffer.m_MemoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 	if (!m_UniformBuffer.create())
 		throw std::runtime_error("Failed to create vulkan uniform buffer");
