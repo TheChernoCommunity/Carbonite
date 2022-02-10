@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mono/utils/mono-forward.h>
+#include <mono/metadata/metadata.h>
 
 #include <filesystem>
 #include <ostream>
@@ -20,6 +20,7 @@ namespace CSharp
 	std::ostream& operator<<(std::ostream& stream, EAssemblyLoadStatus status);
 
 	class Assembly;
+	class Type;
 
 	class Runtime
 	{

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CSharp/Runtime.h"
+
 #include <string>
 #include <string_view>
 
@@ -29,4 +31,6 @@ public:
 
 private:
 	ModInfo m_Info;
+
+	CSharp::Assembly* m_Assembly;
 };

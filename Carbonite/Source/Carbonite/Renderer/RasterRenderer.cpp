@@ -111,8 +111,8 @@ void RasterRenderer::initImpl()
 
 	m_Mesh.updateMeshData();
 
-	m_UniformBuffer.m_Size = Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * getMaxFramesInFlight();
-	m_UniformBuffer.m_Usage = vk::BufferUsageFlagBits::eUniformBuffer;
+	m_UniformBuffer.m_Size        = Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * getMaxFramesInFlight();
+	m_UniformBuffer.m_Usage       = vk::BufferUsageFlagBits::eUniformBuffer;
 	m_UniformBuffer.m_MemoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 	if (!m_UniformBuffer.create())
 		throw std::runtime_error("Failed to create vulkan uniform buffer");
@@ -189,6 +189,7 @@ void RasterRenderer::renderImpl()
 
 				auto& transformationMatrix = transformComponent.getMatrix();
 				std::memcpy(reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(uniformBufferMemory) + Utils::alignCeil(128, m_Device.getPhysicalDeviceLimits().minUniformBufferOffsetAlignment) * m_CurrentFrame + 64), &transformationMatrix, sizeof(transformationMatrix));
+				m_UniformBuffer.flush();
 
 				currentCommandBuffer.cmdBindPipeline(m_Pipeline);
 				currentCommandBuffer.cmdBindDescriptorSets(m_Pipeline.getBindPoint(), m_Pipeline.getPipelineLayout(), 0, { &m_DescriptorSets[m_CurrentFrame] }, {});

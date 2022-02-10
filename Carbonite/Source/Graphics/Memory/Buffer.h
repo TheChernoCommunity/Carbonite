@@ -16,6 +16,7 @@ namespace Graphics::Memory
 
 		void* mapMemory();
 		void  unmapMemory();
+		void  flush();
 
 		std::uint64_t getSize() const { return m_AllocatedSize; }
 

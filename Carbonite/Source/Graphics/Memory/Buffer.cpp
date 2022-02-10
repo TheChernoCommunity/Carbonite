@@ -30,6 +30,11 @@ namespace Graphics::Memory
 		vmaUnmapMemory(*m_Vma, m_Allocation);
 	}
 
+	void Buffer::flush()
+	{
+		vmaFlushAllocation(*m_Vma, m_Allocation, 0, VK_WHOLE_SIZE);
+	}
+
 	void Buffer::createImpl()
 	{
 		vk::SharingMode imageSharingMode = vk::SharingMode::eExclusive;
