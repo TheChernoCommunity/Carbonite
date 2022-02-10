@@ -32,7 +32,9 @@ Makefile
 
 # C#
 Carbonite/Run/Base/Base.dll
+Carbonite/Run/Base/Base.pdb
 Carbonite/Run/Mods/*.dll
+Carbonite/Run/Mods/*.pdb
 
 # Premake
 premake5.exe
