@@ -389,7 +389,7 @@ void Renderer::createRenderPass(bool formatDiffer)
 		dependency.m_SrcSubpass    = ~0U;
 		dependency.m_DstSubpass    = 0;
 		dependency.m_SrcStageMask  = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests;
-		dependency.m_SrcAccessMask = vk::AccessFlagBits::eHostWrite;
+		dependency.m_SrcAccessMask = vk::AccessFlagBits::eNoneKHR;
 		dependency.m_DstStageMask  = vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests;
 		dependency.m_DstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite;
 		m_RenderPass.m_Dependencies.push_back(dependency);
