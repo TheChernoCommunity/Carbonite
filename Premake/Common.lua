@@ -129,11 +129,11 @@ function common:debugDir()
 	if _ACTION == "xcode4" then
 		print([[The xcode4 action doesn't support debug directory.
 So you have to edit the scheme of ']] .. projectName .. [[' (Top center) and set it to:
-]] .. projectLocation .. debugDir)
+]] .. projectLocation .. self.dbgDir)
 	elseif _ACTION == "gmake" or _ACTION == "gmake2" or _ACTION == "cmake" then
 		print("The " .. _ACTION .. [[ action doesn't support debug directory.
 So for the project ']] .. projectName .. [[' you have to manually 'cd' into the directory:
-]] .. projectLocation .. debugDir)
+]] .. projectLocation .. self.dbgDir)
 	end
 	term.popColor()
 end
