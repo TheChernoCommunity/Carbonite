@@ -125,7 +125,7 @@ function common:debugDir()
 	local projectLocation = self:projectLocation()
 	debugdir(projectLocation .. self.dbgDir)
 
-	term.pushColor(term.orange)
+	term.pushColor(term.warningColor)
 	if _ACTION == "xcode4" then
 		print([[The xcode4 action doesn't support debug directory.
 So you have to edit the scheme of ']] .. projectName .. [[' (Top center) and set it to:
