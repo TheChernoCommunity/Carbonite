@@ -31,7 +31,12 @@ protected:
 	Carbonite();
 	~Carbonite();
 
+	void loadModAPI();
+	void loadAvailableMods();
+
 public:
+	CSharp::Assembly* m_ModAPI;
+
 	std::vector<ModInfo> m_AvailableMods;
 	std::vector<Mod>     m_EnabledMods;
 

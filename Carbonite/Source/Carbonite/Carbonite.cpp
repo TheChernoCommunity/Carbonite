@@ -1,8 +1,10 @@
 #include "Carbonite.h"
+#include "CSharp/Runtime.h"
 #include "Renderer/RTRenderer.h"
 #include "Renderer/RasterRenderer.h"
 #include "Renderer/Renderer.h"
 #include "Scene/ECS.h"
+#include "Utils/FileIO.h"
 #include "Utils/Log.h"
 
 Carbonite& Carbonite::Get()
@@ -57,4 +59,26 @@ Carbonite::Carbonite()
 
 Carbonite::~Carbonite()
 {
+}
+
+void Carbonite::loadModAPI()
+{
+	auto& runtime = CSharp::Runtime::Get();
+	m_ModAPI      = runtime.loadAssembly(FileIO::getExecutableDir() / "ModAPI.dll");
+}
+
+void Carbonite::loadAvailableMods()
+{
+	for (auto& itr : std::filesystem::directory_iterator(FileIO::getGameDir() / "Mods/"))
+	{
+		if (!itr.is_directory())
+			continue;
+
+		auto& path     = itr.path();
+		auto  infoFile = path / "Info.ini";
+		if (!std::filesystem::exists(infoFile))
+			continue;
+
+		// TODO(MarcasRealAccount): Implement
+	}
 }
