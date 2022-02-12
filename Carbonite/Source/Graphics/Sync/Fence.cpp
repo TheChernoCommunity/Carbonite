@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Fence.h"
 #include "Graphics/Device/Device.h"
 

@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "Semaphore.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Instance.h"
-#include "Semaphore.h"
 
 namespace Graphics::Sync
 {

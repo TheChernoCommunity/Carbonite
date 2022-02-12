@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "Mesh.h"
 #include "Carbonite/Carbonite.h"
 #include "Carbonite/Renderer/Renderer.h"
-#include "Mesh.h"
 
 Mesh::Mesh(Graphics::Memory::VMA& vma)
     : m_MeshData(vma)

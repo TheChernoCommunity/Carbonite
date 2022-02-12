@@ -1,11 +1,9 @@
-#include "PCH.h"
-
+#include "Queue.h"
 #include "Device.h"
 #include "Graphics/Commands/CommandPool.h"
 #include "Graphics/Swapchain/Swapchain.h"
 #include "Graphics/Sync/Fence.h"
 #include "Graphics/Sync/Semaphore.h"
-#include "Queue.h"
 
 namespace Graphics
 {

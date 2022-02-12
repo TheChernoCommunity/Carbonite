@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Namespace.h"
 
 namespace CSharp

@@ -1,14 +1,19 @@
-local glm = {
-	name = "",
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.glm then
+	libs.glm = {
+		name       = "",
+		location   = ""
+	}
+end
+
+local glm = libs.glm
 
 function glm:setup()
-	self.name = common:projectName()
+	self.name     = common:projectName()
 	self.location = common:projectLocation()
 
 	kind("StaticLib")
-	common:staticLibOutDirs()
+	common:outDirs(true)
 
 	includedirs({
 		self.location,
@@ -21,5 +26,3 @@ end
 function glm:setupDep()
 	sysincludedirs({ self.location })
 end
-
-return glm

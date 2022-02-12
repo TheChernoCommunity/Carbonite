@@ -1,14 +1,19 @@
-local spdlog = {
-	name = "",
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.spdlog then
+	libs.spdlog = {
+		name       = "",
+		location   = ""
+	}
+end
+
+local spdlog = libs.spdlog
 
 function spdlog:setup()
-	self.name = common:projectName()
+	self.name     = common:projectName()
 	self.location = common:projectLocation()
 
 	kind("StaticLib")
-	common:staticLibOutDirs()
+	common:outDirs(true)
 
 	defines({ "SPDLOG_COMPILED_LIB", "FMT_CONSTEVAL=" })
 
@@ -27,5 +32,3 @@ function spdlog:setupDep()
 
 	defines({ "SPDLOG_COMPILED_LIB", "FMT_CONSTEVAL=" })
 end
-
-return spdlog

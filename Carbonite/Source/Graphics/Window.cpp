@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Utils/Log.h"
 #include "Window.h"
+#include "Utils/Log.h"
 
 #include <cstdlib>
 

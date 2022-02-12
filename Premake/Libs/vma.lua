@@ -1,36 +1,39 @@
-local vma = {
-	sourceDir = "/src/",
-	includeDir = "/include/",
-	name = "",
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.vma then
+	libs.vma = {
+		name       = "",
+		location   = ""
+	}
+end
+
+local vma = libs.vma
+
+require("vulkan")
 
 function vma:setup()
-	self.name = common:projectName()
+	self.name     = common:projectName()
 	self.location = common:projectLocation()
 
 	kind("StaticLib")
-	common:staticLibOutDirs()
+	common:outDirs(true)
 
 	includedirs({ self.location .. "/include/" })
-	
+
 	filter("system:windows")
 		removedefines({ "NOMINMAX", "WIN32_LEAN_AND_MEAN" })
 
 	filter({})
 
-	vulkan:setupDep(true)
+	libs.vulkan:setupDep(true)
 
 	files({
-		self.location .. self.includeDir .. "**",
-		self.location .. self.sourceDir .. "VmaUsage.h",
-		self.location .. self.sourceDir .. "VmaUsage.cpp"
+		self.location .. "/include/**",
+		self.location .. "/src/VmaUsage.h",
+		self.location .. "/src/VmaUsage.cpp"
 	})
 end
 
 function vma:setupDep()
 	links({ self.name })
-	sysincludedirs({ self.location .. self.includeDir })
+	sysincludedirs({ self.location .. "/include/" })
 end
-
-return vma

@@ -1,10 +1,8 @@
-#include "PCH.h"
-
+#include "RasterRenderer.h"
 #include "Carbonite/Scene/Components/CameraComponent.h"
 #include "Carbonite/Scene/Components/StaticMeshComponent.h"
 #include "Carbonite/Scene/Components/TransformComponent.h"
 #include "Carbonite/Scene/ECS.h"
-#include "RasterRenderer.h"
 #include "Utils/Log.h"
 #include "Utils/Utils.h"
 

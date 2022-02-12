@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Mod.h"
 
 ModInfo::ModInfo(std::string_view id)

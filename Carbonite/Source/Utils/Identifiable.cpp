@@ -1,10 +1,8 @@
-#include "PCH.h"
+#include "Identifiable.h"
 
 #include <limits>
 #include <random>
 #include <unordered_set>
-
-#include "Identifiable.h"
 
 namespace
 {
@@ -13,7 +11,6 @@ namespace
 	static std::uniform_int_distribution<uint64_t> s_uniformDist(std::numeric_limits<std::uint64_t>::min(), std::numeric_limits<std::uint64_t>::max());
 	static std::unordered_set<uint64_t>            s_usedIDs;
 } // namespace
-
 
 Identifiable::Identifiable()
 {

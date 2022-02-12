@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "Surface.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Window.h"
-#include "Surface.h"
 
 namespace Graphics
 {

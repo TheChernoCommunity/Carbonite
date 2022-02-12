@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Assembly.h"
 #include "Runtime.h"
+#include "Assembly.h"
 #include "Utils/FileIO.h"
 
 #include <mono/jit/jit.h>

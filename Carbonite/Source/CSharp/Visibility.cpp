@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Visibility.h"
 
 #include <mono/metadata/attrdefs.h>

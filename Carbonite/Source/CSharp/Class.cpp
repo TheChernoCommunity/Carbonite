@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Class.h"
 #include "Namespace.h"
 #include "Runtime.h"

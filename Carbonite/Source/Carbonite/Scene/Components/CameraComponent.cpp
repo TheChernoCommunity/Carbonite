@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "CameraComponent.h"
 #include "Carbonite/Scene/ECS.h"
 #include "TransformComponent.h"

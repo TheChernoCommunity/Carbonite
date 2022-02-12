@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "RayTracingPipeline.h"
 #include "Graphics/Device/Device.h"
 #include "PipelineLayout.h"
-#include "RayTracingPipeline.h"
 #include "ShaderModule.h"
 
 namespace Graphics

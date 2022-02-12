@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "RTRenderer.h"
 
 void RTRenderer::initImpl()

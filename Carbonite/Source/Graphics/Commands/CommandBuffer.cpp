@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "Graphics/Device/Device.h"

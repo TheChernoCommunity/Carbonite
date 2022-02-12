@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Core.h"
 #include "FileIO.h"
+#include "Core.h"
 
 #include "Log.h"
 

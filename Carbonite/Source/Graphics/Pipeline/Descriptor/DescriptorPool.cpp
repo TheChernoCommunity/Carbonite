@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "DescriptorPool.h"
 #include "DescriptorSet.h"
 #include "DescriptorSetLayout.h"

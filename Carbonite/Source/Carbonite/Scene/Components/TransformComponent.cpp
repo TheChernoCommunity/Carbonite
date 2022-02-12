@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "TransformComponent.h"
 #include "CameraComponent.h"
 #include "Carbonite/Scene/ECS.h"
-#include "TransformComponent.h"
 
 TransformComponent::TransformComponent(const glm::fvec3& translation, const glm::fquat& rotation, const glm::fvec3& scale)
     : m_Translation(translation),

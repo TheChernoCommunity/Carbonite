@@ -1,16 +1,21 @@
-local imgui = {
-	name = "",
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.imgui then
+	libs.imgui = {
+		name       = "",
+		location   = ""
+	}
+end
+
+local imgui = libs.imgui
 
 function imgui:setup()
-	self.name = common:projectName()
+	self.name     = common:projectName()
 	self.location = common:projectLocation()
 
 	kind("StaticLib")
-	common:staticLibOutDirs()
+	common:outDirs(true)
 
-	includedirs({ "%{prj.location}/" })
+	includedirs({ self.location })
 
 	files({
 		self.location .. "/imgui.h",
@@ -29,5 +34,3 @@ function imgui:setupDep()
 	links({ self.name })
 	sysincludedirs({ self.location })
 end
-
-return imgui

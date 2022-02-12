@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Graphics/Device/Device.h"
 #include "ShaderModule.h"
+#include "Graphics/Device/Device.h"
 
 namespace Graphics
 {

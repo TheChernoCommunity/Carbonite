@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Debug.h"
 #include "Graphics/Instance.h"
 #include "Utils/Log.h"

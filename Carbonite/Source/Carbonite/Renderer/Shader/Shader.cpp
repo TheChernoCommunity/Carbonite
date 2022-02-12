@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Graphics/Device/Device.h"
 #include "Shader.h"
+#include "Graphics/Device/Device.h"
 
 #include "GLSLang.h"
 #include "Utils/FileIO.h"

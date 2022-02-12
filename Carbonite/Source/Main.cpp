@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "CSharp/Assembly.h"
 #include "CSharp/Runtime.h"
 #include "Carbonite/Carbonite.h"

@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Graphics/Device/Device.h"
 #include "GraphicsPipeline.h"
+#include "Graphics/Device/Device.h"
 #include "PipelineLayout.h"
 #include "RenderPass.h"
 #include "ShaderModule.h"

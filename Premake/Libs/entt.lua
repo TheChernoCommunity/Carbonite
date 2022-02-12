@@ -1,6 +1,11 @@
-local entt = {
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.entt then
+	libs.entt = {
+		location = ""
+	}
+end
+
+local entt = libs.entt
 
 function entt:setup()
 	self.location = common:projectLocation()
@@ -15,5 +20,3 @@ end
 function entt:setupDep()
 	sysincludedirs({ self.location .. "/single_include/" })
 end
-
-return entt

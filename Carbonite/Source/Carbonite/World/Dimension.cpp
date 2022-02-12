@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Dimension.h"
 
 Dimension::Dimension() {}

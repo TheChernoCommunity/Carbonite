@@ -1,8 +1,6 @@
-#include "PCH.h"
-
+#include "Renderer.h"
 #include "Carbonite/Carbonite.h"
 #include "Events/Event.h"
-#include "Renderer.h"
 #include "Shader/GLSLang.h"
 #include "Utils/Log.h"
 

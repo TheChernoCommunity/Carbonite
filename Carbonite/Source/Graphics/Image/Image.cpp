@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Graphics/Memory/VMA.h"
 #include "Image.h"
+#include "Graphics/Memory/VMA.h"
 
 namespace Graphics
 {

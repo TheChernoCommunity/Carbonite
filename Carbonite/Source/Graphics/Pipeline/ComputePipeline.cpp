@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "ComputePipeline.h"
 #include "Graphics/Device/Device.h"
 #include "PipelineLayout.h"

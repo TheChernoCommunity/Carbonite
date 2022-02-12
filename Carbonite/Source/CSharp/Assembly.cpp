@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Assembly.h"
 
 #include <mono/metadata/assembly.h>

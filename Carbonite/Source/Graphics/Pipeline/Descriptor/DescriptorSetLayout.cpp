@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "DescriptorSetLayout.h"
 #include "Graphics/Device/Device.h"
 

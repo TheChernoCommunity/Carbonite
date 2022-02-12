@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Buffer.h"
 #include "VMA.h"
 

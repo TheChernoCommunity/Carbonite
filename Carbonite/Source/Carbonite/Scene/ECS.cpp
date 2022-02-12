@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "ECS.h"
 
 ECS& ECS::Get()

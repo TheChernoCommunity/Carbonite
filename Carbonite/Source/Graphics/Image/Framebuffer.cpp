@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Framebuffer.h"
 #include "Graphics/Device/Device.h"
 #include "Graphics/Pipeline/RenderPass.h"

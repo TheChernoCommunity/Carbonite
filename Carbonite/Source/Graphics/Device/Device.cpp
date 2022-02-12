@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Device.h"
 #include "Graphics/Debug/Debug.h"
 #include "Graphics/Device/Queue.h"

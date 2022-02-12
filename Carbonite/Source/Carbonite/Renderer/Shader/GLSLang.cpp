@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include <shaderc/shaderc.hpp>
 
 #include "GLSLang.h"

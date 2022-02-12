@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "Type.h"
 
 namespace CSharp

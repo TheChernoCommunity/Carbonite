@@ -1,5 +1,3 @@
-#include "PCH.h"
-
 #include "StaticMeshComponent.h"
 
 StaticMeshComponent::StaticMeshComponent(Mesh* mesh)
