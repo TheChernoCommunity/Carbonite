@@ -64,6 +64,10 @@ function mono:setupDep()
 			"ws2_32",
 			"Winmm"
 		})
+	elseif common.target == "macosx" then
+	    links({
+	        "z"
+	    })
 	else
 		links(self.requiredLibs.shared)
 	end
