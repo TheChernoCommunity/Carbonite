@@ -1,6 +1,4 @@
-#include "PCH.h"
-
-#include "Graphics/Device/Surface.h"
+#include "Surface.h"
 #include "Graphics/Instance.h"
 #include "Graphics/Window.h"
 

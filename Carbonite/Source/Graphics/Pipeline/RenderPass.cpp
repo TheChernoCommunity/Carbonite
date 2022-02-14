@@ -1,7 +1,5 @@
-#include "PCH.h"
-
+#include "RenderPass.h"
 #include "Graphics/Device/Device.h"
-#include "Graphics/Pipeline/RenderPass.h"
 
 namespace Graphics
 {

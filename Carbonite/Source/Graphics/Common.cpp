@@ -1,6 +1,4 @@
-#include "PCH.h"
-
-#include "Graphics/Common.h"
+#include "Common.h"
 
 namespace Graphics
 {

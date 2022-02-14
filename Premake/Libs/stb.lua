@@ -1,6 +1,11 @@
-local stb = {
-	location = ""
-}
+if not libs then libs = {} end
+if not libs.stb then
+	libs.stb = {
+		location = ""
+	}
+end
+
+local stb = libs.stb
 
 function stb:setup()
 	self.location = common:projectLocation()
@@ -15,5 +20,3 @@ end
 function stb:setupDep()
 	sysincludedirs({ self.location })
 end
-
-return stb

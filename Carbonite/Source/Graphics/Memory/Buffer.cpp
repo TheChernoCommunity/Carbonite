@@ -1,7 +1,5 @@
-#include "PCH.h"
-
-#include "Graphics/Memory/Buffer.h"
-#include "Graphics/Memory/VMA.h"
+#include "Buffer.h"
+#include "VMA.h"
 
 namespace Graphics::Memory
 {
@@ -30,6 +28,11 @@ namespace Graphics::Memory
 		vmaUnmapMemory(*m_Vma, m_Allocation);
 	}
 
+	void Buffer::flush()
+	{
+		vmaFlushAllocation(*m_Vma, m_Allocation, 0, VK_WHOLE_SIZE);
+	}
+
 	void Buffer::createImpl()
 	{
 		vk::SharingMode imageSharingMode = vk::SharingMode::eExclusive;
@@ -48,7 +51,10 @@ namespace Graphics::Memory
 
 		auto result = vmaCreateBuffer(*m_Vma, &vkCreateInfo, &allocationCreateInfo, &buffer, &m_Allocation, nullptr);
 		if (result == VK_SUCCESS)
-			m_Handle = buffer;
+		{
+			m_Handle        = buffer;
+			m_AllocatedSize = m_Size;
+		}
 	}
 
 	bool Buffer::destroyImpl()

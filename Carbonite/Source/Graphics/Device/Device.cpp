@@ -1,7 +1,5 @@
-#include "PCH.h"
-
+#include "Device.h"
 #include "Graphics/Debug/Debug.h"
-#include "Graphics/Device/Device.h"
 #include "Graphics/Device/Queue.h"
 #include "Graphics/Device/Surface.h"
 #include "Graphics/Instance.h"
@@ -100,6 +98,16 @@ namespace Graphics
 			if ((queueFamily.getQueueFlags() & queueFlags) && (queueFamily.isPresentSupported() >= supportsPresent))
 				return const_cast<QueueFamily*>(&queueFamily);
 		return nullptr;
+	}
+
+	Instance& Device::getInstance()
+	{
+		return m_Surface.getInstance();
+	}
+
+	Instance& Device::getInstance() const
+	{
+		return m_Surface.getInstance();
 	}
 
 	void Device::createImpl()
@@ -226,8 +234,9 @@ namespace Graphics
 		if (!bestPhysicalDevice)
 			return;
 
-		m_PhysicalDevice     = bestPhysicalDevice;
-		auto availableLayers = m_PhysicalDevice.enumerateDeviceLayerProperties();
+		m_PhysicalDevice           = bestPhysicalDevice;
+		m_PhysicalDeviceProperties = m_PhysicalDevice.getProperties();
+		auto availableLayers       = m_PhysicalDevice.enumerateDeviceLayerProperties();
 		for (auto& layer : m_Layers)
 		{
 			for (auto& availLayer : availableLayers)

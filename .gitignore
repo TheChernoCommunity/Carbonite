@@ -6,8 +6,17 @@
 Carbonite.sln
 *.vcxproj
 *.vcxproj.*
+/CarboniteBaseMod/bin/
 /CarboniteBaseMod/obj/
+/CarboniteModAPI/bin/
 /CarboniteModAPI/obj/
+
+# CLion
+/.idea/
+
+# CMake
+CMakeLists.txt
+*.cmake
 
 # Makefile
 Makefile
@@ -23,7 +32,42 @@ Makefile
 
 # C#
 Carbonite/Run/Base/Base.dll
+Carbonite/Run/Base/Base.pdb
 Carbonite/Run/Mods/*.dll
+Carbonite/Run/Mods/*.pdb
 
 # Premake
 premake5.exe
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app

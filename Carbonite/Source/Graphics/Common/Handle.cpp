@@ -1,6 +1,4 @@
-#include "PCH.h"
-
-#include "Graphics/Common/Handle.h"
+#include "Handle.h"
 
 #include <algorithm>
 
