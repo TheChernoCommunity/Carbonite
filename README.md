@@ -1,6 +1,12 @@
 # 🎮 Carbonite
 This is a community-driven game project from people in [TheCherno](https://www.youtube.com/user/TheChernoProject)'s community Discord server.
 
+## 📖 Story
+You are a cyborg human that has crashed on an alien planet, with huge memory loss. You have to survive on the planet, gather resources and fix your spaceship to search for civilisation, but you only find other plants and abandoned or ruined space cities and structures which you can loot, but beware of potential aliens in that might want to eat you in them.
+
+## ℹ️ More Info
+Every object (Block or item) has a chemical inscription, and you find resources line carbon in different forms or iron and other elements like Radium on the planets and by salvaging parts from structures, where you can also find other stuff like electrical parts and materials to build your base/ship.
+
 ## 🤷‍♂️ How do I contribute?
 The first step in contributing is to download all the necessary tools. You will need Premake5 ([see Premake](#-premake)) and a C++ compiler (if you're using Visual Studio, you're all set!).
 
